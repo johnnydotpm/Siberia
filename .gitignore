@@ -1,0 +1,21 @@
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.log
+*.tmp
+
+# Keep local credentials and service configuration out of commits.
+.env
+.env.*
+!.env.example
+**/google-services.json
+**/GoogleService-Info.plist
+**/key.properties
+**/*.keystore
+**/*.jks
+**/*.p12
+**/*.p8
+**/*.mobileprovision
+**/*.pem
+**/*.key

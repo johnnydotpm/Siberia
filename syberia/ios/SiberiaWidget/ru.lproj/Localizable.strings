@@ -1,0 +1,15 @@
+/* Titles in the Edit Widget sheet. The keys are the English titles in WidgetOptions.swift. */
+"Next lesson" = "Следующий урок";
+"The current or next lesson with its time and room." = "Текущий или следующий урок: время и кабинет.";
+"Style" = "Оформление";
+"System" = "Системное";
+"Light" = "Светлое";
+"Dark" = "Тёмное";
+"Black (AMOLED)" = "Чёрное (AMOLED)";
+"Room" = "Кабинет";
+"Teacher" = "Учитель";
+"Following lessons" = "Следующие уроки";
+"Countdown" = "Отсчёт времени";
+"Day progress" = "Прогресс дня";
+"Highlight substitutions" = "Выделять замены";
+"Merge double lessons" = "Склеивать сдвоенные уроки";

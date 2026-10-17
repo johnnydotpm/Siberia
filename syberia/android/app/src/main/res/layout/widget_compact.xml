@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- One cell tall: time on the left, lesson on the right, the following
+     lesson at the end when the widget is wide enough. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@android:id/background"
+    style="@style/WidgetRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="48dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/compact_start"
+            style="@style/WidgetText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:text="@string/widget_preview_start"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/compact_end"
+            style="@style/WidgetText.Detail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="@string/widget_preview_end" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/compact_bar"
+        style="@style/WidgetLine"
+        android:layout_width="3dp"
+        android:layout_height="32dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/compact_subject"
+            style="@style/WidgetText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/widget_preview_subject"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:id="@+id/compact_second_line"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:orientation="horizontal">
+
+            <Chronometer
+                android:id="@+id/compact_countdown"
+                style="@style/WidgetText.Countdown"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="13sp"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/compact_detail"
+                style="@style/WidgetText.Detail"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/widget_preview_room"
+                android:textSize="13sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/compact_divider"
+        style="@style/WidgetLine"
+        android:layout_width="1dp"
+        android:layout_height="32dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/compact_later"
+        android:layout_width="96dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/compact_later_time"
+            style="@style/WidgetText.Detail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/compact_later_subject"
+            style="@style/WidgetText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:fontFamily="sans-serif-medium"
+            android:textSize="13sp" />
+    </LinearLayout>
+</LinearLayout>

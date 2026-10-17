@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_name">Next lesson</string>
+    <string name="widget_description">The current or next lesson with its time and room.</string>
+    <string name="widget_open_app">Open SiberiaGB to load your timetable</string>
+    <string name="widget_preview_status">Next lesson</string>
+    <string name="widget_app_name" translatable="false">SiberiaGB</string>
+    <string name="widget_preview_subject" translatable="false">historia</string>
+    <string name="widget_preview_start" translatable="false">08:00</string>
+    <string name="widget_preview_end" translatable="false">08:45</string>
+    <string name="widget_preview_time" translatable="false">08:00–08:45</string>
+    <string name="widget_preview_room" translatable="false">s. 214</string>
+</resources>

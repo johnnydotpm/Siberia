@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Square: the lesson with its time and room at the bottom; a taller widget
+     lists the following lessons underneath instead of leaving a gap. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@android:id/background"
+    style="@style/WidgetRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/small_top"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/small_pill"
+            style="@style/WidgetText.Pill"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/widget_preview_status" />
+
+        <TextView
+            android:id="@+id/small_flag"
+            style="@style/WidgetText.Flag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:visibility="gone" />
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <LinearLayout
+            android:id="@+id/small_dots"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:orientation="horizontal"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/small_subject"
+        style="@style/WidgetText.Subject"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/widget_preview_subject" />
+
+    <FrameLayout
+        android:id="@+id/small_spacer_middle"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:minHeight="8dp" />
+
+    <!-- Replaces the stretching spacer above when a list takes the room. -->
+    <FrameLayout
+        android:id="@+id/small_gap"
+        android:layout_width="match_parent"
+        android:layout_height="8dp"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/small_time"
+        style="@style/WidgetText.Time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/widget_preview_time" />
+
+    <Chronometer
+        android:id="@+id/small_countdown"
+        style="@style/WidgetText.Countdown"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/small_detail"
+        style="@style/WidgetText.Detail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:text="@string/widget_preview_room" />
+
+    <FrameLayout
+        android:id="@+id/small_spacer_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/small_list_block"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <FrameLayout
+            android:id="@+id/small_list_divider"
+            style="@style/WidgetLine"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="4dp" />
+
+        <LinearLayout
+            android:id="@+id/small_rows"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+    </LinearLayout>
+</LinearLayout>

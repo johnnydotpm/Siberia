@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Defaults in the brand theme; the widget code repaints them in the theme
+     chosen for each widget. -->
+<resources>
+    <style name="WidgetRoot">
+        <item name="android:background">@drawable/widget_brand_bg</item>
+        <item name="android:clipToOutline">true</item>
+        <item name="android:padding">@dimen/widget_padding</item>
+    </style>
+
+    <style name="WidgetText">
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:textColor">@color/widget_brand_text</item>
+    </style>
+
+    <style name="WidgetText.Pill">
+        <item name="android:background">@drawable/widget_brand_pill</item>
+        <item name="android:paddingStart">8dp</item>
+        <item name="android:paddingEnd">8dp</item>
+        <item name="android:paddingTop">3dp</item>
+        <item name="android:paddingBottom">3dp</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:letterSpacing">0.06</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textSize">10sp</item>
+    </style>
+
+    <style name="WidgetText.Flag" parent="WidgetText.Pill">
+        <item name="android:background">@drawable/widget_flag</item>
+        <item name="android:textColor">@color/widget_flag_text</item>
+    </style>
+
+    <style name="WidgetText.Subject">
+        <item name="android:maxLines">3</item>
+        <item name="android:lineSpacingExtra">1sp</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="WidgetText.Time">
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="WidgetText.Countdown">
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="WidgetText.Detail">
+        <item name="android:textColor">@color/widget_brand_text2</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="WidgetLine">
+        <item name="android:background">@drawable/widget_brand_line</item>
+    </style>
+</resources>

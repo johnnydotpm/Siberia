@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_name">Nächste Stunde</string>
+    <string name="widget_description">Die aktuelle oder nächste Stunde mit Zeit und Raum.</string>
+    <string name="widget_open_app">Öffne SiberiaGB, um den Stundenplan zu laden</string>
+    <string name="widget_preview_status">Nächste Stunde</string>
+</resources>

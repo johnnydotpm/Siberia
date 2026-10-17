@@ -1,0 +1,15 @@
+/* Titles in the Edit Widget sheet. The keys are the English titles in WidgetOptions.swift. */
+"Next lesson" = "Nächste Stunde";
+"The current or next lesson with its time and room." = "Die aktuelle oder nächste Stunde mit Zeit und Raum.";
+"Style" = "Stil";
+"System" = "System";
+"Light" = "Hell";
+"Dark" = "Dunkel";
+"Black (AMOLED)" = "Schwarz (AMOLED)";
+"Room" = "Raum";
+"Teacher" = "Lehrkraft";
+"Following lessons" = "Folgende Stunden";
+"Countdown" = "Countdown";
+"Day progress" = "Tagesfortschritt";
+"Highlight substitutions" = "Vertretungen hervorheben";
+"Merge double lessons" = "Doppelstunden zusammenfassen";

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Home screen widget themes. "system" falls back to "brand" before Android 12. -->
+    <color name="widget_brand_bg_start">#FF1E7DA6</color>
+    <color name="widget_brand_bg_end">#FF135977</color>
+    <color name="widget_brand_text">#FFFFFFFF</color>
+    <color name="widget_brand_text2">#B8FFFFFF</color>
+    <color name="widget_brand_line">#33FFFFFF</color>
+    <color name="widget_brand_pill">#2EFFFFFF</color>
+    <color name="widget_brand_warn">#FFFFC46B</color>
+    <color name="widget_system_bg_start">#FF1E7DA6</color>
+    <color name="widget_system_bg_end">#FF135977</color>
+    <color name="widget_system_text">#FFFFFFFF</color>
+    <color name="widget_system_text2">#B8FFFFFF</color>
+    <color name="widget_system_line">#33FFFFFF</color>
+    <color name="widget_system_pill">#2EFFFFFF</color>
+    <color name="widget_system_warn">#FFFFC46B</color>
+    <color name="widget_light_bg_start">#FFFFFFFF</color>
+    <color name="widget_light_bg_end">#FFEEF3F6</color>
+    <color name="widget_light_text">#FF0F1C24</color>
+    <color name="widget_light_text2">#FF56646E</color>
+    <color name="widget_light_line">#1F0F1C24</color>
+    <color name="widget_light_pill">#1A176B8F</color>
+    <color name="widget_light_warn">#FFB36B00</color>
+    <color name="widget_dark_bg_start">#FF262C31</color>
+    <color name="widget_dark_bg_end">#FF1B2024</color>
+    <color name="widget_dark_text">#FFFFFFFF</color>
+    <color name="widget_dark_text2">#B3FFFFFF</color>
+    <color name="widget_dark_line">#29FFFFFF</color>
+    <color name="widget_dark_pill">#24FFFFFF</color>
+    <color name="widget_dark_warn">#FFFFC46B</color>
+    <color name="widget_black_bg_start">#FF000000</color>
+    <color name="widget_black_bg_end">#FF000000</color>
+    <color name="widget_black_text">#FFFFFFFF</color>
+    <color name="widget_black_text2">#A6FFFFFF</color>
+    <color name="widget_black_line">#2EFFFFFF</color>
+    <color name="widget_black_pill">#29FFFFFF</color>
+    <color name="widget_black_warn">#FFFFC46B</color>
+    <color name="widget_translucent_bg_start">#8C000000</color>
+    <color name="widget_translucent_bg_end">#73000000</color>
+    <color name="widget_translucent_text">#FFFFFFFF</color>
+    <color name="widget_translucent_text2">#CCFFFFFF</color>
+    <color name="widget_translucent_line">#33FFFFFF</color>
+    <color name="widget_translucent_pill">#2EFFFFFF</color>
+    <color name="widget_translucent_warn">#FFFFC46B</color>
+</resources>

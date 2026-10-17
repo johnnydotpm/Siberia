@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="widget_brand_bg_start">#FF145571</color>
+    <color name="widget_brand_bg_end">#FF0C3446</color>
+</resources>

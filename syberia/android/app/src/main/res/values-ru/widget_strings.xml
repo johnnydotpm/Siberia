@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_name">Следующий урок</string>
+    <string name="widget_description">Текущий или следующий урок: время и кабинет.</string>
+    <string name="widget_open_app">Откройте SiberiaGB, чтобы загрузить расписание</string>
+    <string name="widget_preview_status">Следующий урок</string>
+</resources>

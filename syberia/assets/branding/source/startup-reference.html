@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<title>SiberiaGB animacja logo</title>
+<script src="./vendor/react.js"></script>
+<script src="./vendor/react-dom.js"></script>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&amp;family=Manrope:wght@400;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#176B8F}a:hover{color:#0F4C66}
+@keyframes sgb-icon{0%{transform:scale(.6);opacity:0}8%{transform:scale(1.06);opacity:1}13%,88%{transform:scale(1);opacity:1}97%,100%{transform:scale(.6);opacity:0}}
+@keyframes sgb-word{0%,14%{transform:translateX(-110%);opacity:0}38%,80%{transform:translateX(0);opacity:1}92%,100%{transform:translateX(-110%);opacity:0}}
+@keyframes sgb-tag{0%,30%{transform:translateX(-110%);opacity:0}48%,78%{transform:translateX(0);opacity:1}90%,100%{transform:translateX(-110%);opacity:0}}
+.sgb-icon{animation:sgb-icon 5s cubic-bezier(.2,.8,.2,1) infinite}
+.sgb-word{animation:sgb-word 5s cubic-bezier(.2,.8,.2,1) infinite}
+.sgb-tag{animation:sgb-tag 5s cubic-bezier(.2,.8,.2,1) infinite}
+@media (prefers-reduced-motion: reduce){.sgb-icon,.sgb-word,.sgb-tag{animation:none}}
+</style>
+</helmet>
+<div style="width: 1440px; height: 560px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); font-family: Manrope, system-ui, sans-serif">
+
+<div style="background: #FFFFFF; display: flex; align-items: center; justify-content: center">
+<div style="display: flex; align-items: center">
+<svg class="sgb-icon" width="128" height="128" viewBox="0 0 200 200" role="img" aria-label="SiberiaGB icon, light" style="position: relative; z-index: 2; flex-shrink: 0">
+<rect width="200" height="200" rx="45" fill="#E3EEF2"></rect>
+<path d="M100 162Q68 146 30 148V84H36V138Q68 136 98 152H102Q132 136 164 138V84H170V148Q132 146 100 162Z" fill="#0B3A4F"></path>
+<path d="M98 152Q68 136 36 138V84L64 54L98 86Z" fill="#176B8F"></path>
+<path d="M102 152Q132 136 164 138V72L138 42L102 86Z" fill="#0F4C66"></path>
+<path d="M78 20L80.5 27.5L88 30L80.5 32.5L78 40L75.5 32.5L68 30L75.5 27.5Z" fill="#E59A2E"></path>
+</svg>
+<div style="overflow: hidden; padding: 8px 8px 8px 28px; display: flex; flex-direction: column; gap: 6px">
+<div class="sgb-word" style="font-family: Unbounded, sans-serif; font-size: 56px; letter-spacing: -0.03em; line-height: 1; color: #10222C; white-space: nowrap"><span style="font-weight: 700">Siberia</span><span style="font-weight: 500; color: #176B8F">GB</span></div>
+</div>
+</div>
+</div>
+
+<div style="background: #0B1A22; display: flex; align-items: center; justify-content: center">
+<div style="display: flex; align-items: center">
+<svg class="sgb-icon" width="128" height="128" viewBox="0 0 200 200" role="img" aria-label="SiberiaGB icon, dark" style="position: relative; z-index: 2; flex-shrink: 0">
+<rect width="200" height="200" rx="45" fill="#0C1C27"></rect>
+<path d="M100 162Q68 146 30 148V84H36V138Q68 136 98 152H102Q132 136 164 138V84H170V148Q132 146 100 162Z" fill="#3E7A92"></path>
+<path d="M98 152Q68 136 36 138V84L64 54L98 86Z" fill="#FFFFFF"></path>
+<path d="M102 152Q132 136 164 138V72L138 42L102 86Z" fill="#9FCDE0"></path>
+<path d="M78 20L80.5 27.5L88 30L80.5 32.5L78 40L75.5 32.5L68 30L75.5 27.5Z" fill="#F2B544"></path>
+</svg>
+<div style="overflow: hidden; padding: 8px 8px 8px 28px; display: flex; flex-direction: column; gap: 6px">
+<div class="sgb-word" style="font-family: Unbounded, sans-serif; font-size: 56px; letter-spacing: -0.03em; line-height: 1; color: #FFFFFF; white-space: nowrap"><span style="font-weight: 700">Siberia</span><span style="font-weight: 500; color: #6CC3E6">GB</span></div>
+</div>
+</div>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":560}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

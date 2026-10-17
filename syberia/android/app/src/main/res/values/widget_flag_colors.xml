@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- The substitution label, the same in every theme. -->
+    <color name="widget_flag_background">#FFFFC46B</color>
+    <color name="widget_flag_text">#FF3D2A00</color>
+</resources>

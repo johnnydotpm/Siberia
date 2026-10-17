@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=SiberiaGB
+Comment=Librus Synergia school client
+Exec=SiberiaGB
+Icon=app.syberia.client
+Terminal=false
+Categories=Education;
+StartupWMClass=app.syberia.client

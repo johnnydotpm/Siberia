@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_name">Następna lekcja</string>
+    <string name="widget_description">Bieżąca lub następna lekcja z godziną i salą.</string>
+    <string name="widget_open_app">Otwórz SiberiaGB, aby pobrać plan lekcji</string>
+    <string name="widget_preview_status">Następna lekcja</string>
+</resources>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- One lesson of the day in the progress dots. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:paddingStart="4dp">
+
+    <FrameLayout
+        android:id="@+id/dot"
+        android:layout_width="6dp"
+        android:layout_height="6dp"
+        android:background="@drawable/widget_brand_dot_off" />
+</FrameLayout>
