@@ -31,7 +31,7 @@ The application source code is located in the [`syberia/`](syberia) directory.
 
 Download the file for your platform, then run it or install the application.
 
-On Android, `SiberiaGB-<version>-Android-arm64.apk` is smaller and suits almost every phone from recent years. If it does not install, take `SiberiaGB-<version>-Android.apk`, which works on every device. Either file updates an installation made from the other.
+On Android, `SiberiaGB-<version>-Android-arm64.apk` is smaller and suits almost every phone from recent years. If it does not install, take `SiberiaGB-<version>-Android.apk`, which works on every Android phone, older 32-bit ones included. Either file updates an installation made from the other.
 
 On iOS, install the application yourself using [AltStore](https://altstore.io/), [SideStore](https://sidestore.io/), [LiveContainer](https://github.com/LiveContainer/LiveContainer), or a paid certificate.
 

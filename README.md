@@ -31,7 +31,7 @@ Kod aplikacji znajduje się w katalogu [`syberia/`](syberia).
 
 Pobierz plik odpowiedni dla swojej platformy, a następnie uruchom go lub zainstaluj aplikację.
 
-Na Androidzie plik `SiberiaGB-<wersja>-Android-arm64.apk` jest mniejszy i pasuje do niemal każdego telefonu z ostatnich lat. Jeśli się nie instaluje, pobierz `SiberiaGB-<wersja>-Android.apk`, który działa na każdym urządzeniu. Każdy z tych plików aktualizuje aplikację zainstalowaną z drugiego.
+Na Androidzie plik `SiberiaGB-<wersja>-Android-arm64.apk` jest mniejszy i pasuje do niemal każdego telefonu z ostatnich lat. Jeśli się nie instaluje, pobierz `SiberiaGB-<wersja>-Android.apk`, który działa na każdym telefonie z Androidem, także na starszych 32-bitowych. Każdy z tych plików aktualizuje aplikację zainstalowaną z drugiego.
 
 Na iOS aplikację należy zainstalować we własnym zakresie za pomocą [AltStore](https://altstore.io/), [SideStore](https://sidestore.io/), [LiveContainer](https://github.com/LiveContainer/LiveContainer) lub płatnego certyfikatu.
 

@@ -1,12 +1,27 @@
+import 'dart:collection';
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:xml/xml.dart';
 import 'package:html/parser.dart' as html_parser;
 
 import '../../domain/librus_error.dart';
 import '../../domain/models.dart';
+import 'reference_cache.dart';
+
+/// The parts of a snapshot a sync can be limited to.
+enum LibrusPart {
+  grades,
+  timetable,
+  events,
+  homework,
+  attendance,
+  announcements,
+  notices,
+  messages,
+}
 
 /// Portal-backed Synergia access and web mailbox sessions. Token and session
 /// lifetimes follow Szkolny.eu: six hours for API access and 45 minutes for web.
@@ -15,9 +30,11 @@ class LibrusClient {
     Dio? dio,
     FlutterSecureStorage? secureStorage,
     DateTime Function()? clock,
+    LibrusReferenceCache? referenceCache,
   }) : _dio = dio ?? Dio(),
        _secureStorage = secureStorage ?? const FlutterSecureStorage(),
-       _clock = clock ?? DateTime.now;
+       _clock = clock ?? DateTime.now,
+       _referenceCache = referenceCache ?? LibrusReferenceCache();
 
   static const _portalBase = 'https://portal.librus.pl';
   static const _portalApi = '$_portalBase/api/v3';
@@ -33,6 +50,7 @@ class LibrusClient {
       '(KHTML, like Gecko) Chrome/146.0 Mobile Safari/537.36 LibrusMobileApp';
 
   final DateTime Function() _clock;
+  final LibrusReferenceCache _referenceCache;
   final Dio _dio;
   final FlutterSecureStorage _secureStorage;
   final List<_Cookie> _cookies = [];
@@ -76,14 +94,16 @@ class LibrusClient {
     return fetchSnapshot();
   }
 
-  Future<AppSnapshot?> restoreAndFetch() async {
+  /// [parts] limits the sync to these parts; the others come back empty.
+  Future<AppSnapshot?> restoreAndFetch({Set<LibrusPart>? parts}) async {
     if (!await _restoreSession()) return null;
-    return fetchSnapshot();
+    return fetchSnapshot(parts: parts);
   }
 
   Future<void> logout() async {
     _clearRuntimeSessions();
     _session = null;
+    await _referenceCache.clear();
     await _secureStorage.delete(key: _sessionKey);
   }
 
@@ -278,109 +298,198 @@ class LibrusClient {
     );
   }
 
-  Future<AppSnapshot> fetchSnapshot() async {
+  /// [parts] limits the sync to these parts; the others come back empty.
+  Future<AppSnapshot> fetchSnapshot({Set<LibrusPart>? parts}) async {
+    final wanted = parts ?? LibrusPart.values.toSet();
     await _prepareFreshSession();
-    final references = await Future.wait([
-      _apiGet('Me'),
-      _apiGet('Schools'),
-      _apiGet('Subjects'),
-      _apiGet('Users'),
-      _apiGet('Classrooms'),
-      _apiGet('Grades/Categories'),
-      _apiGet('Attendances/Types', optional: true),
-      _apiGet('Notes/Categories', optional: true),
-      _apiGet('Grades/Comments', optional: true),
-      _apiGet('HomeWorks/Categories', optional: true),
-    ]);
-    final me = _map(references[0]['Me']);
-    final account = _map(me?['Account']);
-    final user = _map(me?['User']);
-    final school = _map(references[1]['School']);
-    final subjects = _idNameMap(references[2], 'Subjects', 'Name');
-    final people = _peopleMap(references[3], 'Users');
-    final classrooms = _idNameMap(references[4], 'Classrooms', 'Name');
-    final categories = _gradeCategories(references[5]);
-    final attendanceTypes = _attendanceTypes(references[6]);
-    final noticeCategories = _idNameMap(
-      references[7],
-      'Categories',
-      'CategoryName',
-    );
-    final gradeComments = _idNameMap(references[8], 'Comments', 'Text');
-    final eventTypes = _idNameMap(references[9], 'Categories', 'Name');
-
     final week = _dateOnly(librusSyncWeekStart(DateTime.now()));
-    final data = await Future.wait([
-      _apiGet('Grades'),
-      _apiGet('Timetables?weekStart=$week'),
-      _apiGet('HomeWorks'),
-      _apiGet('HomeWorkAssignments', optional: true),
-      _apiGet('Attendances', optional: true),
-      _apiGet('SchoolNotices', optional: true),
-      _apiGet('Notes', optional: true),
+    Future<Map<String, dynamic>> data(
+      LibrusPart part,
+      String endpoint, {
+      bool optional = false,
+    }) => wanted.contains(part)
+        ? _apiGet(endpoint, optional: optional)
+        : Future.value(const <String, dynamic>{});
+    final withMessages = wanted.contains(LibrusPart.messages);
+    // Everything starts at once: the reference lists (usually from the
+    // cache), the data and the inbox.
+    final responses = await Future.wait<Object?>([
+      _referenceLists(),
+      Future.wait([
+        data(LibrusPart.grades, 'Grades'),
+        data(LibrusPart.timetable, 'Timetables?weekStart=$week'),
+        data(LibrusPart.events, 'HomeWorks'),
+        data(LibrusPart.homework, 'HomeWorkAssignments', optional: true),
+        data(LibrusPart.attendance, 'Attendances', optional: true),
+        data(LibrusPart.announcements, 'SchoolNotices', optional: true),
+        data(LibrusPart.notices, 'Notes', optional: true),
+        data(LibrusPart.grades, 'Grades/Comments', optional: true),
+      ]),
+      if (withMessages)
+        _apiGet(_apiInboxEndpoint).then<Object?>(
+          (root) => root,
+          // The other mailboxes are tried below.
+          onError: (Object error) => error,
+        ),
     ]);
-
-    final profileName = _fullName(user?['FirstName'], user?['LastName']);
-    final profile = StudentProfile(
-      id: 'librus-${account?['Id'] ?? user?['Id'] ?? _session!.synergiaLogin ?? 'account'}',
-      name: profileName.isEmpty ? 'Użytkownik Librus' : profileName,
-      school: _schoolName(school),
-      provider: 'Librus Synergia',
+    var (references, fresh) = responses[0]! as (LibrusReferences, bool);
+    final fetched = responses[1]! as List<Map<String, dynamic>>;
+    final inbox = withMessages ? responses[2] : null;
+    _SnapshotInput input(LibrusReferences references) => (
+      references: references.responses,
+      knownMissing: references.knownMissing,
+      data: fetched,
+      inbox: inbox is Map<String, dynamic> ? inbox : null,
+      login: _session!.synergiaLogin,
     );
-    final events = <SchoolEvent>[
-      ..._parseEvents(data[2], subjects, eventTypes),
-      ..._parseHomework(data[3], subjects),
-    ]..sort((a, b) => a.date.compareTo(b.date));
+    // Turning the responses into the app's data runs off the UI isolate, so
+    // a sync never makes scrolling stutter.
+    var parsed = await compute(_parseSnapshot, input(references));
+    if (parsed.unknown.isNotEmpty) {
+      if (!fresh && _referencesMayBeStale(references)) {
+        // A new subject, teacher or category: the lists are fetched again.
+        (references, fresh) = await _referenceLists(fresh: true);
+        parsed = await compute(_parseSnapshot, input(references));
+      }
+      if (fresh) await _rememberMissing(references, parsed.unknown);
+    }
+
     var messages = <SchoolMessage>[];
     AppError? messagesError;
-    try {
-      messages = await _fetchMessages(people);
-    } on Object catch (error) {
-      messagesError = AppError.from(
-        error is DioException ? _networkException(error) : error,
-      );
+    if (withMessages) {
+      try {
+        messages =
+            parsed.apiMessages ??
+            await _fallbackMessages(switch (inbox) {
+              LibrusException() || DioException() => _mailboxFailure(inbox!),
+              Map() => 'Messages: API inbox unexpected JSON',
+              _ => throw inbox!,
+            });
+      } on Object catch (error) {
+        messagesError = AppError.from(
+          error is DioException ? _networkException(error) : error,
+        );
+      }
     }
     return AppSnapshot(
-      profile: profile,
-      lessons: _parseTimetable(
-        data[1],
-        subjects: subjects,
-        teachers: people,
-        classrooms: classrooms,
-      ),
-      grades: _parseGrades(
-        data[0],
-        subjects: subjects,
-        categories: categories,
-        comments: gradeComments,
-      ),
-      events: events,
+      profile: parsed.profile,
+      lessons: parsed.lessons,
+      grades: parsed.grades,
+      events: parsed.events,
       messages: messages,
       messagesError: messagesError,
-      attendance: _parseAttendance(data[4], subjects, attendanceTypes),
-      announcements: _parseAnnouncements(data[5], people),
-      notices: _parseNotices(data[6], noticeCategories, people),
+      attendance: parsed.attendance,
+      announcements: parsed.announcements,
+      notices: parsed.notices,
       lastSync: DateTime.now(),
     );
   }
 
   Future<List<Lesson>> fetchTimetableWeek(DateTime day) async {
     await _prepareFreshSession();
-    final references = await Future.wait([
-      _apiGet('Subjects'),
-      _apiGet('Users'),
-      _apiGet('Classrooms'),
-    ]);
     final monday = _startOfWeek(day);
-    final timetable = await _apiGet(
-      'Timetables?weekStart=${_dateOnly(monday)}',
+    final responses = await Future.wait<Object>([
+      _referenceLists(),
+      _apiGet('Timetables?weekStart=${_dateOnly(monday)}'),
+    ]);
+    var (references, fresh) = responses[0] as (LibrusReferences, bool);
+    final timetable = responses[1] as Map<String, dynamic>;
+    (List<Lesson>, Set<String>) parse(LibrusReferences references) {
+      final unknown = _UnknownReferences(references.knownMissing);
+      final lessons = _parseTimetable(
+        timetable,
+        subjects: unknown.track(
+          'subject',
+          _idNameMap(references['Subjects'], 'Subjects', 'Name'),
+        ),
+        teachers: unknown.track(
+          'user',
+          _peopleMap(references['Users'], 'Users'),
+        ),
+        classrooms: unknown.track(
+          'classroom',
+          _idNameMap(references['Classrooms'], 'Classrooms', 'Name'),
+        ),
+      );
+      return (lessons, unknown.found);
+    }
+
+    var (lessons, unknown) = parse(references);
+    if (unknown.isNotEmpty) {
+      if (!fresh && _referencesMayBeStale(references)) {
+        (references, fresh) = await _referenceLists(fresh: true);
+        (lessons, unknown) = parse(references);
+      }
+      if (fresh) await _rememberMissing(references, unknown);
+    }
+    return lessons;
+  }
+
+  /// Names that lists fetched just now still lack are not looked for again
+  /// until the lists are next fetched.
+  Future<void> _rememberMissing(
+    LibrusReferences references,
+    Set<String> unknown,
+  ) async {
+    if (unknown.isEmpty || references.knownMissing.containsAll(unknown)) {
+      return;
+    }
+    await _referenceCache.write(references.withKnownMissing(unknown));
+  }
+
+  static const _apiInboxEndpoint =
+      'Messages?alternativeBody=true&changeNewLine=1&afterId=0&limit=50&page=1';
+
+  /// The lists the sync looks names up in, and whether failing to get each
+  /// may be tolerated.
+  static const _referenceEndpoints = {
+    'Me': false,
+    'Schools': false,
+    'Subjects': false,
+    'Users': false,
+    'Classrooms': false,
+    'Grades/Categories': false,
+    'Attendances/Types': true,
+    'Notes/Categories': true,
+    'HomeWorks/Categories': true,
+  };
+
+  /// Names the cached lists after the account without storing its address.
+  String get _referenceAccount =>
+      _stableHash('${_session!.email}\n${_session!.synergiaLogin ?? ''}');
+
+  /// Lists fetched a while ago may lack what was added since. Lists only a
+  /// few minutes old are not fetched again yet.
+  bool _referencesMayBeStale(LibrusReferences references) =>
+      _clock().difference(references.fetchedAt) > const Duration(minutes: 10);
+
+  /// The lists, and whether they were downloaded just now.
+  Future<(LibrusReferences, bool)> _referenceLists({bool fresh = false}) async {
+    final account = _referenceAccount;
+    if (!fresh) {
+      final cached = await _referenceCache.read(account);
+      if (cached != null) {
+        final age = _clock().difference(cached.fetchedAt);
+        if (!age.isNegative && age < LibrusReferenceCache.maxAge) {
+          return (cached, false);
+        }
+      }
+    }
+    final endpoints = _referenceEndpoints.entries.toList(growable: false);
+    final responses = await Future.wait([
+      for (final endpoint in endpoints)
+        _apiGet(endpoint.key, optional: endpoint.value),
+    ]);
+    final references = LibrusReferences(
+      account: account,
+      fetchedAt: _clock(),
+      responses: {
+        for (final (index, endpoint) in endpoints.indexed)
+          endpoint.key: responses[index],
+      },
     );
-    return _parseTimetable(
-      timetable,
-      subjects: _idNameMap(references[0], 'Subjects', 'Name'),
-      teachers: _peopleMap(references[1], 'Users'),
-      classrooms: _idNameMap(references[2], 'Classrooms', 'Name'),
-    );
+    await _referenceCache.write(references);
+    return (references, true);
   }
 
   Future<_PortalSession> _loginWithPortal(String email, String password) async {
@@ -816,57 +925,53 @@ class LibrusClient {
     return 'Messages: unexpected response';
   }
 
-  Future<List<SchoolMessage>> _fetchMessages(Map<int, String> people) async {
-    // The mobile inbox works on accounts which deny the mobile content endpoint.
-    // Do not discard those messages when web mailbox login is unavailable.
-    String apiFailure = 'Messages: API inbox unexpected JSON';
-    try {
-      final root = await _apiGet(
-        'Messages?alternativeBody=true&changeNewLine=1&afterId=0&limit=50&page=1',
-      );
-      if (root['Messages'] is List) {
-        return _list(root['Messages'])
-            .where(
-              (item) =>
-                  item['inSended'] != true &&
-                  item['inSended'] != 1 &&
-                  item['InSent'] != true &&
-                  item['inTrash'] != true &&
-                  item['inTrash'] != 1,
-            )
-            .map((item) {
-              final readDates = _list(item['ReadDates']);
-              final readValue = readDates.isEmpty
-                  ? null
-                  : readDates.first['ReadDate'];
-              return SchoolMessage(
-                id: item['Id'].toString(),
-                sender:
-                    people[_referenceId(item['Sender'])] ??
-                    _fullName(
-                      _map(item['Sender'])?['FirstName'],
-                      _map(item['Sender'])?['LastName'],
-                    ),
-                subject: _jsonText(item['Subject']),
-                preview: _plainText(_jsonText(item['Body'])),
-                receivedAt: _flexDate(item['SendDate']) ?? DateTime.now(),
-                unread:
-                    item['IsNew'] == true ||
-                    (readDates.isNotEmpty &&
-                        (readValue == 0 || readValue == '0')),
-                hasAttachments:
-                    item['AddedFiles'] == true ||
-                    item['HasAttachment'] == true ||
-                    _list(item['MessageFiles']).isNotEmpty,
-              );
-            })
-            .toList(growable: false);
-      }
-    } on LibrusException catch (error) {
-      apiFailure = _mailboxFailure(error);
-    } on DioException catch (error) {
-      apiFailure = _mailboxFailure(error);
-    }
+  /// The messages of the mobile inbox, or null when it answered with
+  /// something else.
+  static List<SchoolMessage>? _apiMessages(
+    Map<String, dynamic> root,
+    Map<int, String> people,
+  ) {
+    if (root['Messages'] is! List) return null;
+    return _list(root['Messages'])
+        .where(
+          (item) =>
+              item['inSended'] != true &&
+              item['inSended'] != 1 &&
+              item['InSent'] != true &&
+              item['inTrash'] != true &&
+              item['inTrash'] != 1,
+        )
+        .map((item) {
+          final readDates = _list(item['ReadDates']);
+          final readValue = readDates.isEmpty
+              ? null
+              : readDates.first['ReadDate'];
+          return SchoolMessage(
+            id: item['Id'].toString(),
+            sender:
+                people[_referenceId(item['Sender'])] ??
+                _fullName(
+                  _map(item['Sender'])?['FirstName'],
+                  _map(item['Sender'])?['LastName'],
+                ),
+            subject: _jsonText(item['Subject']),
+            preview: _plainText(_jsonText(item['Body'])),
+            receivedAt: _flexDate(item['SendDate']) ?? DateTime.now(),
+            unread:
+                item['IsNew'] == true ||
+                (readDates.isNotEmpty && (readValue == 0 || readValue == '0')),
+            hasAttachments:
+                item['AddedFiles'] == true ||
+                item['HasAttachment'] == true ||
+                _list(item['MessageFiles']).isNotEmpty,
+          );
+        })
+        .toList(growable: false);
+  }
+
+  /// The mobile inbox works on accounts which deny the mobile content
+  /// endpoint. When it fails, the XML and then the web mailbox are tried.
+  Future<List<SchoolMessage>> _fallbackMessages(String apiFailure) async {
     try {
       return await _fetchXmlInbox();
     } on LibrusException catch (xmlError) {
@@ -1139,7 +1244,7 @@ class LibrusClient {
     }
   }
 
-  List<Lesson> _parseTimetable(
+  static List<Lesson> _parseTimetable(
     Map<String, dynamic> root, {
     required Map<int, String> subjects,
     required Map<int, String> teachers,
@@ -1198,7 +1303,7 @@ class LibrusClient {
     return result;
   }
 
-  List<Grade> _parseGrades(
+  static List<Grade> _parseGrades(
     Map<String, dynamic> root, {
     required Map<int, String> subjects,
     required Map<int, _GradeCategory> categories,
@@ -1256,7 +1361,7 @@ class LibrusClient {
     return visible;
   }
 
-  List<SchoolEvent> _parseEvents(
+  static List<SchoolEvent> _parseEvents(
     Map<String, dynamic> root,
     Map<int, String> subjects,
     Map<int, String> eventTypes,
@@ -1279,7 +1384,7 @@ class LibrusClient {
       )
       .toList(growable: false);
 
-  List<SchoolEvent> _parseHomework(
+  static List<SchoolEvent> _parseHomework(
     Map<String, dynamic> root,
     Map<int, String> subjects,
   ) => _list(root['HomeWorkAssignments'])
@@ -1303,7 +1408,7 @@ class LibrusClient {
       })
       .toList(growable: false);
 
-  List<AttendanceRecord> _parseAttendance(
+  static List<AttendanceRecord> _parseAttendance(
     Map<String, dynamic> root,
     Map<int, String> subjects,
     Map<int, _AttendanceType> types,
@@ -1348,7 +1453,7 @@ class LibrusClient {
           .toList(growable: false)
         ..sort((a, b) => b.date.compareTo(a.date));
 
-  AttendanceKind _attendanceKind(_AttendanceType type) {
+  static AttendanceKind _attendanceKind(_AttendanceType type) {
     final name = type.name.toLowerCase();
     final excused = name.contains('uspraw') || name.contains('excused');
     return switch (type.standardId) {
@@ -1371,7 +1476,7 @@ class LibrusClient {
     };
   }
 
-  List<SchoolAnnouncement> _parseAnnouncements(
+  static List<SchoolAnnouncement> _parseAnnouncements(
     Map<String, dynamic> root,
     Map<int, String> people,
   ) =>
@@ -1393,7 +1498,7 @@ class LibrusClient {
           .toList(growable: false)
         ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
 
-  List<StudentNotice> _parseNotices(
+  static List<StudentNotice> _parseNotices(
     Map<String, dynamic> root,
     Map<int, String> categories,
     Map<int, String> people,
@@ -1417,7 +1522,7 @@ class LibrusClient {
           .toList(growable: false)
         ..sort((a, b) => b.date.compareTo(a.date));
 
-  Map<int, String> _idNameMap(
+  static Map<int, String> _idNameMap(
     Map<String, dynamic> root,
     String key,
     String nameKey,
@@ -1425,20 +1530,23 @@ class LibrusClient {
     for (final item in _list(root[key]))
       ?_integer(item['Id']): item[nameKey]?.toString() ?? '',
   };
-  Map<int, String> _peopleMap(Map<String, dynamic> root, String key) => {
+  static Map<int, String> _peopleMap(Map<String, dynamic> root, String key) => {
     for (final item in _list(root[key]))
       ?_integer(item['Id']): _fullName(item['FirstName'], item['LastName']),
   };
-  Map<int, _GradeCategory> _gradeCategories(Map<String, dynamic> root) => {
-    for (final item in _list(root['Categories']))
-      ?_integer(item['Id']): _GradeCategory(
-        name: item['Name']?.toString() ?? '',
-        weight: item['CountToTheAverage'] == true
-            ? (_number(item['Weight']) ?? 0).toDouble()
-            : 0,
-      ),
-  };
-  Map<int, _AttendanceType> _attendanceTypes(Map<String, dynamic> root) => {
+  static Map<int, _GradeCategory> _gradeCategories(Map<String, dynamic> root) =>
+      {
+        for (final item in _list(root['Categories']))
+          ?_integer(item['Id']): _GradeCategory(
+            name: item['Name']?.toString() ?? '',
+            weight: item['CountToTheAverage'] == true
+                ? (_number(item['Weight']) ?? 0).toDouble()
+                : 0,
+          ),
+      };
+  static Map<int, _AttendanceType> _attendanceTypes(
+    Map<String, dynamic> root,
+  ) => {
     for (final item in _list(root['Types']))
       ?_integer(item['Id']): _AttendanceType(
         name: item['Name']?.toString() ?? '',
@@ -1447,6 +1555,182 @@ class LibrusClient {
         standardId: _referenceId(item['StandardType']) ?? _integer(item['Id'])!,
       ),
   };
+}
+
+/// What a sync hands to the isolate that turns responses into data.
+typedef _SnapshotInput = ({
+  Map<String, Map<String, dynamic>> references,
+  Set<String> knownMissing,
+  List<Map<String, dynamic>> data,
+  Map<String, dynamic>? inbox,
+  String? login,
+});
+
+class _ParsedSnapshot {
+  const _ParsedSnapshot({
+    required this.profile,
+    required this.lessons,
+    required this.grades,
+    required this.events,
+    required this.attendance,
+    required this.announcements,
+    required this.notices,
+    required this.apiMessages,
+    required this.unknown,
+  });
+
+  final StudentProfile profile;
+  final List<Lesson> lessons;
+  final List<Grade> grades;
+  final List<SchoolEvent> events;
+  final List<AttendanceRecord> attendance;
+  final List<SchoolAnnouncement> announcements;
+  final List<StudentNotice> notices;
+
+  /// The mobile inbox, or null when it gave no messages.
+  final List<SchoolMessage>? apiMessages;
+
+  /// Subjects, teachers and categories the reference lists did not have.
+  final Set<String> unknown;
+}
+
+/// Runs in a background isolate: everything it uses comes in [input].
+_ParsedSnapshot _parseSnapshot(_SnapshotInput input) {
+  final references = input.references;
+  Map<String, dynamic> reference(String endpoint) =>
+      references[endpoint] ?? const {};
+  final data = input.data;
+  final unknown = _UnknownReferences(input.knownMissing);
+
+  final me = _map(reference('Me')['Me']);
+  final account = _map(me?['Account']);
+  final user = _map(me?['User']);
+  final school = _map(reference('Schools')['School']);
+  final subjects = unknown.track(
+    'subject',
+    LibrusClient._idNameMap(reference('Subjects'), 'Subjects', 'Name'),
+  );
+  // Old records keep naming people who have since left the school, so only
+  // the timetable's teachers count as unknown.
+  final people = LibrusClient._peopleMap(reference('Users'), 'Users');
+  final classrooms = unknown.track(
+    'classroom',
+    LibrusClient._idNameMap(reference('Classrooms'), 'Classrooms', 'Name'),
+  );
+  final categories = unknown.track(
+    'gradeCategory',
+    LibrusClient._gradeCategories(reference('Grades/Categories')),
+  );
+  final attendanceTypes = unknown.track(
+    'attendanceType',
+    LibrusClient._attendanceTypes(reference('Attendances/Types')),
+  );
+  final noticeCategories = unknown.track(
+    'noticeCategory',
+    LibrusClient._idNameMap(
+      reference('Notes/Categories'),
+      'Categories',
+      'CategoryName',
+    ),
+  );
+  final eventTypes = unknown.track(
+    'eventType',
+    LibrusClient._idNameMap(
+      reference('HomeWorks/Categories'),
+      'Categories',
+      'Name',
+    ),
+  );
+  final gradeComments = LibrusClient._idNameMap(data[7], 'Comments', 'Text');
+
+  final profileName = _fullName(user?['FirstName'], user?['LastName']);
+  final inbox = input.inbox;
+  return _ParsedSnapshot(
+    profile: StudentProfile(
+      id: 'librus-${account?['Id'] ?? user?['Id'] ?? input.login ?? 'account'}',
+      name: profileName.isEmpty ? 'Użytkownik Librus' : profileName,
+      school: _schoolName(school),
+      provider: 'Librus Synergia',
+    ),
+    lessons: LibrusClient._parseTimetable(
+      data[1],
+      subjects: subjects,
+      teachers: unknown.track('user', people),
+      classrooms: classrooms,
+    ),
+    grades: LibrusClient._parseGrades(
+      data[0],
+      subjects: subjects,
+      categories: categories,
+      comments: gradeComments,
+    ),
+    events: [
+      ...LibrusClient._parseEvents(data[2], subjects, eventTypes),
+      ...LibrusClient._parseHomework(data[3], subjects),
+    ]..sort((a, b) => a.date.compareTo(b.date)),
+    attendance: LibrusClient._parseAttendance(
+      data[4],
+      subjects,
+      attendanceTypes,
+    ),
+    announcements: LibrusClient._parseAnnouncements(data[5], people),
+    notices: LibrusClient._parseNotices(data[6], noticeCategories, people),
+    apiMessages: inbox == null
+        ? null
+        : LibrusClient._apiMessages(inbox, people),
+    unknown: unknown.found,
+  );
+}
+
+/// Notes which ids the data asks for that a reference list does not have.
+class _UnknownReferences {
+  _UnknownReferences(this.ignored);
+
+  /// Ids already known to be missing, as `kind:id`.
+  final Set<String> ignored;
+  final Set<String> found = {};
+
+  Map<int, V> track<V>(String kind, Map<int, V> names) =>
+      _TrackedMap(kind, names, this);
+}
+
+class _TrackedMap<V> extends MapBase<int, V> {
+  _TrackedMap(this._kind, this._names, this._unknown);
+
+  final String _kind;
+  final Map<int, V> _names;
+  final _UnknownReferences _unknown;
+
+  @override
+  V? operator [](Object? key) {
+    final value = _names[key];
+    if (value == null && key is int && key > 0) {
+      final id = '$_kind:$key';
+      if (!_unknown.ignored.contains(id)) _unknown.found.add(id);
+    }
+    return value;
+  }
+
+  @override
+  void operator []=(int key, V value) => _names[key] = value;
+
+  @override
+  void clear() => _names.clear();
+
+  @override
+  Iterable<int> get keys => _names.keys;
+
+  @override
+  V? remove(Object? key) => _names.remove(key);
+}
+
+/// A short name that stays the same across runs (FNV-1a).
+String _stableHash(String value) {
+  var hash = 0x811c9dc5;
+  for (final unit in utf8.encode(value)) {
+    hash = ((hash ^ unit) * 0x01000193) & 0xffffffff;
+  }
+  return hash.toRadixString(16).padLeft(8, '0');
 }
 
 class _PortalSession {

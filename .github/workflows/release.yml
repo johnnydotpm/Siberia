@@ -130,8 +130,11 @@ jobs:
           ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
           ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
         run: sh tool/android_signing.sh setup
+      # Phones run ARM; leaving out x86_64, which only emulators and a few
+      # Chromebooks use, makes the universal APK much smaller. The debug
+      # symbols stay out of the APK and are kept as a workflow artifact.
       - name: Build Android APK
-        run: flutter build apk --release --build-name="$APP_VERSION" --build-number="$APP_BUILD_NUMBER" --dart-define=APP_VERSION="$APP_VERSION" --dart-define=GIT_COMMIT="$GITHUB_SHA"
+        run: flutter build apk --release --target-platform android-arm,android-arm64 --split-debug-info=build/debug-info/universal --build-name="$APP_VERSION" --build-number="$APP_BUILD_NUMBER" --dart-define=APP_VERSION="$APP_VERSION" --dart-define=GIT_COMMIT="$GITHUB_SHA"
       - name: Check the APK's signature
         run: |
           sh tool/android_signing.sh verify build/app/outputs/flutter-apk/app-release.apk
@@ -140,11 +143,16 @@ jobs:
       # use. It keeps the universal APK's version code, so either file
       # updates an installation made from the other.
       - name: Build Android APK for 64-bit ARM
-        run: flutter build apk --release --target-platform android-arm64 --build-name="$APP_VERSION" --build-number="$APP_BUILD_NUMBER" --dart-define=APP_VERSION="$APP_VERSION" --dart-define=GIT_COMMIT="$GITHUB_SHA"
+        run: flutter build apk --release --target-platform android-arm64 --split-debug-info=build/debug-info/arm64 --build-name="$APP_VERSION" --build-number="$APP_BUILD_NUMBER" --dart-define=APP_VERSION="$APP_VERSION" --dart-define=GIT_COMMIT="$GITHUB_SHA"
       - name: Check the 64-bit ARM APK's signature
         run: |
           sh tool/android_signing.sh verify build/app/outputs/flutter-apk/app-release.apk
           cp build/app/outputs/flutter-apk/app-release.apk "SiberiaGB-${APP_VERSION}-Android-arm64.apk"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: siberiagb-android-symbols
+          path: syberia/build/debug-info
+          if-no-files-found: error
       - name: Build Linux
         run: flutter build linux --release --dart-define=APP_VERSION="$APP_VERSION" --dart-define=GIT_COMMIT="$GITHUB_SHA"
       - name: Package artifacts

@@ -80,7 +80,7 @@ jobs:
       - name: Build Android APK
         run: |
           APP_VERSION="$(sed -n 's/^version: \([^+]*\).*/\1/p' pubspec.yaml)"
-          flutter build apk --release --dart-define=APP_VERSION="$APP_VERSION" --dart-define=GIT_COMMIT="$GITHUB_SHA"
+          flutter build apk --release --target-platform android-arm,android-arm64 --split-debug-info=build/debug-info --dart-define=APP_VERSION="$APP_VERSION" --dart-define=GIT_COMMIT="$GITHUB_SHA"
       - name: Check the APK's signature
         run: sh tool/android_signing.sh verify build/app/outputs/flutter-apk/app-release.apk
       - uses: actions/upload-artifact@v4
