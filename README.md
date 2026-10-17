@@ -20,7 +20,7 @@ SiberiaGB to w pełni funkcjonalny, wieloplatformowy klient Librus napisany w fr
 - Powiadomienia o nowościach w ośmiu kategoriach: oceny, wiadomości, ogłoszenia, uwagi, frekwencja, wydarzenia, zadania domowe i plan lekcji
 - Synchronizacja danych w tle (Android)
 - Wsparcie dla pięciu języków: polskiego, angielskiego, rosyjskiego, niemieckiego i ukraińskiego
-- Działa na Androidzie, iOS, Windows, macOS, Linuksie i w przeglądarce
+- Działa na Androidzie, iOS, Windows i Linuksie
 - Wygląd Liquid Glass: na iOS 26 i nowszych rysowany prawdziwymi paskami systemowymi, na Androidzie 10 i nowszych odtworzony przez samą aplikację w tych samych wymiarach; klasyczny wygląd pozostaje dostępny w ustawieniach
 
 ## Struktura projektu
@@ -77,17 +77,6 @@ GitHub Actions nie wymaga Maka: uruchom workflow `SiberiaGB Flutter` z opcją `b
 </details>
 
 <details>
-<summary>Web</summary>
-
-```sh
-flutter build web --release
-```
-
-Statyczna wersja strony powstanie w `build/web`.
-
-</details>
-
-<details>
 <summary>Windows</summary>
 
 Wymaga systemu Windows oraz Visual Studio z komponentem **Desktop development with C++**.
@@ -97,19 +86,6 @@ flutter build windows --release
 ```
 
 Aplikacja znajdzie się w `build/windows/x64/runner/Release`.
-
-</details>
-
-<details>
-<summary>macOS</summary>
-
-Wymaga macOS i Xcode.
-
-```sh
-flutter build macos --release
-```
-
-Gotowa aplikacja znajduje się w `build/macos/Build/Products/Release`.
 
 </details>
 

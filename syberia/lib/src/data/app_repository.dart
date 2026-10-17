@@ -70,7 +70,7 @@ class AppRepository {
   static const _todayLayoutKey = 'today_layout_v1';
   static const _dismissedUpdateKey = 'dismissed_update_version_v1';
   static const _latestReleaseUrl =
-      'https://api.github.com/repos/johnnydotpm/SiberiaGB/releases/latest';
+      'https://api.github.com/repos/johnnydotpm/Siberia/releases/latest';
 
   final Future<SharedPreferences> _preferences;
   final SnapshotStore _snapshots;

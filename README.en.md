@@ -20,7 +20,7 @@ SiberiaGB is a fully functional, cross-platform Librus client written using the 
 - Notifications across eight categories: grades, messages, announcements, remarks, attendance, events, homework, and timetable
 - Background data synchronization (Android)
 - The app is available in five languages: Polish, English, Russian, German, and Ukrainian
-- Works on Android, iOS, Windows, macOS, Linux, and the web
+- Works on Android, iOS, Windows and Linux
 - A Liquid Glass design: drawn with real system bars on iOS 26 and newer, and recreated by the app itself to the same measurements on Android 10 and newer; the classic design stays available in Settings
 
 ## Project structure
@@ -77,17 +77,6 @@ GitHub Actions does not require a Mac: run the `SiberiaGB Flutter` workflow with
 </details>
 
 <details>
-<summary>Web</summary>
-
-```sh
-flutter build web --release
-```
-
-The static web build will be in `build/web`.
-
-</details>
-
-<details>
 <summary>Windows</summary>
 
 Requires Windows and Visual Studio with the **Desktop development with C++** workload.
@@ -97,19 +86,6 @@ flutter build windows --release
 ```
 
 The application will be in `build/windows/x64/runner/Release`.
-
-</details>
-
-<details>
-<summary>macOS</summary>
-
-Requires macOS and Xcode.
-
-```sh
-flutter build macos --release
-```
-
-The application will be in `build/macos/Build/Products/Release`.
 
 </details>
 

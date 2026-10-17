@@ -5255,7 +5255,7 @@ class _SubjectScope extends InheritedWidget {
       names != oldWidget.names || colors != oldWidget.colors;
 }
 
-const _repositoryUrl = 'https://github.com/johnnydotpm/SiberiaGB';
+const _repositoryUrl = 'https://github.com/johnnydotpm/Siberia';
 
 Future<void> _openLink(BuildContext context, String link) async {
   final opened = await launchUrl(
@@ -5506,7 +5506,7 @@ class _Settings extends StatelessWidget {
               key: const ValueKey('settings-source'),
               leading: const _SettingsIcon(Icons.code_rounded),
               title: Text(context.tr('sourceCode')),
-              subtitle: const Text('github.com/johnnydotpm/SiberiaGB'),
+              subtitle: const Text('github.com/johnnydotpm/Siberia'),
               trailing: const Icon(Icons.open_in_new_rounded, size: 20),
               onTap: () => _openLink(context, _repositoryUrl),
             ),
