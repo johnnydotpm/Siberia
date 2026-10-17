@@ -77,17 +77,6 @@ GitHub Actions не требует Mac: запустите workflow `SiberiaGB F
 </details>
 
 <details>
-<summary>Web</summary>
-
-```sh
-flutter build web --release
-```
-
-Статическая веб-версия будет находиться в `build/web`.
-
-</details>
-
-<details>
 <summary>Windows</summary>
 
 Требуются Windows и Visual Studio с компонентом **Desktop development with C++**.
@@ -97,19 +86,6 @@ flutter build windows --release
 ```
 
 Приложение будет находиться в `build/windows/x64/runner/Release`.
-
-</details>
-
-<details>
-<summary>macOS</summary>
-
-Требуются macOS и Xcode.
-
-```sh
-flutter build macos --release
-```
-
-Приложение будет находиться в `build/macos/Build/Products/Release`.
 
 </details>
 

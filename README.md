@@ -77,17 +77,6 @@ GitHub Actions nie wymaga Maka: uruchom workflow `SiberiaGB Flutter` z opcją `b
 </details>
 
 <details>
-<summary>Web</summary>
-
-```sh
-flutter build web --release
-```
-
-Statyczna wersja strony powstanie w `build/web`.
-
-</details>
-
-<details>
 <summary>Windows</summary>
 
 Wymaga systemu Windows oraz Visual Studio z komponentem **Desktop development with C++**.
@@ -97,19 +86,6 @@ flutter build windows --release
 ```
 
 Aplikacja znajdzie się w `build/windows/x64/runner/Release`.
-
-</details>
-
-<details>
-<summary>macOS</summary>
-
-Wymaga macOS i Xcode.
-
-```sh
-flutter build macos --release
-```
-
-Gotowa aplikacja znajduje się w `build/macos/Build/Products/Release`.
 
 </details>
 
