@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:workmanager/workmanager.dart';
 
 import 'data/app_repository.dart';
+import 'data/librus/librus_client.dart';
 import 'school_notifications.dart';
 
 const _taskId = 'siberiagb_librus_notification_check';
@@ -28,8 +29,12 @@ Future<void> configureBackgroundNotifications(bool enabled) async {
     _taskId,
     _taskId,
     frequency: const Duration(minutes: 30),
-    existingWorkPolicy: ExistingPeriodicWorkPolicy.keep,
-    constraints: Constraints(networkType: NetworkType.connected),
+    // Updating the existing task also brings it the battery rule.
+    existingWorkPolicy: ExistingPeriodicWorkPolicy.update,
+    constraints: Constraints(
+      networkType: NetworkType.connected,
+      requiresBatteryNotLow: true,
+    ),
   );
 }
 
@@ -48,7 +53,9 @@ void schoolNotificationCallbackDispatcher() {
       final settings = await notifications.loadSettings();
       if (!settings.hasEnabledCategory) return true;
       await notifications.initialize();
-      final snapshot = await repository.fetchBackgroundSnapshot();
+      final snapshot = await repository.fetchBackgroundSnapshot(
+        parts: backgroundParts(settings),
+      );
       if (snapshot != null) await notifications.processSnapshot(snapshot);
       return true;
     } on Object {
@@ -57,3 +64,23 @@ void schoolNotificationCallbackDispatcher() {
     }
   });
 }
+
+/// What the background check downloads: only what a notification is on for.
+@visibleForTesting
+Set<LibrusPart> backgroundParts(SchoolNotificationSettings settings) => {
+  if (settings.allows(SchoolNotificationCategory.grades)) LibrusPart.grades,
+  if (settings.allows(SchoolNotificationCategory.messages)) LibrusPart.messages,
+  if (settings.allows(SchoolNotificationCategory.announcements))
+    LibrusPart.announcements,
+  if (settings.allows(SchoolNotificationCategory.notices)) LibrusPart.notices,
+  if (settings.allows(SchoolNotificationCategory.attendance))
+    LibrusPart.attendance,
+  // Events and homework arrive in one list, so they come together.
+  if (settings.allows(SchoolNotificationCategory.events) ||
+      settings.allows(SchoolNotificationCategory.homework)) ...[
+    LibrusPart.events,
+    LibrusPart.homework,
+  ],
+  if (settings.allows(SchoolNotificationCategory.timetable))
+    LibrusPart.timetable,
+};

@@ -20,7 +20,7 @@ SiberiaGB представляет собой полнофункциональн
 - Уведомления по восьми категориям: оценки, сообщения, объявления, замечания, посещаемость, события, домашние задания и расписание
 - Фоновая синхронизация данных (Android)
 - Приложение доступно на пяти языках: польском, английском, русском, немецком и украинском
-- Работает на Android, iOS, Windows, macOS, Linux и в браузере
+- Работает на Android, iOS, Windows и Linux
 - Дизайн Liquid Glass: на iOS 26 и новее на настоящих системных панелях, на Android 10 и новее воссоздан самим приложением в тех же размерах; классический дизайн остаётся доступным в настройках
 
 ## Структура проекта
@@ -31,7 +31,7 @@ SiberiaGB представляет собой полнофункциональн
 
 Скачайте файл для нужной платформы, затем запустите его или установите приложение.
 
-На Android файл `SiberiaGB-<версия>-Android-arm64.apk` меньше и подходит почти любому телефону последних лет. Если он не устанавливается, скачайте `SiberiaGB-<версия>-Android.apk`, который работает на любом устройстве. Любой из этих файлов обновляет приложение, установленное из другого.
+На Android файл `SiberiaGB-<версия>-Android-arm64.apk` меньше и подходит почти любому телефону последних лет. Если он не устанавливается, скачайте `SiberiaGB-<версия>-Android.apk`, который работает на любом телефоне с Android, включая старые 32-битные. Любой из этих файлов обновляет приложение, установленное из другого.
 
 На iOS приложение необходимо установить самостоятельно с помощью [AltStore](https://altstore.io/), [SideStore](https://sidestore.io/), [LiveContainer](https://github.com/LiveContainer/LiveContainer) или платного сертификата.
 
@@ -77,17 +77,6 @@ GitHub Actions не требует Mac: запустите workflow `SiberiaGB F
 </details>
 
 <details>
-<summary>Web</summary>
-
-```sh
-flutter build web --release
-```
-
-Статическая веб-версия будет находиться в `build/web`.
-
-</details>
-
-<details>
 <summary>Windows</summary>
 
 Требуются Windows и Visual Studio с компонентом **Desktop development with C++**.
@@ -97,19 +86,6 @@ flutter build windows --release
 ```
 
 Приложение будет находиться в `build/windows/x64/runner/Release`.
-
-</details>
-
-<details>
-<summary>macOS</summary>
-
-Требуются macOS и Xcode.
-
-```sh
-flutter build macos --release
-```
-
-Приложение будет находиться в `build/macos/Build/Products/Release`.
 
 </details>
 

@@ -93,3 +93,203 @@ jobs:
       - run: flutter analyze --fatal-infos
       - run: python3 tool/verify_branding.py
       - run: python3 -m unittest discover -s tool -p 'test_release_version.py'
+
+  ubuntu-builds:
+    name: Android and Linux
+    needs:
+      - prepare
+      - quality
+    runs-on: ubuntu-latest
+    env:
+      RELEASE_TAG: ${{ needs.prepare.outputs.tag }}
+      APP_VERSION: ${{ needs.prepare.outputs.version }}
+      APP_BUILD_NUMBER: ${{ needs.prepare.outputs.build_number }}
+    defaults:
+      run:
+        working-directory: syberia
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.prepare.outputs.commit_sha }}
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: Install Linux build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev libsecret-1-dev
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - name: Set up the Android signing key
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+        run: sh tool/android_signing.sh setup
+      # Phones run ARM; leaving out x86_64, which only emulators and a few
+      # Chromebooks use, makes the universal APK much smaller. The debug
+      # symbols stay out of the APK and are kept as a workflow artifact.
+      - name: Build Android APK
+        run: flutter build apk --release --target-platform android-arm,android-arm64 --split-debug-info=build/debug-info/universal --build-name="$APP_VERSION" --build-number="$APP_BUILD_NUMBER" --dart-define=APP_VERSION="$APP_VERSION" --dart-define=GIT_COMMIT="$GITHUB_SHA"
+      - name: Check the APK's signature
+        run: |
+          sh tool/android_signing.sh verify build/app/outputs/flutter-apk/app-release.apk
+          cp build/app/outputs/flutter-apk/app-release.apk "SiberiaGB-${APP_VERSION}-Android.apk"
+      # A smaller APK for 64-bit ARM phones, which is nearly every phone in
+      # use. It keeps the universal APK's version code, so either file
+      # updates an installation made from the other.
+      - name: Build Android APK for 64-bit ARM
+        run: flutter build apk --release --target-platform android-arm64 --split-debug-info=build/debug-info/arm64 --build-name="$APP_VERSION" --build-number="$APP_BUILD_NUMBER" --dart-define=APP_VERSION="$APP_VERSION" --dart-define=GIT_COMMIT="$GITHUB_SHA"
+      - name: Check the 64-bit ARM APK's signature
+        run: |
+          sh tool/android_signing.sh verify build/app/outputs/flutter-apk/app-release.apk
+          cp build/app/outputs/flutter-apk/app-release.apk "SiberiaGB-${APP_VERSION}-Android-arm64.apk"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: siberiagb-android-symbols
+          path: syberia/build/debug-info
+          if-no-files-found: error
+      - name: Build Linux
+        run: flutter build linux --release --dart-define=APP_VERSION="$APP_VERSION" --dart-define=GIT_COMMIT="$GITHUB_SHA"
+      - name: Package artifacts
+        run: |
+          tar -czf "SiberiaGB-${APP_VERSION}-Linux-x64.tar.gz" -C build/linux/x64/release/bundle .
+      - uses: actions/upload-artifact@v4
+        with:
+          name: siberiagb-release-ubuntu
+          path: |
+            syberia/SiberiaGB-*-Android.apk
+            syberia/SiberiaGB-*-Android-arm64.apk
+            syberia/SiberiaGB-*-Linux-x64.tar.gz
+          if-no-files-found: error
+
+  windows-build:
+    name: Windows
+    needs:
+      - prepare
+      - quality
+    runs-on: windows-latest
+    env:
+      RELEASE_TAG: ${{ needs.prepare.outputs.tag }}
+      APP_VERSION: ${{ needs.prepare.outputs.version }}
+      APP_BUILD_NUMBER: ${{ needs.prepare.outputs.build_number }}
+    defaults:
+      run:
+        working-directory: syberia
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.prepare.outputs.commit_sha }}
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - name: Build and package Windows
+        shell: pwsh
+        run: |
+          $appVersion = $env:APP_VERSION
+          flutter build windows --release --build-name="$appVersion" --build-number="$env:APP_BUILD_NUMBER" --dart-define="APP_VERSION=$appVersion" --dart-define="GIT_COMMIT=$env:GITHUB_SHA"
+          Compress-Archive -Path "build\windows\x64\runner\Release\*" -DestinationPath "SiberiaGB-$appVersion-Windows-x64.zip"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: siberiagb-release-windows
+          path: syberia/SiberiaGB-*-Windows-x64.zip
+          if-no-files-found: error
+
+  ios-build:
+    name: iOS
+    needs:
+      - prepare
+      - quality
+    runs-on: macos-26
+    env:
+      RELEASE_TAG: ${{ needs.prepare.outputs.tag }}
+      APP_VERSION: ${{ needs.prepare.outputs.version }}
+      APP_BUILD_NUMBER: ${{ needs.prepare.outputs.build_number }}
+    defaults:
+      run:
+        working-directory: syberia
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.prepare.outputs.commit_sha }}
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - name: Build unsigned iOS application
+        run: flutter build ios --release --no-codesign --build-name="$APP_VERSION" --build-number="$APP_BUILD_NUMBER" --dart-define=APP_VERSION="$APP_VERSION" --dart-define=GIT_COMMIT="$GITHUB_SHA"
+      - name: Package signer-ready iOS IPA
+        run: |
+          APP_PATH="$(find build/ios/iphoneos -maxdepth 1 -name '*.app' -print -quit)"
+          test -n "$APP_PATH"
+          sh tool/package_ios_ipa.sh \
+            "$APP_PATH" \
+            SiberiaGB-iOS.ipa
+      - name: Verify IPA payload
+        run: |
+          IPA=SiberiaGB-iOS.ipa
+          python3 tool/release_version.py "$RELEASE_TAG" --ipa "$IPA"
+          test "$(unzip -Z1 "$IPA" | grep -c '^Payload/Runner\.app/Info\.plist$')" -eq 1
+          if unzip -Z1 "$IPA" | grep -Ev '^(Payload/|Payload$)'; then
+            echo "Unexpected files found outside Payload" >&2
+            exit 1
+          fi
+          if unzip -Z1 "$IPA" | grep -F '/Frameworks/objective_c.framework/'; then
+            echo "objective_c.framework is incompatible with supported on-device signers" >&2
+            exit 1
+          fi
+      - name: Name the IPA after the version
+        run: mv SiberiaGB-iOS.ipa "SiberiaGB-${APP_VERSION}-iOS.ipa"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: siberiagb-release-apple
+          path: syberia/SiberiaGB-*-iOS.ipa
+          if-no-files-found: error
+
+  release:
+    name: Publish GitHub release
+    needs:
+      - prepare
+      - ubuntu-builds
+      - windows-build
+      - ios-build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.prepare.outputs.commit_sha }}
+      - name: Locate curated release notes
+        id: notes
+        env:
+          RELEASE_TAG: ${{ needs.prepare.outputs.tag }}
+        run: |
+          NOTES="release-notes/$RELEASE_TAG.md"
+          if [ -f "$NOTES" ]; then
+            echo "path=$NOTES" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: siberiagb-release-*
+          path: release-assets
+          merge-multiple: true
+      - name: List release files
+        run: find release-assets -maxdepth 1 -type f -printf '%f\n' | sort
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.prepare.outputs.tag }}
+          target_commitish: ${{ needs.prepare.outputs.commit_sha }}
+          name: SiberiaGB ${{ needs.prepare.outputs.tag }}
+          body_path: ${{ steps.notes.outputs.path }}
+          generate_release_notes: ${{ steps.notes.outputs.path == '' }}
+          prerelease: ${{ needs.prepare.outputs.prerelease == 'true' }}
+          fail_on_unmatched_files: true
+          files: release-assets/*

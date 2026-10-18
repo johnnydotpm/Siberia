@@ -54,6 +54,14 @@ android {
         }
     }
 
+    // Native libraries are stored compressed. A downloaded APK is about half
+    // the size; Android unpacks the libraries once, when it installs the app.
+    packaging {
+        jniLibs {
+            useLegacyPackaging = true
+        }
+    }
+
     buildTypes {
         release {
             // Android installs an update over an app only when both carry the

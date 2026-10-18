@@ -416,14 +416,21 @@ class _TodayState extends State<_Today> {
   bool _lookingAhead = false;
   bool _waitingForSync = false;
   DateTime? _lastLookAheadDay;
+  DateTime _day = _dateOf(DateTime.now());
+
+  static DateTime _dateOf(DateTime time) =>
+      DateTime(time.year, time.month, time.day);
 
   @override
   void initState() {
     super.initState();
     widget.controller.addListener(_onControllerChanged);
+    // The page itself only changes with the date; the lesson card keeps its
+    // own minute clock, so the rest of the page is not redrawn meanwhile.
     _clock = Timer.periodic(const Duration(seconds: 30), (_) {
       if (!mounted) return;
-      setState(() {});
+      final day = _dateOf(DateTime.now());
+      if (day != _day) setState(() => _day = day);
       _loadNextWeekIfNeeded();
     });
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -549,7 +556,10 @@ class _TodayState extends State<_Today> {
       case TodayBlock.currentLesson:
         return KeyedSubtree(
           key: const ValueKey('today-current-lesson'),
-          child: _NowCard(controller: controller, now: now),
+          child: _MinuteClock(
+            builder: (context, now) =>
+                _NowCard(controller: controller, now: now),
+          ),
         );
       case TodayBlock.summary:
         return _Summary(controller);
@@ -621,6 +631,51 @@ class _TodayState extends State<_Today> {
 }
 
 /// What is on now and what comes next, or when lessons start again.
+/// Rebuilds [builder] at the start of every minute, which is as often as
+/// lesson times and countdowns change.
+class _MinuteClock extends StatefulWidget {
+  const _MinuteClock({required this.builder});
+  final Widget Function(BuildContext context, DateTime now) builder;
+
+  @override
+  State<_MinuteClock> createState() => _MinuteClockState();
+}
+
+class _MinuteClockState extends State<_MinuteClock> {
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _schedule();
+  }
+
+  void _schedule() {
+    final now = DateTime.now();
+    final nextMinute = DateTime(
+      now.year,
+      now.month,
+      now.day,
+      now.hour,
+      now.minute + 1,
+    );
+    _timer = Timer(nextMinute.difference(now), () {
+      if (!mounted) return;
+      setState(() {});
+      _schedule();
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.builder(context, DateTime.now());
+}
+
 class _NowCard extends StatelessWidget {
   const _NowCard({required this.controller, required this.now});
   final AppController controller;
@@ -5255,7 +5310,7 @@ class _SubjectScope extends InheritedWidget {
       names != oldWidget.names || colors != oldWidget.colors;
 }
 
-const _repositoryUrl = 'https://github.com/johnnydotpm/SiberiaGB';
+const _repositoryUrl = 'https://github.com/johnnydotpm/Siberia';
 
 Future<void> _openLink(BuildContext context, String link) async {
   final opened = await launchUrl(
@@ -5506,7 +5561,7 @@ class _Settings extends StatelessWidget {
               key: const ValueKey('settings-source'),
               leading: const _SettingsIcon(Icons.code_rounded),
               title: Text(context.tr('sourceCode')),
-              subtitle: const Text('github.com/johnnydotpm/SiberiaGB'),
+              subtitle: const Text('github.com/johnnydotpm/Siberia'),
               trailing: const Icon(Icons.open_in_new_rounded, size: 20),
               onTap: () => _openLink(context, _repositoryUrl),
             ),
