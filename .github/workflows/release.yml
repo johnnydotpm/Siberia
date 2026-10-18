@@ -89,8 +89,9 @@ jobs:
           channel: stable
           cache: true
       - run: flutter pub get
-      - run: dart format --output=none --set-exit-if-changed lib
+      - run: dart format --output=none --set-exit-if-changed lib test
       - run: flutter analyze --fatal-infos
+      - run: flutter test
       - run: python3 tool/verify_branding.py
       - run: python3 -m unittest discover -s tool -p 'test_release_version.py'
 
