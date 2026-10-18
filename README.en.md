@@ -59,7 +59,7 @@ The APK will be in `build/app/outputs/flutter-apk/app-release.apk`.
 
 Without a local Android SDK: run the `SiberiaGB Flutter` workflow in GitHub Actions with `build_android` enabled, then download the `siberiagb-android` artifact.
 
-A build from your own machine is signed with a debug key, so it will not install over a published release. In GitHub Actions the APK is signed with the project's key from the repository secrets `ANDROID_KEYSTORE_BASE64` and `ANDROID_KEYSTORE_PASSWORD`; without them, with a debug key as well.
+A build from your own machine is signed with a debug key, so it will not install over a published release. In GitHub Actions the APK is signed with the project's key from the repository secrets `ANDROID_KEYSTORE_BASE64` and `ANDROID_KEYSTORE_PASSWORD`; without them, with a debug key as well. A build signed with a debug key installs as a separate app, SiberiaGB Preview, next to the published one, and a release cannot be made without the key.
 
 </details>
 

@@ -129,7 +129,14 @@ jobs:
         env:
           ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
           ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
-        run: sh tool/android_signing.sh setup
+        # Without the key the APK would be the separate Preview app, which
+        # cannot update installations, so a release stops here instead.
+        run: |
+          if [ -z "$ANDROID_KEYSTORE_BASE64" ] || [ -z "$ANDROID_KEYSTORE_PASSWORD" ]; then
+            echo "::error::A release needs the ANDROID_KEYSTORE_BASE64 and ANDROID_KEYSTORE_PASSWORD secrets."
+            exit 1
+          fi
+          sh tool/android_signing.sh setup
       # Phones run ARM; leaving out x86_64, which only emulators and a few
       # Chromebooks use, makes the universal APK much smaller. The debug
       # symbols stay out of the APK and are kept as a workflow artifact.
