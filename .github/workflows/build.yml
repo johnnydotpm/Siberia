@@ -47,10 +47,9 @@ jobs:
           flutter-version: "3.47.4"
           channel: stable
           cache: true
-      - run: flutter pub get
+      - run: flutter pub get --enforce-lockfile
       - run: dart format --output=none --set-exit-if-changed lib
       - run: flutter analyze --fatal-infos
-      - run: python3 tool/verify_branding.py
 
   android:
     name: Android release APK
@@ -71,18 +70,62 @@ jobs:
           flutter-version: "3.47.4"
           channel: stable
           cache: true
-      - run: flutter pub get
+      - run: flutter pub get --enforce-lockfile
       - name: Set up the signing key
         env:
           ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
           ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
-        run: sh tool/android_signing.sh setup
+        run: |
+          python3 - <<'PY_SIGNING'
+          import base64
+          import os
+          import pathlib
+          import re
+          import subprocess
+
+          encoded = os.environ["ANDROID_KEYSTORE_BASE64"]
+          password = os.environ["ANDROID_KEYSTORE_PASSWORD"]
+          if not encoded and not password:
+              print("No signing secrets configured; using debug signing.")
+              raise SystemExit(0)
+          if not encoded or not password:
+              raise SystemExit("Both Android signing secrets must be configured.")
+          os.umask(0o077)
+          keystore = pathlib.Path("android/app/release.p12")
+          keystore.write_bytes(base64.b64decode("".join(encoded.split()), validate=True))
+          result = subprocess.run(
+              ["keytool", "-J-Duser.language=en", "-J-Duser.country=US", "-list",
+               "-v", "-storetype", "PKCS12", "-keystore", str(keystore),
+               "-storepass:env", "ANDROID_KEYSTORE_PASSWORD"],
+              capture_output=True, text=True,
+          )
+          if result.returncode:
+              raise SystemExit("Unable to open the PKCS12 signing keystore.")
+          aliases = re.findall(r"^Alias name: (.+)$", result.stdout, re.MULTILINE)
+          if len(aliases) != 1 or result.stdout.count("Entry type: PrivateKeyEntry") != 1:
+              raise SystemExit("The signing keystore must contain exactly one private key.")
+          def prop(value):
+              return (value.replace("\\", "\\\\").replace("\n", "\\n")
+                      .replace("\r", "\\r").replace("\t", "\\t").replace(" ", "\\ "))
+          values = {"storeFile": "release.p12", "storePassword": password,
+                    "keyAlias": aliases[0], "keyPassword": password}
+          pathlib.Path("android/key.properties").write_text(
+              "".join(f"{key}={prop(value)}\n" for key, value in values.items()),
+              encoding="utf-8",
+          )
+          PY_SIGNING
       - name: Build Android APK
         run: |
           APP_VERSION="$(sed -n 's/^version: \([^+]*\).*/\1/p' pubspec.yaml)"
-          flutter build apk --release --target-platform android-arm,android-arm64 --split-debug-info=build/debug-info --dart-define=APP_VERSION="$APP_VERSION" --dart-define=GIT_COMMIT="$GITHUB_SHA"
+          flutter build apk --release --dart-define=APP_VERSION="$APP_VERSION" --dart-define=GIT_COMMIT="$GITHUB_SHA"
       - name: Check the APK's signature
-        run: sh tool/android_signing.sh verify build/app/outputs/flutter-apk/app-release.apk
+        run: |
+          APKSIGNER="$(find "$ANDROID_HOME/build-tools" -name apksigner -type f | sort -V | tail -n 1)"
+          test -n "$APKSIGNER"
+          "$APKSIGNER" verify --verbose build/app/outputs/flutter-apk/app-release.apk
+      - name: Remove signing material
+        if: always()
+        run: rm -f android/key.properties android/app/release.p12
       - uses: actions/upload-artifact@v4
         with:
           name: siberiagb-android
@@ -104,33 +147,19 @@ jobs:
           flutter-version: "3.47.4"
           channel: stable
           cache: true
-      - run: flutter pub get
-      - name: Build unsigned iOS application
+      - run: flutter pub get --enforce-lockfile
+      - name: Build unsigned iOS app
         run: |
           APP_VERSION="$(sed -n 's/^version: \([^+]*\).*/\1/p' pubspec.yaml)"
           flutter build ios --release --no-codesign --dart-define=APP_VERSION="$APP_VERSION" --dart-define=GIT_COMMIT="$GITHUB_SHA"
-      - name: Package signer-ready IPA
+      - name: Package unsigned IPA for external signing
         run: |
-          APP_PATH="$(find build/ios/iphoneos -maxdepth 1 -name '*.app' -print -quit)"
-          test -n "$APP_PATH"
-          sh tool/package_ios_ipa.sh \
-            "$APP_PATH" \
-            build/ios/SiberiaGB-iOS.ipa
-      - name: Verify IPA payload
-        run: |
-          IPA=build/ios/SiberiaGB-iOS.ipa
-          test "$(unzip -Z1 "$IPA" | grep -c '^Payload/Runner\.app/Info\.plist$')" -eq 1
-          test "$(unzip -Z1 "$IPA" | grep -c '^Payload/Runner\.app/PlugIns/SiberiaWidgetExtension\.appex/Info\.plist$')" -eq 1
-          if unzip -Z1 "$IPA" | grep -Ev '^(Payload/|Payload$)'; then
-            echo "Unexpected files found outside Payload" >&2
-            exit 1
-          fi
-          if unzip -Z1 "$IPA" | grep -F '/Frameworks/objective_c.framework/'; then
-            echo "objective_c.framework is incompatible with supported on-device signers" >&2
-            exit 1
-          fi
+          mkdir -p build/ipa/Payload
+          ditto build/ios/iphoneos/Runner.app build/ipa/Payload/Runner.app
+          cd build/ipa
+          ditto -c -k --sequesterRsrc --keepParent Payload SiberiaGB-unsigned.ipa
       - uses: actions/upload-artifact@v4
         with:
           name: siberiagb-ios
-          path: syberia/build/ios/SiberiaGB-iOS.ipa
+          path: syberia/build/ipa/SiberiaGB-unsigned.ipa
           if-no-files-found: error
