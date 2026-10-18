@@ -70,7 +70,7 @@ class AppRepository {
   static const _todayLayoutKey = 'today_layout_v1';
   static const _dismissedUpdateKey = 'dismissed_update_version_v1';
   static const _latestReleaseUrl =
-      'https://api.github.com/repos/johnnydotpm/SiberiaGB/releases/latest';
+      'https://api.github.com/repos/johnnydotpm/Siberia/releases/latest';
 
   final Future<SharedPreferences> _preferences;
   final SnapshotStore _snapshots;
@@ -171,8 +171,14 @@ class AppRepository {
     );
   }
 
-  Future<AppSnapshot?> fetchBackgroundSnapshot() async {
+  /// A background sync shortly after the app synced finds nothing new.
+  static const backgroundPause = Duration(minutes: 20);
+
+  /// The background check. [parts] are what notifications are on for; the
+  /// rest is kept from the saved snapshot instead of being downloaded.
+  Future<AppSnapshot?> fetchBackgroundSnapshot({Set<LibrusPart>? parts}) async {
     if (!await loadAutoSyncOnOpen()) return null;
+    if (parts != null && parts.isEmpty) return null;
     final preferences = await _preferences;
     final rawProfile = preferences.getString(_profileKey);
     if (rawProfile == null) return null;
@@ -180,15 +186,61 @@ class AppRepository {
       (jsonDecode(rawProfile) as Map).cast<String, Object?>(),
     );
     if (profile.provider != 'Librus Synergia') return null;
-    final fetched = await _librusClient.restoreAndFetch();
+    final saved = await _snapshots.read();
+    final previous = saved?.profile.id == profile.id ? saved : null;
+    if (previous != null) {
+      final sinceSync = DateTime.now().difference(previous.lastSync);
+      if (!sinceSync.isNegative && sinceSync < backgroundPause) return null;
+    }
+    // Without a saved snapshot there is nothing to keep, so all of it comes.
+    final wanted = previous == null ? null : parts;
+    final fetched = await _librusClient.restoreAndFetch(parts: wanted);
     if (fetched == null) return null;
-    final live = _keepLaterWeeks(
-      await _preserveCachedMessages(fetched),
-      await _snapshots.read(),
-      DateTime.now(),
-    );
+    final merged = previous == null || wanted == null
+        ? fetched
+        : _keepUnfetchedParts(fetched, previous, wanted);
+    final preserved = await _preserveCachedMessages(merged);
+    // Kept lessons already include the later weeks.
+    final live = wanted == null || wanted.contains(LibrusPart.timetable)
+        ? _keepLaterWeeks(preserved, previous, DateTime.now())
+        : preserved;
     await _cacheSnapshot(live);
     return live;
+  }
+
+  AppSnapshot _keepUnfetchedParts(
+    AppSnapshot fetched,
+    AppSnapshot previous,
+    Set<LibrusPart> parts,
+  ) {
+    T pick<T>(LibrusPart part, T current, T kept) =>
+        parts.contains(part) ? current : kept;
+    final messages = parts.contains(LibrusPart.messages);
+    return AppSnapshot(
+      profile: fetched.profile,
+      lessons: pick(LibrusPart.timetable, fetched.lessons, previous.lessons),
+      grades: pick(LibrusPart.grades, fetched.grades, previous.grades),
+      // Events and homework share one list and are fetched together.
+      events:
+          parts.contains(LibrusPart.events) ||
+              parts.contains(LibrusPart.homework)
+          ? fetched.events
+          : previous.events,
+      messages: messages ? fetched.messages : previous.messages,
+      messagesError: messages ? fetched.messagesError : previous.messagesError,
+      attendance: pick(
+        LibrusPart.attendance,
+        fetched.attendance,
+        previous.attendance,
+      ),
+      announcements: pick(
+        LibrusPart.announcements,
+        fetched.announcements,
+        previous.announcements,
+      ),
+      notices: pick(LibrusPart.notices, fetched.notices, previous.notices),
+      lastSync: fetched.lastSync,
+    );
   }
 
   Future<bool> loadAutoSyncOnOpen() async =>

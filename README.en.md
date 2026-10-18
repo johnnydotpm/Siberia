@@ -20,7 +20,7 @@ SiberiaGB is a fully functional, cross-platform Librus client written using the 
 - Notifications across eight categories: grades, messages, announcements, remarks, attendance, events, homework, and timetable
 - Background data synchronization (Android)
 - The app is available in five languages: Polish, English, Russian, German, and Ukrainian
-- Works on Android, iOS, Windows, macOS, Linux, and the web
+- Works on Android, iOS, Windows and Linux
 - A Liquid Glass design: drawn with real system bars on iOS 26 and newer, and recreated by the app itself to the same measurements on Android 10 and newer; the classic design stays available in Settings
 
 ## Project structure
@@ -31,7 +31,7 @@ The application source code is located in the [`syberia/`](syberia) directory.
 
 Download the file for your platform, then run it or install the application.
 
-On Android, `SiberiaGB-<version>-Android-arm64.apk` is smaller and suits almost every phone from recent years. If it does not install, take `SiberiaGB-<version>-Android.apk`, which works on every device. Either file updates an installation made from the other.
+On Android, `SiberiaGB-<version>-Android-arm64.apk` is smaller and suits almost every phone from recent years. If it does not install, take `SiberiaGB-<version>-Android.apk`, which works on every Android phone, older 32-bit ones included. Either file updates an installation made from the other.
 
 On iOS, install the application yourself using [AltStore](https://altstore.io/), [SideStore](https://sidestore.io/), [LiveContainer](https://github.com/LiveContainer/LiveContainer), or a paid certificate.
 

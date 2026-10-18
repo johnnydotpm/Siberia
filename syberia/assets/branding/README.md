@@ -6,6 +6,8 @@ The SVG source icons and startup reference were supplied for this project. The H
 
 The Unbounded variable font is bundled under the SIL Open Font License in `assets/fonts/OFL.txt`. Source: https://github.com/google/fonts/tree/main/ofl/unbounded.
 
+The bundled Unbounded and Inter fonts are trimmed to the characters the app shows: Unbounded to basic Latin for the wordmark, Inter to Latin, Cyrillic and common symbols. To replace a font, trim the new original with `python3 tool/subset_fonts.py <InterVariable.ttf> <Unbounded.ttf>` (needs `pip install fonttools`).
+
 To regenerate platform icons and native launch images:
 
 ```sh
@@ -14,4 +16,4 @@ python3 tool/generate_branding.py
 python3 tool/verify_branding.py
 ```
 
-Android includes adaptive and themed launcher icons and a monochrome notification mark. iOS includes default, dark and tinted app icons plus appearance-aware launch assets. Windows uses a multi-resolution ICO; macOS, Linux and web use the appropriate native icon formats.
+Android includes adaptive and themed launcher icons and a monochrome notification mark. iOS includes default, dark and tinted app icons plus appearance-aware launch assets. Windows uses a multi-resolution ICO and Linux a PNG icon.
