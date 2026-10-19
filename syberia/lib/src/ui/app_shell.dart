@@ -7,12 +7,14 @@ import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../app_build_info.dart';
+import '../domain/grade_calculator.dart';
 import '../domain/librus_error.dart';
 import '../domain/models.dart';
 import '../home_widget.dart';
 import '../l10n/app_localizations.dart';
 import '../school_notifications.dart';
 import '../state/app_controller.dart';
+import '../test_reminders.dart';
 import 'brand_logo.dart';
 import 'glass/glass_items.dart';
 import 'glass/glass_modals.dart';
@@ -3186,6 +3188,19 @@ class _SubjectGradesTile extends StatelessWidget {
           ),
           children: [
             for (final grade in grades) _GradeRow(grade, settings: settings),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
+              child: Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: TextButton.icon(
+                  key: ValueKey('grade-calculator-open-$subject'),
+                  onPressed: () =>
+                      _showGradeCalculator(context, subject, grades, settings),
+                  icon: const Icon(Icons.calculate_outlined),
+                  label: Text(context.tr('gradeCalculator')),
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -3268,6 +3283,16 @@ Future<void> _showSubjectGrades(
                 ],
               ),
             ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 4, 20, 8),
+              child: FilledButton.tonalIcon(
+                key: const ValueKey('grade-calculator-open'),
+                onPressed: () =>
+                    _showGradeCalculator(context, subject, grades, settings),
+                icon: const Icon(Icons.calculate_outlined),
+                label: Text(context.tr('gradeCalculator')),
+              ),
+            ),
             Flexible(
               child: ListView(
                 shrinkWrap: true,
@@ -3284,6 +3309,468 @@ Future<void> _showSubjectGrades(
     );
   },
 );
+
+Future<void> _showGradeCalculator(
+  BuildContext context,
+  String subject,
+  List<Grade> grades,
+  GradeAverageSettings settings,
+) => showAppSheet<void>(
+  context: context,
+  compact: true,
+  showDragHandle: true,
+  isScrollControlled: true,
+  builder: (context) => SafeArea(
+    child: ConstrainedBox(
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.sizeOf(context).height * 0.9,
+      ),
+      child: _GradeCalculator(
+        subject: subject,
+        grades: grades,
+        settings: settings,
+      ),
+    ),
+  ),
+);
+
+/// Tries out grades for one subject: the average they would give, and how
+/// many of a grade a target average takes. Nothing is sent to Librus.
+class _GradeCalculator extends StatefulWidget {
+  const _GradeCalculator({
+    required this.subject,
+    required this.grades,
+    required this.settings,
+  });
+  final String subject;
+  final List<Grade> grades;
+  final GradeAverageSettings settings;
+
+  @override
+  State<_GradeCalculator> createState() => _GradeCalculatorState();
+}
+
+class _GradeCalculatorState extends State<_GradeCalculator> {
+  final List<Grade> _added = [];
+  int _modifier = 0;
+  var _nextId = 0;
+  late double _weight = usualWeight(widget.grades);
+  late double _target = suggestedTarget(widget.settings.average(widget.grades));
+
+  void _add(int value) => setState(
+    () => _added.add(
+      Grade(
+        id: 'what-if-${_nextId++}',
+        subject: widget.subject,
+        value: gradeLabel(value, _modifier),
+        description: '',
+        // An old date, so the chip has no "new" dot.
+        date: DateTime(2000),
+        weight: _weight,
+        semester: 0,
+      ),
+    ),
+  );
+
+  void _moveTarget(double step) =>
+      setState(() => _target = (_target + step).clamp(1.0, 6.0));
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final settings = widget.settings;
+    final projection = GradeProjection(settings, widget.grades, _added);
+    final current = projection.current;
+    final projected = projection.projected;
+    final delta = current == null || projected == null || _added.isEmpty
+        ? null
+        : projected - current;
+    final reached = projected != null && projected >= _target - 1e-9;
+    final needed = {
+      for (var value = 1; value <= 6; value++)
+        if (value > _target)
+          value: projection.needed(
+            target: _target,
+            label: '$value',
+            weight: _weight,
+          ),
+    }..removeWhere((_, count) => count == null);
+    final heading = theme.textTheme.titleSmall?.copyWith(
+      fontWeight: FontWeight.w800,
+    );
+    final muted = theme.textTheme.bodySmall?.copyWith(
+      color: theme.colorScheme.onSurfaceVariant,
+    );
+    return SingleChildScrollView(
+      key: const ValueKey('grade-calculator-sheet'),
+      padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            context.tr('gradeCalculator'),
+            style: theme.textTheme.headlineSmall?.copyWith(
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            widget.subject,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Card(
+            margin: EdgeInsets.zero,
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          context.tr('gradeCalculatorNow'),
+                          style: muted,
+                        ),
+                      ),
+                      Expanded(
+                        child: Text(
+                          context.tr('gradeCalculatorAfter'),
+                          textAlign: TextAlign.end,
+                          style: muted,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  Row(
+                    children: [
+                      _AveragePill(current, large: true),
+                      Expanded(
+                        child: Icon(
+                          Icons.arrow_forward_rounded,
+                          color: theme.colorScheme.outline,
+                        ),
+                      ),
+                      KeyedSubtree(
+                        key: const ValueKey('calculator-projected'),
+                        child: _AveragePill(projected, large: true),
+                      ),
+                    ],
+                  ),
+                  if (delta != null && delta.abs() >= 0.005) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      '${delta > 0 ? '+' : '−'}${_decimal(context, delta.abs())}',
+                      key: const ValueKey('calculator-delta'),
+                      textAlign: TextAlign.end,
+                      style: theme.textTheme.labelLarge?.copyWith(
+                        fontWeight: FontWeight.w800,
+                        color: delta > 0
+                            ? theme.colorScheme.primary
+                            : theme.colorScheme.error,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: Text(context.tr('gradeCalculatorAdd'), style: heading),
+              ),
+              SegmentedButton<int>(
+                key: const ValueKey('calculator-modifier'),
+                showSelectedIcon: false,
+                emptySelectionAllowed: true,
+                segments: const [
+                  ButtonSegment(value: -1, label: Text('−')),
+                  ButtonSegment(value: 1, label: Text('+')),
+                ],
+                selected: {if (_modifier != 0) _modifier},
+                onSelectionChanged: (selection) => setState(
+                  () => _modifier = selection.isEmpty ? 0 : selection.first,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              for (var value = 1; value <= 6; value++)
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 3),
+                    child: _CalculatorGradeButton(
+                      key: ValueKey('calculator-add-$value'),
+                      label: gradeLabel(value, _modifier),
+                      value: settings.valueOf(gradeLabel(value, _modifier)),
+                      onPressed: () => _add(value),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          if (settings.weighted)
+            Wrap(
+              spacing: 6,
+              runSpacing: 6,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                Text('${context.tr('weight')}:', style: muted),
+                for (final weight in weightOptions(widget.grades))
+                  ChoiceChip(
+                    key: ValueKey(
+                      'calculator-weight-${_decimal(context, weight)}',
+                    ),
+                    label: Text(_decimal(context, weight)),
+                    selected: _weight == weight,
+                    onSelected: (_) => setState(() => _weight = weight),
+                  ),
+              ],
+            )
+          else
+            Text(context.tr('gradeCalculatorUnweighted'), style: muted),
+          const SizedBox(height: 12),
+          if (_added.isEmpty)
+            Text(context.tr('gradeCalculatorHint'), style: muted)
+          else
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Wrap(
+                    spacing: 6,
+                    runSpacing: 6,
+                    children: [
+                      for (var index = 0; index < _added.length; index++)
+                        _CalculatorAddedGrade(
+                          key: ValueKey('calculator-added-$index'),
+                          grade: _added[index],
+                          settings: settings,
+                          onDeleted: () =>
+                              setState(() => _added.removeAt(index)),
+                        ),
+                    ],
+                  ),
+                ),
+                TextButton(
+                  key: const ValueKey('calculator-clear'),
+                  onPressed: () => setState(_added.clear),
+                  child: Text(context.tr('gradeCalculatorClear')),
+                ),
+              ],
+            ),
+          const Divider(height: 32),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  context.tr('gradeCalculatorTarget'),
+                  style: heading,
+                ),
+              ),
+              IconButton.outlined(
+                key: const ValueKey('calculator-target-down'),
+                onPressed: _target > 1 ? () => _moveTarget(-0.25) : null,
+                icon: const Icon(Icons.remove_rounded),
+              ),
+              SizedBox(
+                width: 64,
+                child: Text(
+                  _decimal(context, _target),
+                  key: const ValueKey('calculator-target'),
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              ),
+              IconButton.outlined(
+                key: const ValueKey('calculator-target-up'),
+                onPressed: _target < 6 ? () => _moveTarget(0.25) : null,
+                icon: const Icon(Icons.add_rounded),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          if (reached)
+            Row(
+              key: const ValueKey('calculator-reached'),
+              children: [
+                Icon(
+                  Icons.check_circle_rounded,
+                  color: theme.colorScheme.primary,
+                ),
+                const SizedBox(width: 8),
+                Expanded(child: Text(context.tr('gradeCalculatorReached'))),
+              ],
+            )
+          else if (needed.isEmpty)
+            Text(
+              context.tr('gradeCalculatorOut'),
+              key: const ValueKey('calculator-out-of-reach'),
+            )
+          else
+            Column(
+              key: const ValueKey('calculator-needed'),
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  settings.weighted
+                      ? '${context.tr('gradeCalculatorNeeded')} (${context.tr('weight').toLowerCase()} ${_decimal(context, _weight)})'
+                      : context.tr('gradeCalculatorNeeded'),
+                  style: muted,
+                ),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 16,
+                  runSpacing: 8,
+                  children: [
+                    for (final MapEntry(key: value, value: count)
+                        in needed.entries)
+                      Row(
+                        key: ValueKey('calculator-needed-$value'),
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _CalculatorGradeBadge('$value', settings: settings),
+                          const SizedBox(width: 6),
+                          Text(
+                            '× $count',
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                        ],
+                      ),
+                  ],
+                ),
+              ],
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+/// A grade from 1 to 6 to try out, in that grade's colour.
+class _CalculatorGradeButton extends StatelessWidget {
+  const _CalculatorGradeButton({
+    super.key,
+    required this.label,
+    required this.value,
+    required this.onPressed,
+  });
+  final String label;
+  final double? value;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = SubjectColors.grade(value, Theme.of(context).brightness);
+    return Material(
+      color: palette.background,
+      borderRadius: BorderRadius.circular(14),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onPressed,
+        child: SizedBox(
+          height: 48,
+          child: Center(
+            child: Text(
+              label,
+              style: TextStyle(
+                color: palette.foreground,
+                fontSize: 18,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// A grade value in its colour, without a Librus grade behind it.
+class _CalculatorGradeBadge extends StatelessWidget {
+  const _CalculatorGradeBadge(this.label, {required this.settings});
+  final String label;
+  final GradeAverageSettings settings;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = SubjectColors.grade(
+      settings.valueOf(label),
+      Theme.of(context).brightness,
+    );
+    return Container(
+      height: 30,
+      constraints: const BoxConstraints(minWidth: 30),
+      padding: const EdgeInsets.symmetric(horizontal: 6),
+      decoration: BoxDecoration(
+        color: palette.background,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Center(
+        widthFactor: 1,
+        child: Text(
+          label,
+          style: TextStyle(
+            color: palette.foreground,
+            fontSize: 14,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// A grade the student added to try out, with its weight and a way to drop
+/// it again.
+class _CalculatorAddedGrade extends StatelessWidget {
+  const _CalculatorAddedGrade({
+    super.key,
+    required this.grade,
+    required this.settings,
+    required this.onDeleted,
+  });
+  final Grade grade;
+  final GradeAverageSettings settings;
+  final VoidCallback onDeleted;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = SubjectColors.grade(
+      settings.valueOf(grade.value),
+      Theme.of(context).brightness,
+    );
+    return InputChip(
+      label: Text(
+        settings.weighted
+            ? '${grade.value} · ${_decimal(context, grade.weight)}'
+            : grade.value,
+      ),
+      labelStyle: TextStyle(
+        color: palette.foreground,
+        fontWeight: FontWeight.w800,
+      ),
+      backgroundColor: palette.background,
+      deleteIconColor: palette.foreground,
+      side: BorderSide.none,
+      onDeleted: onDeleted,
+    );
+  }
+}
 
 String _decimal(BuildContext context, double value) => NumberFormat(
   '0.##',
@@ -6153,6 +6640,8 @@ Future<void> _showNotificationSettings(
                             )
                           : null,
                     ),
+                  const Divider(height: 24),
+                  _ReminderSettings(controller, onPermission: denied),
                 ],
               ),
             ),
@@ -6161,6 +6650,129 @@ Future<void> _showNotificationSettings(
       },
     ),
   );
+}
+
+/// When the app reminds of tests: the evening before and the morning of,
+/// each at its own time, and whether homework comes along.
+class _ReminderSettings extends StatelessWidget {
+  const _ReminderSettings(this.controller, {required this.onPermission});
+  final AppController controller;
+  final void Function(bool granted) onPermission;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final settings = controller.notificationSettings;
+    final reminders = settings.reminders;
+    final enabled = settings.enabled;
+    Future<void> change(TestReminderSettings next) async =>
+        onPermission(await controller.setTestReminders(next));
+    return Column(
+      key: const ValueKey('reminder-settings'),
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 2),
+          child: Text(
+            context.tr('reminders'),
+            style: theme.textTheme.titleSmall?.copyWith(
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 4),
+          child: Text(
+            context.tr('remindersDescription'),
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ),
+        _ReminderTimeTile(
+          key: const ValueKey('reminder-evening'),
+          icon: Icons.nights_stay_outlined,
+          title: context.tr('reminderEvening'),
+          minutes: reminders.eveningMinutes,
+          value: reminders.evening,
+          enabled: enabled,
+          onChanged: (value) => change(reminders.copyWith(evening: value)),
+          onTime: (minutes) => change(
+            reminders.copyWith(evening: true, eveningMinutes: minutes),
+          ),
+        ),
+        _ReminderTimeTile(
+          key: const ValueKey('reminder-morning'),
+          icon: Icons.wb_sunny_outlined,
+          title: context.tr('reminderMorning'),
+          minutes: reminders.morningMinutes,
+          value: reminders.morning,
+          enabled: enabled,
+          onChanged: (value) => change(reminders.copyWith(morning: value)),
+          onTime: (minutes) => change(
+            reminders.copyWith(morning: true, morningMinutes: minutes),
+          ),
+        ),
+        SwitchListTile.adaptive(
+          key: const ValueKey('reminder-homework'),
+          secondary: const Icon(Icons.assignment_outlined),
+          title: Text(context.tr('reminderHomework')),
+          subtitle: Text(context.tr('reminderHomeworkDescription')),
+          value: reminders.homework,
+          onChanged: enabled && reminders.any
+              ? (value) => change(reminders.copyWith(homework: value))
+              : null,
+        ),
+      ],
+    );
+  }
+}
+
+/// A reminder that can be switched on, with the time it comes at; a tap
+/// changes the time.
+class _ReminderTimeTile extends StatelessWidget {
+  const _ReminderTimeTile({
+    super.key,
+    required this.icon,
+    required this.title,
+    required this.minutes,
+    required this.value,
+    required this.enabled,
+    required this.onChanged,
+    required this.onTime,
+  });
+  final IconData icon;
+  final String title;
+  final int minutes;
+  final bool value;
+  final bool enabled;
+  final ValueChanged<bool> onChanged;
+  final ValueChanged<int> onTime;
+
+  @override
+  Widget build(BuildContext context) {
+    final time = TimeOfDay(hour: minutes ~/ 60, minute: minutes % 60);
+    return ListTile(
+      enabled: enabled,
+      leading: Icon(icon),
+      title: Text(title),
+      subtitle: Text(
+        '${time.format(context)} · ${context.tr('reminderChangeTime')}',
+      ),
+      onTap: () async {
+        final picked = await showTimePicker(
+          context: context,
+          initialTime: time,
+        );
+        if (picked != null) onTime(picked.hour * 60 + picked.minute);
+      },
+      trailing: Switch.adaptive(
+        value: value,
+        onChanged: enabled ? onChanged : null,
+      ),
+    );
+  }
 }
 
 /// The student's average with the chosen settings, or a sample before there

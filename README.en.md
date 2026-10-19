@@ -9,6 +9,7 @@ SiberiaGB is a fully functional, cross-platform Librus client written using the 
 - Sign-in with non-expiring sessions
 - Timetable as a timeline or a list, with merged double lessons and tests shown on the lessons they are set for
 - Grades coloured by value and average calculation, including weighted averages and your own value for pluses and minuses
+- A grade calculator: how new grades would change the average, and how many it takes to reach a target
 - Schedule, calendar, and upcoming events
 - Homework grouped by due date, with search
 - A Today screen with the current and next lesson and blocks you can hide and reorder
@@ -18,6 +19,7 @@ SiberiaGB is a fully functional, cross-platform Librus client written using the 
 - Attendance with an attendance chart
 - Remarks
 - Notifications across eight categories: grades, messages, announcements, remarks, attendance, events, homework, and timetable
+- Test reminders the evening before or that morning, at a time you choose (Android and iOS)
 - Background data synchronization (Android)
 - The app is available in five languages: Polish, English, Russian, German, and Ukrainian
 - Works on Android, iOS, Windows and Linux

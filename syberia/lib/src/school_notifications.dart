@@ -2,12 +2,15 @@ import 'dart:convert';
 import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:timezone/timezone.dart' as tz;
 
 import 'domain/models.dart';
 import 'l10n/app_localizations.dart';
+import 'test_reminders.dart';
 
 enum SchoolNotificationCategory {
   grades,
@@ -35,10 +38,12 @@ class SchoolNotificationSettings {
   const SchoolNotificationSettings({
     this.enabled = true,
     this.categories = const {},
+    this.reminders = const TestReminderSettings(),
   });
 
   final bool enabled;
   final Map<SchoolNotificationCategory, bool> categories;
+  final TestReminderSettings reminders;
 
   bool allows(SchoolNotificationCategory category) =>
       enabled && (categories[category] ?? true);
@@ -46,15 +51,23 @@ class SchoolNotificationSettings {
   bool get hasEnabledCategory =>
       enabled && SchoolNotificationCategory.values.any(allows);
 
+  bool get remindersOn => enabled && reminders.any;
+
+  /// Whether anything needs the background check: new data to report, or
+  /// tests to keep the reminders up to date for.
+  bool get needsBackgroundCheck => hasEnabledCategory || remindersOn;
+
   SchoolNotificationSettings copyWith({
     bool? enabled,
     SchoolNotificationCategory? category,
     bool? categoryEnabled,
+    TestReminderSettings? reminders,
   }) => SchoolNotificationSettings(
     enabled: enabled ?? this.enabled,
     categories: category == null
         ? categories
         : {...categories, category: categoryEnabled ?? true},
+    reminders: reminders ?? this.reminders,
   );
 }
 
@@ -68,6 +81,13 @@ abstract class SchoolNotificationPresenter {
   });
   Future<SchoolNotificationCategory?> launchCategory();
   void onTap(void Function(SchoolNotificationCategory) callback);
+
+  /// Replaces every scheduled reminder with [reminders]; an empty list
+  /// cancels them all.
+  Future<void> scheduleReminders(
+    List<TestReminder> reminders, {
+    required String channelName,
+  });
 }
 
 class FlutterSchoolNotificationPresenter
@@ -178,6 +198,75 @@ class FlutterSchoolNotificationPresenter
     );
   }
 
+  /// Reminders take the notification ids from here on.
+  static const _firstReminderId = 1000;
+
+  /// Exact alarms until the system refuses them; then inexact ones, which
+  /// may come late.
+  bool _exactAlarms = true;
+
+  /// Scheduled notifications work on phones; elsewhere there are none.
+  bool get _canSchedule =>
+      !kIsWeb &&
+      (defaultTargetPlatform == TargetPlatform.android ||
+          defaultTargetPlatform == TargetPlatform.iOS);
+
+  @override
+  Future<void> scheduleReminders(
+    List<TestReminder> reminders, {
+    required String channelName,
+  }) async {
+    if (!_ready || !_canSchedule) return;
+    try {
+      for (final pending in await _plugin.pendingNotificationRequests()) {
+        if (pending.id >= _firstReminderId &&
+            pending.id < _firstReminderId + maxTestReminders) {
+          await _plugin.cancel(id: pending.id);
+        }
+      }
+    } on Object {
+      // A reminder that could not be cancelled is replaced below, by id.
+    }
+    for (final (index, reminder) in reminders.take(maxTestReminders).indexed) {
+      Future<void> schedule() => _plugin.zonedSchedule(
+        id: _firstReminderId + index,
+        // A point in time, so no time zone database is needed: the local
+        // time was turned into it when the reminder was made.
+        scheduledDate: tz.TZDateTime.from(reminder.at, tz.UTC),
+        title: reminder.title,
+        body: reminder.body,
+        payload: SchoolNotificationCategory.events.name,
+        androidScheduleMode: _exactAlarms
+            ? AndroidScheduleMode.exactAllowWhileIdle
+            : AndroidScheduleMode.inexactAllowWhileIdle,
+        notificationDetails: NotificationDetails(
+          android: AndroidNotificationDetails(
+            'siberiagb_test_reminders',
+            channelName,
+            channelDescription: 'SiberiaGB: $channelName',
+            importance: Importance.defaultImportance,
+            priority: Priority.defaultPriority,
+            styleInformation: BigTextStyleInformation(reminder.body),
+          ),
+          iOS: const DarwinNotificationDetails(),
+        ),
+      );
+      try {
+        try {
+          await schedule();
+        } on PlatformException catch (error) {
+          if (!_exactAlarms || error.code != 'exact_alarms_not_permitted') {
+            rethrow;
+          }
+          _exactAlarms = false;
+          await schedule();
+        }
+      } on Object {
+        // One reminder that cannot be scheduled leaves the others.
+      }
+    }
+  }
+
   @override
   Future<SchoolNotificationCategory?> launchCategory() async {
     if (!_ready) return null;
@@ -214,6 +303,7 @@ class SchoolNotificationService {
 
   final SchoolNotificationPresenter _presenter;
   final Future<SharedPreferences> _preferences;
+  Future<void> _reminderUpdates = Future.value();
 
   Future<void> initialize() => _presenter.initialize();
   Future<bool> requestPermission() => _presenter.requestPermission();
@@ -225,6 +315,12 @@ class SchoolNotificationService {
   Future<SchoolNotificationSettings> loadSettings() async {
     final preferences = await _preferences;
     await preferences.reload();
+    const defaults = TestReminderSettings();
+    int? minutes(String key) {
+      final value = preferences.getInt('$_settingsPrefix$key');
+      return value != null && value >= 0 && value < 24 * 60 ? value : null;
+    }
+
     return SchoolNotificationSettings(
       enabled: preferences.getBool('${_settingsPrefix}enabled') ?? true,
       categories: {
@@ -232,6 +328,21 @@ class SchoolNotificationService {
           category:
               preferences.getBool('$_settingsPrefix${category.name}') ?? true,
       },
+      reminders: TestReminderSettings(
+        evening:
+            preferences.getBool('${_settingsPrefix}reminder_evening') ??
+            defaults.evening,
+        morning:
+            preferences.getBool('${_settingsPrefix}reminder_morning') ??
+            defaults.morning,
+        eveningMinutes:
+            minutes('reminder_evening_minutes') ?? defaults.eveningMinutes,
+        morningMinutes:
+            minutes('reminder_morning_minutes') ?? defaults.morningMinutes,
+        homework:
+            preferences.getBool('${_settingsPrefix}reminder_homework') ??
+            defaults.homework,
+      ),
     );
   }
 
@@ -244,6 +355,69 @@ class SchoolNotificationService {
         settings.categories[category] ?? true,
       );
     }
+    final reminders = settings.reminders;
+    await preferences.setBool(
+      '${_settingsPrefix}reminder_evening',
+      reminders.evening,
+    );
+    await preferences.setBool(
+      '${_settingsPrefix}reminder_morning',
+      reminders.morning,
+    );
+    await preferences.setInt(
+      '${_settingsPrefix}reminder_evening_minutes',
+      reminders.eveningMinutes,
+    );
+    await preferences.setInt(
+      '${_settingsPrefix}reminder_morning_minutes',
+      reminders.morningMinutes,
+    );
+    await preferences.setBool(
+      '${_settingsPrefix}reminder_homework',
+      reminders.homework,
+    );
+  }
+
+  /// Schedules the reminders for the tests in [snapshot] with the saved
+  /// settings, replacing the ones scheduled before. Signed out, or with
+  /// reminders off, none are left. Updates run one after another, so an
+  /// older list can never land last.
+  Future<void> updateReminders(AppSnapshot snapshot, {DateTime? now}) {
+    final next = _reminderUpdates.then((_) => _updateReminders(snapshot, now));
+    _reminderUpdates = next.catchError((Object _) {});
+    return next;
+  }
+
+  Future<void> _updateReminders(AppSnapshot snapshot, DateTime? now) async {
+    final settings = await loadSettings();
+    final translations = await _translations();
+    final signedIn =
+        snapshot.profile.provider == 'Librus Synergia' &&
+        snapshot.lastSync.millisecondsSinceEpoch != 0;
+    final reminders = signedIn && settings.remindersOn
+        ? buildTestReminders(
+            snapshot.events,
+            settings.reminders,
+            now ?? DateTime.now(),
+            translations,
+          )
+        : const <TestReminder>[];
+    try {
+      await _presenter.scheduleReminders(
+        reminders,
+        channelName: translations.text('reminders'),
+      );
+    } on Object {
+      // Reminders are best effort, like every notification.
+    }
+  }
+
+  Future<AppLocalizations> _translations() async {
+    final preferences = await _preferences;
+    final language =
+        preferences.getString('app_locale_v1') ??
+        PlatformDispatcher.instance.locale.languageCode;
+    return AppLocalizations(Locale(language));
   }
 
   Future<void> processSnapshot(AppSnapshot snapshot) async {
@@ -277,10 +451,7 @@ class SchoolNotificationService {
     // Muted items are still marked as seen, so enabling a category never
     // replays its entire history.
     await preferences.setString(seenKey, jsonEncode(updated));
-    final language =
-        preferences.getString('app_locale_v1') ??
-        PlatformDispatcher.instance.locale.languageCode;
-    final translations = AppLocalizations(Locale(language));
+    final translations = await _translations();
     for (final category in SchoolNotificationCategory.values) {
       final items = newItems[category]!;
       if (!settings.allows(category) || items.isEmpty) continue;

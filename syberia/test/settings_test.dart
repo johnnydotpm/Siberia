@@ -121,6 +121,54 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
   });
 
+  testWidgets('test reminders are set in the notifications sheet', (
+    tester,
+  ) async {
+    final controller = await _pump(tester);
+    await tester.tap(find.byKey(const ValueKey('settings-notifications')));
+    await tester.pumpAndSettle();
+
+    final morning = find.byKey(const ValueKey('reminder-morning'));
+    await tester.ensureVisible(morning);
+    await tester.pumpAndSettle();
+    expect(find.text('7:00 AM · change time'), findsOneWidget);
+    expect(find.text('7:00 PM · change time'), findsOneWidget);
+    await tester.tap(
+      find.descendant(of: morning, matching: find.byType(Switch)),
+    );
+    await tester.pumpAndSettle();
+    expect(controller.notificationSettings.reminders.morning, isTrue);
+    expect(controller.notificationSettings.reminders.evening, isTrue);
+
+    final homework = find.byKey(const ValueKey('reminder-homework'));
+    await tester.ensureVisible(homework);
+    await tester.tap(homework);
+    await tester.pumpAndSettle();
+    expect(controller.notificationSettings.reminders.homework, isTrue);
+
+    // A tap on the row asks for the time.
+    await tester.tap(find.text('The evening before'));
+    await tester.pumpAndSettle();
+    expect(find.byType(TimePickerDialog), findsOneWidget);
+    await tester.tap(find.text('Cancel'));
+    await tester.pumpAndSettle();
+    expect(controller.notificationSettings.reminders.eveningMinutes, 19 * 60);
+
+    // With notifications off the reminders cannot be changed.
+    await tester.ensureVisible(
+      find.byKey(const ValueKey('notifications-master')),
+    );
+    await tester.tap(find.byKey(const ValueKey('notifications-master')));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(morning);
+    final disabled = tester.widget<Switch>(
+      find.descendant(of: morning, matching: find.byType(Switch)),
+    );
+    expect(disabled.onChanged, isNull);
+    expect(tester.takeException(), isNull);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
   testWidgets('language, theme and chart are picked with a tap', (
     tester,
   ) async {
