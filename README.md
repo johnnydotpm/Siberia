@@ -59,7 +59,7 @@ Gotowy plik APK znajdziesz w `build/app/outputs/flutter-apk/app-release.apk`.
 
 Bez lokalnego Android SDK: w GitHub Actions uruchom workflow `SiberiaGB Flutter` z opcją `build_android`, a następnie pobierz artefakt `siberiagb-android`.
 
-Build z własnego komputera jest podpisany kluczem debugowym, więc nie zainstaluje się jako aktualizacja opublikowanego wydania. W GitHub Actions APK jest podpisywany kluczem projektu z sekretów repozytorium `ANDROID_KEYSTORE_BASE64` i `ANDROID_KEYSTORE_PASSWORD`; bez nich również kluczem debugowym.
+Build z własnego komputera jest podpisany kluczem debugowym, więc nie zainstaluje się jako aktualizacja opublikowanego wydania. W GitHub Actions APK jest podpisywany kluczem projektu z sekretów repozytorium `ANDROID_KEYSTORE_BASE64` i `ANDROID_KEYSTORE_PASSWORD`; bez nich również kluczem debugowym. Build z kluczem debugowym instaluje się jako osobna aplikacja SiberiaGB Preview obok opublikowanej, a wydania bez klucza nie da się zrobić.
 
 </details>
 
