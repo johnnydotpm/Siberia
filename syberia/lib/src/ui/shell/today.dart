@@ -61,14 +61,19 @@ class _TodayState extends State<_Today> {
     }
     if (_lookingAhead ||
         !widget.controller.autoSyncOnOpen ||
-        lessons.isEmpty ||
         lessons.any((lesson) => !lesson.cancelled && lesson.end.isAfter(now)) ||
         _lastLookAheadDay == today) {
       return;
     }
     _lookingAhead = true;
     _lastLookAheadDay = today;
-    var monday = today.add(Duration(days: 8 - today.weekday));
+    // Calendar days, not 24-hour steps: across a clock change a Duration
+    // would land on the Sunday before and fetch the week that just ended.
+    var monday = DateTime(
+      today.year,
+      today.month,
+      today.day + 8 - today.weekday,
+    );
     try {
       for (var attempt = 0; attempt < 4; attempt++) {
         await widget.controller.fetchTimetableWeek(monday);
@@ -78,13 +83,12 @@ class _TodayState extends State<_Today> {
             )) {
           break;
         }
-        monday = monday.add(const Duration(days: 7));
+        monday = DateTime(monday.year, monday.month, monday.day + 7);
       }
     } on Object {
       // The existing timetable stays visible while a later week is unavailable.
     } finally {
       _lookingAhead = false;
-      if (mounted) setState(() {});
     }
   }
 
@@ -227,7 +231,6 @@ class _TodayState extends State<_Today> {
   }
 }
 
-/// What is on now and what comes next, or when lessons start again.
 /// Rebuilds [builder] at the start of every minute, which is as often as
 /// lesson times and countdowns change.
 class _MinuteClock extends StatefulWidget {
@@ -273,6 +276,7 @@ class _MinuteClockState extends State<_MinuteClock> {
   Widget build(BuildContext context) => widget.builder(context, DateTime.now());
 }
 
+/// What is on now and what comes next, or when lessons start again.
 class _NowCard extends StatelessWidget {
   const _NowCard({required this.controller, required this.now});
   final AppController controller;
@@ -600,47 +604,49 @@ Future<void> _showTodayLayoutSheet(
                   ],
                 ),
               ),
-              ReorderableListView(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                buildDefaultDragHandles: false,
-                onReorderItem: (from, to) {
-                  final blocks = [...layout.blocks];
-                  blocks.insert(to, blocks.removeAt(from));
-                  update(blocks);
-                },
-                children: [
-                  for (final (index, entry) in layout.blocks.indexed)
-                    ListTile(
-                      key: ValueKey('today-block-${entry.block.name}'),
-                      leading: ReorderableDragStartListener(
-                        index: index,
-                        child: const Icon(Icons.drag_indicator_rounded),
-                      ),
-                      title: Row(
-                        children: [
-                          Icon(_todayBlockIcon(entry.block), size: 20),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Text(
-                              context.tr(_todayBlockLabel(entry.block)),
+              // Scrolls only when the sheet does not fit, as in landscape.
+              Flexible(
+                child: ReorderableListView(
+                  shrinkWrap: true,
+                  buildDefaultDragHandles: false,
+                  onReorderItem: (from, to) {
+                    final blocks = [...layout.blocks];
+                    blocks.insert(to, blocks.removeAt(from));
+                    update(blocks);
+                  },
+                  children: [
+                    for (final (index, entry) in layout.blocks.indexed)
+                      ListTile(
+                        key: ValueKey('today-block-${entry.block.name}'),
+                        leading: ReorderableDragStartListener(
+                          index: index,
+                          child: const Icon(Icons.drag_indicator_rounded),
+                        ),
+                        title: Row(
+                          children: [
+                            Icon(_todayBlockIcon(entry.block), size: 20),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                context.tr(_todayBlockLabel(entry.block)),
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
+                        trailing: Switch(
+                          value: entry.visible,
+                          onChanged: (visible) {
+                            final blocks = [...layout.blocks];
+                            blocks[index] = (
+                              block: entry.block,
+                              visible: visible,
+                            );
+                            update(blocks);
+                          },
+                        ),
                       ),
-                      trailing: Switch(
-                        value: entry.visible,
-                        onChanged: (visible) {
-                          final blocks = [...layout.blocks];
-                          blocks[index] = (
-                            block: entry.block,
-                            visible: visible,
-                          );
-                          update(blocks);
-                        },
-                      ),
-                    ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),
@@ -737,7 +743,6 @@ class _Summary extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(8),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             Expanded(
               child: _Metric(

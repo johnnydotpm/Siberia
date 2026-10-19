@@ -284,6 +284,74 @@ void main() {
     expect(tester.takeException(), isNull);
     await tester.pumpWidget(const SizedBox.shrink());
   });
+
+  testWidgets('the selected Messages tab keeps its unread count', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(400, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final controller = AppController(
+      _Repository(
+        _snapshot(
+          messages: [
+            SchoolMessage(
+              id: 'm1',
+              sender: 'Teacher Delta',
+              subject: 'Trip',
+              preview: '',
+              receivedAt: DateTime.now(),
+              unread: true,
+            ),
+          ],
+        ),
+      ),
+      updatesEnabled: false,
+    );
+    await controller.bootstrap();
+    await tester.pumpWidget(SyberiaApp(controller: controller));
+    await tester.pumpAndSettle();
+    Finder count() => find.descendant(
+      of: find.byType(NavigationBar),
+      matching: find.text('1'),
+    );
+    expect(count(), findsOneWidget);
+    controller.selectTab(5);
+    await tester.pumpAndSettle();
+    expect(count(), findsOneWidget);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
+  testWidgets('the Today layout sheet scrolls when it does not fit', (
+    tester,
+  ) async {
+    final controller = await _pump(tester, _snapshot(), tab: 9);
+    final todaySettings = find.byKey(const ValueKey('settings-today-screen'));
+    await tester.scrollUntilVisible(todaySettings, 200);
+    await tester.tap(todaySettings);
+    await tester.pumpAndSettle();
+    // The phone is turned sideways with the sheet open.
+    tester.view.physicalSize = const Size(852, 393);
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    final last = find.byKey(const ValueKey('today-block-messages'));
+    await tester.scrollUntilVisible(
+      last,
+      100,
+      scrollable: find.descendant(
+        of: find.byKey(const ValueKey('today-layout-sheet')),
+        matching: find.byType(Scrollable),
+      ),
+    );
+    await tester.tap(find.descendant(of: last, matching: find.byType(Switch)));
+    await tester.pumpAndSettle();
+    expect(
+      controller.todayLayout.visible,
+      isNot(contains(TodayBlock.messages)),
+    );
+    expect(tester.takeException(), isNull);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
 }
 
 class _Repository extends AppRepository {
@@ -292,4 +360,8 @@ class _Repository extends AppRepository {
 
   @override
   Future<AppSnapshot> load() async => data;
+
+  // The real one would reach Librus; the Today look-ahead asks for weeks.
+  @override
+  Future<List<Lesson>> fetchTimetableWeek(DateTime day) async => const [];
 }

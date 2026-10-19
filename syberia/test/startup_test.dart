@@ -230,4 +230,8 @@ class _Repository extends AppRepository {
     notices: const [],
     lastSync: DateTime.now(),
   );
+
+  // The real one would reach Librus; the Today look-ahead asks for weeks.
+  @override
+  Future<List<Lesson>> fetchTimetableWeek(DateTime day) async => const [];
 }

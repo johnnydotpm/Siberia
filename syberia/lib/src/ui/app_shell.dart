@@ -299,15 +299,20 @@ NavigationDestination _destination(
   IconData selected,
   String label, {
   int badge = 0,
-}) => NavigationDestination(
-  icon: Badge(
+}) {
+  // The count stays on the selected tab too, as in the glass bar and the
+  // side navigation.
+  Widget badged(IconData data) => Badge(
     isLabelVisible: badge > 0,
     label: Text('$badge'),
-    child: Icon(icon),
-  ),
-  selectedIcon: Icon(selected),
-  label: label,
-);
+    child: Icon(data),
+  );
+  return NavigationDestination(
+    icon: badged(icon),
+    selectedIcon: badged(selected),
+    label: label,
+  );
+}
 
 String _title(BuildContext context, int index) => context.tr(
   const [

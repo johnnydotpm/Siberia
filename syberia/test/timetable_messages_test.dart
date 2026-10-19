@@ -358,4 +358,8 @@ class _Repository extends AppRepository {
       receivedAt: message.receivedAt,
     );
   }
+
+  // The real one would reach Librus; the Today look-ahead asks for weeks.
+  @override
+  Future<List<Lesson>> fetchTimetableWeek(DateTime day) async => const [];
 }

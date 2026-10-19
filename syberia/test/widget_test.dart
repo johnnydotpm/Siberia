@@ -505,6 +505,43 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
   });
 
+  testWidgets('Today looks ahead from an empty week, as over a school break', (
+    tester,
+  ) async {
+    final now = DateTime.now();
+    final snapshot = AppSnapshot(
+      profile: const StudentProfile(
+        id: '1',
+        name: 'Uczeń testowy',
+        school: 'School',
+        provider: 'Librus Synergia',
+      ),
+      lessons: const [],
+      grades: const [],
+      events: const [],
+      messages: const [],
+      attendance: const [],
+      announcements: const [],
+      notices: const [],
+      lastSync: now,
+    );
+    final repository = _WeekAheadRepository(snapshot);
+    final controller = AppController(repository, updatesEnabled: false);
+    await controller.bootstrap();
+    await tester.pumpWidget(SyberiaApp(controller: controller));
+    await tester.pumpAndSettle();
+
+    expect(repository.weekRequests, 1);
+    expect(find.text('Next week lesson'), findsOneWidget);
+    // Next Monday at midnight, counted in calendar days.
+    final monday = repository.requestedDays.single;
+    expect(monday.weekday, DateTime.monday);
+    expect((monday.hour, monday.minute), (0, 0));
+    expect(monday.isAfter(now), isTrue);
+
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
   testWidgets('keeps the current-time marker visible during a break', (
     tester,
   ) async {
@@ -822,16 +859,22 @@ class _TestRepository extends AppRepository {
   @override
   Future<AttendanceChartStyle> loadAttendanceChartStyle() async =>
       AttendanceChartStyle.ring;
+
+  // The real one would reach Librus; the Today look-ahead asks for weeks.
+  @override
+  Future<List<Lesson>> fetchTimetableWeek(DateTime day) async => const [];
 }
 
 class _WeekAheadRepository extends _TestRepository {
   _WeekAheadRepository(super.data);
 
   int weekRequests = 0;
+  final requestedDays = <DateTime>[];
 
   @override
   Future<List<Lesson>> fetchTimetableWeek(DateTime day) async {
     weekRequests++;
+    requestedDays.add(day);
     final start = DateTime(day.year, day.month, day.day, 8);
     return [
       Lesson(
