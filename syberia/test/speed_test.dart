@@ -252,4 +252,8 @@ class _Repository extends AppRepository {
 
   @override
   Future<AppSnapshot> sync(AppSnapshot current) async => synced;
+
+  // The real one would reach Librus; the Today look-ahead asks for weeks.
+  @override
+  Future<List<Lesson>> fetchTimetableWeek(DateTime day) async => const [];
 }

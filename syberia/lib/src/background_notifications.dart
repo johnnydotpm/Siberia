@@ -51,12 +51,15 @@ void schoolNotificationCallbackDispatcher() {
         FlutterSchoolNotificationPresenter(),
       );
       final settings = await notifications.loadSettings();
-      if (!settings.hasEnabledCategory) return true;
+      if (!settings.needsBackgroundCheck) return true;
       await notifications.initialize();
       final snapshot = await repository.fetchBackgroundSnapshot(
         parts: backgroundParts(settings),
       );
-      if (snapshot != null) await notifications.processSnapshot(snapshot);
+      if (snapshot != null) {
+        await notifications.processSnapshot(snapshot);
+        await notifications.updateReminders(snapshot);
+      }
       return true;
     } on Object {
       // Network and authentication failures must not generate false alerts.
@@ -65,7 +68,8 @@ void schoolNotificationCallbackDispatcher() {
   });
 }
 
-/// What the background check downloads: only what a notification is on for.
+/// What the background check downloads: only what a notification or the
+/// test reminders are on for.
 @visibleForTesting
 Set<LibrusPart> backgroundParts(SchoolNotificationSettings settings) => {
   if (settings.allows(SchoolNotificationCategory.grades)) LibrusPart.grades,
@@ -75,9 +79,11 @@ Set<LibrusPart> backgroundParts(SchoolNotificationSettings settings) => {
   if (settings.allows(SchoolNotificationCategory.notices)) LibrusPart.notices,
   if (settings.allows(SchoolNotificationCategory.attendance))
     LibrusPart.attendance,
-  // Events and homework arrive in one list, so they come together.
+  // Events and homework arrive in one list, so they come together. The
+  // reminders need them to know about new tests.
   if (settings.allows(SchoolNotificationCategory.events) ||
-      settings.allows(SchoolNotificationCategory.homework)) ...[
+      settings.allows(SchoolNotificationCategory.homework) ||
+      settings.remindersOn) ...[
     LibrusPart.events,
     LibrusPart.homework,
   ],

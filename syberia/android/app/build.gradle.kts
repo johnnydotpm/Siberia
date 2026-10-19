@@ -79,6 +79,11 @@ android {
             // `flutter run --release` works anywhere.
             signingConfig =
                 signingConfigs.findByName("release") ?: signingConfigs.getByName("debug")
+            // Keeps what scheduled notifications store (see the file).
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro",
+            )
         }
     }
 }

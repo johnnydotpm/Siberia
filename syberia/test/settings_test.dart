@@ -7,6 +7,7 @@ import 'package:syberia/src/data/app_repository.dart';
 import 'package:syberia/src/domain/models.dart';
 import 'package:syberia/src/school_notifications.dart';
 import 'package:syberia/src/state/app_controller.dart';
+import 'package:syberia/src/test_reminders.dart';
 
 int _semester() {
   final month = DateTime.now().month;
@@ -27,6 +28,7 @@ Future<AppController> _pump(
   WidgetTester tester, {
   String? latestVersion,
   List<Grade> grades = const [],
+  SchoolNotificationService? notifications,
 }) async {
   tester.view.physicalSize = const Size(800, 3200);
   tester.view.devicePixelRatio = 1;
@@ -52,6 +54,7 @@ Future<AppController> _pump(
       latestVersion: latestVersion,
     ),
     updatesEnabled: false,
+    notifications: notifications,
   );
   await controller.bootstrap();
   controller.selectTab(9);
@@ -118,6 +121,95 @@ void main() {
     ).pop();
     await tester.pumpAndSettle();
     expect(find.text('Off'), findsOneWidget);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
+  testWidgets('test reminders are set in the notifications sheet', (
+    tester,
+  ) async {
+    final controller = await _pump(tester);
+    await tester.tap(find.byKey(const ValueKey('settings-notifications')));
+    await tester.pumpAndSettle();
+
+    final morning = find.byKey(const ValueKey('reminder-morning'));
+    await tester.ensureVisible(morning);
+    await tester.pumpAndSettle();
+    expect(find.text('7:00 AM · change time'), findsOneWidget);
+    expect(find.text('7:00 PM · change time'), findsOneWidget);
+    await tester.tap(
+      find.descendant(of: morning, matching: find.byType(Switch)),
+    );
+    await tester.pumpAndSettle();
+    expect(controller.notificationSettings.reminders.morning, isTrue);
+    expect(controller.notificationSettings.reminders.evening, isTrue);
+
+    final homework = find.byKey(const ValueKey('reminder-homework'));
+    await tester.ensureVisible(homework);
+    await tester.tap(homework);
+    await tester.pumpAndSettle();
+    expect(controller.notificationSettings.reminders.homework, isTrue);
+
+    // A tap on the row asks for the time.
+    await tester.tap(find.text('The evening before'));
+    await tester.pumpAndSettle();
+    expect(find.byType(TimePickerDialog), findsOneWidget);
+    await tester.tap(find.text('Cancel'));
+    await tester.pumpAndSettle();
+    expect(controller.notificationSettings.reminders.eveningMinutes, 19 * 60);
+
+    // With notifications off the reminders cannot be changed.
+    await tester.ensureVisible(
+      find.byKey(const ValueKey('notifications-master')),
+    );
+    await tester.tap(find.byKey(const ValueKey('notifications-master')));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(morning);
+    final disabled = tester.widget<Switch>(
+      find.descendant(of: morning, matching: find.byType(Switch)),
+    );
+    expect(disabled.onChanged, isNull);
+    expect(tester.takeException(), isNull);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
+  testWidgets('a denied permission is explained inside the sheet', (
+    tester,
+  ) async {
+    final controller = await _pump(
+      tester,
+      notifications: SchoolNotificationService(_DenyingPresenter()),
+    );
+    await tester.tap(find.byKey(const ValueKey('settings-notifications')));
+    await tester.pumpAndSettle();
+    final notice = find.byKey(const ValueKey('notification-permission-denied'));
+    expect(notice, findsNothing);
+
+    // Turning a category back on asks for the permission, which is denied.
+    for (var i = 0; i < 2; i++) {
+      await tester.tap(find.byKey(const ValueKey('notification-grades')));
+      await tester.pumpAndSettle();
+    }
+    expect(
+      controller.notificationSettings.allows(SchoolNotificationCategory.grades),
+      isTrue,
+    );
+    expect(notice, findsOneWidget);
+    expect(
+      find.text('Allow notifications in system settings.'),
+      findsOneWidget,
+    );
+
+    // Turning something else off asks nothing; the others still need the
+    // permission, so the notice stays.
+    await tester.tap(find.byKey(const ValueKey('notification-messages')));
+    await tester.pumpAndSettle();
+    expect(notice, findsOneWidget);
+
+    // Notifications off: nothing to ask for, so the notice goes.
+    await tester.tap(find.byKey(const ValueKey('notifications-master')));
+    await tester.pumpAndSettle();
+    expect(notice, findsNothing);
+    expect(tester.takeException(), isNull);
     await tester.pumpWidget(const SizedBox.shrink());
   });
 
@@ -211,4 +303,35 @@ class _Repository extends AppRepository {
 
   @override
   Future<String?> fetchLatestReleaseVersion() async => latestVersion;
+
+  // The real one would reach Librus; the Today look-ahead asks for weeks.
+  @override
+  Future<List<Lesson>> fetchTimetableWeek(DateTime day) async => const [];
+}
+
+class _DenyingPresenter implements SchoolNotificationPresenter {
+  @override
+  Future<void> initialize() async {}
+
+  @override
+  Future<bool> requestPermission() async => false;
+
+  @override
+  Future<void> show({
+    required SchoolNotificationCategory category,
+    required String title,
+    required String body,
+  }) async {}
+
+  @override
+  Future<SchoolNotificationCategory?> launchCategory() async => null;
+
+  @override
+  void onTap(void Function(SchoolNotificationCategory) callback) {}
+
+  @override
+  Future<void> scheduleReminders(
+    List<TestReminder> reminders, {
+    required String channelName,
+  }) async {}
 }
