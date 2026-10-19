@@ -15,6 +15,11 @@ if (keystorePropertiesFile.exists()) {
     keystorePropertiesFile.inputStream().use { keystoreProperties.load(it) }
 }
 
+// An APK signed without the project's key cannot update the published app.
+// Such builds install beside it as a separate app, "SiberiaGB Preview", so a
+// test build can be tried without removing the real one.
+val preview = !keystorePropertiesFile.exists()
+
 android {
     namespace = "app.syberia.client"
     compileSdk = flutter.compileSdkVersion
@@ -40,6 +45,10 @@ android {
         // flag during build.
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        if (preview) {
+            applicationIdSuffix = ".preview"
+        }
+        manifestPlaceholders["appLabel"] = if (preview) "SiberiaGB Preview" else "SiberiaGB"
     }
 
     signingConfigs {

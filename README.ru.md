@@ -59,7 +59,7 @@ APK будет находиться в `build/app/outputs/flutter-apk/app-releas
 
 Без локального Android SDK: запустите workflow `SiberiaGB Flutter` в GitHub Actions с включённой опцией `build_android`, затем скачайте артефакт `siberiagb-android`.
 
-Сборка со своего компьютера подписана отладочным ключом, поэтому не установится поверх опубликованного релиза. В GitHub Actions APK подписывается ключом проекта из секретов репозитория `ANDROID_KEYSTORE_BASE64` и `ANDROID_KEYSTORE_PASSWORD`; без них тоже отладочным.
+Сборка со своего компьютера подписана отладочным ключом, поэтому не установится поверх опубликованного релиза. В GitHub Actions APK подписывается ключом проекта из секретов репозитория `ANDROID_KEYSTORE_BASE64` и `ANDROID_KEYSTORE_PASSWORD`; без них тоже отладочным. Сборка с отладочным ключом ставится отдельным приложением SiberiaGB Preview рядом с опубликованным, а релиз без ключа сделать нельзя.
 
 </details>
 
