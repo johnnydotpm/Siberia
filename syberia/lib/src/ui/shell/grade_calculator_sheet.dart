@@ -54,7 +54,7 @@ class _GradeCalculatorState extends State<_GradeCalculator> {
         subject: widget.subject,
         value: gradeLabel(value, _modifier),
         description: '',
-        // An old date, so the chip has no "new" dot.
+        // Never shown; the field is required.
         date: DateTime(2000),
         weight: _weight,
         semester: 0,
@@ -76,14 +76,15 @@ class _GradeCalculatorState extends State<_GradeCalculator> {
         ? null
         : projected - current;
     final reached = projected != null && projected >= _target - 1e-9;
+    // needed() decides which grades can get there: with no counted grades
+    // yet, one grade equal to the target is enough.
     final needed = {
       for (var value = 1; value <= 6; value++)
-        if (value > _target)
-          value: projection.needed(
-            target: _target,
-            label: '$value',
-            weight: _weight,
-          ),
+        value: projection.needed(
+          target: _target,
+          label: '$value',
+          weight: _weight,
+        ),
     }..removeWhere((_, count) => count == null);
     final heading = theme.textTheme.titleSmall?.copyWith(
       fontWeight: FontWeight.w800,
@@ -243,7 +244,9 @@ class _GradeCalculatorState extends State<_GradeCalculator> {
                     children: [
                       for (var index = 0; index < _added.length; index++)
                         _CalculatorAddedGrade(
-                          key: ValueKey('calculator-added-$index'),
+                          // By id, so removing one grade does not hand
+                          // its chip to the next.
+                          key: ValueKey(_added[index].id),
                           grade: _added[index],
                           settings: settings,
                           onDeleted: () =>

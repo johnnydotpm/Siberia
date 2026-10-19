@@ -201,7 +201,7 @@ void main() {
 
     await tester.tap(find.byKey(const ValueKey('calculator-clear')));
     await tester.pumpAndSettle();
-    expect(find.byKey(const ValueKey('calculator-added-0')), findsNothing);
+    expect(find.byKey(const ValueKey('what-if-0')), findsNothing);
     expect(find.byKey(const ValueKey('calculator-needed')), findsOneWidget);
 
     // A target of 6 cannot be reached with grades of at most 6.
@@ -217,6 +217,75 @@ void main() {
     expect(tester.takeException(), isNull);
     await tester.pumpWidget(const SizedBox.shrink());
   });
+
+  testWidgets(
+    'with no counted grades yet, a grade equal to the target counts',
+    (tester) async {
+      SharedPreferences.setMockInitialValues({'app_design_v1': 'classic'});
+      tester.view.physicalSize = const Size(800, 2400);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      final controller = AppController(
+        _Repository(
+          AppSnapshot(
+            profile: const StudentProfile(
+              id: 'test',
+              name: 'Demo Student',
+              school: 'School',
+              provider: 'Librus Synergia',
+            ),
+            lessons: const [],
+            // Neither counts towards the average.
+            grades: [
+              _grade('np', id: 'a'),
+              _grade('5', weight: 0, id: 'b'),
+            ],
+            events: const [],
+            messages: const [],
+            attendance: const [],
+            announcements: const [],
+            notices: const [],
+            lastSync: DateTime.now(),
+          ),
+        ),
+        updatesEnabled: false,
+      );
+      await controller.bootstrap();
+      controller.selectTab(2);
+      await tester.pumpWidget(SyberiaApp(controller: controller));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('grades-subject-Math')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('grade-calculator-open')));
+      await tester.pumpAndSettle();
+
+      // The target starts at 4: one 4, 5 or 6 reaches it.
+      expect(find.text('4'), findsWidgets);
+      for (final value in [4, 5, 6]) {
+        expect(
+          find.descendant(
+            of: find.byKey(ValueKey('calculator-needed-$value')),
+            matching: find.text('× 1'),
+          ),
+          findsOneWidget,
+          reason: '$value',
+        );
+      }
+      for (var step = 0; step < 8; step++) {
+        await tester.tap(find.byKey(const ValueKey('calculator-target-up')));
+        await tester.pump();
+      }
+      await tester.pumpAndSettle();
+      // A single 6 gives exactly 6.
+      expect(
+        find.byKey(const ValueKey('calculator-out-of-reach')),
+        findsNothing,
+      );
+      expect(find.byKey(const ValueKey('calculator-needed-6')), findsOneWidget);
+      expect(find.byKey(const ValueKey('calculator-needed-5')), findsNothing);
+      await tester.pumpWidget(const SizedBox.shrink());
+    },
+  );
 }
 
 class _Repository extends AppRepository {
