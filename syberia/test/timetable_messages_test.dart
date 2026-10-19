@@ -234,6 +234,53 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
   });
 
+  testWidgets('the lesson sheet scrolls through long test descriptions', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(360, 640);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final day = DateTime.now().add(const Duration(days: 1));
+    final start = DateTime(day.year, day.month, day.day, 8);
+    final long = List.filled(30, 'Rozdział 3, zadania z funkcji.').join(' ');
+    SchoolEvent test(String id) => SchoolEvent(
+      id: id,
+      title: long,
+      subject: 'Math',
+      date: DateTime(day.year, day.month, day.day),
+      kind: EventKind.exam,
+      typeLabel: 'Sprawdzian',
+      lessonNumber: 1,
+    );
+    final controller = AppController(
+      _Repository(
+        _snapshot(lessons: [_lesson('m1', 'Math', start, number: 1)])
+            .copyWith(events: [test('t1'), test('t2')]),
+      ),
+      updatesEnabled: false,
+    );
+    await controller.bootstrap();
+    controller.selectTab(1);
+    await tester.pumpWidget(SyberiaApp(controller: controller));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const ValueKey('timeline-lesson-m1')));
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    final sheet = find.byKey(const ValueKey('lesson-details-sheet'));
+    expect(tester.getSize(sheet).width, 360);
+    await tester.scrollUntilVisible(
+      find.byKey(const ValueKey('lesson-test-t2')),
+      200,
+      // The sheet's own; each SelectableText has one too.
+      scrollable: find
+          .descendant(of: sheet, matching: find.byType(Scrollable))
+          .first,
+    );
+    expect(tester.takeException(), isNull);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
   test('the lesson of a test survives the cache', () {
     final snapshot = _snapshot().copyWith(
       events: [

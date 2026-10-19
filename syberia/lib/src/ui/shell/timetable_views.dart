@@ -651,23 +651,29 @@ class _TimetableRow extends StatelessWidget {
 void _showLessonDetails(BuildContext context, _LessonBlock block) {
   final lesson = block.lesson;
   final tests = _DayTests.of(context, block);
-  final screenWidth = MediaQuery.sizeOf(context).width;
+  final screen = MediaQuery.sizeOf(context);
   final details = [
     if (block.count > 1) _lessonCount(context, block.count),
     lesson.teacher,
     if (lesson.room.isNotEmpty) 's. ${lesson.room}',
   ].where((value) => value.isNotEmpty).join(' · ');
+  // Scrolls when the tests' descriptions are long, like the homework sheet.
   showAppSheet<void>(
     context: context,
     compact: true,
     showDragHandle: true,
-    constraints: BoxConstraints.tightFor(width: screenWidth),
+    isScrollControlled: true,
+    constraints: BoxConstraints(
+      minWidth: screen.width,
+      maxWidth: screen.width,
+      maxHeight: screen.height * 0.85,
+    ),
     builder: (context) => SafeArea(
-      child: SizedBox(
+      child: SingleChildScrollView(
         key: const ValueKey('lesson-details-sheet'),
-        width: double.infinity,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 4, 20, 24),
+        padding: const EdgeInsets.fromLTRB(20, 4, 20, 24),
+        child: SizedBox(
+          width: double.infinity,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
