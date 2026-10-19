@@ -99,6 +99,51 @@ void main() {
     },
   );
 
+  testWidgets('an attachment that fails to open says so inside the sheet', (
+    tester,
+  ) async {
+    final controller = await load(_ReadClient(), _data());
+    controller.selectTab(5);
+    await tester.pumpWidget(SyberiaApp(controller: controller));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Subject a'));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('attachment-open-failed')), findsNothing);
+    await tester.ensureVisible(find.text('plan.pdf'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('plan.pdf'));
+    await tester.pumpAndSettle();
+    expect(
+      find.byKey(const ValueKey('attachment-open-failed')),
+      findsOneWidget,
+    );
+    expect(find.text('The attachment could not be opened.'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+    await tester.pumpWidget(const SizedBox.shrink());
+    controller.dispose();
+  });
+
+  testWidgets('swiping one message read that fails shows why', (tester) async {
+    final client = _ReadClient()..failures.add('b');
+    final controller = await load(client, _data());
+    controller.selectTab(5);
+    await tester.pumpWidget(SyberiaApp(controller: controller));
+    await tester.pumpAndSettle();
+    await tester.drag(
+      find.byKey(const ValueKey('message-b')),
+      const Offset(500, 0),
+    );
+    await tester.pumpAndSettle();
+    expect(client.opened, ['b']);
+    expect(find.text('The message could not be loaded.'), findsOneWidget);
+    expect(
+      find.text('Some messages could not be marked as read. Please try again.'),
+      findsNothing,
+    );
+    await tester.pumpWidget(const SizedBox.shrink());
+    controller.dispose();
+  });
+
   testWidgets('Today uses wall clock progress with Reduce Motion enabled', (
     tester,
   ) async {
@@ -221,6 +266,14 @@ AppSnapshot _data() => AppSnapshot(
 class _ReadClient extends LibrusClient {
   final opened = <String>[];
   final failures = <String>{};
+
+  @override
+  Future<Uri> fetchMessageAttachmentUrl({
+    required String messageId,
+    required String attachmentId,
+  }) async =>
+      throw const LibrusException(LibrusErrorCode.attachmentFetchFailed);
+
   @override
   Future<SchoolMessageContent> fetchMessageContent(
     SchoolMessage message,
@@ -235,7 +288,7 @@ class _ReadClient extends LibrusClient {
       subject: message.subject,
       body: 'Content',
       receivedAt: message.receivedAt,
-      attachments: const [],
+      attachments: [MessageAttachment(id: 'f-${message.id}', name: 'plan.pdf')],
     );
   }
 }

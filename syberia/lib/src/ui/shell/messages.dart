@@ -264,11 +264,15 @@ class _MessageTile extends StatelessWidget {
 
   Future<bool> _markRead(BuildContext context) async {
     final messenger = ScaffoldMessenger.of(context);
-    final failed = context.tr('markAllReadFailed');
     try {
       await controller.markMessageRead(item);
-    } on Object {
-      messenger.showSnackBar(SnackBar(content: Text(failed)));
+    } on Object catch (error) {
+      // A message that failed stays unread, so its row is still here.
+      if (context.mounted) {
+        messenger.showSnackBar(
+          SnackBar(content: Text(context.trError(AppError.from(error)))),
+        );
+      }
     }
     // The row stays; it just turns read.
     return false;
@@ -501,6 +505,10 @@ class _MessageDetailSheetState extends State<_MessageDetailSheet> {
   late Future<SchoolMessageContent> content;
   String? openingAttachment;
 
+  /// Whether the last attachment could not be opened. Shown in the sheet:
+  /// a SnackBar would appear behind it.
+  bool attachmentFailed = false;
+
   @override
   void initState() {
     super.initState();
@@ -514,7 +522,10 @@ class _MessageDetailSheetState extends State<_MessageDetailSheet> {
   }
 
   Future<void> openAttachment(MessageAttachment attachment) async {
-    setState(() => openingAttachment = attachment.id);
+    setState(() {
+      openingAttachment = attachment.id;
+      attachmentFailed = false;
+    });
     try {
       final url = await widget.controller.fetchMessageAttachmentUrl(
         messageId: widget.message.id,
@@ -523,10 +534,7 @@ class _MessageDetailSheetState extends State<_MessageDetailSheet> {
       final opened = await launchUrl(url, mode: LaunchMode.externalApplication);
       if (!opened) throw StateError('Unable to open attachment URL');
     } on Object {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(context.tr('attachmentOpenFailed'))),
-      );
+      if (mounted) setState(() => attachmentFailed = true);
     } finally {
       if (mounted) setState(() => openingAttachment = null);
     }
@@ -564,13 +572,11 @@ class _MessageDetailSheetState extends State<_MessageDetailSheet> {
               if (snapshot.connectionState != ConnectionState.done) {
                 return const Center(child: CircularProgressIndicator());
               }
-              if (snapshot.hasError || snapshot.data == null) {
+              if (snapshot.hasError) {
                 return Padding(
                   padding: const EdgeInsets.all(20),
                   child: _RecipientError(
-                    message: snapshot.error == null
-                        ? context.tr('messageLoadFailed')
-                        : context.trError(AppError.from(snapshot.error!)),
+                    message: context.trError(AppError.from(snapshot.error!)),
                     onRetry: retry,
                   ),
                 );
@@ -655,6 +661,17 @@ class _MessageDetailSheetState extends State<_MessageDetailSheet> {
                         ),
                       ),
                     ),
+                    if (attachmentFailed)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4),
+                        child: Text(
+                          context.tr('attachmentOpenFailed'),
+                          key: const ValueKey('attachment-open-failed'),
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.error,
+                          ),
+                        ),
+                      ),
                   ],
                 ],
               );

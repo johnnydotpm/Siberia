@@ -78,11 +78,7 @@ class _ComposeMessageSheetState extends State<_ComposeMessageSheet> {
       );
     } on Object catch (error) {
       if (!mounted) return;
-      setState(() {
-        validationError = error.toString().trim().isEmpty
-            ? context.tr('messageSendFailed')
-            : error.toString();
-      });
+      setState(() => validationError = context.trError(AppError.from(error)));
     } finally {
       if (mounted) setState(() => sending = false);
     }
@@ -140,7 +136,7 @@ class _ComposeMessageSheetState extends State<_ComposeMessageSheet> {
                           onRetry: retryRecipients,
                         );
                       }
-                      final items = snapshot.data ?? const [];
+                      final items = snapshot.data!;
                       if (items.isEmpty) {
                         return _RecipientError(
                           message: context.tr('noRecipients'),
