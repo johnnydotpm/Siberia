@@ -99,7 +99,6 @@ class _AttendanceChart extends StatelessWidget {
     final entries = AttendanceKind.values
         .map(
           (kind) => (
-            kind: kind,
             count: counts[kind] ?? 0,
             color: _attendanceColor(kind),
             label: context.tr(_attendanceLabel(kind)),
@@ -159,8 +158,7 @@ class _AttendanceGraphic extends StatelessWidget {
     required this.style,
     required this.percentage,
   });
-  final List<({AttendanceKind kind, int count, Color color, String label})>
-  entries;
+  final List<({int count, Color color, String label})> entries;
   final AttendanceChartStyle style;
   final double percentage;
 
@@ -319,16 +317,17 @@ class _AttendanceCalendar extends StatelessWidget {
     final leading = first.weekday - 1;
     final cells = leading + count;
     final locale = Localizations.localeOf(context).toLanguageTag();
+    // One pass over the records: a year holds a thousand or more, and this
+    // runs on every tap of a day.
+    final byDay = <int, List<AttendanceRecord>>{};
+    for (final item in records) {
+      if (item.date.year == month.year && item.date.month == month.month) {
+        (byDay[item.date.day] ??= []).add(item);
+      }
+    }
     final days = {
-      for (var day = 1; day <= count; day++)
-        day: _attendanceDay(
-          records
-              .where(
-                (item) =>
-                    _sameDay(item.date, DateTime(month.year, month.month, day)),
-              )
-              .toList(),
-        ),
+      for (final MapEntry(key: day, value: dayRecords) in byDay.entries)
+        day: _attendanceDay(dayRecords),
     };
     final shown = days.values.nonNulls.map((day) => day.label).toSet();
     return Card(
@@ -506,9 +505,9 @@ final _attendanceDayKinds = <_AttendanceDay>[
 /// "partly absent" when the student missed only some of the lessons.
 _AttendanceDay? _attendanceDay(List<AttendanceRecord> records) {
   if (records.isEmpty) return null;
-  final hasPresence = records.any(
-    (record) => record.kind == AttendanceKind.present,
-  );
+  // Attended the same way the rate above the calendar counts it, so late
+  // lessons are attendance too.
+  final hasPresence = records.any((record) => record.kind.countsAsPresence);
   final hasAbsence = records.any(
     (record) =>
         record.kind == AttendanceKind.absent ||

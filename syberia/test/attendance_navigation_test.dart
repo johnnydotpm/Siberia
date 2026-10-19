@@ -110,6 +110,35 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
   });
 
+  testWidgets('a day with absences and a late lesson is partly absent', (
+    tester,
+  ) async {
+    final now = DateTime.now();
+    final day = DateTime(now.year, now.month, now.day);
+    final controller = await _pump(
+      tester,
+      attendance: [
+        _record('a1', day, AttendanceKind.absent),
+        _record('a2', day, AttendanceKind.absent),
+        // The last lesson was attended, only late.
+        _record('a3', day, AttendanceKind.late),
+      ],
+    );
+    controller.selectTab(6);
+    await tester.pumpAndSettle();
+    final legend = find.byKey(const ValueKey('attendance-calendar-legend'));
+    expect(
+      find.descendant(of: legend, matching: find.text('Partly absent')),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(of: legend, matching: find.text('Absent')),
+      findsNothing,
+    );
+    expect(tester.takeException(), isNull);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
   testWidgets(
     'flat chart has visible proportional segments in AMOLED and an empty term stays valid',
     (tester) async {
