@@ -1,0 +1,535 @@
+part of '../app_shell.dart';
+
+enum _AttendancePeriod { first, second, year }
+
+class _Attendance extends StatefulWidget {
+  const _Attendance(this.controller);
+  final AppController controller;
+  @override
+  State<_Attendance> createState() => _AttendanceState();
+}
+
+class _AttendanceState extends State<_Attendance> {
+  _AttendancePeriod period = _AttendancePeriod.year;
+  DateTime month = DateTime(DateTime.now().year, DateTime.now().month);
+  DateTime? selectedDay;
+
+  @override
+  Widget build(BuildContext context) {
+    final records = widget.controller.snapshot.attendance
+        .where(
+          (item) => switch (period) {
+            _AttendancePeriod.first => item.semester == 1,
+            _AttendancePeriod.second => item.semester == 2,
+            _AttendancePeriod.year => true,
+          },
+        )
+        .toList();
+    final counts = {
+      for (final kind in AttendanceKind.values)
+        kind: records.where((item) => item.kind == kind).length,
+    };
+    final selected = selectedDay == null
+        ? const <AttendanceRecord>[]
+        : records.where((item) => _sameDay(item.date, selectedDay!)).toList();
+    return _PageList(
+      padding: const EdgeInsets.all(12),
+      children: [
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: SegmentedButton<_AttendancePeriod>(
+            selected: {period},
+            onSelectionChanged: (value) => setState(() => period = value.first),
+            segments: [
+              ButtonSegment(
+                value: _AttendancePeriod.first,
+                label: Text(context.tr('period1')),
+              ),
+              ButtonSegment(
+                value: _AttendancePeriod.second,
+                label: Text(context.tr('period2')),
+              ),
+              ButtonSegment(
+                value: _AttendancePeriod.year,
+                label: Text(context.tr('schoolYear')),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 16),
+        _AttendanceChart(
+          counts: counts,
+          style: widget.controller.attendanceChartStyle,
+        ),
+        const SizedBox(height: 16),
+        _AttendanceCalendar(
+          records: records,
+          month: month,
+          selectedDay: selectedDay,
+          onMonthChanged: (value) => setState(() => month = value),
+          onDaySelected: (value) => setState(() => selectedDay = value),
+        ),
+        if (selectedDay != null) ...[
+          const SizedBox(height: 18),
+          _Heading('${context.tr('selectedDay')}: ${_date(selectedDay!)}'),
+          const SizedBox(height: 8),
+          if (selected.isEmpty)
+            _Empty(context.tr('noData'))
+          else
+            ...selected.map(_AttendanceTile.new),
+        ],
+        const SizedBox(height: 18),
+        ...records.map(_AttendanceTile.new),
+      ],
+    );
+  }
+}
+
+class _AttendanceChart extends StatelessWidget {
+  const _AttendanceChart({required this.counts, required this.style});
+  final Map<AttendanceKind, int> counts;
+  final AttendanceChartStyle style;
+
+  @override
+  Widget build(BuildContext context) {
+    final total = counts.values.fold(0, (sum, value) => sum + value);
+    final present = counts.entries
+        .where((entry) => entry.key.countsAsPresence)
+        .fold(0, (sum, entry) => sum + entry.value);
+    final entries = AttendanceKind.values
+        .map(
+          (kind) => (
+            kind: kind,
+            count: counts[kind] ?? 0,
+            color: _attendanceColor(kind),
+            label: context.tr(_attendanceLabel(kind)),
+          ),
+        )
+        .toList(growable: false);
+    final visibleEntries = entries
+        .where((entry) => entry.count > 0)
+        .toList(growable: false);
+    final percentage = total == 0 ? 0.0 : present / total * 100;
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(18),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              context.tr('attendanceChart'),
+              style: Theme.of(context).textTheme.titleMedium
+                  ?.copyWith(fontWeight: FontWeight.w800),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              '${context.tr('attendanceRate')}: ${_percent(context, percentage)}',
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+            const SizedBox(height: 16),
+            _AttendanceGraphic(
+              entries: visibleEntries,
+              style: style,
+              percentage: percentage,
+            ),
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 18,
+              runSpacing: 10,
+              children: entries
+                  .map(
+                    (entry) => _Legend(
+                      color: entry.color,
+                      label: entry.label,
+                      value: entry.count,
+                    ),
+                  )
+                  .toList(growable: false),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _AttendanceGraphic extends StatelessWidget {
+  const _AttendanceGraphic({
+    required this.entries,
+    required this.style,
+    required this.percentage,
+  });
+  final List<({AttendanceKind kind, int count, Color color, String label})>
+  entries;
+  final AttendanceChartStyle style;
+  final double percentage;
+
+  @override
+  Widget build(BuildContext context) {
+    if (style == AttendanceChartStyle.bar) {
+      return SizedBox(
+        key: const ValueKey('attendance-flat-chart'),
+        width: double.infinity,
+        height: 24,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: entries.isEmpty
+              ? ColoredBox(
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                )
+              : Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: entries
+                      .map(
+                        (entry) => Expanded(
+                          flex: entry.count,
+                          child: ColoredBox(color: entry.color),
+                        ),
+                      )
+                      .toList(growable: false),
+                ),
+        ),
+      );
+    }
+    final ring = style == AttendanceChartStyle.ring;
+    return Center(
+      child: SizedBox.square(
+        dimension: 178,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            CustomPaint(
+              size: const Size.square(178),
+              painter: _AttendancePiePainter(
+                segments: entries
+                    .map((entry) => (count: entry.count, color: entry.color))
+                    .toList(growable: false),
+                ring: ring,
+                emptyColor: Theme.of(context)
+                    .colorScheme
+                    .surfaceContainerHighest,
+              ),
+            ),
+            if (ring)
+              Text(
+                _percent(context, percentage),
+                style: Theme.of(context).textTheme.titleLarge
+                    ?.copyWith(fontWeight: FontWeight.w900),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _AttendancePiePainter extends CustomPainter {
+  const _AttendancePiePainter({
+    required this.segments,
+    required this.ring,
+    required this.emptyColor,
+  });
+  final List<({int count, Color color})> segments;
+  final bool ring;
+  final Color emptyColor;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final total = segments.fold<int>(0, (sum, item) => sum + item.count);
+    final strokeWidth = size.shortestSide * 0.18;
+    final inset = ring ? strokeWidth / 2 : 0.0;
+    final rect = Offset.zero & size;
+    final arcRect = rect.deflate(inset);
+    if (total == 0) {
+      canvas.drawArc(
+        arcRect,
+        -math.pi / 2,
+        math.pi * 2,
+        !ring,
+        Paint()
+          ..color = emptyColor
+          ..style = ring ? PaintingStyle.stroke : PaintingStyle.fill
+          ..strokeWidth = strokeWidth,
+      );
+      return;
+    }
+    var start = -math.pi / 2;
+    for (final segment in segments) {
+      final sweep = math.pi * 2 * segment.count / total;
+      canvas.drawArc(
+        arcRect,
+        start,
+        sweep,
+        !ring,
+        Paint()
+          ..color = segment.color
+          ..style = ring ? PaintingStyle.stroke : PaintingStyle.fill
+          ..strokeWidth = strokeWidth
+          ..strokeCap = StrokeCap.butt,
+      );
+      start += sweep;
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _AttendancePiePainter oldDelegate) =>
+      oldDelegate.segments != segments ||
+      oldDelegate.ring != ring ||
+      oldDelegate.emptyColor != emptyColor;
+}
+
+class _Legend extends StatelessWidget {
+  const _Legend({required this.color, required this.label, this.value});
+  final Color color;
+  final String label;
+  final int? value;
+  @override
+  Widget build(BuildContext context) => Row(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Container(
+        width: 10,
+        height: 10,
+        decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+      ),
+      const SizedBox(width: 7),
+      Text(value == null ? label : '$label: $value'),
+    ],
+  );
+}
+
+class _AttendanceCalendar extends StatelessWidget {
+  const _AttendanceCalendar({
+    required this.records,
+    required this.month,
+    required this.selectedDay,
+    required this.onMonthChanged,
+    required this.onDaySelected,
+  });
+  final List<AttendanceRecord> records;
+  final DateTime month;
+  final DateTime? selectedDay;
+  final ValueChanged<DateTime> onMonthChanged;
+  final ValueChanged<DateTime> onDaySelected;
+
+  @override
+  Widget build(BuildContext context) {
+    final first = DateTime(month.year, month.month);
+    final count = DateTime(month.year, month.month + 1, 0).day;
+    final leading = first.weekday - 1;
+    final cells = leading + count;
+    final locale = Localizations.localeOf(context).toLanguageTag();
+    final days = {
+      for (var day = 1; day <= count; day++)
+        day: _attendanceDay(
+          records
+              .where(
+                (item) =>
+                    _sameDay(item.date, DateTime(month.year, month.month, day)),
+              )
+              .toList(),
+        ),
+    };
+    final shown = days.values.nonNulls.map((day) => day.label).toSet();
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                IconButton(
+                  onPressed: () =>
+                      onMonthChanged(DateTime(month.year, month.month - 1)),
+                  icon: const Icon(Icons.chevron_left_rounded),
+                ),
+                Expanded(
+                  child: Text(
+                    _capitalize(DateFormat.yMMMM(locale).format(month)),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontWeight: FontWeight.w800),
+                  ),
+                ),
+                IconButton(
+                  onPressed: () =>
+                      onMonthChanged(DateTime(month.year, month.month + 1)),
+                  icon: const Icon(Icons.chevron_right_rounded),
+                ),
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 6),
+              child: Row(
+                children: [
+                  // 1 January 2024 was a Monday.
+                  for (var weekday = 0; weekday < 7; weekday++)
+                    Expanded(
+                      child: Text(
+                        _shortWeekday(context, DateTime(2024, 1, 1 + weekday)),
+                        textAlign: TextAlign.center,
+                        maxLines: 1,
+                        style: const TextStyle(fontWeight: FontWeight.w700),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+            GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 7,
+                mainAxisSpacing: 4,
+                crossAxisSpacing: 4,
+              ),
+              itemCount: ((cells + 6) ~/ 7) * 7,
+              itemBuilder: (context, index) {
+                final dayNumber = index - leading + 1;
+                if (dayNumber < 1 || dayNumber > count) {
+                  return const SizedBox.shrink();
+                }
+                final date = DateTime(month.year, month.month, dayNumber);
+                final color = days[dayNumber]?.color;
+                final active =
+                    selectedDay != null && _sameDay(selectedDay!, date);
+                return InkWell(
+                  borderRadius: BorderRadius.circular(10),
+                  onTap: () => onDaySelected(date),
+                  child: Container(
+                    key: ValueKey('attendance-day-${date.toIso8601String()}'),
+                    decoration: BoxDecoration(
+                      color: color,
+                      borderRadius: BorderRadius.circular(10),
+                      border: active
+                          ? Border.all(
+                              color: Theme.of(context).colorScheme.primary,
+                              width: 2,
+                            )
+                          : null,
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      '$dayNumber',
+                      style: TextStyle(
+                        fontWeight: color == null
+                            ? FontWeight.w400
+                            : FontWeight.w800,
+                        color: color == null
+                            ? null
+                            : ThemeData.estimateBrightnessForColor(color) ==
+                                  Brightness.light
+                            ? const Color(0xFF101416)
+                            : Colors.white,
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+            if (shown.isNotEmpty)
+              Padding(
+                key: const ValueKey('attendance-calendar-legend'),
+                padding: const EdgeInsets.fromLTRB(6, 12, 6, 4),
+                child: Wrap(
+                  spacing: 16,
+                  runSpacing: 8,
+                  children: [
+                    for (final day in _attendanceDayKinds)
+                      if (shown.contains(day.label))
+                        _Legend(color: day.color, label: context.tr(day.label)),
+                  ],
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _AttendanceTile extends StatelessWidget {
+  const _AttendanceTile(this.item);
+  final AttendanceRecord item;
+  @override
+  Widget build(BuildContext context) => Card(
+    child: ListTile(
+      leading: CircleAvatar(
+        backgroundColor: _attendanceColor(item.kind).withAlpha(55),
+        child: Text(item.symbol),
+      ),
+      title: Text(item.type),
+      subtitle: Text(
+        [
+          if (item.subject.isNotEmpty) item.subject,
+          if (item.lessonNumber > 0)
+            context.trArgs('lessonNumber', {'number': '${item.lessonNumber}'}),
+        ].join(' · '),
+      ),
+      trailing: Text(_date(item.date)),
+    ),
+  );
+}
+
+String _attendanceLabel(AttendanceKind kind) => switch (kind) {
+  AttendanceKind.present => 'present',
+  AttendanceKind.absent => 'absent',
+  AttendanceKind.absentExcused => 'absentExcused',
+  AttendanceKind.late => 'late',
+  AttendanceKind.lateExcused => 'lateExcused',
+  AttendanceKind.released => 'released',
+  AttendanceKind.other => 'otherAttendance',
+};
+
+Color _attendanceColor(AttendanceKind kind) => switch (kind) {
+  AttendanceKind.present => const Color(0xFF43C66C),
+  AttendanceKind.absent => const Color(0xFFF45B69),
+  AttendanceKind.absentExcused => const Color(0xFFAB7BE8),
+  AttendanceKind.late => const Color(0xFFFFD166),
+  AttendanceKind.lateExcused => const Color(0xFF2DD4BF),
+  AttendanceKind.released => const Color(0xFF5BA9F4),
+  AttendanceKind.other => const Color(0xFFA4ACBA),
+};
+
+typedef _AttendanceDay = ({Color color, String label});
+
+const _partlyAbsent = (color: Color(0xFFF28C28), label: 'partlyAbsent');
+
+/// Everything a calendar day can show, in the order of its legend.
+final _attendanceDayKinds = <_AttendanceDay>[
+  for (final kind in AttendanceKind.values) ...[
+    (color: _attendanceColor(kind), label: _attendanceLabel(kind)),
+    if (kind == AttendanceKind.absent) _partlyAbsent,
+  ],
+];
+
+/// The colour of a calendar day: the most serious record of the day, or
+/// "partly absent" when the student missed only some of the lessons.
+_AttendanceDay? _attendanceDay(List<AttendanceRecord> records) {
+  if (records.isEmpty) return null;
+  final hasPresence = records.any(
+    (record) => record.kind == AttendanceKind.present,
+  );
+  final hasAbsence = records.any(
+    (record) =>
+        record.kind == AttendanceKind.absent ||
+        record.kind == AttendanceKind.absentExcused,
+  );
+  if (hasPresence && hasAbsence) return _partlyAbsent;
+  final kind = _dominantAttendanceKind(records);
+  return (color: _attendanceColor(kind), label: _attendanceLabel(kind));
+}
+
+AttendanceKind _dominantAttendanceKind(List<AttendanceRecord> records) {
+  const priority = [
+    AttendanceKind.absent,
+    AttendanceKind.absentExcused,
+    AttendanceKind.late,
+    AttendanceKind.lateExcused,
+    AttendanceKind.released,
+    AttendanceKind.other,
+    AttendanceKind.present,
+  ];
+  return priority.firstWhere(
+    (kind) => records.any((record) => record.kind == kind),
+  );
+}
