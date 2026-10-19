@@ -206,16 +206,20 @@ class AppController extends ChangeNotifier {
     return await notifications?.requestPermission() ?? true;
   }
 
-  Future<bool> setNotificationsEnabled(bool enabled) async {
+  // The notification setters return what the system answered when they had
+  // to ask for the permission: false when it refused, true when it allowed
+  // it or nothing needs it. null means nothing was asked, as when turning
+  // something off.
+  Future<bool?> setNotificationsEnabled(bool enabled) async {
     _notificationSettings = _notificationSettings.copyWith(enabled: enabled);
     notifyListeners();
     await notifications?.saveSettings(_notificationSettings);
     await configureBackground();
     await _updateReminders();
-    return enabled ? requestNotificationPermissionIfEnabled() : true;
+    return enabled ? requestNotificationPermissionIfEnabled() : null;
   }
 
-  Future<bool> setNotificationCategoryEnabled(
+  Future<bool?> setNotificationCategoryEnabled(
     SchoolNotificationCategory category,
     bool enabled,
   ) async {
@@ -226,13 +230,13 @@ class AppController extends ChangeNotifier {
     notifyListeners();
     await notifications?.saveSettings(_notificationSettings);
     await configureBackground();
-    return enabled ? requestNotificationPermissionIfEnabled() : true;
+    return enabled ? requestNotificationPermissionIfEnabled() : null;
   }
 
   /// Changes when tests are reminded of and schedules the reminders again
   /// right away.
-  Future<bool> setTestReminders(TestReminderSettings reminders) async {
-    if (_notificationSettings.reminders == reminders) return true;
+  Future<bool?> setTestReminders(TestReminderSettings reminders) async {
+    if (_notificationSettings.reminders == reminders) return null;
     _notificationSettings = _notificationSettings.copyWith(
       reminders: reminders,
     );
@@ -240,7 +244,7 @@ class AppController extends ChangeNotifier {
     await notifications?.saveSettings(_notificationSettings);
     await configureBackground();
     await _updateReminders();
-    return reminders.any ? requestNotificationPermissionIfEnabled() : true;
+    return reminders.any ? requestNotificationPermissionIfEnabled() : null;
   }
 
   Future<void> _updateReminders() async {

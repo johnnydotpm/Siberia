@@ -199,6 +199,12 @@ void main() {
       findsOneWidget,
     );
 
+    // Turning something else off asks nothing; the others still need the
+    // permission, so the notice stays.
+    await tester.tap(find.byKey(const ValueKey('notification-messages')));
+    await tester.pumpAndSettle();
+    expect(notice, findsOneWidget);
+
     // Notifications off: nothing to ask for, so the notice goes.
     await tester.tap(find.byKey(const ValueKey('notifications-master')));
     await tester.pumpAndSettle();

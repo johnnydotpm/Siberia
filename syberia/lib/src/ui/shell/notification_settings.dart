@@ -20,8 +20,15 @@ Future<void> _showNotificationSettings(
   // alone would look as if notifications were on.
   final permissionDenied = ValueNotifier(false);
   var open = true;
-  void denied(bool granted) {
-    if (open) permissionDenied.value = !granted;
+  // Changes only on the system's answer. Turning something off asks
+  // nothing, so the notice stays while notifications still need it.
+  void denied(bool? granted) {
+    if (!open) return;
+    if (granted != null) {
+      permissionDenied.value = !granted;
+    } else if (!controller.notificationSettings.needsBackgroundCheck) {
+      permissionDenied.value = false;
+    }
   }
 
   return showAppSheet<void>(
@@ -139,7 +146,7 @@ class _PermissionDeniedNotice extends StatelessWidget {
 class _ReminderSettings extends StatelessWidget {
   const _ReminderSettings(this.controller, {required this.onPermission});
   final AppController controller;
-  final void Function(bool granted) onPermission;
+  final void Function(bool? granted) onPermission;
 
   @override
   Widget build(BuildContext context) {

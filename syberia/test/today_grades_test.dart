@@ -322,6 +322,25 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
   });
 
+  testWidgets('while the Today blocks fit, a drag on them closes the sheet', (
+    tester,
+  ) async {
+    await _pump(tester, _snapshot(), tab: 9);
+    final todaySettings = find.byKey(const ValueKey('settings-today-screen'));
+    await tester.scrollUntilVisible(todaySettings, 200);
+    await tester.tap(todaySettings);
+    await tester.pumpAndSettle();
+    final sheet = find.byKey(const ValueKey('today-layout-sheet'));
+    expect(sheet, findsOneWidget);
+    await tester.drag(
+      find.byKey(const ValueKey('today-block-homework')),
+      const Offset(0, 500),
+    );
+    await tester.pumpAndSettle();
+    expect(sheet, findsNothing);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
   testWidgets('the Today layout sheet scrolls when it does not fit', (
     tester,
   ) async {

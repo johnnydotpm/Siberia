@@ -608,6 +608,9 @@ Future<void> _showTodayLayoutSheet(
               Flexible(
                 child: ReorderableListView(
                   shrinkWrap: true,
+                  // Not always scrollable: while the rows fit, a drag on
+                  // them still moves the sheet.
+                  primary: false,
                   buildDefaultDragHandles: false,
                   onReorderItem: (from, to) {
                     final blocks = [...layout.blocks];
