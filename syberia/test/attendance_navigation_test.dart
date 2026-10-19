@@ -110,6 +110,30 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
   });
 
+  testWidgets('the legends fit a narrow phone with large text', (tester) async {
+    final now = DateTime.now();
+    final day = DateTime(now.year, now.month, now.day);
+    final controller = await _pump(
+      tester,
+      locale: const Locale('pl'),
+      attendance: [
+        for (final (index, kind) in AttendanceKind.values.indexed)
+          _record('k$index', day, kind),
+      ],
+    );
+    tester.view.physicalSize = const Size(360, 2400);
+    tester.platformDispatcher.textScaleFactorTestValue = 1.3;
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+    controller.selectTab(6);
+    await tester.pumpAndSettle();
+    expect(
+      find.byKey(const ValueKey('attendance-calendar-legend')),
+      findsOneWidget,
+    );
+    expect(tester.takeException(), isNull);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
   testWidgets('a day with absences and a late lesson is partly absent', (
     tester,
   ) async {

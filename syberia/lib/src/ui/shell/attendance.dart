@@ -291,7 +291,9 @@ class _Legend extends StatelessWidget {
         decoration: BoxDecoration(color: color, shape: BoxShape.circle),
       ),
       const SizedBox(width: 7),
-      Text(value == null ? label : '$label: $value'),
+      // Wraps instead of overflowing when a long label meets a narrow
+      // screen or large text.
+      Flexible(child: Text(value == null ? label : '$label: $value')),
     ],
   );
 }
