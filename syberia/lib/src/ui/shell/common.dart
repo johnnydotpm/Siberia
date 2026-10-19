@@ -15,8 +15,7 @@ double _systemButtonsRoom(BuildContext context) {
   return inset > 34 ? inset : 0;
 }
 
-/// Short subject names the student chose, for the lesson tiles below.
-/// Short subject names and subject colours, for the lesson views below.
+/// Short subject names and subject colours, for the pages of the shell.
 class _SubjectScope extends InheritedWidget {
   const _SubjectScope({
     required this.names,

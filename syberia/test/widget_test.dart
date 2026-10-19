@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -50,6 +52,46 @@ void main() {
       expect(find.text('No data'), findsNothing);
     },
   );
+
+  testWidgets('logging out waits for a running sync', (tester) async {
+    final data = AppSnapshot(
+      profile: const StudentProfile(
+        id: '1',
+        name: 'Test',
+        school: 'School',
+        provider: 'Librus Synergia',
+      ),
+      lessons: const [],
+      grades: const [],
+      events: const [],
+      messages: const [],
+      attendance: const [],
+      announcements: const [],
+      notices: const [],
+      lastSync: DateTime.now(),
+    );
+    final repository = _SlowSyncRepository(data);
+    final controller = AppController(repository, updatesEnabled: false);
+    await controller.bootstrap();
+    await tester.pumpWidget(SyberiaApp(controller: controller));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byIcon(Icons.person_rounded).first);
+    await tester.pumpAndSettle();
+    FilledButton logout() =>
+        tester.widget(find.byKey(const ValueKey('account-logout')));
+    expect(logout().onPressed, isNotNull);
+
+    final sync = controller.sync();
+    await tester.pump();
+    expect(controller.syncing, isTrue);
+    expect(logout().onPressed, isNull);
+
+    repository.pending.complete(data);
+    await sync;
+    await tester.pumpAndSettle();
+    expect(logout().onPressed, isNotNull);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
 
   testWidgets('account sheet lets the user choose a linked Synergia login', (
     tester,
@@ -863,6 +905,15 @@ class _TestRepository extends AppRepository {
   // The real one would reach Librus; the Today look-ahead asks for weeks.
   @override
   Future<List<Lesson>> fetchTimetableWeek(DateTime day) async => const [];
+}
+
+class _SlowSyncRepository extends _TestRepository {
+  _SlowSyncRepository(super.data);
+
+  final pending = Completer<AppSnapshot>();
+
+  @override
+  Future<AppSnapshot> sync(AppSnapshot current) => pending.future;
 }
 
 class _WeekAheadRepository extends _TestRepository {

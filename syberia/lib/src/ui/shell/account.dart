@@ -59,6 +59,8 @@ class _LoginRequired extends StatelessWidget {
   );
 }
 
+/// The signed-in account: its linked Synergia logins and logging out. It
+/// only opens for a Librus Synergia account, from inside the shell.
 Future<void> _showAccount(BuildContext context, AppController controller) =>
     showAppSheet<void>(
       context: context,
@@ -66,25 +68,27 @@ Future<void> _showAccount(BuildContext context, AppController controller) =>
       isScrollControlled: true,
       useSafeArea: true,
       showDragHandle: true,
-      builder: (sheetContext) => Padding(
-        padding: EdgeInsets.fromLTRB(
-          22,
-          0,
-          22,
-          24 + MediaQuery.viewPaddingOf(sheetContext).bottom,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              controller.snapshot.profile.name,
-              style: Theme.of(context).textTheme.headlineSmall
-                  ?.copyWith(fontWeight: FontWeight.bold),
-            ),
-            Text(controller.snapshot.profile.school),
-            const SizedBox(height: 20),
-            if (controller.snapshot.profile.provider == 'Librus Synergia')
+      // Follows the sync, so neither button can act in the middle of one.
+      builder: (sheetContext) => ListenableBuilder(
+        listenable: controller,
+        builder: (sheetContext, _) => Padding(
+          padding: EdgeInsets.fromLTRB(
+            22,
+            0,
+            22,
+            24 + MediaQuery.viewPaddingOf(sheetContext).bottom,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                controller.snapshot.profile.name,
+                style: Theme.of(context).textTheme.headlineSmall
+                    ?.copyWith(fontWeight: FontWeight.bold),
+              ),
+              Text(controller.snapshot.profile.school),
+              const SizedBox(height: 20),
               OutlinedButton.icon(
                 onPressed: controller.syncing
                     ? null
@@ -101,35 +105,21 @@ Future<void> _showAccount(BuildContext context, AppController controller) =>
                 icon: const Icon(Icons.switch_account_outlined),
                 label: Text(context.tr('synergiaAccounts')),
               ),
-            FilledButton.icon(
-              onPressed: () {
-                Navigator.pop(sheetContext);
-                if (controller.snapshot.profile.provider == 'Librus Synergia') {
-                  controller.logout();
-                } else {
-                  showModalBottomSheet<void>(
-                    context: context,
-                    isScrollControlled: true,
-                    useSafeArea: true,
-                    showDragHandle: true,
-                    builder: (_) => _Login(controller),
-                  );
-                }
-              },
-              icon: Icon(
-                controller.snapshot.profile.provider == 'Librus Synergia'
-                    ? Icons.logout_rounded
-                    : Icons.login_rounded,
+              // A sync that runs on after logging out would bring back an
+              // error, or the old account's data.
+              FilledButton.icon(
+                key: const ValueKey('account-logout'),
+                onPressed: controller.syncing
+                    ? null
+                    : () {
+                        Navigator.pop(sheetContext);
+                        controller.logout();
+                      },
+                icon: const Icon(Icons.logout_rounded),
+                label: Text(context.tr('logout')),
               ),
-              label: Text(
-                context.tr(
-                  controller.snapshot.profile.provider == 'Librus Synergia'
-                      ? 'logout'
-                      : 'connect',
-                ),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -246,9 +236,8 @@ class _LoginState extends State<_Login> {
       24,
       0,
       24,
-      24 +
-          MediaQuery.viewInsetsOf(context).bottom +
-          _systemButtonsRoom(context),
+      // The list below already keeps clear of the system buttons.
+      24 + MediaQuery.viewInsetsOf(context).bottom,
     ),
     child: Form(
       key: form,
