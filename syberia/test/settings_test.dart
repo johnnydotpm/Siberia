@@ -7,6 +7,7 @@ import 'package:syberia/src/data/app_repository.dart';
 import 'package:syberia/src/domain/models.dart';
 import 'package:syberia/src/school_notifications.dart';
 import 'package:syberia/src/state/app_controller.dart';
+import 'package:syberia/src/test_reminders.dart';
 
 int _semester() {
   final month = DateTime.now().month;
@@ -27,6 +28,7 @@ Future<AppController> _pump(
   WidgetTester tester, {
   String? latestVersion,
   List<Grade> grades = const [],
+  SchoolNotificationService? notifications,
 }) async {
   tester.view.physicalSize = const Size(800, 3200);
   tester.view.devicePixelRatio = 1;
@@ -52,6 +54,7 @@ Future<AppController> _pump(
       latestVersion: latestVersion,
     ),
     updatesEnabled: false,
+    notifications: notifications,
   );
   await controller.bootstrap();
   controller.selectTab(9);
@@ -169,6 +172,41 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
   });
 
+  testWidgets('a denied permission is explained inside the sheet', (
+    tester,
+  ) async {
+    final controller = await _pump(
+      tester,
+      notifications: SchoolNotificationService(_DenyingPresenter()),
+    );
+    await tester.tap(find.byKey(const ValueKey('settings-notifications')));
+    await tester.pumpAndSettle();
+    final notice = find.byKey(const ValueKey('notification-permission-denied'));
+    expect(notice, findsNothing);
+
+    // Turning a category back on asks for the permission, which is denied.
+    for (var i = 0; i < 2; i++) {
+      await tester.tap(find.byKey(const ValueKey('notification-grades')));
+      await tester.pumpAndSettle();
+    }
+    expect(
+      controller.notificationSettings.allows(SchoolNotificationCategory.grades),
+      isTrue,
+    );
+    expect(notice, findsOneWidget);
+    expect(
+      find.text('Allow notifications in system settings.'),
+      findsOneWidget,
+    );
+
+    // Notifications off: nothing to ask for, so the notice goes.
+    await tester.tap(find.byKey(const ValueKey('notifications-master')));
+    await tester.pumpAndSettle();
+    expect(notice, findsNothing);
+    expect(tester.takeException(), isNull);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
   testWidgets('language, theme and chart are picked with a tap', (
     tester,
   ) async {
@@ -263,4 +301,31 @@ class _Repository extends AppRepository {
   // The real one would reach Librus; the Today look-ahead asks for weeks.
   @override
   Future<List<Lesson>> fetchTimetableWeek(DateTime day) async => const [];
+}
+
+class _DenyingPresenter implements SchoolNotificationPresenter {
+  @override
+  Future<void> initialize() async {}
+
+  @override
+  Future<bool> requestPermission() async => false;
+
+  @override
+  Future<void> show({
+    required SchoolNotificationCategory category,
+    required String title,
+    required String body,
+  }) async {}
+
+  @override
+  Future<SchoolNotificationCategory?> launchCategory() async => null;
+
+  @override
+  void onTap(void Function(SchoolNotificationCategory) callback) {}
+
+  @override
+  Future<void> scheduleReminders(
+    List<TestReminder> reminders, {
+    required String channelName,
+  }) async {}
 }

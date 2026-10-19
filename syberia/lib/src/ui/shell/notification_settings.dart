@@ -16,12 +16,12 @@ Future<void> _showNotificationSettings(
   BuildContext context,
   AppController controller,
 ) {
+  // Shown in the sheet: a SnackBar would appear behind it, and the switch
+  // alone would look as if notifications were on.
+  final permissionDenied = ValueNotifier(false);
+  var open = true;
   void denied(bool granted) {
-    if (!granted && context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(context.tr('notificationPermissionDenied'))),
-      );
-    }
+    if (open) permissionDenied.value = !granted;
   }
 
   return showAppSheet<void>(
@@ -58,6 +58,16 @@ Future<void> _showNotificationSettings(
                     onChanged: (value) async =>
                         denied(await controller.setNotificationsEnabled(value)),
                   ),
+                  ValueListenableBuilder(
+                    valueListenable: permissionDenied,
+                    builder: (context, shown, _) => shown
+                        ? _PermissionDeniedNotice(
+                            key: const ValueKey(
+                              'notification-permission-denied',
+                            ),
+                          )
+                        : const SizedBox.shrink(),
+                  ),
                   const Divider(height: 1),
                   for (final category in SchoolNotificationCategory.values)
                     SwitchListTile.adaptive(
@@ -85,7 +95,43 @@ Future<void> _showNotificationSettings(
         );
       },
     ),
-  );
+  ).whenComplete(() {
+    open = false;
+    permissionDenied.dispose();
+  });
+}
+
+/// Notifications were turned on, but the system does not allow them.
+class _PermissionDeniedNotice extends StatelessWidget {
+  const _PermissionDeniedNotice({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Container(
+      margin: const EdgeInsets.fromLTRB(8, 4, 8, 8),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: scheme.errorContainer,
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            Icons.notifications_off_outlined,
+            color: scheme.onErrorContainer,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              context.tr('notificationPermissionDenied'),
+              style: TextStyle(color: scheme.onErrorContainer),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 /// When the app reminds of tests: the evening before and the morning of,
