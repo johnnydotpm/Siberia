@@ -579,7 +579,9 @@ class SchoolNotificationService {
       for (final record in snapshot.attendance)
         _Candidate(
           '${record.id}|${record.kind.name}',
-          '${record.subject}: ${record.type}',
+          record.subject.isEmpty
+              ? record.type
+              : '${record.subject}: ${record.type}',
           wanted: (settings) => settings.attendanceKinds.contains(record.kind),
         ),
     ],

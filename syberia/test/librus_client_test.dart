@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
@@ -7,6 +8,7 @@ import 'package:flutter_secure_storage/test/test_flutter_secure_storage_platform
 import 'package:flutter_secure_storage_platform_interface/flutter_secure_storage_platform_interface.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:syberia/src/data/librus/librus_client.dart';
+import 'package:syberia/src/data/librus/reference_cache.dart';
 import 'package:syberia/src/domain/librus_error.dart';
 import 'package:syberia/src/domain/models.dart';
 
@@ -806,6 +808,144 @@ void main() {
     );
   });
 
+  group('subjects of lessons', () {
+    // As Librus sends them: the lesson's id, not its subject.
+    (int, Object)? lessonOnly(RequestOptions options) {
+      final path = options.uri.path;
+      if (path.endsWith('/2.0/Attendances')) {
+        return (
+          200,
+          {
+            'Attendances': [
+              {
+                'Id': 80,
+                'Date': '2026-09-18',
+                'LessonNo': 1,
+                'Type': {'Id': 2},
+                'Lesson': {
+                  'Id': 500,
+                  'Url': 'https://api.librus.pl/2.0/Lessons/500',
+                },
+              },
+              {
+                'Id': 81,
+                'Date': '2026-09-17',
+                'LessonNo': 2,
+                'Type': {'Id': 2},
+                'Lesson': {'Id': 999},
+              },
+            ],
+          },
+        );
+      }
+      if (path.endsWith('/HomeWorkAssignments')) {
+        return (
+          200,
+          {
+            'HomeWorkAssignments': [
+              {
+                'Id': 70,
+                'Topic': 'Zadania 1–5',
+                'DueDate': '2026-09-21',
+                'Lesson': {'Id': 500},
+              },
+              {
+                'Id': 71,
+                'Topic': 'Wypracowanie',
+                'DueDate': '2026-09-22',
+                'Subject': {'Id': 10},
+                'Lesson': {'Id': 999},
+              },
+            ],
+          },
+        );
+      }
+      return null;
+    }
+
+    String homework(AppSnapshot snapshot, String id) => snapshot.events
+        .singleWhere((item) => item.id == 'homework-$id')
+        .subject;
+
+    test('attendance and homework take the subject of their lesson', () async {
+      final client = LibrusClient(
+        dio: Dio()
+          ..httpClientAdapter = _FixtureAdapter(
+            (options) => lessonOnly(options) ?? _successfulResponse(options),
+          ),
+      );
+      final snapshot = await client.loginAndFetch(
+        username: 'parent@example.com',
+        password: 'secret',
+      );
+      final attendance = {
+        for (final record in snapshot.attendance) record.id: record.subject,
+      };
+      expect(attendance, {'80': 'Matematyka', '81': ''});
+      expect(homework(snapshot, '70'), 'Matematyka');
+      // A subject named directly still wins over the lesson.
+      expect(homework(snapshot, '71'), 'Matematyka');
+    });
+
+    test('lists saved before the lessons were fetched catch up', () async {
+      var now = DateTime.now();
+      final requests = <String>[];
+      final cache = _MemoryReferenceCache();
+      final client = LibrusClient(
+        clock: () => now,
+        referenceCache: cache,
+        dio: Dio()
+          ..httpClientAdapter = _FixtureAdapter((options) {
+            requests.add(options.uri.path);
+            return lessonOnly(options) ?? _successfulResponse(options);
+          }),
+      );
+      await client.loginAndFetch(
+        username: 'parent@example.com',
+        password: 'secret',
+      );
+      // The lists as an older version saved them: no lessons.
+      final saved = cache.last!;
+      await cache.write(
+        LibrusReferences(
+          account: saved.account,
+          fetchedAt: now,
+          responses: {...saved.responses}..remove('Lessons'),
+        ),
+      );
+      int lessons() => requests.where((p) => p.endsWith('/2.0/Lessons')).length;
+      expect(lessons(), 1);
+      // Lists a few minutes old are used as they are.
+      var snapshot = await client.fetchSnapshot();
+      expect(lessons(), 1);
+      expect(snapshot.attendance.first.subject, '');
+      // Then the unknown lesson brings fresh lists, with the lessons.
+      now = now.add(const Duration(minutes: 11));
+      snapshot = await client.fetchSnapshot();
+      expect(lessons(), 2);
+      expect(snapshot.attendance.first.subject, 'Matematyka');
+    });
+
+    test('without the list of lessons the sync still works', () async {
+      final client = LibrusClient(
+        dio: Dio()
+          ..httpClientAdapter = _FixtureAdapter((options) {
+            if (options.uri.path.endsWith('/2.0/Lessons')) {
+              return (403, {'Code': 'AccessDenied'});
+            }
+            return lessonOnly(options) ?? _successfulResponse(options);
+          }),
+      );
+      final snapshot = await client.loginAndFetch(
+        username: 'parent@example.com',
+        password: 'secret',
+      );
+      expect(snapshot.attendance, hasLength(2));
+      expect(snapshot.attendance.map((item) => item.subject), everyElement(''));
+      expect(snapshot.grades, isNotEmpty);
+    });
+  });
+
   group('sent messages', () {
     Future<LibrusClient> signedIn(
       (int, Object)? Function(RequestOptions options) override, {
@@ -1295,6 +1435,20 @@ const _loginPage =
       },
     );
   }
+  if (path.endsWith('/2.0/Lessons')) {
+    return (
+      200,
+      {
+        'Lessons': [
+          {
+            'Id': 500,
+            'Teacher': {'Id': 20},
+            'Subject': {'Id': 10},
+          },
+        ],
+      },
+    );
+  }
   if (path.endsWith('/HomeWorkAssignments')) {
     return (
       200,
@@ -1545,4 +1699,18 @@ class _FixtureAdapter implements HttpClientAdapter {
 
   @override
   void close({bool force = false}) {}
+}
+
+/// Keeps the lists in memory and remembers the last ones written.
+class _MemoryReferenceCache extends LibrusReferenceCache {
+  _MemoryReferenceCache()
+    : super(directory: () async => throw const FileSystemException('none'));
+
+  LibrusReferences? last;
+
+  @override
+  Future<void> write(LibrusReferences references) async {
+    last = references;
+    await super.write(references);
+  }
 }

@@ -128,6 +128,30 @@ void main() {
     expect(presenter.shown, hasLength(1));
   });
 
+  test('an entry without a subject reads as its type alone', () async {
+    final presenter = _Presenter();
+    final service = SchoolNotificationService(presenter);
+    await service.processSnapshot(_snapshot());
+    await service.processSnapshot(
+      _snapshot(
+        attendance: [
+          AttendanceRecord(
+            id: 'n1',
+            date: DateTime(2026, 10, 20),
+            lessonNumber: 3,
+            subject: '',
+            type: 'Nieobecność',
+            symbol: 'nb',
+            kind: AttendanceKind.absent,
+          ),
+        ],
+      ),
+    );
+    expect(presenter.shown, [
+      (SchoolNotificationCategory.attendance, 'Nieobecność'),
+    ]);
+  });
+
   test('only the chosen lesson changes notify, saying what changed', () async {
     final presenter = _Presenter();
     final service = SchoolNotificationService(presenter);

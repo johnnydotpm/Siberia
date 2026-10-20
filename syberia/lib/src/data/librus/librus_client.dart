@@ -494,6 +494,8 @@ class LibrusClient {
     'Classrooms': false,
     'Grades/Categories': false,
     'Attendances/Types': true,
+    // Which subject each lesson is: attendance names only the lesson.
+    'Lessons': true,
     'Notes/Categories': true,
     'HomeWorks/Categories': true,
   };
@@ -1563,13 +1565,20 @@ class LibrusClient {
   static List<SchoolEvent> _parseHomework(
     Map<String, dynamic> root,
     Map<int, String> subjects,
+    Map<int, int> lessonSubjects,
   ) => _list(root['HomeWorkAssignments'])
       .map((item) {
         final topic = item['Topic']?.toString().trim() ?? '';
         final text = item['Text']?.toString().trim() ?? '';
         final lesson = _map(item['Lesson']);
+        // Only when neither names the subject: the lesson it belongs to.
         final subjectId =
-            _referenceId(item['Subject']) ?? _referenceId(lesson?['Subject']);
+            _referenceId(item['Subject']) ??
+            _referenceId(lesson?['Subject']) ??
+            switch (_referenceId(lesson)) {
+              final id? => lessonSubjects[id],
+              null => null,
+            };
         return SchoolEvent(
           id: 'homework-${item['Id'] ?? item.hashCode}',
           title: topic.isNotEmpty
@@ -1587,6 +1596,7 @@ class LibrusClient {
   static List<AttendanceRecord> _parseAttendance(
     Map<String, dynamic> root,
     Map<int, String> subjects,
+    Map<int, int> lessonSubjects,
     Map<int, _AttendanceType> types,
   ) =>
       _list(root['Attendances'])
@@ -1603,17 +1613,23 @@ class LibrusClient {
                       _integer(embeddedType?['Id']) ??
                       -1,
                 );
+            final lesson = _map(item['Lesson']);
             final embeddedSubject = _map(
-              _map(item['Lesson'])?['Subject'],
+              lesson?['Subject'],
             )?['Name']?.toString();
+            // Librus sends only the lesson's id; its subject comes from the
+            // list of lessons.
+            final subjectId =
+                _referenceId(lesson?['Subject']) ??
+                switch (_referenceId(lesson)) {
+                  final id? => lessonSubjects[id],
+                  null => null,
+                };
             return AttendanceRecord(
               id: item['Id']?.toString() ?? item.hashCode.toString(),
               date: _parseDate(item['Date']) ?? DateTime.now(),
               lessonNumber: _integer(item['LessonNo']) ?? 0,
-              subject:
-                  embeddedSubject ??
-                  subjects[_referenceId(_map(item['Lesson'])?['Subject'])] ??
-                  '',
+              subject: embeddedSubject ?? subjects[subjectId] ?? '',
               type:
                   (type.name.isNotEmpty ? type.name : null) ??
                   _map(item['Type'])?['Name']?.toString() ??
@@ -1705,6 +1721,13 @@ class LibrusClient {
   ) => {
     for (final item in _list(root[key]))
       ?_integer(item['Id']): item[nameKey]?.toString() ?? '',
+  };
+
+  /// Lesson id to subject id. A lesson is a subject taught by a teacher to
+  /// a class; attendance and homework point at it instead of the subject.
+  static Map<int, int> _lessonSubjects(Map<String, dynamic> root) => {
+    for (final item in _list(root['Lessons']))
+      ?_integer(item['Id']): ?_referenceId(item['Subject']),
   };
   static Map<int, String> _peopleMap(Map<String, dynamic> root, String key) => {
     for (final item in _list(root[key]))
@@ -1817,6 +1840,10 @@ _ParsedSnapshot _parseSnapshot(_SnapshotInput input) {
       'Name',
     ),
   );
+  final lessonSubjects = unknown.track(
+    'lesson',
+    LibrusClient._lessonSubjects(reference('Lessons')),
+  );
   final gradeComments = LibrusClient._idNameMap(data[7], 'Comments', 'Text');
 
   final profileName = _fullName(user?['FirstName'], user?['LastName']);
@@ -1842,11 +1869,12 @@ _ParsedSnapshot _parseSnapshot(_SnapshotInput input) {
     ),
     events: [
       ...LibrusClient._parseEvents(data[2], subjects, eventTypes),
-      ...LibrusClient._parseHomework(data[3], subjects),
+      ...LibrusClient._parseHomework(data[3], subjects, lessonSubjects),
     ]..sort((a, b) => a.date.compareTo(b.date)),
     attendance: LibrusClient._parseAttendance(
       data[4],
       subjects,
+      lessonSubjects,
       attendanceTypes,
     ),
     announcements: LibrusClient._parseAnnouncements(data[5], people),
