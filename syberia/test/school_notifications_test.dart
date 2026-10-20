@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syberia/src/domain/models.dart';
 import 'package:syberia/src/school_notifications.dart';
+import 'package:syberia/src/test_reminders.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -79,23 +80,80 @@ void main() {
     );
     expect(presenter.shown.last, SchoolNotificationCategory.announcements);
   });
+
+  test('test reminders follow the settings and the account', () async {
+    final presenter = _Presenter();
+    final service = SchoolNotificationService(presenter);
+    final now = DateTime.now();
+    final inThreeDays = DateTime(now.year, now.month, now.day + 3);
+    final snapshot = _snapshot(events: [_test('t1', inThreeDays)]);
+
+    // On by default: the evening before, at 19:00.
+    await service.updateReminders(snapshot);
+    expect(presenter.scheduled, hasLength(1));
+    expect(
+      presenter.scheduled!.single.at,
+      DateTime(now.year, now.month, now.day + 2, 19),
+    );
+    expect(presenter.scheduled!.single.body, 'Matematyka: Sprawdzian');
+
+    final settings = await service.loadSettings();
+    await service.saveSettings(
+      settings.copyWith(
+        reminders: settings.reminders.copyWith(
+          morning: true,
+          morningMinutes: 6 * 60 + 30,
+          homework: true,
+        ),
+      ),
+    );
+    final saved = await service.loadSettings();
+    expect(saved.reminders.morning, isTrue);
+    expect(saved.reminders.morningMinutes, 6 * 60 + 30);
+    expect(saved.reminders.homework, isTrue);
+    await service.updateReminders(snapshot);
+    expect(presenter.scheduled, hasLength(2));
+
+    // The master switch turns reminders off too.
+    await service.saveSettings(saved.copyWith(enabled: false));
+    await service.updateReminders(snapshot);
+    expect(presenter.scheduled, isEmpty);
+    await service.saveSettings(saved);
+
+    // Signed out, nothing is left scheduled.
+    await service.updateReminders(
+      _snapshot(events: [_test('t1', inThreeDays)], provider: 'Demo'),
+    );
+    expect(presenter.scheduled, isEmpty);
+  });
 }
+
+SchoolEvent _test(String id, DateTime date) => SchoolEvent(
+  id: id,
+  title: 'Rozdział 3',
+  subject: 'Matematyka',
+  date: date,
+  kind: EventKind.exam,
+  typeLabel: 'Sprawdzian',
+);
 
 AppSnapshot _snapshot({
   List<Grade> grades = const [],
   List<SchoolMessage> messages = const [],
   List<SchoolAnnouncement> announcements = const [],
   List<StudentNotice> notices = const [],
+  List<SchoolEvent> events = const [],
+  String provider = 'Librus Synergia',
 }) => AppSnapshot(
-  profile: const StudentProfile(
+  profile: StudentProfile(
     id: 'student-1',
     name: 'Uczeń testowy',
     school: 'School',
-    provider: 'Librus Synergia',
+    provider: provider,
   ),
   lessons: const [],
   grades: grades,
-  events: const [],
+  events: events,
   messages: messages,
   attendance: const [],
   announcements: announcements,
@@ -142,6 +200,15 @@ SchoolMessage _message(String id) => SchoolMessage(
 
 class _Presenter implements SchoolNotificationPresenter {
   final List<SchoolNotificationCategory> shown = [];
+  List<TestReminder>? scheduled;
+
+  @override
+  Future<void> scheduleReminders(
+    List<TestReminder> reminders, {
+    required String channelName,
+  }) async {
+    scheduled = reminders;
+  }
 
   @override
   Future<void> initialize() async {}

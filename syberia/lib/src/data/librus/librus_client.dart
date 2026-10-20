@@ -201,11 +201,20 @@ class LibrusClient {
       'receivers': recipientIds.toSet().join(','),
       'actions': base64Encode(utf8.encode('<Actions/>')),
     });
-    if (!response.findAllElements('status').any((e) => e.innerText == 'ok') ||
+    final confirmed = response
+        .findAllElements('status')
+        .any((e) => e.innerText == 'ok');
+    if (!confirmed ||
         !response
             .findAllElements('data')
             .any((e) => int.tryParse(e.innerText.trim()) != null)) {
-      throw const LibrusException(LibrusErrorCode.messageNotSent);
+      // The translation shows the detail, so there always is one.
+      throw LibrusException(
+        LibrusErrorCode.messageNotSent,
+        detail: confirmed
+            ? 'Messages: XML SendMessage no message id'
+            : 'Messages: XML SendMessage not confirmed',
+      );
     }
   }
 

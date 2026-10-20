@@ -362,6 +362,13 @@ class GradeAverageSettings {
   /// Grades that do not count towards the average have weight 0 and are
   /// left out, as are grades without a numeric value.
   double? average(Iterable<Grade> grades) {
+    final (:sum, :total) = totals(grades);
+    return total == 0 ? null : sum / total;
+  }
+
+  /// The sum of the counted grades' values, each times its weight when the
+  /// average is weighted, and the sum of those weights.
+  ({double sum, double total}) totals(Iterable<Grade> grades) {
     var sum = 0.0;
     var total = 0.0;
     for (final grade in grades) {
@@ -372,7 +379,7 @@ class GradeAverageSettings {
       sum += value * weight;
       total += weight;
     }
-    return total == 0 ? null : sum / total;
+    return (sum: sum, total: total);
   }
 
   @override

@@ -11,6 +11,7 @@ import '../home_widget.dart';
 import '../home_widget.dart' as home_widget show displaySubject;
 import '../l10n/app_localizations.dart';
 import '../school_notifications.dart';
+import '../test_reminders.dart';
 
 class AppController extends ChangeNotifier {
   AppController(
@@ -123,13 +124,14 @@ class AppController extends ChangeNotifier {
     notifyListeners();
     _updateHomeWidget();
     await configureBackground();
+    await _updateReminders();
   }
 
   Future<void> configureBackground() async {
     try {
       await backgroundScheduling?.call(
         _autoSyncOnOpen &&
-            _notificationSettings.hasEnabledCategory &&
+            _notificationSettings.needsBackgroundCheck &&
             snapshot.profile.provider == 'Librus Synergia',
       );
     } on Object {
@@ -191,25 +193,33 @@ class AppController extends ChangeNotifier {
     } on Object {
       // Notifications cannot turn a successful Librus sync into an error.
     }
+    // Scheduling takes a round trip per reminder, so it never holds the app
+    // opening or a sync.
+    unawaited(_updateReminders());
   }
 
   Future<bool> requestNotificationPermissionIfEnabled() async {
-    if (!_notificationSettings.hasEnabledCategory ||
+    if (!_notificationSettings.needsBackgroundCheck ||
         snapshot.profile.provider != 'Librus Synergia') {
       return true;
     }
     return await notifications?.requestPermission() ?? true;
   }
 
-  Future<bool> setNotificationsEnabled(bool enabled) async {
+  // The notification setters return what the system answered when they had
+  // to ask for the permission: false when it refused, true when it allowed
+  // it or nothing needs it. null means nothing was asked, as when turning
+  // something off.
+  Future<bool?> setNotificationsEnabled(bool enabled) async {
     _notificationSettings = _notificationSettings.copyWith(enabled: enabled);
     notifyListeners();
     await notifications?.saveSettings(_notificationSettings);
     await configureBackground();
-    return enabled ? requestNotificationPermissionIfEnabled() : true;
+    await _updateReminders();
+    return enabled ? requestNotificationPermissionIfEnabled() : null;
   }
 
-  Future<bool> setNotificationCategoryEnabled(
+  Future<bool?> setNotificationCategoryEnabled(
     SchoolNotificationCategory category,
     bool enabled,
   ) async {
@@ -220,7 +230,29 @@ class AppController extends ChangeNotifier {
     notifyListeners();
     await notifications?.saveSettings(_notificationSettings);
     await configureBackground();
-    return enabled ? requestNotificationPermissionIfEnabled() : true;
+    return enabled ? requestNotificationPermissionIfEnabled() : null;
+  }
+
+  /// Changes when tests are reminded of and schedules the reminders again
+  /// right away.
+  Future<bool?> setTestReminders(TestReminderSettings reminders) async {
+    if (_notificationSettings.reminders == reminders) return null;
+    _notificationSettings = _notificationSettings.copyWith(
+      reminders: reminders,
+    );
+    notifyListeners();
+    await notifications?.saveSettings(_notificationSettings);
+    await configureBackground();
+    await _updateReminders();
+    return reminders.any ? requestNotificationPermissionIfEnabled() : null;
+  }
+
+  Future<void> _updateReminders() async {
+    try {
+      await notifications?.updateReminders(snapshot);
+    } on Object {
+      // Reminders are best effort.
+    }
   }
 
   Future<void> setAutoSyncOnOpen(bool enabled) async {
@@ -544,6 +576,8 @@ class AppController extends ChangeNotifier {
     notifyListeners();
     _updateHomeWidget();
     unawaited(configureBackground());
+    // Signed out, the reminders of the old account are cancelled.
+    unawaited(_updateReminders());
   }
 }
 

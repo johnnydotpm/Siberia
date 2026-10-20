@@ -767,6 +767,45 @@ void main() {
     expect(snapshot.grades.last.wasChanged, isFalse);
   });
 
+  test('a message Librus does not confirm fails with a reason', () async {
+    final dio = Dio()
+      ..httpClientAdapter = _FixtureAdapter((options) {
+        if (options.uri.path.endsWith('/SendMessage')) {
+          return (
+            200,
+            // Not an error reply, just no id for a sent message.
+            '<response><SendMessage><status>ok</status></SendMessage></response>',
+          );
+        }
+        return _successfulResponse(options);
+      });
+    final client = LibrusClient(
+      dio: dio,
+      secureStorage: const FlutterSecureStorage(),
+    );
+    await client.loginAndFetch(
+      username: 'parent@example.com',
+      password: 'secret',
+    );
+    // The translation shows the detail, so it must never be missing.
+    await expectLater(
+      client.sendMessage(
+        recipientIds: [20],
+        subject: 'Pytanie',
+        body: 'Dzień dobry',
+      ),
+      throwsA(
+        isA<LibrusException>()
+            .having(
+              (error) => error.errorCode,
+              'errorCode',
+              LibrusErrorCode.messageNotSent,
+            )
+            .having((error) => error.detail, 'detail', isNotNull),
+      ),
+    );
+  });
+
   test('maps invalid Portal credentials to a readable error', () async {
     final dio = Dio()
       ..httpClientAdapter = _FixtureAdapter((options) {

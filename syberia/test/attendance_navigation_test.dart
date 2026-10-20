@@ -110,6 +110,59 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
   });
 
+  testWidgets('the legends fit a narrow phone with large text', (tester) async {
+    final now = DateTime.now();
+    final day = DateTime(now.year, now.month, now.day);
+    final controller = await _pump(
+      tester,
+      locale: const Locale('pl'),
+      attendance: [
+        for (final (index, kind) in AttendanceKind.values.indexed)
+          _record('k$index', day, kind),
+      ],
+    );
+    tester.view.physicalSize = const Size(360, 2400);
+    tester.platformDispatcher.textScaleFactorTestValue = 1.3;
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+    controller.selectTab(6);
+    await tester.pumpAndSettle();
+    expect(
+      find.byKey(const ValueKey('attendance-calendar-legend')),
+      findsOneWidget,
+    );
+    expect(tester.takeException(), isNull);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
+  testWidgets('a day with absences and a late lesson is partly absent', (
+    tester,
+  ) async {
+    final now = DateTime.now();
+    final day = DateTime(now.year, now.month, now.day);
+    final controller = await _pump(
+      tester,
+      attendance: [
+        _record('a1', day, AttendanceKind.absent),
+        _record('a2', day, AttendanceKind.absent),
+        // The last lesson was attended, only late.
+        _record('a3', day, AttendanceKind.late),
+      ],
+    );
+    controller.selectTab(6);
+    await tester.pumpAndSettle();
+    final legend = find.byKey(const ValueKey('attendance-calendar-legend'));
+    expect(
+      find.descendant(of: legend, matching: find.text('Partly absent')),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(of: legend, matching: find.text('Absent')),
+      findsNothing,
+    );
+    expect(tester.takeException(), isNull);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
   testWidgets(
     'flat chart has visible proportional segments in AMOLED and an empty term stays valid',
     (tester) async {
@@ -184,4 +237,8 @@ class _Repository extends AppRepository {
 
   @override
   Future<AppSnapshot> load() async => data;
+
+  // The real one would reach Librus; the Today look-ahead asks for weeks.
+  @override
+  Future<List<Lesson>> fetchTimetableWeek(DateTime day) async => const [];
 }
