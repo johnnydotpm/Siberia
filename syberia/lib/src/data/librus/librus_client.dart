@@ -514,7 +514,12 @@ class LibrusClient {
     final account = _referenceAccount;
     if (!fresh) {
       final cached = await _referenceCache.read(account);
-      if (cached != null) {
+      // A list that failed is saved empty; one missing altogether means an
+      // older version saved them, before that list was fetched.
+      final complete =
+          cached != null &&
+          _referenceEndpoints.keys.every(cached.responses.containsKey);
+      if (cached != null && complete) {
         final age = _clock().difference(cached.fetchedAt);
         if (!age.isNegative && age < LibrusReferenceCache.maxAge) {
           return (cached, false);
@@ -1729,6 +1734,19 @@ class LibrusClient {
     for (final item in _list(root['Lessons']))
       ?_integer(item['Id']): ?_referenceId(item['Subject']),
   };
+
+  /// The same from the timetable, which every sync fetches: each entry
+  /// names its lesson and its subject. A week holds nearly every lesson.
+  static Map<int, int> _timetableLessonSubjects(Map<String, dynamic> root) => {
+    for (final day in (_map(root['Timetable']) ?? const {}).values)
+      if (day is List)
+        for (final range in day)
+          if (range is List)
+            for (final item in range)
+              ?_referenceId(_map(item)?['Lesson']): ?_referenceId(
+                _map(item)?['Subject'],
+              ),
+  };
   static Map<int, String> _peopleMap(Map<String, dynamic> root, String key) => {
     for (final item in _list(root[key]))
       ?_integer(item['Id']): _fullName(item['FirstName'], item['LastName']),
@@ -1840,10 +1858,10 @@ _ParsedSnapshot _parseSnapshot(_SnapshotInput input) {
       'Name',
     ),
   );
-  final lessonSubjects = unknown.track(
-    'lesson',
-    LibrusClient._lessonSubjects(reference('Lessons')),
-  );
+  final lessonSubjects = unknown.track('lesson', {
+    ...LibrusClient._timetableLessonSubjects(data[1]),
+    ...LibrusClient._lessonSubjects(reference('Lessons')),
+  });
   final gradeComments = LibrusClient._idNameMap(data[7], 'Comments', 'Text');
 
   final profileName = _fullName(user?['FirstName'], user?['LastName']);

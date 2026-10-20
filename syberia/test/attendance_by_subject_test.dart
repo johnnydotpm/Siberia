@@ -43,30 +43,34 @@ List<AttendanceRecord> _records() => [
   _record('Biologia', AttendanceKind.present, semester: 2),
 ];
 
-Future<AppController> _pump(WidgetTester tester) async {
+Future<AppController> _pump(
+  WidgetTester tester, {
+  List<AttendanceRecord>? records,
+  // Made once the stored settings are in place, as it reads them.
+  _Repository Function(AppSnapshot data)? repository,
+}) async {
   SharedPreferences.setMockInitialValues({'app_design_v1': 'classic'});
   tester.view.physicalSize = const Size(800, 3000);
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
-  final controller = AppController(
-    _Repository(
-      AppSnapshot(
-        profile: const StudentProfile(
-          id: 'test',
-          name: 'Demo Student',
-          school: 'School',
-          provider: 'Librus Synergia',
-        ),
-        lessons: const [],
-        grades: const [],
-        events: const [],
-        messages: const [],
-        attendance: _records(),
-        announcements: const [],
-        notices: const [],
-        lastSync: DateTime.now(),
-      ),
+  final data = AppSnapshot(
+    profile: const StudentProfile(
+      id: 'test',
+      name: 'Demo Student',
+      school: 'School',
+      provider: 'Librus Synergia',
     ),
+    lessons: const [],
+    grades: const [],
+    events: const [],
+    messages: const [],
+    attendance: records ?? _records(),
+    announcements: const [],
+    notices: const [],
+    lastSync: DateTime.now(),
+  );
+  final controller = AppController(
+    repository?.call(data) ?? _Repository(data),
     updatesEnabled: false,
   );
   await controller.bootstrap();
@@ -163,14 +167,63 @@ void main() {
     expect(tester.takeException(), isNull);
     await tester.pumpWidget(const SizedBox.shrink());
   });
+
+  testWidgets('entries without subjects say so and offer a sync', (
+    tester,
+  ) async {
+    late final _Repository repository;
+    await _pump(
+      tester,
+      records: [for (final record in _records()) _withoutSubject(record)],
+      repository: (data) => repository = _Repository(data),
+    );
+    expect(find.byKey(const ValueKey('attendance-by-subject')), findsNothing);
+    final note = find.byKey(const ValueKey('attendance-no-subjects'));
+    expect(note, findsOneWidget);
+    expect(
+      find.descendant(
+        of: note,
+        matching: find.text(
+          "Couldn't tell which subjects the entries are for.",
+        ),
+      ),
+      findsOneWidget,
+    );
+    expect(repository.syncs, 0);
+    await tester.tap(
+      find.descendant(of: note, matching: find.byType(TextButton)),
+    );
+    await tester.pumpAndSettle();
+    expect(repository.syncs, 1);
+    expect(tester.takeException(), isNull);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
 }
+
+AttendanceRecord _withoutSubject(AttendanceRecord record) => AttendanceRecord(
+  id: record.id,
+  date: record.date,
+  lessonNumber: record.lessonNumber,
+  subject: '',
+  type: record.type,
+  symbol: record.symbol,
+  kind: record.kind,
+  semester: record.semester,
+);
 
 class _Repository extends AppRepository {
   _Repository(this.data);
   final AppSnapshot data;
+  int syncs = 0;
 
   @override
   Future<AppSnapshot> load() async => data;
+
+  @override
+  Future<AppSnapshot> sync(AppSnapshot current) async {
+    syncs++;
+    return current;
+  }
 
   @override
   Future<List<Lesson>> fetchTimetableWeek(DateTime day) async => const [];

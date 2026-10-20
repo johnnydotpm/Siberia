@@ -887,8 +887,8 @@ void main() {
       expect(homework(snapshot, '71'), 'Matematyka');
     });
 
-    test('lists saved before the lessons were fetched catch up', () async {
-      var now = DateTime.now();
+    test('lists saved by an older version are fetched again at once', () async {
+      final now = DateTime.now();
       final requests = <String>[];
       final cache = _MemoryReferenceCache();
       final client = LibrusClient(
@@ -904,7 +904,7 @@ void main() {
         username: 'parent@example.com',
         password: 'secret',
       );
-      // The lists as an older version saved them: no lessons.
+      // The lists as an older version saved them a moment ago: no lessons.
       final saved = cache.last!;
       await cache.write(
         LibrusReferences(
@@ -915,16 +915,116 @@ void main() {
       );
       int lessons() => requests.where((p) => p.endsWith('/2.0/Lessons')).length;
       expect(lessons(), 1);
-      // Lists a few minutes old are used as they are.
-      var snapshot = await client.fetchSnapshot();
-      expect(lessons(), 1);
-      expect(snapshot.attendance.first.subject, '');
-      // Then the unknown lesson brings fresh lists, with the lessons.
-      now = now.add(const Duration(minutes: 11));
-      snapshot = await client.fetchSnapshot();
+      final snapshot = await client.fetchSnapshot();
       expect(lessons(), 2);
       expect(snapshot.attendance.first.subject, 'Matematyka');
     });
+
+    test('a lesson the lists do not know brings them again once old', () async {
+      var now = DateTime.now();
+      var newLesson = false;
+      final requests = <String>[];
+      final client = LibrusClient(
+        clock: () => now,
+        dio: Dio()
+          ..httpClientAdapter = _FixtureAdapter((options) {
+            requests.add(options.uri.path);
+            final path = options.uri.path;
+            if (newLesson && path.endsWith('/2.0/Attendances')) {
+              return (
+                200,
+                {
+                  'Attendances': [
+                    {
+                      'Id': 90,
+                      'Date': '2026-09-18',
+                      'LessonNo': 1,
+                      'Type': {'Id': 2},
+                      'Lesson': {'Id': 700},
+                    },
+                  ],
+                },
+              );
+            }
+            if (newLesson && path.endsWith('/2.0/Lessons')) {
+              return (
+                200,
+                {
+                  'Lessons': [
+                    {
+                      'Id': 700,
+                      'Subject': {'Id': 11},
+                    },
+                  ],
+                },
+              );
+            }
+            return lessonOnly(options) ?? _successfulResponse(options);
+          }),
+      );
+      await client.loginAndFetch(
+        username: 'parent@example.com',
+        password: 'secret',
+      );
+      int lessons() => requests.where((p) => p.endsWith('/2.0/Lessons')).length;
+      newLesson = true;
+      // Lists fetched a moment ago are not fetched again.
+      var snapshot = await client.fetchSnapshot();
+      expect(lessons(), 1);
+      expect(snapshot.attendance.single.subject, '');
+      now = now.add(const Duration(minutes: 11));
+      snapshot = await client.fetchSnapshot();
+      expect(lessons(), 2);
+      expect(snapshot.attendance.single.subject, 'Fizyka');
+    });
+
+    test(
+      'the timetable names the subject when the lessons are denied',
+      () async {
+        final client = LibrusClient(
+          dio: Dio()
+            ..httpClientAdapter = _FixtureAdapter((options) {
+              final path = options.uri.path;
+              if (path.endsWith('/2.0/Lessons')) {
+                return (403, {'Code': 'AccessDenied'});
+              }
+              if (path.endsWith('/Timetables')) {
+                return (
+                  200,
+                  {
+                    'Timetable': {
+                      '2026-09-18': [
+                        [
+                          {
+                            'Lesson': {'Id': '500'},
+                            'LessonNo': 1,
+                            'HourFrom': '08:00',
+                            'HourTo': '08:45',
+                            'Subject': {'Id': '11'},
+                            'Teacher': {'Id': 20},
+                            'Classroom': {'Id': 30},
+                          },
+                        ],
+                        [],
+                      ],
+                    },
+                  },
+                );
+              }
+              return lessonOnly(options) ?? _successfulResponse(options);
+            }),
+        );
+        final snapshot = await client.loginAndFetch(
+          username: 'parent@example.com',
+          password: 'secret',
+        );
+        final attendance = {
+          for (final record in snapshot.attendance) record.id: record.subject,
+        };
+        // Lesson 500 is in this week's timetable; 999 is nowhere.
+        expect(attendance, {'80': 'Fizyka', '81': ''});
+      },
+    );
 
     test('without the list of lessons the sync still works', () async {
       final client = LibrusClient(

@@ -67,6 +67,10 @@ class _AttendanceState extends State<_Attendance> {
             records: records,
             style: widget.controller.attendanceChartStyle,
           ),
+        ] else if (records.isNotEmpty) ...[
+          // Said, not hidden: a sync may still bring the subjects.
+          const SizedBox(height: 16),
+          _AttendanceNoSubjects(widget.controller),
         ],
         const SizedBox(height: 16),
         _AttendanceCalendar(
@@ -151,6 +155,46 @@ class _AttendanceChart extends StatelessWidget {
                     ),
                   )
                   .toList(growable: false),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Entries came without their subjects, so there is nothing to split by
+/// subject yet; a sync may bring them.
+class _AttendanceNoSubjects extends StatelessWidget {
+  const _AttendanceNoSubjects(this.controller);
+  final AppController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    return Card(
+      key: const ValueKey('attendance-no-subjects'),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
+        child: Row(
+          children: [
+            Icon(Icons.info_outline_rounded, color: colors.onSurfaceVariant),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                context.tr('attendanceNoSubjects'),
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: colors.onSurfaceVariant,
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            TextButton(
+              onPressed: controller.syncing ? null : controller.sync,
+              child: Text(
+                MaterialLocalizations.of(context).refreshIndicatorSemanticLabel,
+              ),
             ),
           ],
         ),
