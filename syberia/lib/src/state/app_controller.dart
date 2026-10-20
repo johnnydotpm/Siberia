@@ -238,6 +238,27 @@ class AppController extends ChangeNotifier {
     return enabled ? requestNotificationPermissionIfEnabled() : null;
   }
 
+  /// Limits the attendance and timetable notifications to these kinds.
+  Future<bool?> setNotificationKinds({
+    Set<AttendanceKind>? attendance,
+    Set<TimetableChange>? timetable,
+  }) async {
+    final before = _notificationSettings;
+    _notificationSettings = before.copyWith(
+      attendanceKinds: attendance,
+      timetableChanges: timetable,
+    );
+    notifyListeners();
+    await notifications?.saveSettings(_notificationSettings);
+    await configureBackground();
+    // Choosing a kind can be what turns notifications back on.
+    final gained = SchoolNotificationCategory.values.any(
+      (category) =>
+          _notificationSettings.allows(category) && !before.allows(category),
+    );
+    return gained ? requestNotificationPermissionIfEnabled() : null;
+  }
+
   /// Changes when tests are reminded of and schedules the reminders again
   /// right away.
   Future<bool?> setTestReminders(TestReminderSettings reminders) async {
