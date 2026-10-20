@@ -806,6 +806,145 @@ void main() {
     );
   });
 
+  group('sent messages', () {
+    Future<LibrusClient> signedIn(
+      (int, Object)? Function(RequestOptions options) override, {
+      List<String>? requests,
+    }) async {
+      final client = LibrusClient(
+        dio: Dio()
+          ..httpClientAdapter = _FixtureAdapter((options) {
+            requests?.add(options.uri.path);
+            return override(options) ?? _successfulResponse(options);
+          }),
+      );
+      await client.loginAndFetch(
+        username: 'parent@example.com',
+        password: 'secret',
+      );
+      return client;
+    }
+
+    test('come from the XML outbox with who read them', () async {
+      final client = await signedIn((_) => null);
+      final sent = await client.fetchSentMessages();
+      expect(sent.map((item) => item.id), ['120', '121']);
+      final first = sent.first;
+      expect(first.sent, isTrue);
+      expect(first.sender, isEmpty);
+      expect(first.recipients, ['Nauczyciel Testowy']);
+      expect(first.subject, 'Pytanie o sprawdzian');
+      expect(first.receivedAt, DateTime(2026, 10, 17, 18, 5));
+      expect(first.recipientRead, isTrue);
+      expect(first.hasAttachments, isFalse);
+      expect(sent.last.recipients, ['Nauczyciel Zastępczy']);
+      expect(sent.last.recipientRead, isFalse);
+      expect(sent.last.hasAttachments, isTrue);
+    });
+
+    test(
+      'an opened sent message lists each recipient and read state',
+      () async {
+        final client = await signedIn((_) => null);
+        final sent = await client.fetchSentMessages();
+        final content = await client.fetchMessageContent(sent.first);
+        expect(content.body, 'Kiedy jest sprawdzian?');
+        expect(content.recipients.map((item) => item.name), [
+          'Nauczyciel Testowy',
+          'Nauczyciel Zastępczy',
+        ]);
+        expect(content.recipients.first.read, isTrue);
+        expect(content.recipients.first.readAt, DateTime(2026, 10, 18, 7, 40));
+        expect(content.recipients.last.read, isFalse);
+        expect(content.recipients.last.readAt, isNull);
+      },
+    );
+
+    test('the web Sent folder is used when the XML outbox fails', () async {
+      final client = await signedIn((options) {
+        if (options.uri.path.endsWith('/Outbox/action/GetList')) {
+          return (200, '<error><type>eAccessDeny</type></error>');
+        }
+        if (options.uri.path.endsWith('/module/GetMessage')) {
+          return (200, '<error><type>eAccessDeny</type></error>');
+        }
+        if (options.uri.path == '/wiadomosci/6') {
+          return (
+            200,
+            '<table class="decorated stretch"><thead><tr><th></th><th></th><th>Odbiorca</th><th>Temat</th><th>Data</th></tr></thead><tbody><tr><td><a href="/wiadomosci/1/6/130/f0">Otwórz</a></td><td></td><td>Testowy Nauczyciel (Nauczyciel)</td><td>Usprawiedliwienie</td><td>2026-10-15 20:00:00</td></tr></tbody></table>',
+          );
+        }
+        if (options.uri.path == '/wiadomosci/1/6/130/f0') {
+          return (
+            200,
+            '<table class="container-message"><tr><td>Message</td><td><div class="container-message-content">Proszę o usprawiedliwienie</div></td></tr></table>',
+          );
+        }
+        return null;
+      });
+      final sent = await client.fetchSentMessages();
+      expect(sent.single.id, '130');
+      expect(sent.single.sent, isTrue);
+      expect(sent.single.recipients, ['Testowy Nauczyciel']);
+      expect(sent.single.subject, 'Usprawiedliwienie');
+      // The web folder does not say who read it.
+      expect(sent.single.recipientRead, isNull);
+      final content = await client.fetchMessageContent(sent.single);
+      expect(content.body, 'Proszę o usprawiedliwienie');
+    });
+
+    test('both Sent folders failing gives a reason, not a list', () async {
+      final client = await signedIn((options) {
+        if (options.uri.path.endsWith('/Outbox/action/GetList')) {
+          return (200, '<error><type>eAccessDeny</type></error>');
+        }
+        return null;
+      });
+      await expectLater(
+        client.fetchSentMessages(),
+        throwsA(
+          isA<LibrusException>().having(
+            (error) => error.detail,
+            'detail',
+            allOf(
+              contains('XML GetList eAccessDeny'),
+              contains('Synergia outbox HTTP 404'),
+            ),
+          ),
+        ),
+      );
+    });
+
+    test('sending returns the id of the new message', () async {
+      final client = await signedIn((_) => null);
+      expect(
+        await client.sendMessage(
+          recipientIds: [20],
+          subject: 'Pytanie',
+          body: 'Dzień dobry',
+        ),
+        '99',
+      );
+    });
+
+    test('two mailbox calls at once log in to the mailbox once', () async {
+      final requests = <String>[];
+      final client = await signedIn((_) => null, requests: requests);
+      // The API inbox worked, so the sync did not open the mailbox.
+      expect(requests.where((path) => path == '/wiadomosci2'), isEmpty);
+      final results = await Future.wait([
+        client.fetchSentMessages(),
+        client.fetchMessageRecipients(),
+      ]);
+      expect(results, everyElement(isNotEmpty));
+      expect(requests.where((path) => path == '/wiadomosci2'), hasLength(1));
+      expect(
+        requests.where((path) => path.endsWith('/AutoLoginToken')),
+        hasLength(1),
+      );
+    });
+  });
+
   test('maps invalid Portal credentials to a readable error', () async {
     final dio = Dio()
       ..httpClientAdapter = _FixtureAdapter((options) {
@@ -849,6 +988,27 @@ const _loginPage =
       return (
         200,
         '<response><GetList><data><ArrayItem><messageId>91</messageId><topic>Wywiadówka</topic><senderFirstName>Nauczyciel</senderFirstName><senderLastName>Testowy</senderLastName><sendDate>2026-09-18 12:00:00</sendDate><readDate/><isAnyFileAttached>1</isAnyFileAttached></ArrayItem></data></GetList></response>',
+      );
+    }
+    if (path.endsWith('/Outbox/action/GetList')) {
+      return (
+        200,
+        '<response><GetList><data>'
+            '<ArrayItem><messageId>120</messageId><topic>Pytanie o sprawdzian</topic><receiverFirstName>Nauczyciel</receiverFirstName><receiverLastName>Testowy</receiverLastName><sendDate>2026-10-17 18:05:00</sendDate><readDate>2026-10-18 07:40:00</readDate><isAnyFileAttached>0</isAnyFileAttached></ArrayItem>'
+            '<ArrayItem><messageId>121</messageId><topic>Nieobecność</topic><receiverFirstName>Nauczyciel</receiverFirstName><receiverLastName>Zastępczy</receiverLastName><sendDate>2026-10-19 08:00:00</sendDate><readDate/><isAnyFileAttached>1</isAnyFileAttached></ArrayItem>'
+            '</data></GetList></response>',
+      );
+    }
+    if (path.endsWith('/GetMessage') &&
+        request.contains('<messageId>120</messageId>')) {
+      final body = base64Encode(utf8.encode('Kiedy jest sprawdzian?'));
+      return (
+        200,
+        '<response><GetMessage><data><Message>$body</Message>'
+            '<receivers>'
+            '<ArrayItem><receiverId>20</receiverId><firstName>Nauczyciel</firstName><lastName>Testowy</lastName><readed>2026-10-18 07:40:00</readed></ArrayItem>'
+            '<ArrayItem><receiverId>21</receiverId><firstName>Nauczyciel</firstName><lastName>Zastępczy</lastName><readed></readed></ArrayItem>'
+            '</receivers></data></GetMessage></response>',
       );
     }
     if (path.endsWith('/GetMessage')) {

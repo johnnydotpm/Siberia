@@ -66,7 +66,7 @@ class _ComposeMessageSheetState extends State<_ComposeMessageSheet> {
     });
     try {
       await widget.controller.sendMessage(
-        recipientIds: selectedRecipients.map((item) => item.id).toList(),
+        recipients: selectedRecipients.toList(),
         subject: subject,
         body: body,
       );

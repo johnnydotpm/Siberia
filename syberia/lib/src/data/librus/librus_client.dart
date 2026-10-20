@@ -60,6 +60,8 @@ class LibrusClient {
   DateTime? _synergiaSessionExpiresAt;
   DateTime? _messagesSessionExpiresAt;
   Future<void>? _refreshInFlight;
+  Future<void>? _webSessionInFlight;
+  Future<void>? _messagesSessionInFlight;
 
   bool _validUntil(DateTime? expiry) =>
       expiry != null &&
@@ -186,7 +188,8 @@ class LibrusClient {
     return recipients.values.toList()..sort((a, b) => a.name.compareTo(b.name));
   }
 
-  Future<void> sendMessage({
+  /// Returns the id of the new message.
+  Future<String> sendMessage({
     required List<int> recipientIds,
     required String subject,
     required String body,
@@ -204,10 +207,12 @@ class LibrusClient {
     final confirmed = response
         .findAllElements('status')
         .any((e) => e.innerText == 'ok');
-    if (!confirmed ||
-        !response
-            .findAllElements('data')
-            .any((e) => int.tryParse(e.innerText.trim()) != null)) {
+    final id = response
+        .findAllElements('data')
+        .map((e) => int.tryParse(e.innerText.trim()))
+        .nonNulls
+        .firstOrNull;
+    if (!confirmed || id == null) {
       // The translation shows the detail, so there always is one.
       throw LibrusException(
         LibrusErrorCode.messageNotSent,
@@ -215,6 +220,24 @@ class LibrusClient {
             ? 'Messages: XML SendMessage no message id'
             : 'Messages: XML SendMessage not confirmed',
       );
+    }
+    return '$id';
+  }
+
+  /// The messages the student sent this school year. The XML mailbox says
+  /// who read them; the web mailbox is tried when it fails.
+  Future<List<SchoolMessage>> fetchSentMessages() async {
+    try {
+      return await _fetchXmlOutbox();
+    } on LibrusException catch (xmlError) {
+      try {
+        return await _fetchSynergiaOutbox();
+      } on LibrusException catch (webError) {
+        throw LibrusException(
+          LibrusErrorCode.serverReply,
+          detail: '${_mailboxFailure(xmlError)}; ${_mailboxFailure(webError)}',
+        );
+      }
     }
   }
 
@@ -293,6 +316,18 @@ class LibrusClient {
       subject: summary.subject,
       body: _plainText(body.replaceAll('<![CDATA[', '').replaceAll(']]>', '')),
       receivedAt: summary.receivedAt,
+      recipients: summary.sent
+          ? [
+              for (final receiver
+                  in data.getElement('receivers')?.findElements('ArrayItem') ??
+                      <XmlElement>[])
+                if (_fullName(
+                  _xmlText(receiver, 'firstName'),
+                  _xmlText(receiver, 'lastName'),
+                ).isNotEmpty)
+                  _receiver(receiver),
+            ]
+          : const [],
       attachments: [
         for (final attachment
             in data.getElement('attachments')?.findElements('ArrayItem') ??
@@ -742,7 +777,16 @@ class LibrusClient {
   static const _webUserAgent =
       'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Gecko/20100101 Firefox/62.0';
 
-  Future<void> _prepareSynergiaWebSession() async {
+  /// Logging in twice at once would clear the cookies of the first login.
+  Future<void> _prepareSynergiaWebSession() => _webSessionInFlight ??=
+      _openSynergiaWebSession().whenComplete(() => _webSessionInFlight = null);
+
+  Future<void> _prepareMessagesSession() =>
+      _messagesSessionInFlight ??= _openMessagesSession().whenComplete(
+        () => _messagesSessionInFlight = null,
+      );
+
+  Future<void> _openSynergiaWebSession() async {
     await _prepareFreshSession();
     if (_validUntil(_synergiaSessionExpiresAt) &&
         _hasCookieFor('https://synergia.librus.pl/')) {
@@ -778,7 +822,7 @@ class LibrusClient {
     _synergiaSessionExpiresAt = _clock().add(const Duration(minutes: 45));
   }
 
-  Future<void> _prepareMessagesSession() async {
+  Future<void> _openMessagesSession() async {
     await _prepareSynergiaWebSession();
     if (_validUntil(_messagesSessionExpiresAt) &&
         _hasCookieFor(_messagesBase)) {
@@ -1031,6 +1075,129 @@ class LibrusClient {
     ];
   }
 
+  Future<List<SchoolMessage>> _fetchXmlOutbox() async {
+    await _prepareMessagesSession();
+    final response = await _messagesRequest('Outbox/action/GetList', {
+      'archive': 0,
+    });
+    final data = response
+        .findAllElements('GetList')
+        .firstOrNull
+        ?.getElement('data');
+    if (data == null) {
+      throw const LibrusException(
+        LibrusErrorCode.serverReply,
+        detail: 'Messages: invalid outbox response',
+      );
+    }
+    return [
+      for (final item in data.childElements)
+        if (_xmlText(item, 'messageId').isNotEmpty)
+          SchoolMessage(
+            id: _xmlText(item, 'messageId'),
+            sender: '',
+            subject: _xmlText(item, 'topic'),
+            preview: '',
+            receivedAt: _flexDate(_xmlText(item, 'sendDate')) ?? DateTime.now(),
+            hasAttachments: _xmlText(item, 'isAnyFileAttached') == '1',
+            sent: true,
+            recipients: [
+              _fullName(
+                _xmlText(item, 'receiverFirstName'),
+                _xmlText(item, 'receiverLastName'),
+              ),
+            ].where((name) => name.isNotEmpty).toList(growable: false),
+            recipientRead: item.getElement('readDate') == null
+                ? null
+                : _readDate(_xmlText(item, 'readDate')) != null,
+          ),
+    ];
+  }
+
+  /// A recipient in GetMessage: "readed" holds when they read it.
+  MessageReceiver _receiver(XmlElement receiver) {
+    final field =
+        receiver.getElement('readed') ?? receiver.getElement('readDate');
+    final readAt = field == null ? null : _readDate(field.innerText.trim());
+    return MessageReceiver(
+      name: _fullName(
+        _xmlText(receiver, 'firstName'),
+        _xmlText(receiver, 'lastName'),
+      ),
+      read: field == null ? null : readAt != null,
+      readAt: readAt,
+    );
+  }
+
+  /// Unread messages have an empty, zero or all-zero read date.
+  static DateTime? _readDate(String value) =>
+      value.isEmpty || value == '0' || value.startsWith('0000')
+      ? null
+      : _flexDate(value);
+
+  Future<List<SchoolMessage>> _fetchSynergiaOutbox() async {
+    await _prepareSynergiaWebSession();
+    final response = await _request(
+      'GET',
+      'https://synergia.librus.pl/wiadomosci/6',
+      headers: {'User-Agent': _webUserAgent},
+    );
+    final doc = html_parser.parse(response.data?.toString() ?? '');
+    final table = doc.querySelector('.decorated.stretch');
+    if (response.statusCode != 200 || table == null) {
+      throw LibrusException(
+        LibrusErrorCode.serverReply,
+        detail:
+            'Messages: Synergia outbox HTTP ${response.statusCode ?? 0}, missing outbox',
+      );
+    }
+    final messages = <SchoolMessage>[];
+    for (final row in table.querySelectorAll('tbody > tr')) {
+      final cells = row.children;
+      final link = row.querySelector('a[href]')?.attributes['href'] ?? '';
+      final id = RegExp(r'(?:^|/)wiadomosci/1/6/([0-9]+)(?:/|$)')
+          .firstMatch(link)
+          ?.group(1);
+      if (id == null) continue;
+      if (cells.length < 5) {
+        throw const LibrusException(
+          LibrusErrorCode.serverReply,
+          detail: 'Messages: Synergia outbox invalid row',
+        );
+      }
+      final recipient = cells[2].text.split('(').first.trim();
+      messages.add(
+        SchoolMessage(
+          id: id,
+          sender: '',
+          subject: cells[3].text.trim(),
+          preview: '',
+          receivedAt: _flexDate(cells[4].text.trim()) ?? DateTime.now(),
+          hasAttachments: cells[1].querySelector('img') != null,
+          sent: true,
+          recipients: [if (recipient.isNotEmpty) recipient],
+        ),
+      );
+    }
+    // A login or error page is not an empty outbox.
+    if (messages.isEmpty &&
+        (table.querySelector('tbody') == null ||
+            !table
+                .querySelectorAll('th')
+                .any(
+                  (cell) => const [
+                    'temat',
+                    'subject',
+                  ].contains(cell.text.trim().toLowerCase()),
+                ))) {
+      throw const LibrusException(
+        LibrusErrorCode.serverReply,
+        detail: 'Messages: Synergia outbox missing rows',
+      );
+    }
+    return messages;
+  }
+
   Future<List<SchoolMessage>> _fetchSynergiaInbox() async {
     await _prepareSynergiaWebSession();
     final response = await _request(
@@ -1098,7 +1265,7 @@ class LibrusClient {
     await _prepareSynergiaWebSession();
     final response = await _request(
       'GET',
-      'https://synergia.librus.pl/wiadomosci/1/5/${Uri.encodeComponent(summary.id)}/f0',
+      'https://synergia.librus.pl/wiadomosci/1/${summary.sent ? 6 : 5}/${Uri.encodeComponent(summary.id)}/f0',
       headers: {'User-Agent': _webUserAgent},
     );
     final doc = html_parser.parse(response.data?.toString() ?? '');

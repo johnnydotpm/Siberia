@@ -144,10 +144,21 @@ class AppRepository {
             snapshot.profile.id == current.profile.id
         ? snapshot.copyWith(messages: current.messages)
         : snapshot;
-    final result = _keepLaterWeeks(withMessages, current, DateTime.now());
+    final result = _keepSent(
+      _keepLaterWeeks(withMessages, current, DateTime.now()),
+      current,
+    );
     await _cacheSnapshot(result);
     return result;
   }
+
+  /// A sync does not fetch the Sent folder, so the one loaded earlier stays.
+  AppSnapshot _keepSent(AppSnapshot fetched, AppSnapshot? previous) =>
+      previous == null ||
+          previous.profile.id != fetched.profile.id ||
+          previous.sentMessages.isEmpty
+      ? fetched
+      : fetched.copyWith(sentMessages: previous.sentMessages);
 
   /// A sync fetches a single timetable week. Later weeks the app has already
   /// loaded stay, so the next lessons on the Today screen and in the home
@@ -201,9 +212,12 @@ class AppRepository {
         : _keepUnfetchedParts(fetched, previous, wanted);
     final preserved = await _preserveCachedMessages(merged);
     // Kept lessons already include the later weeks.
-    final live = wanted == null || wanted.contains(LibrusPart.timetable)
-        ? _keepLaterWeeks(preserved, previous, DateTime.now())
-        : preserved;
+    final live = _keepSent(
+      wanted == null || wanted.contains(LibrusPart.timetable)
+          ? _keepLaterWeeks(preserved, previous, DateTime.now())
+          : preserved,
+      previous,
+    );
     await _cacheSnapshot(live);
     return live;
   }
@@ -461,40 +475,69 @@ class AppRepository {
   Future<List<MessageRecipient>> fetchMessageRecipients() =>
       _librusClient.fetchMessageRecipients();
 
-  Future<void> sendMessage({
-    required List<int> recipientIds,
+  /// Sends a message and puts it at the top of the saved Sent folder.
+  Future<SchoolMessage> sendMessage({
+    required List<MessageRecipient> recipients,
     required String subject,
     required String body,
-  }) => _librusClient.sendMessage(
-    recipientIds: recipientIds,
-    subject: subject,
-    body: body,
-  );
+  }) async {
+    final profile = (await _preferences).getString(_profileKey);
+    final names = {
+      for (final recipient in recipients) recipient.id: recipient.name,
+    };
+    final id = await _librusClient.sendMessage(
+      recipientIds: names.keys.toList(),
+      subject: subject,
+      body: body,
+    );
+    final message = SchoolMessage(
+      id: id,
+      sender: '',
+      subject: subject.trim(),
+      preview: body.trim(),
+      receivedAt: DateTime.now(),
+      sent: true,
+      recipients: names.values.toList(growable: false),
+      recipientRead: false,
+    );
+    await _updateCached(profile, (cached) => cached.withSent(message));
+    return message;
+  }
+
+  Future<List<SchoolMessage>> fetchSentMessages() async {
+    final profile = (await _preferences).getString(_profileKey);
+    final sent = await _librusClient.fetchSentMessages();
+    await _updateCached(
+      profile,
+      (cached) => cached.copyWith(sentMessages: sent),
+    );
+    return sent;
+  }
 
   Future<SchoolMessageContent> fetchMessageContent(
     SchoolMessage message,
   ) async {
-    final preferences = await _preferences;
-    final profile = preferences.getString(_profileKey);
+    final profile = (await _preferences).getString(_profileKey);
     final content = await _librusClient.fetchMessageContent(message);
-    // Do not change the cache if the user switched accounts while loading.
-    if (profile != null && preferences.getString(_profileKey) == profile) {
-      final cached = await _snapshots.read();
-      if (cached != null) {
-        await _cacheSnapshot(
-          cached.copyWith(
-            messages: cached.messages
-                .map(
-                  (item) => item.id == message.id
-                      ? item.copyWith(unread: false)
-                      : item,
-                )
-                .toList(growable: false),
-          ),
-        );
-      }
-    }
+    await _updateCached(
+      profile,
+      (cached) => cached.withOpened(message, content),
+    );
     return content;
+  }
+
+  /// Changes the saved snapshot, unless the user switched accounts since
+  /// [profile] was read.
+  Future<void> _updateCached(
+    String? profile,
+    AppSnapshot Function(AppSnapshot cached) change,
+  ) async {
+    if (profile == null ||
+        (await _preferences).getString(_profileKey) != profile) {
+      return;
+    }
+    final cached = await _snapshots.read();
+    if (cached != null) await _cacheSnapshot(change(cached));
   }
 
   Future<Uri> fetchMessageAttachmentUrl({
