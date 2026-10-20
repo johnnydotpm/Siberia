@@ -256,10 +256,18 @@ class _AveragePill extends StatelessWidget {
 /// A grade in the colour of its value. A grade that replaced an earlier
 /// one keeps Librus's brackets, and a new grade has a dot.
 class _GradeChip extends StatelessWidget {
-  const _GradeChip(this.grade, {required this.settings, this.size = 32});
+  const _GradeChip(
+    this.grade, {
+    required this.settings,
+    this.size = 32,
+    this.showNew = true,
+  });
   final Grade grade;
   final GradeAverageSettings settings;
   final double size;
+
+  /// The dot on grades from the last week.
+  final bool showNew;
 
   @override
   Widget build(BuildContext context) {
@@ -291,7 +299,7 @@ class _GradeChip extends StatelessWidget {
         ),
       ),
     );
-    if (!_isNewGrade(grade, DateTime.now())) return chip;
+    if (!showNew || !_isNewGrade(grade, DateTime.now())) return chip;
     return Stack(
       clipBehavior: Clip.none,
       children: [

@@ -455,10 +455,14 @@ String _blockDetails(BuildContext context, _LessonBlock block) {
   final lesson = block.lesson;
   return [
     if (block.count > 1) _lessonCount(context, block.count),
-    if (lesson.room.isNotEmpty) 's. ${lesson.room}',
+    if (lesson.room.isNotEmpty) _room(context, lesson.room),
     lesson.teacher,
   ].where((value) => value.isNotEmpty).join(' · ');
 }
+
+/// "s. 101" in Polish, "каб. 101" in Russian.
+String _room(BuildContext context, String room) =>
+    '${context.tr('roomShort')} $room';
 
 String _lessonCount(BuildContext context, int count) {
   if (count == 1) return context.tr('lessonsOne').replaceAll('%d', '1');

@@ -114,6 +114,8 @@ class _TodayState extends State<_Today> {
             _capitalize(DateFormat.MMMMEEEEd(locale).format(now)),
             style: Theme.of(context).textTheme.titleMedium,
           ),
+          if (controller.snapshot.lastSync.millisecondsSinceEpoch != 0)
+            _LastSync(controller, now: now),
           const SizedBox(height: 14),
           if (controller.error != null)
             _InfoCard(
@@ -337,7 +339,10 @@ class _NowCard extends StatelessWidget {
       final dayName = _daysBetween(now, day) == 1
           ? context.tr('widgetTomorrow')
           : _shortWeekday(context, day);
-      when = '$dayName, ${DateFormat('dd.MM').format(day)}';
+      // The big subject below is that day's first lesson, not today's.
+      when =
+          '$dayName, ${DateFormat('dd.MM').format(day)} · '
+          '${context.tr('todayFirstLesson')}';
     }
 
     // The line at the bottom: what follows.
@@ -348,7 +353,18 @@ class _NowCard extends StatelessWidget {
           ? context.tr('todayLastLesson')
           : '${context.tr('todayNext')} · ${_time(next.lesson.start)} '
                 '${_SubjectScope.of(context, next.lesson.subject)}'
-                '${next.lesson.room.isEmpty ? '' : ' · s. ${next.lesson.room}'}';
+                '${next.lesson.room.isEmpty ? '' : ' · ${_room(context, next.lesson.room)}'}';
+    } else if (!sameDay) {
+      final thatDay = upcoming.where(
+        (block) => _sameDay(block.lesson.start, lesson.start),
+      );
+      footer = context.trArgs('todayDayLessons', {
+        'lessons': _lessonCount(
+          context,
+          thatDay.fold(0, (sum, block) => sum + block.count),
+        ),
+        'time': _time(thatDay.last.lesson.end),
+      });
     } else if (sameDay && laterToday.length > 1) {
       final more = laterToday
           .skip(1)
@@ -524,41 +540,126 @@ class _RecentGrades extends StatelessWidget {
   final GradeAverageSettings settings;
 
   @override
-  Widget build(BuildContext context) => Card(
-    child: SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 10),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          for (final grade in grades)
-            InkWell(
-              borderRadius: BorderRadius.circular(14),
-              onTap: () => _showGradeDetails(context, grade),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(minWidth: 56, maxWidth: 96),
-                  child: Column(
-                    children: [
-                      _GradeChip(grade, settings: settings, size: 44),
-                      const SizedBox(height: 6),
-                      Text(
-                        _SubjectScope.of(context, grade.subject),
-                        maxLines: 2,
-                        textAlign: TextAlign.center,
-                        overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context).textTheme.labelSmall,
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final now = DateTime.now();
+    // One width for all, growing with the text so long words stay whole.
+    final width = MediaQuery.textScalerOf(context).scale(84).clamp(84.0, 120.0);
+    return Card(
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 10),
+        // Every grade as tall as the tallest, so the dates line up.
+        child: IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              for (final grade in grades)
+                InkWell(
+                  key: ValueKey('recent-grade-${grade.id}'),
+                  borderRadius: BorderRadius.circular(14),
+                  onTap: () => _showGradeDetails(context, grade),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 4,
+                      vertical: 4,
+                    ),
+                    child: SizedBox(
+                      width: width,
+                      child: Column(
+                        children: [
+                          // All of them are recent: a "new" dot says nothing.
+                          _GradeChip(
+                            grade,
+                            settings: settings,
+                            size: 44,
+                            showNew: false,
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            _SubjectScope.of(context, grade.subject),
+                            maxLines: 2,
+                            textAlign: TextAlign.center,
+                            overflow: TextOverflow.ellipsis,
+                            style: theme.textTheme.labelSmall?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const Spacer(),
+                          const SizedBox(height: 2),
+                          Text(
+                            _gradeWhen(context, grade.date, now),
+                            key: ValueKey('recent-grade-when-${grade.id}'),
+                            maxLines: 1,
+                            style: theme.textTheme.labelSmall?.copyWith(
+                              color: theme.colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
                 ),
-              ),
-            ),
-        ],
+            ],
+          ),
+        ),
       ),
-    ),
-  );
+    );
+  }
+}
+
+/// "Today", "Yesterday", the weekday within a week, then the date.
+String _gradeWhen(BuildContext context, DateTime date, DateTime now) {
+  final days = _daysBetween(date, now);
+  if (days <= 0) return context.tr('messagesToday');
+  if (days == 1) return context.tr('messagesYesterday');
+  if (days < 7) return _shortWeekday(context, date);
+  return DateFormat('dd.MM').format(date);
+}
+
+/// "Updated at 17:05" under the date; a tap syncs again.
+class _LastSync extends StatelessWidget {
+  const _LastSync(this.controller, {required this.now});
+  final AppController controller;
+  final DateTime now;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final color = theme.colorScheme.onSurfaceVariant;
+    final last = controller.snapshot.lastSync;
+    final text = controller.syncing
+        ? context.tr('todayUpdating')
+        : _sameDay(last, now)
+        ? context.trArgs('todayUpdatedAt', {'time': _time(last)})
+        : context.trArgs('todayUpdatedOn', {
+            'date': '${DateFormat('dd.MM').format(last)}, ${_time(last)}',
+          });
+    return Align(
+      alignment: AlignmentDirectional.centerStart,
+      child: InkWell(
+        key: const ValueKey('today-last-sync'),
+        borderRadius: BorderRadius.circular(8),
+        onTap: controller.syncing ? null : controller.sync,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.sync_rounded, size: 14, color: color),
+              const SizedBox(width: 4),
+              Flexible(
+                child: Text(
+                  text,
+                  style: theme.textTheme.bodySmall?.copyWith(color: color),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 /// Which Today blocks show, and in what order.

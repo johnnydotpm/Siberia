@@ -105,6 +105,28 @@ class SubjectColors {
 
   static final _gradeSchemes = <(int, Brightness), ColorScheme>{};
 
+  /// A fixed colour of its own, for things that must not look like a
+  /// subject, such as the kind of a calendar entry.
+  static ({Color background, Color foreground, Color accent}) tone(
+    double hue,
+    Brightness brightness,
+  ) {
+    final scheme = _toneSchemes.putIfAbsent(
+      (hue, brightness),
+      () => ColorScheme.fromSeed(
+        seedColor: HSVColor.fromAHSV(1, hue, 0.75, 0.85).toColor(),
+        brightness: brightness,
+      ),
+    );
+    return (
+      background: scheme.primaryContainer,
+      foreground: scheme.onPrimaryContainer,
+      accent: scheme.primary,
+    );
+  }
+
+  static final _toneSchemes = <(double, Brightness), ColorScheme>{};
+
   /// A hash that stays the same across runs and platforms, unlike
   /// [String.hashCode].
   static int stableHash(String text) {

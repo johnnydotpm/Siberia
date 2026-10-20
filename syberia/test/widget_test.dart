@@ -722,8 +722,9 @@ void main() {
     controller.selectTab(1);
     await tester.pumpAndSettle();
 
+    // Shown with a capital letter, as Librus's lower case looks careless.
     expect(
-      find.text('przykładowy przedmiot z bardzo długą nazwą'),
+      find.text('Przykładowy przedmiot z bardzo długą nazwą'),
       findsOneWidget,
     );
     expect(find.text('08:00'), findsOneWidget);
