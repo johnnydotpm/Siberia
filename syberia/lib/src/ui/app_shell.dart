@@ -3,6 +3,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -38,6 +39,7 @@ part 'shell/settings.dart';
 part 'shell/settings_previews.dart';
 part 'shell/notification_settings.dart';
 part 'shell/account.dart';
+part 'shell/free_days.dart';
 
 class AppShell extends StatefulWidget {
   const AppShell({required this.controller, super.key});
@@ -70,8 +72,8 @@ class _AppShellState extends State<AppShell> {
     4 => _Homework(controller),
     5 => _Messages(controller),
     6 => _Attendance(controller),
-    7 => _Announcements(controller.snapshot),
-    8 => _Notices(controller.snapshot),
+    7 => _Announcements(controller),
+    8 => _Notices(controller),
     _ => _Settings(controller),
   };
 
@@ -126,7 +128,13 @@ class _AppShellState extends State<AppShell> {
         final body = _SubjectScope(
           names: controller.subjectShortNames,
           colors: _subjectColors(),
-          child: IndexedStack(index: current, children: pages),
+          child: _FreeDaysScope(
+            days: controller.snapshot.freeDays,
+            child: _ControllerScope(
+              controller: controller,
+              child: IndexedStack(index: current, children: pages),
+            ),
+          ),
         );
         if (wide) {
           return Scaffold(
@@ -373,6 +381,9 @@ class _SideNavigation extends StatelessWidget {
             ),
             Expanded(
               child: ListView.builder(
+                // Scrolls only when the entries do not fit, as on a short
+                // screen or with large text.
+                primary: false,
                 itemCount: entries.length,
                 itemBuilder: (context, index) {
                   final entry = entries[index];

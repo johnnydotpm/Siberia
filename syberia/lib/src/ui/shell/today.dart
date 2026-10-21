@@ -104,25 +104,29 @@ class _TodayState extends State<_Today> {
     return _Refresh(
       controller: controller,
       child: _PageList(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(_Space.page),
         children: [
           if (controller.updateAvailable) ...[
             _UpdateBanner(controller),
-            const SizedBox(height: 14),
+            const SizedBox(height: _Space.card),
           ],
           Text(
             _capitalize(DateFormat.MMMMEEEEd(locale).format(now)),
             style: Theme.of(context).textTheme.titleMedium,
           ),
-          const SizedBox(height: 14),
-          if (controller.error != null)
+          if (controller.snapshot.lastSync.millisecondsSinceEpoch != 0)
+            _LastSync(controller, now: now),
+          const SizedBox(height: _Space.card),
+          if (controller.error != null) ...[
             _InfoCard(
-              icon: Icons.error_outline,
+              icon: Icons.error_outline_rounded,
               text: context.trError(controller.error!),
               color: Theme.of(context).colorScheme.error,
             ),
+            const SizedBox(height: _Space.card),
+          ],
           for (final (index, block) in blocks.indexed) ...[
-            if (index > 0) const SizedBox(height: 22),
+            if (index > 0) const SizedBox(height: _Space.section),
             block,
           ],
         ],
@@ -140,7 +144,7 @@ class _TodayState extends State<_Today> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _Heading(title, onAll: () => controller.selectTab(tab)),
-        const SizedBox(height: 8),
+        const SizedBox(height: _Space.heading),
         child,
       ],
     );
@@ -148,7 +152,7 @@ class _TodayState extends State<_Today> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         for (final (index, item) in items.indexed) ...[
-          if (index > 0) const SizedBox(height: 8),
+          if (index > 0) const SizedBox(height: _Space.item),
           item,
         ],
       ],
@@ -161,6 +165,13 @@ class _TodayState extends State<_Today> {
             builder: (context, now) =>
                 _NowCard(controller: controller, now: now),
           ),
+        );
+      case TodayBlock.freeDays:
+        final next = _nextFreeDays(data.freeDays, now);
+        if (next == null) return null;
+        return KeyedSubtree(
+          key: const ValueKey('today-free-days'),
+          child: _FreeDayCard(next, now: now),
         );
       case TodayBlock.summary:
         return _Summary(controller);
@@ -179,7 +190,9 @@ class _TodayState extends State<_Today> {
                 .where(
                   (item) =>
                       item.kind == EventKind.homework &&
-                      !item.date.isBefore(today),
+                      !item.date.isBefore(today) &&
+                      // Done is off the list of what is to do.
+                      !controller.isHomeworkDone(item),
                 )
                 .toList()
               ..sort((a, b) => a.date.compareTo(b.date));
@@ -214,16 +227,17 @@ class _TodayState extends State<_Today> {
         return section(
           context.tr('todayUnreadMessages'),
           5,
-          Column(
-            children: [
-              for (final item in unread.take(2))
-                _MessageTile(
-                  controller,
-                  item,
-                  style: MessageListStyle.cards,
-                  now: now,
+          spaced(
+            unread
+                .take(2)
+                .map(
+                  (item) => _MessageTile(
+                    controller,
+                    item,
+                    style: MessageListStyle.cards,
+                    now: now,
+                  ),
                 ),
-            ],
           ),
           key: const ValueKey('today-messages'),
         );
@@ -297,12 +311,11 @@ class _NowCard extends StatelessWidget {
         .toList(growable: false);
     final featured = current ?? upcoming.firstOrNull;
     if (featured == null) {
-      return Card(
+      return _InfoCard(
         key: const ValueKey('today-now-card'),
-        child: ListTile(
-          leading: const Icon(Icons.free_breakfast_outlined),
-          title: Text(context.tr('todayNoUpcoming')),
-        ),
+        icon: Icons.free_breakfast_rounded,
+        text: context.tr('todayNoUpcoming'),
+        color: theme.colorScheme.onSurfaceVariant,
       );
     }
     final lesson = featured.lesson;
@@ -337,7 +350,10 @@ class _NowCard extends StatelessWidget {
       final dayName = _daysBetween(now, day) == 1
           ? context.tr('widgetTomorrow')
           : _shortWeekday(context, day);
-      when = '$dayName, ${DateFormat('dd.MM').format(day)}';
+      // The big subject below is that day's first lesson, not today's.
+      when =
+          '$dayName, ${_shortDate(context, day)} · '
+          '${context.tr('todayFirstLesson')}';
     }
 
     // The line at the bottom: what follows.
@@ -348,7 +364,18 @@ class _NowCard extends StatelessWidget {
           ? context.tr('todayLastLesson')
           : '${context.tr('todayNext')} · ${_time(next.lesson.start)} '
                 '${_SubjectScope.of(context, next.lesson.subject)}'
-                '${next.lesson.room.isEmpty ? '' : ' · s. ${next.lesson.room}'}';
+                '${next.lesson.room.isEmpty ? '' : ' · ${_room(context, next.lesson.room)}'}';
+    } else if (!sameDay) {
+      final thatDay = upcoming.where(
+        (block) => _sameDay(block.lesson.start, lesson.start),
+      );
+      footer = context.trArgs('todayDayLessons', {
+        'lessons': _lessonCount(
+          context,
+          thatDay.fold(0, (sum, block) => sum + block.count),
+        ),
+        'time': _time(thatDay.last.lesson.end),
+      });
     } else if (sameDay && laterToday.length > 1) {
       final more = laterToday
           .skip(1)
@@ -367,12 +394,12 @@ class _NowCard extends StatelessWidget {
     return Material(
       key: const ValueKey('today-now-card'),
       color: palette.background,
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: BorderRadius.circular(14),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: () => controller.selectTab(1),
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(18, 16, 18, 16),
+          padding: const EdgeInsets.all(_Space.inset),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -398,7 +425,9 @@ class _NowCard extends StatelessWidget {
                       ),
                     )
                   else
-                    Flexible(
+                    // All the room the time leaves: beside a Spacer it
+                    // got only half of it, and "Next lesson" broke in two.
+                    Expanded(
                       child: Text(
                         label,
                         maxLines: 2,
@@ -410,13 +439,14 @@ class _NowCard extends StatelessWidget {
                       ),
                     ),
                   if (sameDay || current != null) ...[
-                    const Spacer(),
+                    if (current != null) const Spacer(),
                     const SizedBox(width: 8),
                     Text(
                       when,
                       style: theme.textTheme.labelLarge?.copyWith(
                         color: foreground,
                         fontWeight: FontWeight.w800,
+                        fontFeatures: _tabular,
                       ),
                     ),
                   ],
@@ -490,6 +520,7 @@ class _NowCard extends StatelessWidget {
                       style: theme.textTheme.labelLarge?.copyWith(
                         color: foreground,
                         fontWeight: FontWeight.w800,
+                        fontFeatures: _tabular,
                       ),
                     ),
                   ],
@@ -524,41 +555,126 @@ class _RecentGrades extends StatelessWidget {
   final GradeAverageSettings settings;
 
   @override
-  Widget build(BuildContext context) => Card(
-    child: SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 10),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          for (final grade in grades)
-            InkWell(
-              borderRadius: BorderRadius.circular(14),
-              onTap: () => _showGradeDetails(context, grade),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(minWidth: 56, maxWidth: 96),
-                  child: Column(
-                    children: [
-                      _GradeChip(grade, settings: settings, size: 44),
-                      const SizedBox(height: 6),
-                      Text(
-                        _SubjectScope.of(context, grade.subject),
-                        maxLines: 2,
-                        textAlign: TextAlign.center,
-                        overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context).textTheme.labelSmall,
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final now = DateTime.now();
+    // One width for all, growing with the text so long words stay whole.
+    final width = MediaQuery.textScalerOf(context).scale(84).clamp(84.0, 120.0);
+    return Card(
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 10),
+        // Every grade as tall as the tallest, so the dates line up.
+        child: IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              for (final grade in grades)
+                InkWell(
+                  key: ValueKey('recent-grade-${grade.id}'),
+                  borderRadius: BorderRadius.circular(14),
+                  onTap: () => _showGradeDetails(context, grade),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 4,
+                      vertical: 4,
+                    ),
+                    child: SizedBox(
+                      width: width,
+                      child: Column(
+                        children: [
+                          // All of them are recent: a "new" dot says nothing.
+                          _GradeChip(
+                            grade,
+                            settings: settings,
+                            size: 44,
+                            showNew: false,
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            _SubjectScope.of(context, grade.subject),
+                            maxLines: 2,
+                            textAlign: TextAlign.center,
+                            overflow: TextOverflow.ellipsis,
+                            style: theme.textTheme.labelSmall?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const Spacer(),
+                          const SizedBox(height: 2),
+                          Text(
+                            _gradeWhen(context, grade.date, now),
+                            key: ValueKey('recent-grade-when-${grade.id}'),
+                            maxLines: 1,
+                            style: theme.textTheme.labelSmall?.copyWith(
+                              color: theme.colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
                 ),
-              ),
-            ),
-        ],
+            ],
+          ),
+        ),
       ),
-    ),
-  );
+    );
+  }
+}
+
+/// "Today", "Yesterday", the weekday within a week, then the date.
+String _gradeWhen(BuildContext context, DateTime date, DateTime now) {
+  final days = _daysBetween(date, now);
+  if (days <= 0) return context.tr('messagesToday');
+  if (days == 1) return context.tr('messagesYesterday');
+  if (days < 7) return _shortWeekday(context, date);
+  return _shortDate(context, date);
+}
+
+/// "Updated at 17:05" under the date; a tap syncs again.
+class _LastSync extends StatelessWidget {
+  const _LastSync(this.controller, {required this.now});
+  final AppController controller;
+  final DateTime now;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final color = theme.colorScheme.onSurfaceVariant;
+    final last = controller.snapshot.lastSync;
+    final text = controller.syncing
+        ? context.tr('todayUpdating')
+        : _sameDay(last, now)
+        ? context.trArgs('todayUpdatedAt', {'time': _time(last)})
+        : context.trArgs('todayUpdatedOn', {
+            'date': '${_shortDate(context, last)}, ${_time(last)}',
+          });
+    return Align(
+      alignment: AlignmentDirectional.centerStart,
+      child: InkWell(
+        key: const ValueKey('today-last-sync'),
+        borderRadius: BorderRadius.circular(8),
+        onTap: controller.syncing ? null : controller.sync,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.sync_rounded, size: 14, color: color),
+              const SizedBox(width: 4),
+              Flexible(
+                child: Text(
+                  text,
+                  style: theme.textTheme.bodySmall?.copyWith(color: color),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 /// Which Today blocks show, and in what order.
@@ -579,19 +695,19 @@ Future<void> _showTodayLayoutSheet(
       return SafeArea(
         child: Padding(
           key: const ValueKey('today-layout-sheet'),
-          padding: const EdgeInsets.fromLTRB(8, 0, 8, 16),
+          // The rows' own 16 makes the sheet's 20.
+          padding: const EdgeInsets.fromLTRB(4, 0, 4, 16),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Padding(
-                padding: const EdgeInsets.fromLTRB(12, 0, 4, 8),
+                padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 4, 8),
                 child: Row(
                   children: [
                     Expanded(
                       child: Text(
                         context.tr('todayScreen'),
-                        style: Theme.of(context).textTheme.headlineSmall
-                            ?.copyWith(fontWeight: FontWeight.w900),
+                        style: _sheetTitleStyle(context),
                       ),
                     ),
                     TextButton(
@@ -636,7 +752,7 @@ Future<void> _showTodayLayoutSheet(
                             ),
                           ],
                         ),
-                        trailing: Switch(
+                        trailing: Switch.adaptive(
                           value: entry.visible,
                           onChanged: (visible) {
                             final blocks = [...layout.blocks];
@@ -661,6 +777,7 @@ Future<void> _showTodayLayoutSheet(
 
 String _todayBlockLabel(TodayBlock block) => switch (block) {
   TodayBlock.currentLesson => 'todayCurrentLesson',
+  TodayBlock.freeDays => 'freeDays',
   TodayBlock.summary => 'todayBlockSummary',
   TodayBlock.grades => 'todayRecentGrades',
   TodayBlock.homework => 'homework',
@@ -670,11 +787,12 @@ String _todayBlockLabel(TodayBlock block) => switch (block) {
 
 IconData _todayBlockIcon(TodayBlock block) => switch (block) {
   TodayBlock.currentLesson => Icons.schedule_rounded,
-  TodayBlock.summary => Icons.dashboard_outlined,
-  TodayBlock.grades => Icons.school_outlined,
-  TodayBlock.homework => Icons.assignment_outlined,
-  TodayBlock.events => Icons.event_outlined,
-  TodayBlock.messages => Icons.mail_outline_rounded,
+  TodayBlock.freeDays => Icons.beach_access_rounded,
+  TodayBlock.summary => Icons.dashboard_rounded,
+  TodayBlock.grades => Icons.school_rounded,
+  TodayBlock.homework => Icons.assignment_rounded,
+  TodayBlock.events => Icons.event_note_rounded,
+  TodayBlock.messages => Icons.mail_rounded,
 };
 
 class _UpdateBanner extends StatelessWidget {
@@ -796,7 +914,8 @@ class _Metric extends StatelessWidget {
   final VoidCallback onTap;
   @override
   Widget build(BuildContext context) => InkWell(
-    borderRadius: BorderRadius.circular(16),
+    // The card's corner less its padding, so the two curves follow.
+    borderRadius: BorderRadius.circular(10),
     onTap: onTap,
     child: Padding(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
@@ -806,7 +925,8 @@ class _Metric extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             value,
-            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w800),
+            style: Theme.of(context).textTheme.titleLarge
+                ?.copyWith(fontWeight: FontWeight.w800),
           ),
           Text(
             label,

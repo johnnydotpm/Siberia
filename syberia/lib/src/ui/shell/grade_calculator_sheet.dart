@@ -94,18 +94,13 @@ class _GradeCalculatorState extends State<_GradeCalculator> {
     );
     return SingleChildScrollView(
       key: const ValueKey('grade-calculator-sheet'),
-      padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+      padding: const EdgeInsets.fromLTRB(_Space.sheet, 0, _Space.sheet, 24),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            context.tr('gradeCalculator'),
-            style: theme.textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-          const SizedBox(height: 2),
+          Text(context.tr('gradeCalculator'), style: _sheetTitleStyle(context)),
+          const SizedBox(height: 4),
           Text(
             widget.subject,
             style: theme.textTheme.bodyMedium?.copyWith(
@@ -186,9 +181,12 @@ class _GradeCalculatorState extends State<_GradeCalculator> {
                   ButtonSegment(value: 1, label: Text('+')),
                 ],
                 selected: {if (_modifier != 0) _modifier},
-                onSelectionChanged: (selection) => setState(
-                  () => _modifier = selection.isEmpty ? 0 : selection.first,
-                ),
+                onSelectionChanged: (selection) {
+                  HapticFeedback.selectionClick();
+                  setState(
+                    () => _modifier = selection.isEmpty ? 0 : selection.first,
+                  );
+                },
               ),
             ],
           ),

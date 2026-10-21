@@ -16,6 +16,14 @@ class _AttendanceState extends State<_Attendance> {
 
   @override
   Widget build(BuildContext context) {
+    // Nothing yet, as at the start of the year: said as on the other pages,
+    // not drawn as 0 %.
+    if (widget.controller.snapshot.attendance.isEmpty) {
+      return _PageEmpty(
+        context.tr('emptyAttendance'),
+        icon: Icons.fact_check_rounded,
+      );
+    }
     final records = widget.controller.snapshot.attendance
         .where(
           (item) => switch (period) {
@@ -32,55 +40,85 @@ class _AttendanceState extends State<_Attendance> {
     final selected = selectedDay == null
         ? const <AttendanceRecord>[]
         : records.where((item) => _sameDay(item.date, selectedDay!)).toList();
-    return _PageList(
-      padding: const EdgeInsets.all(12),
-      children: [
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: SegmentedButton<_AttendancePeriod>(
-            selected: {period},
-            onSelectionChanged: (value) => setState(() => period = value.first),
-            segments: [
-              ButtonSegment(
-                value: _AttendancePeriod.first,
-                label: Text(context.tr('period1')),
-              ),
-              ButtonSegment(
-                value: _AttendancePeriod.second,
-                label: Text(context.tr('period2')),
-              ),
-              ButtonSegment(
-                value: _AttendancePeriod.year,
-                label: Text(context.tr('schoolYear')),
-              ),
-            ],
+    // One line on a narrow phone with large text.
+    Widget label(String key) =>
+        FittedBox(fit: BoxFit.scaleDown, child: Text(context.tr(key)));
+    return _Refresh(
+      controller: widget.controller,
+      child: _PageList(
+        padding: const EdgeInsets.all(_Space.page),
+        children: [
+          SizedBox(
+            width: double.infinity,
+            child: SegmentedButton<_AttendancePeriod>(
+              showSelectedIcon: false,
+              selected: {period},
+              onSelectionChanged: (value) {
+                HapticFeedback.selectionClick();
+                setState(() => period = value.first);
+              },
+              segments: [
+                ButtonSegment(
+                  value: _AttendancePeriod.first,
+                  label: label('period1'),
+                ),
+                ButtonSegment(
+                  value: _AttendancePeriod.second,
+                  label: label('period2'),
+                ),
+                ButtonSegment(
+                  value: _AttendancePeriod.year,
+                  label: label('schoolYear'),
+                ),
+              ],
+            ),
           ),
-        ),
-        const SizedBox(height: 16),
-        _AttendanceChart(
-          counts: counts,
-          style: widget.controller.attendanceChartStyle,
-        ),
-        const SizedBox(height: 16),
-        _AttendanceCalendar(
-          records: records,
-          month: month,
-          selectedDay: selectedDay,
-          onMonthChanged: (value) => setState(() => month = value),
-          onDaySelected: (value) => setState(() => selectedDay = value),
-        ),
-        if (selectedDay != null) ...[
-          const SizedBox(height: 18),
-          _Heading('${context.tr('selectedDay')}: ${_date(selectedDay!)}'),
-          const SizedBox(height: 8),
-          if (selected.isEmpty)
-            _Empty(context.tr('noData'))
-          else
-            ...selected.map(_AttendanceTile.new),
+          const SizedBox(height: _Space.card),
+          _AttendanceChart(
+            counts: counts,
+            style: widget.controller.attendanceChartStyle,
+          ),
+          if (records.any((item) => item.subject.trim().isNotEmpty)) ...[
+            const SizedBox(height: 16),
+            _AttendanceBySubject(
+              records: records,
+              style: widget.controller.attendanceChartStyle,
+            ),
+          ] else if (records.isNotEmpty) ...[
+            // Said, not hidden: a sync may still bring the subjects.
+            const SizedBox(height: 16),
+            _AttendanceNoSubjects(widget.controller),
+          ],
+          const SizedBox(height: 16),
+          _AttendanceCalendar(
+            records: records,
+            month: month,
+            selectedDay: selectedDay,
+            onMonthChanged: (value) => setState(() => month = value),
+            onDaySelected: (value) {
+              HapticFeedback.selectionClick();
+              setState(() => selectedDay = value);
+            },
+          ),
+          if (selectedDay != null) ...[
+            const SizedBox(height: _Space.section),
+            _Heading(
+              '${context.tr('selectedDay')}: ${_shortDate(context, selectedDay!)}',
+            ),
+            const SizedBox(height: _Space.heading),
+            if (selected.isEmpty)
+              _Empty(context.tr('emptyEntries'), icon: Icons.fact_check_rounded)
+            else
+              ..._spaced(selected.map(_AttendanceTile.new)),
+          ],
+          if (records.isNotEmpty) ...[
+            const SizedBox(height: _Space.section),
+            _Heading(context.tr('attendanceEntries')),
+            const SizedBox(height: _Space.heading),
+            ..._spaced(records.map(_AttendanceTile.new)),
+          ],
         ],
-        const SizedBox(height: 18),
-        ...records.map(_AttendanceTile.new),
-      ],
+      ),
     );
   }
 }
@@ -111,7 +149,7 @@ class _AttendanceChart extends StatelessWidget {
     final percentage = total == 0 ? 0.0 : present / total * 100;
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(18),
+        padding: const EdgeInsets.all(_Space.inset),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -132,10 +170,11 @@ class _AttendanceChart extends StatelessWidget {
               percentage: percentage,
             ),
             const SizedBox(height: 12),
+            // Only what there is: a row of zeros says nothing.
             Wrap(
               spacing: 18,
               runSpacing: 10,
-              children: entries
+              children: visibleEntries
                   .map(
                     (entry) => _Legend(
                       color: entry.color,
@@ -151,6 +190,277 @@ class _AttendanceChart extends StatelessWidget {
     );
   }
 }
+
+/// Entries came without their subjects, so there is nothing to split by
+/// subject yet; a sync may bring them.
+class _AttendanceNoSubjects extends StatelessWidget {
+  const _AttendanceNoSubjects(this.controller);
+  final AppController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    return Card(
+      key: const ValueKey('attendance-no-subjects'),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
+        child: Row(
+          children: [
+            Icon(Icons.info_outline_rounded, color: colors.onSurfaceVariant),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                context.tr('attendanceNoSubjects'),
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: colors.onSurfaceVariant,
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            TextButton(
+              onPressed: controller.syncing ? null : controller.sync,
+              child: Text(
+                MaterialLocalizations.of(context).refreshIndicatorSemanticLabel,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// The attendance of each subject, the lowest first; a tap shows the
+/// subject's own summary and entries.
+class _AttendanceBySubject extends StatelessWidget {
+  const _AttendanceBySubject({required this.records, required this.style});
+  final List<AttendanceRecord> records;
+  final AttendanceChartStyle style;
+
+  /// Below this a student may not be graded in the subject.
+  static const _gradingThreshold = 50.0;
+
+  @override
+  Widget build(BuildContext context) {
+    final bySubject = <String, List<AttendanceRecord>>{};
+    for (final record in records) {
+      final subject = record.subject.trim();
+      if (subject.isNotEmpty) {
+        bySubject.putIfAbsent(subject, () => []).add(record);
+      }
+    }
+    double rate(List<AttendanceRecord> items) =>
+        items.where((item) => item.isPresence).length / items.length * 100;
+    final subjects = bySubject.keys.toList()
+      ..sort((a, b) {
+        final byRate = rate(bySubject[a]!).compareTo(rate(bySubject[b]!));
+        return byRate != 0 ? byRate : a.compareTo(b);
+      });
+    return Card(
+      key: const ValueKey('attendance-by-subject'),
+      clipBehavior: Clip.antiAlias,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: _Space.inset,
+                vertical: 6,
+              ),
+              child: Text(
+                context.tr('attendanceBySubject'),
+                style: Theme.of(context).textTheme.titleMedium
+                    ?.copyWith(fontWeight: FontWeight.w800),
+              ),
+            ),
+            for (final subject in subjects)
+              _SubjectAttendanceRow(
+                subject: subject,
+                records: bySubject[subject]!,
+                percentage: rate(bySubject[subject]!),
+                low: rate(bySubject[subject]!) < _gradingThreshold,
+                style: style,
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SubjectAttendanceRow extends StatelessWidget {
+  const _SubjectAttendanceRow({
+    required this.subject,
+    required this.records,
+    required this.percentage,
+    required this.low,
+    required this.style,
+  });
+  final String subject;
+  final List<AttendanceRecord> records;
+  final double percentage;
+  final bool low;
+  final AttendanceChartStyle style;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    final name = _SubjectScope.of(context, subject);
+    final accent = SubjectColors.colors(
+      _SubjectScope.colorsOf(context).indexOf(subject),
+      theme.brightness,
+    ).accent;
+    int count(bool Function(AttendanceKind kind) test) =>
+        records.where((item) => test(item.kind)).length;
+    final absences = count(
+      (kind) =>
+          kind == AttendanceKind.absent || kind == AttendanceKind.absentExcused,
+    );
+    final late = count(
+      (kind) =>
+          kind == AttendanceKind.late || kind == AttendanceKind.lateExcused,
+    );
+    final kinds = [
+      for (final kind in AttendanceKind.values)
+        (kind: kind, count: count((value) => value == kind)),
+    ].where((entry) => entry.count > 0);
+    return InkWell(
+      key: ValueKey('attendance-subject-$subject'),
+      onTap: () => _showSubjectAttendance(context, name, records, style),
+      child: Padding(
+        padding: const EdgeInsetsDirectional.fromSTEB(_Space.inset, 8, 12, 8),
+        child: Row(
+          children: [
+            Container(
+              width: 4,
+              height: 40,
+              decoration: BoxDecoration(
+                color: accent,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          name,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.titleSmall?.copyWith(
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        _percent(context, percentage),
+                        key: ValueKey('attendance-subject-rate-$subject'),
+                        style: theme.textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w800,
+                          color: low ? colors.error : null,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  // The same colours as the summary above, in proportion.
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(4),
+                    child: SizedBox(
+                      height: 7,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          for (final entry in kinds)
+                            Expanded(
+                              flex: entry.count,
+                              child: ColoredBox(
+                                color: _attendanceColor(entry.kind),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 5),
+                  Text(
+                    [
+                      if (absences > 0)
+                        '${context.tr('attendanceAbsences')}: $absences',
+                      if (late > 0) '${context.tr('late')}: $late',
+                      '${context.tr('attendanceLessons')}: ${records.length}',
+                    ].join(' · '),
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: colors.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 4),
+            const _Chevron(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// One subject's summary and its entries, the latest first.
+Future<void> _showSubjectAttendance(
+  BuildContext context,
+  String name,
+  List<AttendanceRecord> records,
+  AttendanceChartStyle style,
+) => showAppSheet<void>(
+  context: context,
+  compact: true,
+  showDragHandle: true,
+  isScrollControlled: true,
+  builder: (context) {
+    final latest = records.toList()..sort((a, b) => b.date.compareTo(a.date));
+    return SafeArea(
+      child: ConstrainedBox(
+        key: const ValueKey('subject-attendance-sheet'),
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.sizeOf(context).height * 0.85,
+        ),
+        child: ListView(
+          shrinkWrap: true,
+          // Scrolls only when it does not fit; a sheet that fits moves as a whole.
+          primary: false,
+          padding: const EdgeInsets.fromLTRB(_Space.sheet, 0, _Space.sheet, 24),
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Text(name, style: _sheetTitleStyle(context)),
+            ),
+            _AttendanceChart(
+              counts: {
+                for (final kind in AttendanceKind.values)
+                  kind: records.where((item) => item.kind == kind).length,
+              },
+              style: style,
+            ),
+            const SizedBox(height: _Space.item),
+            ..._spaced(
+              latest.map((item) => _AttendanceTile(item, showSubject: false)),
+            ),
+          ],
+        ),
+      ),
+    );
+  },
+);
 
 class _AttendanceGraphic extends StatelessWidget {
   const _AttendanceGraphic({
@@ -343,6 +653,8 @@ class _AttendanceCalendar extends StatelessWidget {
                   onPressed: () =>
                       onMonthChanged(DateTime(month.year, month.month - 1)),
                   icon: const Icon(Icons.chevron_left_rounded),
+                  tooltip: MaterialLocalizations.of(context)
+                      .previousMonthTooltip,
                 ),
                 Expanded(
                   child: Text(
@@ -355,6 +667,7 @@ class _AttendanceCalendar extends StatelessWidget {
                   onPressed: () =>
                       onMonthChanged(DateTime(month.year, month.month + 1)),
                   icon: const Icon(Icons.chevron_right_rounded),
+                  tooltip: MaterialLocalizations.of(context).nextMonthTooltip,
                 ),
               ],
             ),
@@ -449,24 +762,33 @@ class _AttendanceCalendar extends StatelessWidget {
 }
 
 class _AttendanceTile extends StatelessWidget {
-  const _AttendanceTile(this.item);
+  const _AttendanceTile(this.item, {this.showSubject = true});
   final AttendanceRecord item;
+
+  /// Off where every entry is of the same subject.
+  final bool showSubject;
   @override
   Widget build(BuildContext context) => Card(
     child: ListTile(
-      leading: CircleAvatar(
-        backgroundColor: _attendanceColor(item.kind).withAlpha(55),
-        child: Text(item.symbol),
+      contentPadding: const EdgeInsets.symmetric(horizontal: _Space.inset),
+      titleTextStyle: _rowTitleStyle(context),
+      leading: _IconTile(
+        label: item.symbol,
+        background: _attendanceColor(item.kind).withValues(alpha: 0.22),
+        foreground: Theme.of(context).colorScheme.onSurface,
       ),
       title: Text(item.type),
       subtitle: Text(
         [
-          if (item.subject.isNotEmpty) item.subject,
+          if (showSubject && item.subject.isNotEmpty) item.subject,
           if (item.lessonNumber > 0)
             context.trArgs('lessonNumber', {'number': '${item.lessonNumber}'}),
         ].join(' · '),
       ),
-      trailing: Text(_date(item.date)),
+      trailing: Text(
+        _shortDate(context, item.date),
+        style: _metaStyle(context),
+      ),
     ),
   );
 }

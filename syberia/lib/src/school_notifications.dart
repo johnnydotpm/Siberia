@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/timezone.dart' as tz;
 
 import 'domain/models.dart';
+import 'homework_done.dart';
 import 'l10n/app_localizations.dart';
 import 'test_reminders.dart';
 
@@ -34,19 +35,59 @@ enum SchoolNotificationCategory {
   };
 }
 
+/// A change to a lesson the timetable notifications can be limited to.
+enum TimetableChange {
+  substitution,
+  cancelled,
+  moved;
+
+  /// What happened to [lesson], or null when it takes place as planned.
+  /// A moved lesson is also cancelled where it was, so it counts as moved.
+  static TimetableChange? of(Lesson lesson) => lesson.movedTo != null
+      ? moved
+      : lesson.cancelled
+      ? cancelled
+      : lesson.substitution
+      ? substitution
+      : null;
+
+  /// The translation key of its name.
+  String get label => switch (this) {
+    substitution => 'substitution',
+    cancelled => 'lessonCancelled',
+    moved => 'lessonMoved',
+  };
+}
+
 class SchoolNotificationSettings {
   const SchoolNotificationSettings({
     this.enabled = true,
     this.categories = const {},
     this.reminders = const TestReminderSettings(),
+    this.attendanceKinds = const {...AttendanceKind.values},
+    this.timetableChanges = const {...TimetableChange.values},
   });
 
   final bool enabled;
   final Map<SchoolNotificationCategory, bool> categories;
   final TestReminderSettings reminders;
 
+  /// The attendance entries that notify, for example only absences.
+  final Set<AttendanceKind> attendanceKinds;
+
+  /// The lesson changes that notify.
+  final Set<TimetableChange> timetableChanges;
+
+  /// A category with nothing chosen inside it is as good as off, so the
+  /// background check does not fetch it.
   bool allows(SchoolNotificationCategory category) =>
-      enabled && (categories[category] ?? true);
+      enabled &&
+      (categories[category] ?? true) &&
+      switch (category) {
+        SchoolNotificationCategory.attendance => attendanceKinds.isNotEmpty,
+        SchoolNotificationCategory.timetable => timetableChanges.isNotEmpty,
+        _ => true,
+      };
 
   bool get hasEnabledCategory =>
       enabled && SchoolNotificationCategory.values.any(allows);
@@ -62,12 +103,16 @@ class SchoolNotificationSettings {
     SchoolNotificationCategory? category,
     bool? categoryEnabled,
     TestReminderSettings? reminders,
+    Set<AttendanceKind>? attendanceKinds,
+    Set<TimetableChange>? timetableChanges,
   }) => SchoolNotificationSettings(
     enabled: enabled ?? this.enabled,
     categories: category == null
         ? categories
         : {...categories, category: categoryEnabled ?? true},
     reminders: reminders ?? this.reminders,
+    attendanceKinds: attendanceKinds ?? this.attendanceKinds,
+    timetableChanges: timetableChanges ?? this.timetableChanges,
   );
 }
 
@@ -343,8 +388,25 @@ class SchoolNotificationService {
             preferences.getBool('${_settingsPrefix}reminder_homework') ??
             defaults.homework,
       ),
+      attendanceKinds: _chosen(
+        preferences.getStringList('${_settingsPrefix}attendance_kinds'),
+        AttendanceKind.values,
+      ),
+      timetableChanges: _chosen(
+        preferences.getStringList('${_settingsPrefix}timetable_changes'),
+        TimetableChange.values,
+      ),
     );
   }
+
+  /// The saved choice, or all of [values] when nothing was saved yet.
+  static Set<T> _chosen<T extends Enum>(List<String>? names, List<T> values) =>
+      names == null
+      ? values.toSet()
+      : {
+          for (final value in values)
+            if (names.contains(value.name)) value,
+        };
 
   Future<void> saveSettings(SchoolNotificationSettings settings) async {
     final preferences = await _preferences;
@@ -376,6 +438,12 @@ class SchoolNotificationService {
       '${_settingsPrefix}reminder_homework',
       reminders.homework,
     );
+    await preferences.setStringList('${_settingsPrefix}attendance_kinds', [
+      for (final kind in settings.attendanceKinds) kind.name,
+    ]);
+    await preferences.setStringList('${_settingsPrefix}timetable_changes', [
+      for (final change in settings.timetableChanges) change.name,
+    ]);
   }
 
   /// Schedules the reminders for the tests in [snapshot] with the saved
@@ -394,9 +462,15 @@ class SchoolNotificationService {
     final signedIn =
         snapshot.profile.provider == 'Librus Synergia' &&
         snapshot.lastSync.millisecondsSinceEpoch != 0;
+    // Homework the student marked as done is not reminded of.
+    final done = HomeworkDoneStore.read(await _preferences);
     final reminders = signedIn && settings.remindersOn
         ? buildTestReminders(
-            snapshot.events,
+            snapshot.events.where(
+              (event) =>
+                  event.kind != EventKind.homework ||
+                  !done.containsKey(event.id),
+            ),
             settings.reminders,
             now ?? DateTime.now(),
             translations,
@@ -429,7 +503,8 @@ class SchoolNotificationService {
     await preferences.reload();
     final settings = await loadSettings();
     final seenKey = '$_seenPrefix${snapshot.profile.id}';
-    final current = _candidates(snapshot);
+    final translations = await _translations();
+    final current = _candidates(snapshot, translations);
     final previous = _readSeen(preferences.getString(seenKey));
     final firstSnapshot = previous == null;
     final updated = <String, List<String>>{};
@@ -448,12 +523,14 @@ class SchoolNotificationService {
       }.take(1000).toList();
     }
 
-    // Muted items are still marked as seen, so enabling a category never
-    // replays its entire history.
+    // Muted items are still marked as seen, so enabling a category, or a
+    // kind inside it, never replays its entire history.
     await preferences.setString(seenKey, jsonEncode(updated));
-    final translations = await _translations();
     for (final category in SchoolNotificationCategory.values) {
-      final items = newItems[category]!;
+      final items = [
+        for (final item in newItems[category]!)
+          if (item.wanted?.call(settings) ?? true) item,
+      ];
       if (!settings.allows(category) || items.isEmpty) continue;
       final title = translations.text('notification_${category.name}');
       final body = items.length == 1
@@ -484,6 +561,7 @@ class SchoolNotificationService {
 
   Map<SchoolNotificationCategory, List<_Candidate>> _candidates(
     AppSnapshot snapshot,
+    AppLocalizations translations,
   ) => {
     SchoolNotificationCategory.grades: [
       for (final grade in snapshot.grades)
@@ -508,7 +586,10 @@ class SchoolNotificationService {
       for (final record in snapshot.attendance)
         _Candidate(
           '${record.id}|${record.kind.name}',
-          '${record.subject}: ${record.type}',
+          record.subject.isEmpty
+              ? record.type
+              : '${record.subject}: ${record.type}',
+          wanted: (settings) => settings.attendanceKinds.contains(record.kind),
         ),
     ],
     SchoolNotificationCategory.events: [
@@ -521,17 +602,27 @@ class SchoolNotificationService {
     ],
     SchoolNotificationCategory.timetable: [
       for (final lesson in snapshot.lessons)
-        if (lesson.substitution || lesson.cancelled || lesson.movedTo != null)
+        if (TimetableChange.of(lesson) case final change?)
           _Candidate(
             '${lesson.id}|${lesson.subject}|${lesson.teacher}|${lesson.room}|${lesson.cancelled}|${lesson.movedTo}',
-            lesson.subject,
+            // "Matematyka, 21.10: Odwołana lekcja"
+            '${lesson.subject}, ${_dayMonth(lesson.start)}: '
+                '${translations.text(change.label)}',
+            wanted: (settings) => settings.timetableChanges.contains(change),
           ),
     ],
   };
+
+  static String _dayMonth(DateTime value) =>
+      '${value.day.toString().padLeft(2, '0')}.'
+      '${value.month.toString().padLeft(2, '0')}';
 }
 
 class _Candidate {
-  const _Candidate(this.key, this.body);
+  const _Candidate(this.key, this.body, {this.wanted});
   final String key;
   final String body;
+
+  /// Whether the settings want a notification for it; null means always.
+  final bool Function(SchoolNotificationSettings settings)? wanted;
 }

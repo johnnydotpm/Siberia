@@ -30,6 +30,9 @@ class AppController extends ChangeNotifier {
   AppSnapshot? _snapshot;
   bool _syncing = false;
   bool _markingMessagesRead = false;
+  bool _loadingSentMessages = false;
+  AppError? _sentMessagesError;
+  DateTime? _sentMessagesLoadedAt;
   int _tabIndex = 0;
   AppError? _error;
   Locale? _locale;
@@ -46,6 +49,7 @@ class AppController extends ChangeNotifier {
   MessageListStyle _messageListStyle = MessageListStyle.list;
   GradesView _gradesView = GradesView.compact;
   TodayLayout _todayLayout = TodayLayout.defaults;
+  Map<String, DateTime> _doneHomework = const {};
   Timer? _homeWidgetDebounce;
   SchoolNotificationSettings _notificationSettings =
       const SchoolNotificationSettings();
@@ -54,6 +58,8 @@ class AppController extends ChangeNotifier {
   AppSnapshot get snapshot => _snapshot!;
   bool get syncing => _syncing;
   bool get markingMessagesRead => _markingMessagesRead;
+  bool get loadingSentMessages => _loadingSentMessages;
+  AppError? get sentMessagesError => _sentMessagesError;
   int get tabIndex => _tabIndex;
   AppError? get error => _error;
   Locale? get locale => _locale;
@@ -70,6 +76,9 @@ class AppController extends ChangeNotifier {
   MessageListStyle get messageListStyle => _messageListStyle;
   GradesView get gradesView => _gradesView;
   TodayLayout get todayLayout => _todayLayout;
+
+  /// Whether the student marked [item] as done.
+  bool isHomeworkDone(SchoolEvent item) => _doneHomework.containsKey(item.id);
 
   /// The name to show for [subject]: the student's short name if they set one.
   String displaySubject(String subject) =>
@@ -109,6 +118,7 @@ class AppController extends ChangeNotifier {
     _messageListStyle = await _repository.loadMessageListStyle();
     _gradesView = await _repository.loadGradesView();
     _todayLayout = await _repository.loadTodayLayout();
+    _doneHomework = await _repository.loadDoneHomework();
     _autoSyncOnOpen = await _repository.loadAutoSyncOnOpen();
     if (notifications != null) {
       _notificationSettings = await notifications!.loadSettings();
@@ -233,6 +243,27 @@ class AppController extends ChangeNotifier {
     return enabled ? requestNotificationPermissionIfEnabled() : null;
   }
 
+  /// Limits the attendance and timetable notifications to these kinds.
+  Future<bool?> setNotificationKinds({
+    Set<AttendanceKind>? attendance,
+    Set<TimetableChange>? timetable,
+  }) async {
+    final before = _notificationSettings;
+    _notificationSettings = before.copyWith(
+      attendanceKinds: attendance,
+      timetableChanges: timetable,
+    );
+    notifyListeners();
+    await notifications?.saveSettings(_notificationSettings);
+    await configureBackground();
+    // Choosing a kind can be what turns notifications back on.
+    final gained = SchoolNotificationCategory.values.any(
+      (category) =>
+          _notificationSettings.allows(category) && !before.allows(category),
+    );
+    return gained ? requestNotificationPermissionIfEnabled() : null;
+  }
+
   /// Changes when tests are reminded of and schedules the reminders again
   /// right away.
   Future<bool?> setTestReminders(TestReminderSettings reminders) async {
@@ -301,23 +332,69 @@ class AppController extends ChangeNotifier {
     }
   }
 
+  /// Sends a message; it shows in the Sent folder at once.
   Future<void> sendMessage({
-    required List<int> recipientIds,
+    required List<MessageRecipient> recipients,
     required String subject,
     required String body,
   }) async {
     _error = null;
+    final profileId = snapshot.profile.id;
     try {
-      await _repository.sendMessage(
-        recipientIds: recipientIds,
+      final message = await _repository.sendMessage(
+        recipients: recipients,
         subject: subject,
         body: body,
       );
+      if (snapshot.profile.id == profileId) {
+        _snapshot = snapshot.withSent(message);
+        notifyListeners();
+      }
     } on Object catch (error) {
       _error = AppError.from(error);
       notifyListeners();
       rethrow;
     }
+  }
+
+  /// A Sent folder loaded this recently is not loaded again on its own.
+  static const sentMessagesPause = Duration(minutes: 2);
+
+  /// Loads the Sent folder, which a sync leaves out. Without [force] it is
+  /// not loaded again within [sentMessagesPause].
+  Future<void> refreshSentMessages({bool force = false}) async {
+    if (_loadingSentMessages) return;
+    if (snapshot.profile.provider != 'Librus Synergia') return;
+    final loadedAt = _sentMessagesLoadedAt;
+    if (!force &&
+        loadedAt != null &&
+        DateTime.now().difference(loadedAt) < sentMessagesPause) {
+      return;
+    }
+    final profileId = snapshot.profile.id;
+    _loadingSentMessages = true;
+    _sentMessagesError = null;
+    notifyListeners();
+    try {
+      final sent = await _repository.fetchSentMessages();
+      if (snapshot.profile.id == profileId) {
+        _snapshot = snapshot.copyWith(sentMessages: sent);
+        _sentMessagesLoadedAt = DateTime.now();
+      }
+    } on Object catch (error) {
+      if (snapshot.profile.id == profileId) {
+        _sentMessagesError = AppError.from(error);
+      }
+    } finally {
+      _loadingSentMessages = false;
+      notifyListeners();
+    }
+  }
+
+  /// Another account, or none: its Sent folder is loaded afresh.
+  void _forgetSentMessages() {
+    _sentMessagesLoadedAt = null;
+    _sentMessagesError = null;
   }
 
   Future<SchoolMessageContent> fetchMessageContent(
@@ -328,14 +405,7 @@ class AppController extends ChangeNotifier {
     try {
       final content = await _repository.fetchMessageContent(message);
       if (snapshot.profile.id == profileId) {
-        _snapshot = snapshot.copyWith(
-          messages: snapshot.messages
-              .map(
-                (item) =>
-                    item.id == message.id ? item.copyWith(unread: false) : item,
-              )
-              .toList(growable: false),
-        );
+        _snapshot = snapshot.withOpened(message, content);
         notifyListeners();
       }
       return content;
@@ -476,6 +546,19 @@ class AppController extends ChangeNotifier {
     await _repository.saveGradesView(view);
   }
 
+  /// Marks [item] as done, or not. Done work is no longer reminded of.
+  Future<void> setHomeworkDone(SchoolEvent item, bool done) async {
+    if (isHomeworkDone(item) == done) return;
+    _doneHomework = {
+      for (final entry in _doneHomework.entries)
+        if (entry.key != item.id) entry.key: entry.value,
+      if (done) item.id: item.date,
+    };
+    notifyListeners();
+    await _repository.saveDoneHomework(_doneHomework);
+    await _updateReminders();
+  }
+
   Future<void> setTodayLayout(TodayLayout layout) async {
     if (_todayLayout == layout) return;
     _todayLayout = layout;
@@ -513,6 +596,7 @@ class AppController extends ChangeNotifier {
     notifyListeners();
     try {
       _snapshot = await _repository.selectSynergiaAccount(login);
+      _forgetSentMessages();
       await _recordNotifications();
       _updateHomeWidget();
       return true;
@@ -531,7 +615,11 @@ class AppController extends ChangeNotifier {
     _error = null;
     notifyListeners();
     try {
-      _snapshot = await _repository.sync(snapshot);
+      final result = await _repository.sync(snapshot);
+      // A Sent folder loaded or a message sent while this sync ran stays.
+      _snapshot = result.profile.id == snapshot.profile.id
+          ? result.copyWith(sentMessages: snapshot.sentMessages)
+          : result;
       await _recordNotifications();
       _updateHomeWidget();
     } on Object catch (error) {
@@ -555,6 +643,7 @@ class AppController extends ChangeNotifier {
         username: username,
         password: password,
       );
+      _forgetSentMessages();
       await _recordNotifications();
       _updateHomeWidget();
       unawaited(configureBackground());
@@ -571,6 +660,8 @@ class AppController extends ChangeNotifier {
 
   Future<void> logout() async {
     _snapshot = await _repository.logout();
+    _doneHomework = const {};
+    _forgetSentMessages();
     _error = null;
     _tabIndex = 0;
     notifyListeners();

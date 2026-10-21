@@ -162,15 +162,33 @@ class SchoolMessage {
     required this.receivedAt,
     this.unread = false,
     this.hasAttachments = false,
+    this.sent = false,
+    this.recipients = const [],
+    this.recipientRead,
   });
   final String id;
   final String sender;
   final String subject;
   final String preview;
+
+  /// When it was sent; for a received message, when it came.
   final DateTime receivedAt;
   final bool unread;
   final bool hasAttachments;
-  SchoolMessage copyWith({bool? unread}) => SchoolMessage(
+
+  /// Written by the student. Sent messages have [recipients] and no sender.
+  final bool sent;
+  final List<String> recipients;
+
+  /// Whether the recipients have read a sent message, or null when Librus
+  /// does not say.
+  final bool? recipientRead;
+
+  SchoolMessage copyWith({
+    bool? unread,
+    List<String>? recipients,
+    bool? recipientRead,
+  }) => SchoolMessage(
     id: id,
     sender: sender,
     subject: subject,
@@ -178,6 +196,9 @@ class SchoolMessage {
     receivedAt: receivedAt,
     unread: unread ?? this.unread,
     hasAttachments: hasAttachments,
+    sent: sent,
+    recipients: recipients ?? this.recipients,
+    recipientRead: recipientRead ?? this.recipientRead,
   );
 }
 
@@ -189,6 +210,7 @@ class SchoolMessageContent {
     required this.body,
     required this.receivedAt,
     this.attachments = const [],
+    this.recipients = const [],
   });
   final String id;
   final String sender;
@@ -196,6 +218,19 @@ class SchoolMessageContent {
   final String body;
   final DateTime receivedAt;
   final List<MessageAttachment> attachments;
+
+  /// Who a sent message went to; empty for received ones.
+  final List<MessageReceiver> recipients;
+}
+
+/// A recipient of a sent message and whether they have read it.
+class MessageReceiver {
+  const MessageReceiver({required this.name, this.read, this.readAt});
+  final String name;
+
+  /// Null when Librus does not say.
+  final bool? read;
+  final DateTime? readAt;
 }
 
 class MessageAttachment {
@@ -244,7 +279,15 @@ enum MessageListStyle { list, cards }
 enum GradesView { compact, cards }
 
 /// The configurable parts of the Today screen.
-enum TodayBlock { currentLesson, summary, grades, homework, events, messages }
+enum TodayBlock {
+  currentLesson,
+  freeDays,
+  summary,
+  grades,
+  homework,
+  events,
+  messages,
+}
 
 /// Which Today blocks show, and in what order.
 class TodayLayout {
@@ -252,6 +295,7 @@ class TodayLayout {
 
   static const defaults = TodayLayout([
     (block: TodayBlock.currentLesson, visible: true),
+    (block: TodayBlock.freeDays, visible: true),
     (block: TodayBlock.summary, visible: true),
     (block: TodayBlock.grades, visible: true),
     (block: TodayBlock.homework, visible: true),
@@ -272,7 +316,8 @@ class TodayLayout {
 
   /// Reads [encode]'s output. Unknown names are skipped and blocks added in
   /// a later version are visible. The lesson card is inserted first for
-  /// layouts saved before it became configurable.
+  /// layouts saved before it became configurable, and the days off right
+  /// after it.
   factory TodayLayout.decode(List<String> saved) {
     final blocks = <({TodayBlock block, bool visible})>[];
     for (final item in saved) {
@@ -288,6 +333,11 @@ class TodayLayout {
       if (!blocks.any((entry) => entry.block == block)) {
         if (block == TodayBlock.currentLesson) {
           blocks.insert(0, (block: block, visible: true));
+        } else if (block == TodayBlock.freeDays) {
+          final lesson = blocks.indexWhere(
+            (entry) => entry.block == TodayBlock.currentLesson,
+          );
+          blocks.insert(lesson + 1, (block: block, visible: true));
         } else {
           blocks.add((block: block, visible: true));
         }
@@ -431,6 +481,82 @@ class AttendanceRecord {
   bool get isExcused => kind.isExcused;
 }
 
+/// What gives a day off.
+enum FreeDayKind {
+  /// The whole school: holidays and days off.
+  school,
+
+  /// The student's class only, sometimes for some lessons only.
+  classDay,
+
+  /// A teacher's absence.
+  teacher,
+}
+
+/// One or more days without (some) lessons: a school holiday, a day off for
+/// the class, or a teacher's absence.
+class FreeDay {
+  const FreeDay({
+    required this.id,
+    required this.kind,
+    required this.name,
+    required this.from,
+    required this.to,
+    this.teacher = '',
+    this.lessonFrom,
+    this.lessonTo,
+    this.timeFrom,
+    this.timeTo,
+  });
+
+  final String id;
+  final FreeDayKind kind;
+
+  /// "Ferie zimowe", the kind of the class's day off or of the absence. May
+  /// be empty.
+  final String name;
+
+  /// The first and the last day, both whole.
+  final DateTime from;
+  final DateTime to;
+
+  /// Who is absent, for [FreeDayKind.teacher].
+  final String teacher;
+
+  /// The lessons a class's day off covers, when not all of them.
+  final int? lessonFrom;
+  final int? lessonTo;
+
+  /// The part of a day a teacher is absent for, in minutes after midnight.
+  final int? timeFrom;
+  final int? timeTo;
+
+  /// Whether [day] is one of these days.
+  bool covers(DateTime day) {
+    final date = DateTime(day.year, day.month, day.day);
+    return !date.isBefore(DateTime(from.year, from.month, from.day)) &&
+        !date.isAfter(DateTime(to.year, to.month, to.day));
+  }
+
+  /// No lessons at all for the student on these days.
+  bool get wholeDays =>
+      kind != FreeDayKind.teacher && lessonFrom == null && lessonTo == null;
+
+  /// Whether this is [lesson]'s teacher being absent while it is on.
+  bool absentFor(Lesson lesson) {
+    if (kind != FreeDayKind.teacher ||
+        teacher.isEmpty ||
+        lesson.teacher != teacher ||
+        !covers(lesson.start)) {
+      return false;
+    }
+    final start = lesson.start.hour * 60 + lesson.start.minute;
+    final end = lesson.end.hour * 60 + lesson.end.minute;
+    return (timeFrom == null || timeFrom! < end) &&
+        (timeTo == null || timeTo! > start);
+  }
+}
+
 class SchoolAnnouncement {
   const SchoolAnnouncement({
     required this.id,
@@ -481,6 +607,8 @@ class AppSnapshot {
     required this.notices,
     required this.lastSync,
     this.messagesError,
+    this.sentMessages = const [],
+    this.freeDays = const [],
   });
   final StudentProfile profile;
   final List<Lesson> lessons;
@@ -488,9 +616,15 @@ class AppSnapshot {
   final List<SchoolEvent> events;
   final List<SchoolMessage> messages;
   final AppError? messagesError;
+
+  /// Loaded when the Sent folder is opened; a sync leaves them as they are.
+  final List<SchoolMessage> sentMessages;
   final List<AttendanceRecord> attendance;
   final List<SchoolAnnouncement> announcements;
   final List<StudentNotice> notices;
+
+  /// Holidays, the class's days off and teachers' absences.
+  final List<FreeDay> freeDays;
   final DateTime lastSync;
   int get unreadMessages => messages.where((item) => item.unread).length;
   int get absences => attendance
@@ -504,6 +638,8 @@ class AppSnapshot {
     List<Lesson>? lessons,
     List<SchoolEvent>? events,
     List<SchoolMessage>? messages,
+    List<SchoolMessage>? sentMessages,
+    List<FreeDay>? freeDays,
     DateTime? lastSync,
   }) => AppSnapshot(
     profile: profile,
@@ -512,9 +648,51 @@ class AppSnapshot {
     events: events ?? this.events,
     messages: messages ?? this.messages,
     messagesError: messagesError,
+    sentMessages: sentMessages ?? this.sentMessages,
     attendance: attendance,
     announcements: announcements,
     notices: notices,
+    freeDays: freeDays ?? this.freeDays,
     lastSync: lastSync ?? this.lastSync,
   );
+
+  /// [message] just sent, at the top of the Sent folder.
+  AppSnapshot withSent(SchoolMessage message) => copyWith(
+    sentMessages: [
+      message,
+      ...sentMessages.where((item) => item.id != message.id),
+    ],
+  );
+
+  /// After [message] was opened: a received one is read now, and a sent one
+  /// learns all its recipients and whether they have read it.
+  AppSnapshot withOpened(SchoolMessage message, SchoolMessageContent content) {
+    if (!message.sent) {
+      return copyWith(
+        messages: [
+          for (final item in messages)
+            item.id == message.id ? item.copyWith(unread: false) : item,
+        ],
+      );
+    }
+    if (content.recipients.isEmpty) return this;
+    final states = content.recipients.map((item) => item.read);
+    final read = states.contains(null)
+        ? null
+        : states.every((value) => value == true);
+    return copyWith(
+      sentMessages: [
+        for (final item in sentMessages)
+          item.id == message.id
+              ? item.copyWith(
+                  recipients: [
+                    for (final recipient in content.recipients) recipient.name,
+                  ],
+                  // An unknown state leaves what the list said.
+                  recipientRead: read,
+                )
+              : item,
+      ],
+    );
+  }
 }

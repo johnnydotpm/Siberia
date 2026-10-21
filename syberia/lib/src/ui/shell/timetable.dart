@@ -13,33 +13,36 @@ Future<void> _showTimetableSettings(
     builder: (context, _) => SafeArea(
       child: SingleChildScrollView(
         key: const ValueKey('timetable-settings-sheet'),
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
+        padding: const EdgeInsets.fromLTRB(_Space.sheet, 0, _Space.sheet, 24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
               context.tr('timetableStyle'),
-              style: Theme.of(context).textTheme.titleLarge,
+              style: _sheetTitleStyle(context),
             ),
             const SizedBox(height: 12),
             SegmentedButton<TimetableView>(
               key: const ValueKey('settings-timetable-style'),
+              showSelectedIcon: false,
               segments: [
                 ButtonSegment(
                   value: TimetableView.timeline,
                   label: Text(context.tr('timetableStyleClassic')),
-                  icon: const Icon(Icons.view_timeline_outlined),
+                  icon: const Icon(Icons.view_timeline_rounded),
                 ),
                 ButtonSegment(
                   value: TimetableView.list,
                   label: Text(context.tr('timetableStyleCompact')),
-                  icon: const Icon(Icons.view_agenda_outlined),
+                  icon: const Icon(Icons.view_agenda_rounded),
                 ),
               ],
               selected: {controller.timetableView},
-              onSelectionChanged: (selection) =>
-                  controller.setTimetableView(selection.first),
+              onSelectionChanged: (selection) {
+                HapticFeedback.selectionClick();
+                controller.setTimetableView(selection.first);
+              },
             ),
             const SizedBox(height: 12),
             SwitchListTile.adaptive(
@@ -153,6 +156,7 @@ class _TimetableState extends State<_Timetable> {
   }
 
   void _selectFromStrip(DateTime requested, Iterable<DateTime> lessonDays) {
+    HapticFeedback.selectionClick();
     setState(() {
       selectedDay = _nearestDayWithLessons(requested, lessonDays);
     });
@@ -189,6 +193,10 @@ class _TimetableState extends State<_Timetable> {
               _sameDay(event.date, selectedDay!),
         )
         .toList(growable: false);
+    final dayOff = _freeDayOn(
+      widget.controller.snapshot.freeDays,
+      selectedDay!,
+    );
     final mergeLessons = widget.controller.mergeTimetableLessons;
     final showBreaks = widget.controller.showTimetableBreaks;
     final placed = _placeTests(
@@ -263,21 +271,40 @@ class _TimetableState extends State<_Timetable> {
         ),
         Expanded(
           child: lessons.isEmpty
-              ? ListView(
+              // Like a day with lessons: scrolls only when it does not fit.
+              ? SingleChildScrollView(
                   padding: EdgeInsets.fromLTRB(16, 0, 16, 24 + insets.bottom),
-                  children: [
-                    for (final event in dayEvents) ...[
-                      _EventTile(event),
-                      const SizedBox(height: 8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      // A holiday says so, instead of "No data".
+                      if (dayOff != null) ...[
+                        _FreeDayCard(dayOff),
+                        const SizedBox(height: 8),
+                      ],
+                      for (final event in dayEvents) ...[
+                        _EventTile(event),
+                        const SizedBox(height: 8),
+                      ],
+                      if (dayEvents.isEmpty && dayOff == null)
+                        _Empty(
+                          context.tr('emptyDay'),
+                          icon: Icons.free_breakfast_rounded,
+                        ),
                     ],
-                    if (dayEvents.isEmpty) _Empty(context.tr('noData')),
-                  ],
+                  ),
                 )
               : SingleChildScrollView(
                   padding: EdgeInsets.fromLTRB(12, 4, 16, 24 + insets.bottom),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
+                      // Some lessons off for the class.
+                      if (dayOff != null)
+                        Padding(
+                          padding: const EdgeInsets.only(left: 4, bottom: 8),
+                          child: _FreeDayCard(dayOff),
+                        ),
                       // Entries that belong to no lesson of the day.
                       for (final event in placed.unplaced)
                         Padding(
@@ -451,14 +478,23 @@ List<_LessonBlock> _lessonBlocks(
 }
 
 /// "s. 207 · Teacher Alpha", or "2 lessons · s. 207 · …" for a double lesson.
+/// An absent teacher is said to be.
 String _blockDetails(BuildContext context, _LessonBlock block) {
   final lesson = block.lesson;
+  final absent = _FreeDaysScope.absenceFor(context, lesson) != null;
   return [
     if (block.count > 1) _lessonCount(context, block.count),
-    if (lesson.room.isNotEmpty) 's. ${lesson.room}',
-    lesson.teacher,
+    if (lesson.room.isNotEmpty) _room(context, lesson.room),
+    if (absent && lesson.teacher.isNotEmpty)
+      '${lesson.teacher} – ${context.tr('teacherAbsent')}'
+    else
+      lesson.teacher,
   ].where((value) => value.isNotEmpty).join(' · ');
 }
+
+/// "s. 101" in Polish, "каб. 101" in Russian.
+String _room(BuildContext context, String room) =>
+    '${context.tr('roomShort')} $room';
 
 String _lessonCount(BuildContext context, int count) {
   if (count == 1) return context.tr('lessonsOne').replaceAll('%d', '1');
@@ -651,6 +687,7 @@ class _TimetableCalendarDialogState extends State<_TimetableCalendarDialog> {
                           )
                         : null,
                     icon: const Icon(Icons.chevron_left_rounded),
+                    tooltip: localizations.previousMonthTooltip,
                   ),
                   Expanded(
                     child: Text(
@@ -666,6 +703,7 @@ class _TimetableCalendarDialogState extends State<_TimetableCalendarDialog> {
                           )
                         : null,
                     icon: const Icon(Icons.chevron_right_rounded),
+                    tooltip: localizations.nextMonthTooltip,
                   ),
                 ],
               ),
@@ -712,12 +750,13 @@ class _TimetableCalendarDialogState extends State<_TimetableCalendarDialog> {
                     key: ValueKey('timetable-day-${day.toIso8601String()}'),
                     borderRadius: BorderRadius.circular(12),
                     onTap: enabled ? () => Navigator.pop(context, day) : null,
+                    // Marked as in the strip of days above it.
                     child: Container(
                       decoration: BoxDecoration(
-                        color: selected ? colors.primaryContainer : null,
+                        color: selected ? colors.primary : null,
                         borderRadius: BorderRadius.circular(12),
                         border: today && !selected
-                            ? Border.all(color: colors.outline)
+                            ? Border.all(color: colors.primary, width: 1.5)
                             : null,
                       ),
                       child: Stack(
@@ -726,9 +765,11 @@ class _TimetableCalendarDialogState extends State<_TimetableCalendarDialog> {
                           Text(
                             '$dayNumber',
                             style: TextStyle(
-                              color: enabled
+                              color: selected
+                                  ? colors.onPrimary
+                                  : enabled
                                   ? null
-                                  : colors.onSurface.withAlpha(90),
+                                  : colors.onSurface.withValues(alpha: 0.38),
                               fontWeight: selected || hasLessons
                                   ? FontWeight.w800
                                   : FontWeight.w500,
@@ -750,7 +791,9 @@ class _TimetableCalendarDialogState extends State<_TimetableCalendarDialog> {
                                 width: 5,
                                 height: 5,
                                 decoration: BoxDecoration(
-                                  color: colors.primary,
+                                  color: selected
+                                      ? colors.onPrimary
+                                      : colors.primary,
                                   shape: BoxShape.circle,
                                 ),
                               ),

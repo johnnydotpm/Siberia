@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
@@ -7,6 +8,8 @@ import 'package:flutter_secure_storage/test/test_flutter_secure_storage_platform
 import 'package:flutter_secure_storage_platform_interface/flutter_secure_storage_platform_interface.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:syberia/src/data/librus/librus_client.dart';
+import 'package:syberia/src/data/librus/reference_cache.dart';
+import 'package:syberia/src/data/snapshot_cache.dart';
 import 'package:syberia/src/domain/librus_error.dart';
 import 'package:syberia/src/domain/models.dart';
 
@@ -806,6 +809,540 @@ void main() {
     );
   });
 
+  group('days off', () {
+    final today = DateTime.now();
+    String day(int offset) {
+      final value = DateTime(today.year, today.month, today.day + offset);
+      return '${value.year}-${value.month.toString().padLeft(2, '0')}-'
+          '${value.day.toString().padLeft(2, '0')}';
+    }
+
+    // Shaped as Librus sends them.
+    (int, Object)? freeDays(RequestOptions options) {
+      final path = options.uri.path;
+      if (path.endsWith('/2.0/SchoolFreeDays')) {
+        return (
+          200,
+          {
+            'SchoolFreeDays': [
+              {
+                'Id': 1,
+                'Name': 'Ferie zimowe',
+                'DateFrom': day(30),
+                'DateTo': day(43),
+              },
+            ],
+          },
+        );
+      }
+      if (path.endsWith('/2.0/ClassFreeDays')) {
+        return (
+          200,
+          {
+            'ClassFreeDays': [
+              {
+                'Id': 2,
+                'Type': {'Id': 5},
+                'DateFrom': day(3),
+                'DateTo': day(3),
+                'LessonNoFrom': 1,
+                'LessonNoTo': 3,
+              },
+            ],
+          },
+        );
+      }
+      if (path.endsWith('/2.0/ClassFreeDays/Types')) {
+        return (
+          200,
+          {
+            'Types': [
+              {'Id': 5, 'Name': 'Rekolekcje'},
+            ],
+          },
+        );
+      }
+      if (path.endsWith('/2.0/TeacherFreeDays')) {
+        return (
+          200,
+          {
+            'TeacherFreeDays': [
+              {
+                'Id': 3,
+                'Teacher': {'Id': 20},
+                'Type': {'Id': 7},
+                'DateFrom': day(0),
+                'DateTo': day(1),
+                'TimeFrom': '08:00:00',
+                'TimeTo': '10:30:00',
+              },
+              // Over: left out.
+              {
+                'Id': 4,
+                'Teacher': {'Id': 20},
+                'DateFrom': day(-10),
+                'DateTo': day(-9),
+              },
+            ],
+          },
+        );
+      }
+      if (path.endsWith('/2.0/TeacherFreeDays/Types')) {
+        return (
+          200,
+          {
+            'Types': [
+              {'Id': 7, 'Name': 'Szkolenie'},
+            ],
+          },
+        );
+      }
+      return null;
+    }
+
+    test(
+      'holidays, the class days off and absences come with a sync',
+      () async {
+        final client = LibrusClient(
+          referenceCache: _MemoryReferenceCache(),
+          dio: Dio()
+            ..httpClientAdapter = _FixtureAdapter(
+              (options) => freeDays(options) ?? _successfulResponse(options),
+            ),
+        );
+        final snapshot = await client.loginAndFetch(
+          username: 'parent@example.com',
+          password: 'secret',
+        );
+        final days = {for (final item in snapshot.freeDays) item.id: item};
+        expect(days.keys.toSet(), {'class-2', 'teacher-3', 'school-1'});
+
+        final holiday = days['school-1']!;
+        expect(holiday.kind, FreeDayKind.school);
+        expect(holiday.name, 'Ferie zimowe');
+        expect(holiday.wholeDays, isTrue);
+        expect(holiday.covers(today.add(const Duration(days: 30))), isTrue);
+        expect(holiday.covers(today.add(const Duration(days: 44))), isFalse);
+
+        final retreat = days['class-2']!;
+        expect(retreat.kind, FreeDayKind.classDay);
+        expect(retreat.name, 'Rekolekcje');
+        expect((retreat.lessonFrom, retreat.lessonTo), (1, 3));
+        expect(retreat.wholeDays, isFalse);
+
+        final absence = days['teacher-3']!;
+        expect(absence.kind, FreeDayKind.teacher);
+        expect(absence.teacher, 'Nauczyciel Testowy');
+        expect(absence.name, 'Szkolenie');
+        expect((absence.timeFrom, absence.timeTo), (480, 630));
+        // Kept for the next time the app opens offline.
+        expect(
+          SnapshotCache.decode(SnapshotCache.encode(snapshot))!.freeDays.map(
+            (item) => (item.id, item.teacher, item.timeTo, item.lessonTo),
+          ),
+          snapshot.freeDays.map(
+            (item) => (item.id, item.teacher, item.timeTo, item.lessonTo),
+          ),
+        );
+      },
+    );
+
+    test('without the lists of days off the sync still works', () async {
+      final client = LibrusClient(
+        referenceCache: _MemoryReferenceCache(),
+        dio: Dio()
+          ..httpClientAdapter = _FixtureAdapter(
+            (options) => options.uri.path.contains('FreeDays')
+                ? (403, {'Code': 'AccessDeny'})
+                : _successfulResponse(options),
+          ),
+      );
+      final snapshot = await client.loginAndFetch(
+        username: 'parent@example.com',
+        password: 'secret',
+      );
+      expect(snapshot.freeDays, isEmpty);
+      expect(snapshot.grades, isNotEmpty);
+    });
+  });
+
+  group('subjects of lessons', () {
+    // As Librus sends them: the lesson's id, not its subject.
+    (int, Object)? lessonOnly(RequestOptions options) {
+      final path = options.uri.path;
+      if (path.endsWith('/2.0/Attendances')) {
+        return (
+          200,
+          {
+            'Attendances': [
+              {
+                'Id': 80,
+                'Date': '2026-09-18',
+                'LessonNo': 1,
+                'Type': {'Id': 2},
+                'Lesson': {
+                  'Id': 500,
+                  'Url': 'https://api.librus.pl/2.0/Lessons/500',
+                },
+              },
+              {
+                'Id': 81,
+                'Date': '2026-09-17',
+                'LessonNo': 2,
+                'Type': {'Id': 2},
+                'Lesson': {'Id': 999},
+              },
+            ],
+          },
+        );
+      }
+      if (path.endsWith('/HomeWorkAssignments')) {
+        return (
+          200,
+          {
+            'HomeWorkAssignments': [
+              {
+                'Id': 70,
+                'Topic': 'Zadania 1–5',
+                'DueDate': '2026-09-21',
+                'Lesson': {'Id': 500},
+              },
+              {
+                'Id': 71,
+                'Topic': 'Wypracowanie',
+                'DueDate': '2026-09-22',
+                'Subject': {'Id': 10},
+                'Lesson': {'Id': 999},
+              },
+            ],
+          },
+        );
+      }
+      return null;
+    }
+
+    String homework(AppSnapshot snapshot, String id) => snapshot.events
+        .singleWhere((item) => item.id == 'homework-$id')
+        .subject;
+
+    test('attendance and homework take the subject of their lesson', () async {
+      final client = LibrusClient(
+        dio: Dio()
+          ..httpClientAdapter = _FixtureAdapter(
+            (options) => lessonOnly(options) ?? _successfulResponse(options),
+          ),
+      );
+      final snapshot = await client.loginAndFetch(
+        username: 'parent@example.com',
+        password: 'secret',
+      );
+      final attendance = {
+        for (final record in snapshot.attendance) record.id: record.subject,
+      };
+      expect(attendance, {'80': 'Matematyka', '81': ''});
+      expect(homework(snapshot, '70'), 'Matematyka');
+      // A subject named directly still wins over the lesson.
+      expect(homework(snapshot, '71'), 'Matematyka');
+    });
+
+    test('lists saved by an older version are fetched again at once', () async {
+      final now = DateTime.now();
+      final requests = <String>[];
+      final cache = _MemoryReferenceCache();
+      final client = LibrusClient(
+        clock: () => now,
+        referenceCache: cache,
+        dio: Dio()
+          ..httpClientAdapter = _FixtureAdapter((options) {
+            requests.add(options.uri.path);
+            return lessonOnly(options) ?? _successfulResponse(options);
+          }),
+      );
+      await client.loginAndFetch(
+        username: 'parent@example.com',
+        password: 'secret',
+      );
+      // The lists as an older version saved them a moment ago: no lessons.
+      final saved = cache.last!;
+      await cache.write(
+        LibrusReferences(
+          account: saved.account,
+          fetchedAt: now,
+          responses: {...saved.responses}..remove('Lessons'),
+        ),
+      );
+      int lessons() => requests.where((p) => p.endsWith('/2.0/Lessons')).length;
+      expect(lessons(), 1);
+      final snapshot = await client.fetchSnapshot();
+      expect(lessons(), 2);
+      expect(snapshot.attendance.first.subject, 'Matematyka');
+    });
+
+    test('a lesson the lists do not know brings them again once old', () async {
+      var now = DateTime.now();
+      var newLesson = false;
+      final requests = <String>[];
+      final client = LibrusClient(
+        clock: () => now,
+        dio: Dio()
+          ..httpClientAdapter = _FixtureAdapter((options) {
+            requests.add(options.uri.path);
+            final path = options.uri.path;
+            if (newLesson && path.endsWith('/2.0/Attendances')) {
+              return (
+                200,
+                {
+                  'Attendances': [
+                    {
+                      'Id': 90,
+                      'Date': '2026-09-18',
+                      'LessonNo': 1,
+                      'Type': {'Id': 2},
+                      'Lesson': {'Id': 700},
+                    },
+                  ],
+                },
+              );
+            }
+            if (newLesson && path.endsWith('/2.0/Lessons')) {
+              return (
+                200,
+                {
+                  'Lessons': [
+                    {
+                      'Id': 700,
+                      'Subject': {'Id': 11},
+                    },
+                  ],
+                },
+              );
+            }
+            return lessonOnly(options) ?? _successfulResponse(options);
+          }),
+      );
+      await client.loginAndFetch(
+        username: 'parent@example.com',
+        password: 'secret',
+      );
+      int lessons() => requests.where((p) => p.endsWith('/2.0/Lessons')).length;
+      newLesson = true;
+      // Lists fetched a moment ago are not fetched again.
+      var snapshot = await client.fetchSnapshot();
+      expect(lessons(), 1);
+      expect(snapshot.attendance.single.subject, '');
+      now = now.add(const Duration(minutes: 11));
+      snapshot = await client.fetchSnapshot();
+      expect(lessons(), 2);
+      expect(snapshot.attendance.single.subject, 'Fizyka');
+    });
+
+    test(
+      'the timetable names the subject when the lessons are denied',
+      () async {
+        final client = LibrusClient(
+          dio: Dio()
+            ..httpClientAdapter = _FixtureAdapter((options) {
+              final path = options.uri.path;
+              if (path.endsWith('/2.0/Lessons')) {
+                return (403, {'Code': 'AccessDenied'});
+              }
+              if (path.endsWith('/Timetables')) {
+                return (
+                  200,
+                  {
+                    'Timetable': {
+                      '2026-09-18': [
+                        [
+                          {
+                            'Lesson': {'Id': '500'},
+                            'LessonNo': 1,
+                            'HourFrom': '08:00',
+                            'HourTo': '08:45',
+                            'Subject': {'Id': '11'},
+                            'Teacher': {'Id': 20},
+                            'Classroom': {'Id': 30},
+                          },
+                        ],
+                        [],
+                      ],
+                    },
+                  },
+                );
+              }
+              return lessonOnly(options) ?? _successfulResponse(options);
+            }),
+        );
+        final snapshot = await client.loginAndFetch(
+          username: 'parent@example.com',
+          password: 'secret',
+        );
+        final attendance = {
+          for (final record in snapshot.attendance) record.id: record.subject,
+        };
+        // Lesson 500 is in this week's timetable; 999 is nowhere.
+        expect(attendance, {'80': 'Fizyka', '81': ''});
+      },
+    );
+
+    test('without the list of lessons the sync still works', () async {
+      final client = LibrusClient(
+        dio: Dio()
+          ..httpClientAdapter = _FixtureAdapter((options) {
+            if (options.uri.path.endsWith('/2.0/Lessons')) {
+              return (403, {'Code': 'AccessDenied'});
+            }
+            return lessonOnly(options) ?? _successfulResponse(options);
+          }),
+      );
+      final snapshot = await client.loginAndFetch(
+        username: 'parent@example.com',
+        password: 'secret',
+      );
+      expect(snapshot.attendance, hasLength(2));
+      expect(snapshot.attendance.map((item) => item.subject), everyElement(''));
+      expect(snapshot.grades, isNotEmpty);
+    });
+  });
+
+  group('sent messages', () {
+    Future<LibrusClient> signedIn(
+      (int, Object)? Function(RequestOptions options) override, {
+      List<String>? requests,
+    }) async {
+      final client = LibrusClient(
+        dio: Dio()
+          ..httpClientAdapter = _FixtureAdapter((options) {
+            requests?.add(options.uri.path);
+            return override(options) ?? _successfulResponse(options);
+          }),
+      );
+      await client.loginAndFetch(
+        username: 'parent@example.com',
+        password: 'secret',
+      );
+      return client;
+    }
+
+    test('come from the XML outbox with who read them', () async {
+      final client = await signedIn((_) => null);
+      final sent = await client.fetchSentMessages();
+      expect(sent.map((item) => item.id), ['120', '121']);
+      final first = sent.first;
+      expect(first.sent, isTrue);
+      expect(first.sender, isEmpty);
+      expect(first.recipients, ['Nauczyciel Testowy']);
+      expect(first.subject, 'Pytanie o sprawdzian');
+      expect(first.receivedAt, DateTime(2026, 10, 17, 18, 5));
+      expect(first.recipientRead, isTrue);
+      expect(first.hasAttachments, isFalse);
+      expect(sent.last.recipients, ['Nauczyciel Zastępczy']);
+      expect(sent.last.recipientRead, isFalse);
+      expect(sent.last.hasAttachments, isTrue);
+    });
+
+    test(
+      'an opened sent message lists each recipient and read state',
+      () async {
+        final client = await signedIn((_) => null);
+        final sent = await client.fetchSentMessages();
+        final content = await client.fetchMessageContent(sent.first);
+        expect(content.body, 'Kiedy jest sprawdzian?');
+        expect(content.recipients.map((item) => item.name), [
+          'Nauczyciel Testowy',
+          'Nauczyciel Zastępczy',
+        ]);
+        expect(content.recipients.first.read, isTrue);
+        expect(content.recipients.first.readAt, DateTime(2026, 10, 18, 7, 40));
+        expect(content.recipients.last.read, isFalse);
+        expect(content.recipients.last.readAt, isNull);
+      },
+    );
+
+    test('the web Sent folder is used when the XML outbox fails', () async {
+      final client = await signedIn((options) {
+        if (options.uri.path.endsWith('/Outbox/action/GetList')) {
+          return (200, '<error><type>eAccessDeny</type></error>');
+        }
+        if (options.uri.path.endsWith('/module/GetMessage')) {
+          return (200, '<error><type>eAccessDeny</type></error>');
+        }
+        if (options.uri.path == '/wiadomosci/6') {
+          return (
+            200,
+            '<table class="decorated stretch"><thead><tr><th></th><th></th><th>Odbiorca</th><th>Temat</th><th>Data</th></tr></thead><tbody><tr><td><a href="/wiadomosci/1/6/130/f0">Otwórz</a></td><td></td><td>Testowy Nauczyciel (Nauczyciel)</td><td>Usprawiedliwienie</td><td>2026-10-15 20:00:00</td></tr></tbody></table>',
+          );
+        }
+        if (options.uri.path == '/wiadomosci/1/6/130/f0') {
+          return (
+            200,
+            '<table class="container-message"><tr><td>Message</td><td><div class="container-message-content">Proszę o usprawiedliwienie</div></td></tr></table>',
+          );
+        }
+        return null;
+      });
+      final sent = await client.fetchSentMessages();
+      expect(sent.single.id, '130');
+      expect(sent.single.sent, isTrue);
+      expect(sent.single.recipients, ['Testowy Nauczyciel']);
+      expect(sent.single.subject, 'Usprawiedliwienie');
+      // The web folder does not say who read it.
+      expect(sent.single.recipientRead, isNull);
+      final content = await client.fetchMessageContent(sent.single);
+      expect(content.body, 'Proszę o usprawiedliwienie');
+    });
+
+    test('both Sent folders failing gives a reason, not a list', () async {
+      final client = await signedIn((options) {
+        if (options.uri.path.endsWith('/Outbox/action/GetList')) {
+          return (200, '<error><type>eAccessDeny</type></error>');
+        }
+        return null;
+      });
+      await expectLater(
+        client.fetchSentMessages(),
+        throwsA(
+          isA<LibrusException>().having(
+            (error) => error.detail,
+            'detail',
+            allOf(
+              contains('XML GetList eAccessDeny'),
+              contains('Synergia outbox HTTP 404'),
+            ),
+          ),
+        ),
+      );
+    });
+
+    test('sending returns the id of the new message', () async {
+      final client = await signedIn((_) => null);
+      expect(
+        await client.sendMessage(
+          recipientIds: [20],
+          subject: 'Pytanie',
+          body: 'Dzień dobry',
+        ),
+        '99',
+      );
+    });
+
+    test('two mailbox calls at once log in to the mailbox once', () async {
+      final requests = <String>[];
+      final client = await signedIn((_) => null, requests: requests);
+      // The API inbox worked, so the sync did not open the mailbox.
+      expect(requests.where((path) => path == '/wiadomosci2'), isEmpty);
+      final results = await Future.wait([
+        client.fetchSentMessages(),
+        client.fetchMessageRecipients(),
+      ]);
+      expect(results, everyElement(isNotEmpty));
+      expect(requests.where((path) => path == '/wiadomosci2'), hasLength(1));
+      expect(
+        requests.where((path) => path.endsWith('/AutoLoginToken')),
+        hasLength(1),
+      );
+    });
+  });
+
   test('maps invalid Portal credentials to a readable error', () async {
     final dio = Dio()
       ..httpClientAdapter = _FixtureAdapter((options) {
@@ -849,6 +1386,27 @@ const _loginPage =
       return (
         200,
         '<response><GetList><data><ArrayItem><messageId>91</messageId><topic>Wywiadówka</topic><senderFirstName>Nauczyciel</senderFirstName><senderLastName>Testowy</senderLastName><sendDate>2026-09-18 12:00:00</sendDate><readDate/><isAnyFileAttached>1</isAnyFileAttached></ArrayItem></data></GetList></response>',
+      );
+    }
+    if (path.endsWith('/Outbox/action/GetList')) {
+      return (
+        200,
+        '<response><GetList><data>'
+            '<ArrayItem><messageId>120</messageId><topic>Pytanie o sprawdzian</topic><receiverFirstName>Nauczyciel</receiverFirstName><receiverLastName>Testowy</receiverLastName><sendDate>2026-10-17 18:05:00</sendDate><readDate>2026-10-18 07:40:00</readDate><isAnyFileAttached>0</isAnyFileAttached></ArrayItem>'
+            '<ArrayItem><messageId>121</messageId><topic>Nieobecność</topic><receiverFirstName>Nauczyciel</receiverFirstName><receiverLastName>Zastępczy</receiverLastName><sendDate>2026-10-19 08:00:00</sendDate><readDate/><isAnyFileAttached>1</isAnyFileAttached></ArrayItem>'
+            '</data></GetList></response>',
+      );
+    }
+    if (path.endsWith('/GetMessage') &&
+        request.contains('<messageId>120</messageId>')) {
+      final body = base64Encode(utf8.encode('Kiedy jest sprawdzian?'));
+      return (
+        200,
+        '<response><GetMessage><data><Message>$body</Message>'
+            '<receivers>'
+            '<ArrayItem><receiverId>20</receiverId><firstName>Nauczyciel</firstName><lastName>Testowy</lastName><readed>2026-10-18 07:40:00</readed></ArrayItem>'
+            '<ArrayItem><receiverId>21</receiverId><firstName>Nauczyciel</firstName><lastName>Zastępczy</lastName><readed></readed></ArrayItem>'
+            '</receivers></data></GetMessage></response>',
       );
     }
     if (path.endsWith('/GetMessage')) {
@@ -1135,6 +1693,20 @@ const _loginPage =
       },
     );
   }
+  if (path.endsWith('/2.0/Lessons')) {
+    return (
+      200,
+      {
+        'Lessons': [
+          {
+            'Id': 500,
+            'Teacher': {'Id': 20},
+            'Subject': {'Id': 10},
+          },
+        ],
+      },
+    );
+  }
   if (path.endsWith('/HomeWorkAssignments')) {
     return (
       200,
@@ -1385,4 +1957,18 @@ class _FixtureAdapter implements HttpClientAdapter {
 
   @override
   void close({bool force = false}) {}
+}
+
+/// Keeps the lists in memory and remembers the last ones written.
+class _MemoryReferenceCache extends LibrusReferenceCache {
+  _MemoryReferenceCache()
+    : super(directory: () async => throw const FileSystemException('none'));
+
+  LibrusReferences? last;
+
+  @override
+  Future<void> write(LibrusReferences references) async {
+    last = references;
+    await super.write(references);
+  }
 }

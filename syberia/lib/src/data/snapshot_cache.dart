@@ -19,11 +19,13 @@ abstract final class SnapshotCache {
             'raw': value.messagesError!.raw,
           },
     'messages': [for (final item in value.messages) _message(item)],
+    'sentMessages': [for (final item in value.sentMessages) _message(item)],
     'attendance': [for (final item in value.attendance) _attendance(item)],
     'announcements': [
       for (final item in value.announcements) _announcement(item),
     ],
     'notices': [for (final item in value.notices) _notice(item)],
+    'freeDays': [for (final item in value.freeDays) _freeDay(item)],
   });
 
   static AppSnapshot? decode(String? raw) {
@@ -51,9 +53,17 @@ abstract final class SnapshotCache {
                 raw: (value['messagesError'] as Map)['raw'] as String?,
               )
             : null,
+        // Caches written before the Sent folder have none.
+        sentMessages: value['sentMessages'] == null
+            ? const []
+            : _list(value['sentMessages'], _readMessage),
         attendance: _list(value['attendance'], _readAttendance),
         announcements: _list(value['announcements'], _readAnnouncement),
         notices: _list(value['notices'], _readNotice),
+        // Caches written before free days have none.
+        freeDays: value['freeDays'] == null
+            ? const []
+            : _list(value['freeDays'], _readFreeDay),
       );
     } on Object {
       return null;
@@ -154,6 +164,11 @@ abstract final class SnapshotCache {
     'receivedAt': _date(item.receivedAt),
     'unread': item.unread,
     'hasAttachments': item.hasAttachments,
+    if (item.sent) ...{
+      'sent': true,
+      'recipients': item.recipients,
+      'recipientRead': item.recipientRead,
+    },
   };
   static SchoolMessage _readMessage(Map<String, Object?> item) => SchoolMessage(
     id: item['id']! as String,
@@ -163,6 +178,11 @@ abstract final class SnapshotCache {
     receivedAt: _parseDate(item['receivedAt']),
     unread: item['unread'] as bool? ?? false,
     hasAttachments: item['hasAttachments'] as bool? ?? false,
+    sent: item['sent'] as bool? ?? false,
+    recipients: [
+      for (final name in item['recipients'] as List? ?? const []) '$name',
+    ],
+    recipientRead: item['recipientRead'] as bool?,
   );
 
   static Map<String, Object?> _attendance(AttendanceRecord item) => {
@@ -222,5 +242,30 @@ abstract final class SnapshotCache {
     teacher: item['teacher']! as String,
     date: _parseDate(item['date']),
     tone: NoticeTone.values.byName(item['tone']! as String),
+  );
+
+  static Map<String, Object?> _freeDay(FreeDay item) => {
+    'id': item.id,
+    'kind': item.kind.name,
+    'name': item.name,
+    'from': _date(item.from),
+    'to': _date(item.to),
+    'teacher': item.teacher,
+    'lessonFrom': item.lessonFrom,
+    'lessonTo': item.lessonTo,
+    'timeFrom': item.timeFrom,
+    'timeTo': item.timeTo,
+  };
+  static FreeDay _readFreeDay(Map<String, Object?> item) => FreeDay(
+    id: item['id']! as String,
+    kind: FreeDayKind.values.byName(item['kind']! as String),
+    name: item['name']! as String,
+    from: _parseDate(item['from']),
+    to: _parseDate(item['to']),
+    teacher: item['teacher'] as String? ?? '',
+    lessonFrom: item['lessonFrom'] as int?,
+    lessonTo: item['lessonTo'] as int?,
+    timeFrom: item['timeFrom'] as int?,
+    timeTo: item['timeTo'] as int?,
   );
 }
