@@ -373,6 +373,9 @@ class _SideNavigation extends StatelessWidget {
             ),
             Expanded(
               child: ListView.builder(
+                // Scrolls only when the entries do not fit, as on a short
+                // screen or with large text.
+                primary: false,
                 itemCount: entries.length,
                 itemBuilder: (context, index) {
                   final entry = entries[index];

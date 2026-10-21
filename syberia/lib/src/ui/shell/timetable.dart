@@ -264,15 +264,19 @@ class _TimetableState extends State<_Timetable> {
         ),
         Expanded(
           child: lessons.isEmpty
-              ? ListView(
+              // Like a day with lessons: scrolls only when it does not fit.
+              ? SingleChildScrollView(
                   padding: EdgeInsets.fromLTRB(16, 0, 16, 24 + insets.bottom),
-                  children: [
-                    for (final event in dayEvents) ...[
-                      _EventTile(event),
-                      const SizedBox(height: 8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      for (final event in dayEvents) ...[
+                        _EventTile(event),
+                        const SizedBox(height: 8),
+                      ],
+                      if (dayEvents.isEmpty) _Empty(context.tr('noData')),
                     ],
-                    if (dayEvents.isEmpty) _Empty(context.tr('noData')),
-                  ],
+                  ),
                 )
               : SingleChildScrollView(
                   padding: EdgeInsets.fromLTRB(12, 4, 16, 24 + insets.bottom),

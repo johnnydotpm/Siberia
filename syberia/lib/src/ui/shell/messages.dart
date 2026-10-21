@@ -801,6 +801,8 @@ class _MessageDetailSheetState extends State<_MessageDetailSheet> {
               }
               final message = snapshot.data!;
               return ListView(
+                // Scrolls only when it does not fit; a sheet that fits moves as a whole.
+                primary: false,
                 padding: EdgeInsets.fromLTRB(
                   20,
                   20,

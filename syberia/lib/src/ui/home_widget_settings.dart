@@ -83,6 +83,8 @@ class _HomeWidgetSettingsFormState extends State<HomeWidgetSettingsForm> {
       children: [
         Expanded(
           child: ListView(
+            // Scrolls only when the settings do not fit.
+            primary: false,
             padding: const EdgeInsets.symmetric(vertical: 8),
             children: [
               _SectionTitle(context.tr('widgetStyle')),
@@ -329,6 +331,8 @@ class _HomeWidgetsSheetState extends State<HomeWidgetsSheet> {
                   child: Text(context.tr('homeWidgetsNone')),
                 ),
               (final List<PlacedHomeWidget> list, _) => ListView(
+                // Scrolls only when the widgets do not fit.
+                primary: false,
                 children: [
                   for (final (index, placed) in list.indexed)
                     ListTile(
@@ -392,6 +396,8 @@ class SubjectShortNamesSheet extends StatelessWidget {
             child: subjects.isEmpty
                 ? Center(child: Text(context.tr('noData')))
                 : ListView.separated(
+                    // Scrolls only when the subjects do not fit.
+                    primary: false,
                     padding: EdgeInsets.fromLTRB(
                       20,
                       8,

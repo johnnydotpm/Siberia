@@ -111,9 +111,10 @@ Future<(AppController, _Repository)> _pump(
   WidgetTester tester, {
   int tab = 0,
   AppSnapshot? data,
+  double height = 2400,
 }) async {
   SharedPreferences.setMockInitialValues({'app_design_v1': 'classic'});
-  tester.view.physicalSize = const Size(400, 2400);
+  tester.view.physicalSize = Size(400, height);
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
   // Made once the stored settings are in place, as it reads them.
@@ -132,8 +133,121 @@ List<Rect> _cards(WidgetTester tester) => [
     tester.getRect(find.byWidget(card.widget)),
 ]..sort((a, b) => a.top.compareTo(b.top));
 
+/// Whatever scrolls up and down in [area] fits, and so takes no swipe: no
+/// stretch, no bounce, and a sheet still moves as a whole.
+void _expectStill(WidgetTester tester, Finder area, String what) {
+  final positions = [
+    for (final state in tester.stateList<ScrollableState>(
+      find.descendant(of: area, matching: find.byType(Scrollable)),
+    ))
+      if (state.position.axis == Axis.vertical) state.position,
+  ];
+  expect(positions, isNotEmpty, reason: what);
+  for (final position in positions) {
+    expect(position.maxScrollExtent, 0, reason: '$what fits');
+    expect(
+      position.physics.shouldAcceptUserOffset(position),
+      isFalse,
+      reason: what,
+    );
+  }
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+
+  testWidgets('the side menu scrolls only when it does not fit', (
+    tester,
+  ) async {
+    Future<void> openMenu() async {
+      await tester.tap(find.byTooltip('Open navigation menu'));
+      await tester.pumpAndSettle();
+    }
+
+    await _pump(tester);
+    await openMenu();
+    _expectStill(tester, find.byType(Drawer), 'menu');
+    await tester.pumpWidget(const SizedBox.shrink());
+
+    // On a short screen it still scrolls.
+    await _pump(tester, height: 500);
+    await openMenu();
+    final menu = tester.state<ScrollableState>(
+      find.descendant(
+        of: find.byType(Drawer),
+        matching: find.byType(Scrollable),
+      ),
+    );
+    expect(menu.position.maxScrollExtent, greaterThan(0));
+    expect(menu.position.physics.shouldAcceptUserOffset(menu.position), isTrue);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
+  testWidgets('sheets that fit move as a whole', (tester) async {
+    final (controller, _) = await _pump(tester, tab: 2);
+    final sheet = find.byType(BottomSheet);
+    Future<void> check(String what) async {
+      await tester.pumpAndSettle();
+      _expectStill(tester, sheet, what);
+      Navigator.of(tester.element(sheet)).pop();
+      await tester.pumpAndSettle();
+    }
+
+    await tester.tap(find.byKey(const ValueKey('grades-subject-matematyka')));
+    await check('subject grades');
+    controller.selectTab(6);
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('attendance-subject-Fizyka')));
+    await check('subject attendance');
+    controller.selectTab(5);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Temat'));
+    await check('message');
+    controller.selectTab(9);
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('settings-today-screen')));
+    await check('Today layout');
+    await tester.tap(find.byKey(const ValueKey('settings-short-names')));
+    await check('short names');
+    await tester.tap(find.byKey(const ValueKey('settings-profile')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byIcon(Icons.switch_account_rounded));
+    await check('Synergia accounts');
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
+  testWidgets('the login form and an empty day do not scroll for nothing', (
+    tester,
+  ) async {
+    await _pump(
+      tester,
+      data: AppSnapshot(
+        profile: const StudentProfile(
+          id: '',
+          name: '',
+          school: '',
+          provider: '',
+        ),
+        lessons: const [],
+        grades: const [],
+        events: const [],
+        messages: const [],
+        attendance: const [],
+        announcements: const [],
+        notices: const [],
+        lastSync: DateTime.fromMillisecondsSinceEpoch(0),
+      ),
+    );
+    await tester.tap(find.byIcon(Icons.login_rounded));
+    await tester.pumpAndSettle();
+    _expectStill(tester, find.byType(BottomSheet), 'login');
+    await tester.pumpWidget(const SizedBox.shrink());
+
+    // A day with no lessons, as the timetable opens on one here.
+    await _pump(tester, tab: 1);
+    _expectStill(tester, find.byType(IndexedStack), 'empty day');
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
 
   testWidgets('every page starts 16 from the edge', (tester) async {
     for (final tab in [0, 2, 3, 4, 6, 7, 8, 9]) {
@@ -285,4 +399,21 @@ class _Repository extends AppRepository {
 
   @override
   Future<List<Lesson>> fetchTimetableWeek(DateTime day) async => const [];
+
+  @override
+  Future<List<LinkedSynergiaAccount>> fetchSynergiaAccounts() async => const [
+    LinkedSynergiaAccount(login: '1u', name: 'Demo Student', selected: true),
+    LinkedSynergiaAccount(login: '2u', name: 'Uczeń Testowy', selected: false),
+  ];
+
+  @override
+  Future<SchoolMessageContent> fetchMessageContent(
+    SchoolMessage message,
+  ) async => SchoolMessageContent(
+    id: message.id,
+    sender: message.sender,
+    subject: message.subject,
+    body: 'Krótka treść.',
+    receivedAt: message.receivedAt,
+  );
 }

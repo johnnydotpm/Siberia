@@ -162,6 +162,8 @@ class _LinkedSynergiaAccountsState extends State<_LinkedSynergiaAccounts> {
       future: accounts,
       builder: (context, result) => ListView(
         shrinkWrap: true,
+        // Scrolls only when it does not fit; a sheet that fits moves as a whole.
+        primary: false,
         children: [
           Text(
             context.tr('synergiaAccounts'),
@@ -267,6 +269,8 @@ class _LoginState extends State<_Login> {
       key: form,
       child: ListView(
         shrinkWrap: true,
+        // Scrolls only when the form does not fit, as with the keyboard up.
+        primary: false,
         children: [
           Text(context.tr('account'), style: _sheetTitleStyle(context)),
           const SizedBox(height: 8),

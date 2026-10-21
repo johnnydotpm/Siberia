@@ -219,6 +219,9 @@ class _ComposeMessageSheetState extends State<_ComposeMessageSheet> {
                                       child: ListView.builder(
                                         padding: EdgeInsets.zero,
                                         shrinkWrap: true,
+                                        // Scrolls only when the names do
+                                        // not fit.
+                                        primary: false,
                                         itemCount: options.length,
                                         itemBuilder: (context, index) {
                                           final item = options.elementAt(index);

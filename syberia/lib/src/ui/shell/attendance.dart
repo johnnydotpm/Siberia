@@ -427,6 +427,8 @@ Future<void> _showSubjectAttendance(
         ),
         child: ListView(
           shrinkWrap: true,
+          // Scrolls only when it does not fit; a sheet that fits moves as a whole.
+          primary: false,
           padding: const EdgeInsets.fromLTRB(_Space.sheet, 0, _Space.sheet, 24),
           children: [
             Padding(

@@ -559,6 +559,8 @@ Future<void> _showSubjectGrades(
             Flexible(
               child: ListView(
                 shrinkWrap: true,
+                // Scrolls only when it does not fit; a sheet that fits moves as a whole.
+                primary: false,
                 // The rows' own 16 makes the sheet's 20.
                 padding: const EdgeInsets.fromLTRB(4, 0, 4, 16),
                 children: [
