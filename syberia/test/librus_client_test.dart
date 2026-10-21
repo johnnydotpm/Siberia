@@ -9,6 +9,7 @@ import 'package:flutter_secure_storage_platform_interface/flutter_secure_storage
 import 'package:flutter_test/flutter_test.dart';
 import 'package:syberia/src/data/librus/librus_client.dart';
 import 'package:syberia/src/data/librus/reference_cache.dart';
+import 'package:syberia/src/data/snapshot_cache.dart';
 import 'package:syberia/src/domain/librus_error.dart';
 import 'package:syberia/src/domain/models.dart';
 
@@ -806,6 +807,163 @@ void main() {
             .having((error) => error.detail, 'detail', isNotNull),
       ),
     );
+  });
+
+  group('days off', () {
+    final today = DateTime.now();
+    String day(int offset) {
+      final value = DateTime(today.year, today.month, today.day + offset);
+      return '${value.year}-${value.month.toString().padLeft(2, '0')}-'
+          '${value.day.toString().padLeft(2, '0')}';
+    }
+
+    // Shaped as Librus sends them.
+    (int, Object)? freeDays(RequestOptions options) {
+      final path = options.uri.path;
+      if (path.endsWith('/2.0/SchoolFreeDays')) {
+        return (
+          200,
+          {
+            'SchoolFreeDays': [
+              {
+                'Id': 1,
+                'Name': 'Ferie zimowe',
+                'DateFrom': day(30),
+                'DateTo': day(43),
+              },
+            ],
+          },
+        );
+      }
+      if (path.endsWith('/2.0/ClassFreeDays')) {
+        return (
+          200,
+          {
+            'ClassFreeDays': [
+              {
+                'Id': 2,
+                'Type': {'Id': 5},
+                'DateFrom': day(3),
+                'DateTo': day(3),
+                'LessonNoFrom': 1,
+                'LessonNoTo': 3,
+              },
+            ],
+          },
+        );
+      }
+      if (path.endsWith('/2.0/ClassFreeDays/Types')) {
+        return (
+          200,
+          {
+            'Types': [
+              {'Id': 5, 'Name': 'Rekolekcje'},
+            ],
+          },
+        );
+      }
+      if (path.endsWith('/2.0/TeacherFreeDays')) {
+        return (
+          200,
+          {
+            'TeacherFreeDays': [
+              {
+                'Id': 3,
+                'Teacher': {'Id': 20},
+                'Type': {'Id': 7},
+                'DateFrom': day(0),
+                'DateTo': day(1),
+                'TimeFrom': '08:00:00',
+                'TimeTo': '10:30:00',
+              },
+              // Over: left out.
+              {
+                'Id': 4,
+                'Teacher': {'Id': 20},
+                'DateFrom': day(-10),
+                'DateTo': day(-9),
+              },
+            ],
+          },
+        );
+      }
+      if (path.endsWith('/2.0/TeacherFreeDays/Types')) {
+        return (
+          200,
+          {
+            'Types': [
+              {'Id': 7, 'Name': 'Szkolenie'},
+            ],
+          },
+        );
+      }
+      return null;
+    }
+
+    test(
+      'holidays, the class days off and absences come with a sync',
+      () async {
+        final client = LibrusClient(
+          referenceCache: _MemoryReferenceCache(),
+          dio: Dio()
+            ..httpClientAdapter = _FixtureAdapter(
+              (options) => freeDays(options) ?? _successfulResponse(options),
+            ),
+        );
+        final snapshot = await client.loginAndFetch(
+          username: 'parent@example.com',
+          password: 'secret',
+        );
+        final days = {for (final item in snapshot.freeDays) item.id: item};
+        expect(days.keys.toSet(), {'class-2', 'teacher-3', 'school-1'});
+
+        final holiday = days['school-1']!;
+        expect(holiday.kind, FreeDayKind.school);
+        expect(holiday.name, 'Ferie zimowe');
+        expect(holiday.wholeDays, isTrue);
+        expect(holiday.covers(today.add(const Duration(days: 30))), isTrue);
+        expect(holiday.covers(today.add(const Duration(days: 44))), isFalse);
+
+        final retreat = days['class-2']!;
+        expect(retreat.kind, FreeDayKind.classDay);
+        expect(retreat.name, 'Rekolekcje');
+        expect((retreat.lessonFrom, retreat.lessonTo), (1, 3));
+        expect(retreat.wholeDays, isFalse);
+
+        final absence = days['teacher-3']!;
+        expect(absence.kind, FreeDayKind.teacher);
+        expect(absence.teacher, 'Nauczyciel Testowy');
+        expect(absence.name, 'Szkolenie');
+        expect((absence.timeFrom, absence.timeTo), (480, 630));
+        // Kept for the next time the app opens offline.
+        expect(
+          SnapshotCache.decode(SnapshotCache.encode(snapshot))!.freeDays.map(
+            (item) => (item.id, item.teacher, item.timeTo, item.lessonTo),
+          ),
+          snapshot.freeDays.map(
+            (item) => (item.id, item.teacher, item.timeTo, item.lessonTo),
+          ),
+        );
+      },
+    );
+
+    test('without the lists of days off the sync still works', () async {
+      final client = LibrusClient(
+        referenceCache: _MemoryReferenceCache(),
+        dio: Dio()
+          ..httpClientAdapter = _FixtureAdapter(
+            (options) => options.uri.path.contains('FreeDays')
+                ? (403, {'Code': 'AccessDeny'})
+                : _successfulResponse(options),
+          ),
+      );
+      final snapshot = await client.loginAndFetch(
+        username: 'parent@example.com',
+        password: 'secret',
+      );
+      expect(snapshot.freeDays, isEmpty);
+      expect(snapshot.grades, isNotEmpty);
+    });
   });
 
   group('subjects of lessons', () {

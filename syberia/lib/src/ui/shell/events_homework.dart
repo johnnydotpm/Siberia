@@ -23,39 +23,42 @@ class _EventsState extends State<_Events> {
               !item.date.isBefore(DateTime(today.year, today.month, today.day)),
         )
         .take(8);
-    return _PageList(
-      padding: const EdgeInsets.all(12),
-      children: [
-        Card(
-          child: MediaQuery.removePadding(
-            context: context,
-            removeTop: true,
-            removeBottom: true,
-            child: PrimaryScrollController.none(
-              child: CalendarDatePicker(
-                initialDate: selected,
-                firstDate: DateTime(today.year - 2),
-                lastDate: DateTime(today.year + 3, 12, 31),
-                onDateChanged: (value) => setState(() => selected = value),
+    return _Refresh(
+      controller: widget.controller,
+      child: _PageList(
+        padding: const EdgeInsets.all(_Space.page),
+        children: [
+          Card(
+            child: MediaQuery.removePadding(
+              context: context,
+              removeTop: true,
+              removeBottom: true,
+              child: PrimaryScrollController.none(
+                child: CalendarDatePicker(
+                  initialDate: selected,
+                  firstDate: DateTime(today.year - 2),
+                  lastDate: DateTime(today.year + 3, 12, 31),
+                  onDateChanged: (value) => setState(() => selected = value),
+                ),
               ),
             ),
           ),
-        ),
-        const SizedBox(height: 18),
-        _Heading(context.tr('selectedDay')),
-        const SizedBox(height: 8),
-        if (selectedEvents.isEmpty)
-          _Empty(context.tr('noData'))
-        else
-          ...selectedEvents.map(_EventTile.new),
-        const SizedBox(height: 18),
-        _Heading(context.tr('upcomingEvents')),
-        const SizedBox(height: 8),
-        if (upcoming.isEmpty)
-          _Empty(context.tr('noData'))
-        else
-          ...upcoming.map(_EventTile.new),
-      ],
+          const SizedBox(height: _Space.section),
+          _Heading(context.tr('selectedDay')),
+          const SizedBox(height: _Space.heading),
+          if (selectedEvents.isEmpty)
+            _Empty(context.tr('emptyEvents'), icon: Icons.event_note_rounded)
+          else
+            ..._spaced(selectedEvents.map(_EventTile.new)),
+          const SizedBox(height: _Space.section),
+          _Heading(context.tr('upcomingEvents')),
+          const SizedBox(height: _Space.heading),
+          if (upcoming.isEmpty)
+            _Empty(context.tr('emptyEvents'), icon: Icons.event_note_rounded)
+          else
+            ..._spaced(upcoming.map(_EventTile.new)),
+        ],
+      ),
     );
   }
 }
@@ -70,6 +73,9 @@ class _Homework extends StatefulWidget {
 class _HomeworkState extends State<_Homework> {
   final _search = TextEditingController();
   bool _past = false;
+
+  /// Whether the upcoming work already done is shown.
+  bool _showDone = false;
 
   @override
   void dispose() {
@@ -102,105 +108,168 @@ class _HomeworkState extends State<_Homework> {
     final all = widget.controller.snapshot.events
         .where((item) => item.kind == EventKind.homework)
         .toList();
-    if (all.isEmpty) return _PageEmpty(context.tr('noData'));
-    final upcoming = all.where((item) => !item.date.isBefore(today)).toList()
+    if (all.isEmpty) {
+      return _PageEmpty(
+        context.tr('emptyHomework'),
+        icon: Icons.assignment_rounded,
+      );
+    }
+    final controller = widget.controller;
+    final future = all.where((item) => !item.date.isBefore(today)).toList()
       ..sort((a, b) => a.date.compareTo(b.date));
+    // Work marked as done leaves the upcoming list for a group of its own.
+    final upcoming = future
+        .where((item) => !controller.isHomeworkDone(item))
+        .toList(growable: false);
     final past = all.where((item) => item.date.isBefore(today)).toList()
       ..sort((a, b) => b.date.compareTo(a.date));
     final query = _search.text.trim().toLowerCase();
-    final shown = (_past ? past : upcoming)
-        .where(
-          (item) =>
-              query.isEmpty ||
-              item.title.toLowerCase().contains(query) ||
-              item.subject.toLowerCase().contains(query) ||
-              _SubjectScope.of(
-                context,
-                item.subject,
-              ).toLowerCase().contains(query) ||
-              item.description.toLowerCase().contains(query),
-        )
-        .toList();
-    final colors = Theme.of(context).colorScheme;
-
+    bool matches(SchoolEvent item) =>
+        query.isEmpty ||
+        item.title.toLowerCase().contains(query) ||
+        item.subject.toLowerCase().contains(query) ||
+        _SubjectScope.of(context, item.subject).toLowerCase().contains(query) ||
+        item.description.toLowerCase().contains(query);
+    final shown = (_past ? past : upcoming).where(matches).toList();
+    final done = _past
+        ? const <SchoolEvent>[]
+        : future.where(controller.isHomeworkDone).where(matches).toList();
     final rows = <Widget>[];
     String? lastSection;
     for (final item in shown) {
       final section = _section(item.date, today);
       if (section != lastSection) {
         rows.add(
-          Padding(
+          _GroupLabel(
+            section,
             key: ValueKey('homework-section-$section'),
-            padding: const EdgeInsets.fromLTRB(8, 14, 8, 6),
-            child: Text(
-              section,
-              style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                color: colors.onSurfaceVariant,
-                fontWeight: FontWeight.w800,
-              ),
-            ),
+            top: _Space.card,
           ),
         );
         lastSection = section;
       } else {
-        rows.add(const SizedBox(height: 8));
+        rows.add(const SizedBox(height: _Space.item));
       }
       rows.add(_HomeworkCard(item, now: now));
+    }
+    if (done.isNotEmpty) {
+      rows.add(
+        InkWell(
+          key: const ValueKey('homework-done-toggle'),
+          borderRadius: BorderRadius.circular(8),
+          onTap: () => setState(() => _showDone = !_showDone),
+          child: Row(
+            children: [
+              Expanded(
+                child: _GroupLabel(
+                  '${context.tr('homeworkDoneSection')} (${done.length})',
+                  top: _Space.card,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsetsDirectional.only(
+                  top: _Space.card,
+                  bottom: _Space.heading,
+                  end: 8,
+                ),
+                child: AnimatedRotation(
+                  turns: _showDone ? 0.5 : 0,
+                  duration: const Duration(milliseconds: 200),
+                  child: Icon(
+                    Icons.expand_more_rounded,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+      if (_showDone) {
+        rows.addAll(_spaced(done.map((item) => _HomeworkCard(item, now: now))));
+      }
     }
 
     String counted(String key, int count) =>
         count == 0 ? context.tr(key) : '${context.tr(key)} ($count)';
-    return _PageList(
-      padding: const EdgeInsets.all(12),
-      children: [
-        TextField(
-          key: const ValueKey('homework-search'),
-          controller: _search,
-          onChanged: (_) => setState(() {}),
-          textInputAction: TextInputAction.search,
-          decoration: InputDecoration(
-            hintText: context.tr('homeworkSearch'),
-            prefixIcon: const Icon(Icons.search_rounded),
-            suffixIcon: _search.text.isEmpty
-                ? null
-                : IconButton(
-                    icon: const Icon(Icons.clear_rounded),
-                    tooltip: MaterialLocalizations.of(context)
-                        .deleteButtonTooltip,
-                    onPressed: () => setState(_search.clear),
-                  ),
-            filled: true,
-            isDense: true,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide.none,
+    return _Refresh(
+      controller: widget.controller,
+      child: _PageList(
+        padding: const EdgeInsets.all(_Space.page),
+        children: [
+          TextField(
+            key: const ValueKey('homework-search'),
+            controller: _search,
+            onChanged: (_) => setState(() {}),
+            textInputAction: TextInputAction.search,
+            decoration: InputDecoration(
+              hintText: context.tr('homeworkSearch'),
+              prefixIcon: const Icon(Icons.search_rounded),
+              suffixIcon: _search.text.isEmpty
+                  ? null
+                  : IconButton(
+                      icon: const Icon(Icons.clear_rounded),
+                      tooltip: MaterialLocalizations.of(context)
+                          .deleteButtonTooltip,
+                      onPressed: () => setState(_search.clear),
+                    ),
+              filled: true,
+              isDense: true,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: BorderSide.none,
+              ),
             ),
           ),
-        ),
-        const SizedBox(height: 10),
-        SegmentedButton<bool>(
-          key: const ValueKey('homework-filter'),
-          showSelectedIcon: false,
-          segments: [
-            ButtonSegment(
-              value: false,
-              label: Text(counted('homeworkUpcoming', upcoming.length)),
-            ),
-            ButtonSegment(
-              value: true,
-              label: Text(counted('homeworkPast', past.length)),
-            ),
-          ],
-          selected: {_past},
-          onSelectionChanged: (selection) =>
-              setState(() => _past = selection.first),
-        ),
-        if (shown.isEmpty) _Empty(context.tr('noData')),
-        ...rows,
-      ],
+          const SizedBox(height: 12),
+          SegmentedButton<bool>(
+            key: const ValueKey('homework-filter'),
+            showSelectedIcon: false,
+            segments: [
+              ButtonSegment(
+                value: false,
+                label: Text(counted('homeworkUpcoming', upcoming.length)),
+              ),
+              ButtonSegment(
+                value: true,
+                label: Text(counted('homeworkPast', past.length)),
+              ),
+            ],
+            selected: {_past},
+            onSelectionChanged: (selection) {
+              HapticFeedback.selectionClick();
+              setState(() => _past = selection.first);
+            },
+          ),
+          if (shown.isEmpty)
+            if (query.isNotEmpty && done.isEmpty)
+              _Empty(context.tr('noResults'), icon: Icons.search_off_rounded)
+            else if (done.isNotEmpty)
+              // Everything due is done: said with a check, as a good thing.
+              _Empty(
+                context.tr('homeworkAllDone'),
+                icon: Icons.task_alt_rounded,
+                color: Theme.of(context).colorScheme.primary,
+              )
+            else
+              _Empty(
+                context.tr('emptyHomework'),
+                icon: Icons.assignment_rounded,
+              ),
+          ...rows,
+        ],
+      ),
     );
   }
 }
+
+/// When an entry is due: "Today", "Tomorrow", or the weekday and date.
+String _dueLabel(BuildContext context, DateTime date, DateTime now) =>
+    switch (_daysBetween(now, date)) {
+      0 => context.tr('messagesToday'),
+      1 => context.tr('widgetTomorrow'),
+      _ => '${_shortWeekday(context, date)}, ${_shortDate(context, date)}',
+    };
 
 /// Whole days from [from] to [to], unaffected by daylight saving.
 int _daysBetween(DateTime from, DateTime to) => DateTime.utc(
@@ -328,14 +397,7 @@ class _EventTile extends StatelessWidget {
     final colors = theme.colorScheme;
     final days = _daysBetween(now, item.date);
     final soon = days == 0 || days == 1;
-    final locale = Localizations.localeOf(context).toLanguageTag();
-    final when = switch (days) {
-      0 => context.tr('messagesToday'),
-      1 => context.tr('widgetTomorrow'),
-      _ =>
-        '${_shortWeekday(context, item.date)}, '
-            '${DateFormat(item.date.year == now.year ? 'dd.MM' : 'dd.MM.yyyy', locale).format(item.date)}',
-    };
+    final when = _dueLabel(context, item.date, now);
     final (:type, :label, :text) = _eventType(item);
     final tone = type.colors(theme.brightness);
     // Entries of no subject come from the client as "Librus".
@@ -356,18 +418,17 @@ class _EventTile extends StatelessWidget {
     return Card(
       key: ValueKey('event-${item.id}'),
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(12, 12, 14, 12),
+        padding: const EdgeInsets.symmetric(
+          horizontal: _Space.inset,
+          vertical: 12,
+        ),
         child: Row(
           children: [
-            Container(
+            _IconTile(
               key: ValueKey('event-type-${item.id}-${type.name}'),
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: tone.background,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(type.icon, size: 22, color: tone.foreground),
+              icon: type.icon,
+              background: tone.background,
+              foreground: tone.foreground,
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -392,9 +453,7 @@ class _EventTile extends StatelessWidget {
                           title,
                           maxLines: hasSubject ? 1 : 2,
                           overflow: TextOverflow.ellipsis,
-                          style: theme.textTheme.titleSmall?.copyWith(
-                            fontWeight: FontWeight.w800,
-                          ),
+                          style: _rowTitleStyle(context),
                         ),
                       ),
                       // "Wycieczka do Krakowa" needs no "Wycieczka" next to it.
@@ -472,10 +531,64 @@ class _HomeworkCard extends StatelessWidget {
     final days = _daysBetween(now, item.date);
     // Due today or tomorrow: the one to do first.
     final soon = days == 0 || days == 1;
-    final locale = Localizations.localeOf(context).toLanguageTag();
-    final due =
-        '${_shortWeekday(context, item.date)}, '
-        '${DateFormat(item.date.year == now.year ? 'dd.MM' : 'dd.MM.yyyy', locale).format(item.date)}';
+    final due = _dueLabel(context, item.date, now);
+    final controller = _ControllerScope.maybeOf(context);
+    final done = controller?.isHomeworkDone(item) ?? false;
+    final content = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                item.subject.isEmpty
+                    ? context.tr('homeworkItem')
+                    : _SubjectScope.of(context, item.subject),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: theme.textTheme.labelLarge?.copyWith(
+                  color: palette.accent,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Icon(
+              Icons.event_rounded,
+              size: 14,
+              color: soon && !done ? colors.error : colors.onSurfaceVariant,
+            ),
+            const SizedBox(width: 4),
+            Text(
+              due,
+              style: theme.textTheme.labelMedium?.copyWith(
+                color: soon && !done ? colors.error : colors.onSurfaceVariant,
+                fontWeight: soon && !done ? FontWeight.w800 : FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 4),
+        Text(
+          _homeworkTitle(context, item),
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          style: _rowTitleStyle(context)
+              ?.copyWith(decoration: done ? TextDecoration.lineThrough : null),
+        ),
+        if (details.isNotEmpty) ...[
+          const SizedBox(height: 3),
+          Text(
+            details,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: colors.onSurfaceVariant,
+            ),
+          ),
+        ],
+      ],
+    );
     return Card(
       key: ValueKey('homework-${item.id}'),
       clipBehavior: Clip.antiAlias,
@@ -485,62 +598,148 @@ class _HomeworkCard extends StatelessWidget {
           decoration: BoxDecoration(
             border: Border(left: BorderSide(color: palette.accent, width: 4)),
           ),
-          padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      item.subject.isEmpty
-                          ? context.tr('homeworkItem')
-                          : _SubjectScope.of(context, item.subject),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.labelLarge?.copyWith(
-                        color: palette.accent,
-                        fontWeight: FontWeight.w800,
-                      ),
+          // With the stripe, 16 from the card's edge; the check's own room
+          // makes up the rest.
+          padding: controller == null
+              ? const EdgeInsetsDirectional.fromSTEB(12, 12, 16, 12)
+              : const EdgeInsetsDirectional.fromSTEB(4, 12, 16, 12),
+          child: controller == null
+              ? content
+              : Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _DoneCheck(
+                      key: ValueKey('homework-done-${item.id}'),
+                      done: done,
+                      onChanged: (value) =>
+                          _setHomeworkDone(context, controller, item, value),
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  Icon(
-                    Icons.event_rounded,
-                    size: 14,
-                    color: soon ? colors.error : colors.onSurfaceVariant,
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    due,
-                    style: theme.textTheme.labelMedium?.copyWith(
-                      color: soon ? colors.error : colors.onSurfaceVariant,
-                      fontWeight: soon ? FontWeight.w800 : FontWeight.w600,
+                    const SizedBox(width: 4),
+                    // Done work steps back.
+                    Expanded(
+                      child: Opacity(opacity: done ? 0.6 : 1, child: content),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 4),
-              Text(
-                _homeworkTitle(context, item),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: theme.textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w700,
+                  ],
                 ),
-              ),
-              if (details.isNotEmpty) ...[
-                const SizedBox(height: 3),
-                Text(
-                  details,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: colors.onSurfaceVariant,
+        ),
+      ),
+    );
+  }
+}
+
+/// Marks [item] done or not; a mark from a list can be taken back at once.
+void _setHomeworkDone(
+  BuildContext context,
+  AppController controller,
+  SchoolEvent item,
+  bool done,
+) {
+  unawaited(controller.setHomeworkDone(item, done));
+  // Marked after the card left the screen: nothing to show the message on.
+  if (!done || !context.mounted) return;
+  final messenger = ScaffoldMessenger.of(context);
+  messenger.hideCurrentSnackBar();
+  messenger.showSnackBar(
+    SnackBar(
+      content: Text(context.tr('homeworkMarkedDone')),
+      action: SnackBarAction(
+        label: context.tr('undo'),
+        onPressed: () => controller.setHomeworkDone(item, false),
+      ),
+    ),
+  );
+}
+
+/// The round check in front of an assignment. As in Reminders, a tick
+/// fills the circle at once and the work leaves the list a moment later, so
+/// the tick is seen; a second tap meanwhile takes it back.
+class _DoneCheck extends StatefulWidget {
+  const _DoneCheck({required this.done, required this.onChanged, super.key});
+  final bool done;
+  final ValueChanged<bool> onChanged;
+
+  /// How long a ticked circle shows before the work is marked.
+  static const delay = Duration(milliseconds: 700);
+
+  @override
+  State<_DoneCheck> createState() => _DoneCheckState();
+}
+
+class _DoneCheckState extends State<_DoneCheck> {
+  Timer? _ticking;
+
+  void _tap() {
+    if (_ticking != null) {
+      _ticking!.cancel();
+      setState(() => _ticking = null);
+      return;
+    }
+    if (widget.done) {
+      HapticFeedback.selectionClick();
+      widget.onChanged(false);
+      return;
+    }
+    HapticFeedback.lightImpact();
+    setState(() => _ticking = Timer(_DoneCheck.delay, _commit));
+  }
+
+  void _commit() {
+    _ticking = null;
+    widget.onChanged(true);
+  }
+
+  @override
+  void dispose() {
+    // Gone from the screen before the moment passed: still marked.
+    if (_ticking?.isActive ?? false) {
+      _ticking!.cancel();
+      _commit();
+    }
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    final ticked = widget.done || _ticking != null;
+    final label = context.tr(
+      widget.done ? 'homeworkMarkNotDone' : 'homeworkMarkDone',
+    );
+    return Semantics(
+      button: true,
+      checked: ticked,
+      label: label,
+      excludeSemantics: true,
+      child: Tooltip(
+        message: label,
+        child: InkResponse(
+          onTap: _tap,
+          radius: 20,
+          // A 40-point target around a 24-point circle.
+          child: SizedBox.square(
+            dimension: 40,
+            child: Center(
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 150),
+                width: 24,
+                height: 24,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: ticked ? colors.primary : Colors.transparent,
+                  border: Border.all(
+                    color: ticked ? colors.primary : colors.outline,
+                    width: 2,
                   ),
                 ),
-              ],
-            ],
+                child: ticked
+                    ? Icon(
+                        Icons.check_rounded,
+                        size: 16,
+                        color: colors.onPrimary,
+                      )
+                    : null,
+              ),
+            ),
           ),
         ),
       ),
@@ -563,6 +762,7 @@ void _showHomeworkDetails(BuildContext context, SchoolEvent item) {
   );
   final details = _homeworkDetails(item);
   final screen = MediaQuery.sizeOf(context);
+  final controller = _ControllerScope.maybeOf(context);
   showAppSheet<void>(
     context: context,
     compact: true,
@@ -575,7 +775,7 @@ void _showHomeworkDetails(BuildContext context, SchoolEvent item) {
     builder: (context) => SafeArea(
       child: SingleChildScrollView(
         key: const ValueKey('homework-details-sheet'),
-        padding: const EdgeInsets.fromLTRB(20, 4, 20, 24),
+        padding: const EdgeInsets.fromLTRB(_Space.sheet, 4, _Space.sheet, 24),
         child: SizedBox(
           width: double.infinity,
           child: Column(
@@ -584,7 +784,7 @@ void _showHomeworkDetails(BuildContext context, SchoolEvent item) {
             children: [
               if (item.subject.isNotEmpty)
                 Text(
-                  item.subject,
+                  displaySubject(item.subject, const {}),
                   style: theme.textTheme.titleSmall?.copyWith(
                     color: palette.accent,
                     fontWeight: FontWeight.w800,
@@ -593,9 +793,7 @@ void _showHomeworkDetails(BuildContext context, SchoolEvent item) {
               const SizedBox(height: 6),
               SelectableText(
                 _homeworkTitle(context, item),
-                style: theme.textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.w800,
-                ),
+                style: _sheetTitleStyle(context),
               ),
               const SizedBox(height: 12),
               Row(
@@ -616,6 +814,31 @@ void _showHomeworkDetails(BuildContext context, SchoolEvent item) {
                   ),
                 ],
               ),
+              if (controller != null) ...[
+                const SizedBox(height: 16),
+                ListenableBuilder(
+                  listenable: controller,
+                  builder: (context, _) {
+                    final done = controller.isHomeworkDone(item);
+                    final button = done
+                        ? OutlinedButton.icon(
+                            key: const ValueKey('homework-sheet-not-done'),
+                            onPressed: () =>
+                                controller.setHomeworkDone(item, false),
+                            icon: const Icon(Icons.undo_rounded),
+                            label: Text(context.tr('homeworkMarkNotDone')),
+                          )
+                        : FilledButton.tonalIcon(
+                            key: const ValueKey('homework-sheet-done'),
+                            onPressed: () =>
+                                controller.setHomeworkDone(item, true),
+                            icon: const Icon(Icons.check_rounded),
+                            label: Text(context.tr('homeworkMarkDone')),
+                          );
+                    return SizedBox(width: double.infinity, child: button);
+                  },
+                ),
+              ],
               if (details.isNotEmpty) ...[
                 const SizedBox(height: 16),
                 SelectableText(details, style: theme.textTheme.bodyLarge),

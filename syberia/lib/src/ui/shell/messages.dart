@@ -16,6 +16,7 @@ class _MessagesState extends State<_Messages> {
   _MessageFolder _folder = _MessageFolder.inbox;
 
   void _openFolder(_MessageFolder folder) {
+    HapticFeedback.selectionClick();
     setState(() => _folder = folder);
     // A sync leaves the Sent folder out, so it is loaded when opened.
     if (folder == _MessageFolder.sent) {
@@ -90,7 +91,6 @@ class _MessagesState extends State<_Messages> {
     final unreadCount = controller.snapshot.unreadMessages;
     final style = controller.messageListStyle;
     final now = DateTime.now();
-    final colors = Theme.of(context).colorScheme;
 
     final rows = <Widget>[];
     String? lastSection;
@@ -98,22 +98,21 @@ class _MessagesState extends State<_Messages> {
       final section = _section(item.receivedAt, now);
       if (section != lastSection) {
         rows.add(
-          Padding(
+          _GroupLabel(
+            section,
             key: ValueKey('messages-section-$section'),
-            padding: const EdgeInsets.fromLTRB(8, 14, 8, 6),
-            child: Text(
-              section,
-              style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                color: colors.onSurfaceVariant,
-                fontWeight: FontWeight.w800,
-              ),
-            ),
+            top: _Space.card,
           ),
         );
         lastSection = section;
+      } else if (style == MessageListStyle.cards) {
+        rows.add(const SizedBox(height: _Space.item));
       }
       rows.add(_MessageTile(controller, item, style: style, now: now));
     }
+    Future<void> refresh() => sentFolder
+        ? controller.refreshSentMessages(force: true)
+        : controller.sync();
 
     final tiles = <Widget>[
       TextField(
@@ -140,7 +139,7 @@ class _MessagesState extends State<_Messages> {
           ),
         ),
       ),
-      const SizedBox(height: 10),
+      const SizedBox(height: 12),
       SizedBox(
         width: double.infinity,
         child: SegmentedButton<_MessageFolder>(
@@ -170,7 +169,7 @@ class _MessagesState extends State<_Messages> {
           onSelectionChanged: (selection) => _openFolder(selection.first),
         ),
       ),
-      const SizedBox(height: 6),
+      const SizedBox(height: _Space.item),
       Row(
         children: [
           if (!sentFolder)
@@ -233,28 +232,29 @@ class _MessagesState extends State<_Messages> {
             ),
             icon: Icon(
               style == MessageListStyle.list
-                  ? Icons.view_agenda_outlined
+                  ? Icons.view_agenda_rounded
                   : Icons.view_list_rounded,
             ),
           ),
         ],
       ),
-      if (error != null)
-        ListTile(
+      if (error != null) ...[
+        const SizedBox(height: _Space.item),
+        _InfoCard(
           key: ValueKey('messages-error-${_folder.name}'),
-          leading: const Icon(Icons.error_outline),
-          title: Text(context.trError(error)),
+          icon: Icons.error_outline_rounded,
+          text: context.trError(error),
+          color: Theme.of(context).colorScheme.error,
           trailing: IconButton(
-            icon: const Icon(Icons.refresh),
+            icon: const Icon(Icons.refresh_rounded),
             tooltip: MaterialLocalizations.of(context)
                 .refreshIndicatorSemanticLabel,
-            onPressed: sentFolder
-                ? (loadingSent
-                      ? null
-                      : () => controller.refreshSentMessages(force: true))
-                : (controller.syncing ? null : controller.sync),
+            onPressed: (sentFolder ? loadingSent : controller.syncing)
+                ? null
+                : refresh,
           ),
         ),
+      ],
       if (loadingSent && all.isEmpty)
         const Padding(
           key: ValueKey('sent-loading'),
@@ -262,15 +262,31 @@ class _MessagesState extends State<_Messages> {
           child: Center(child: CircularProgressIndicator()),
         )
       else if (messages.isEmpty && error == null)
-        _Empty(
-          context.tr(sentFolder && query.isEmpty ? 'noSentMessages' : 'noData'),
-        ),
+        if (query.isNotEmpty)
+          _Empty(context.tr('noResults'), icon: Icons.search_off_rounded)
+        else if (sentFolder)
+          _Empty(context.tr('noSentMessages'), icon: Icons.send_rounded)
+        else if (_unreadOnly)
+          _Empty(
+            context.tr('noUnreadMessages'),
+            icon: Icons.mark_email_read_rounded,
+            color: Theme.of(context).colorScheme.primary,
+          )
+        else
+          _Empty(context.tr('emptyMessages'), icon: Icons.mail_rounded),
       ...rows,
     ];
     final scope = GlassPageScope.maybeOf(context);
     // Under a glass top bar the compose button lives in the bar.
     if (scope != null && scope.barActions) {
-      return _PageList(padding: const EdgeInsets.all(12), children: tiles);
+      return _Refresh(
+        controller: controller,
+        onRefresh: refresh,
+        child: _PageList(
+          padding: const EdgeInsets.all(_Space.page),
+          children: tiles,
+        ),
+      );
     }
     final insets = _chromeInsets(context);
     final title = scope?.largeTitle;
@@ -288,9 +304,14 @@ class _MessagesState extends State<_Messages> {
             ),
           ),
         Padding(
-          padding: const EdgeInsets.fromLTRB(12, 12, 12, 4),
+          padding: const EdgeInsets.fromLTRB(
+            _Space.page,
+            _Space.page,
+            _Space.page,
+            0,
+          ),
           child: Align(
-            alignment: Alignment.centerRight,
+            alignment: AlignmentDirectional.centerEnd,
             child: FilledButton.icon(
               onPressed: () => _showComposeMessage(context, controller),
               icon: const Icon(Icons.edit_rounded),
@@ -299,9 +320,18 @@ class _MessagesState extends State<_Messages> {
           ),
         ),
         Expanded(
-          child: ListView(
-            padding: EdgeInsets.fromLTRB(12, 12, 12, 12 + insets.bottom),
-            children: tiles,
+          child: _Refresh(
+            controller: controller,
+            onRefresh: refresh,
+            child: ListView(
+              padding: EdgeInsets.fromLTRB(
+                _Space.page,
+                _Space.page,
+                _Space.page,
+                _Space.page + insets.bottom,
+              ),
+              children: tiles,
+            ),
           ),
         ),
       ],
@@ -356,10 +386,16 @@ class _MessageTile extends StatelessWidget {
     final colors = theme.colorScheme;
     final unread = !item.sent && item.unread;
     final content = Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: style == MessageListStyle.list ? 8 : 12,
-        vertical: 10,
-      ),
+      // A card's content starts 16 from its edge, the stripe included.
+      // In the list, the avatar lines up with the label of its group.
+      padding: style == MessageListStyle.list
+          ? const EdgeInsets.symmetric(horizontal: 12, vertical: 10)
+          : const EdgeInsetsDirectional.fromSTEB(
+              _Space.inset - 3,
+              10,
+              _Space.inset,
+              10,
+            ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -404,6 +440,7 @@ class _MessageTile extends StatelessWidget {
                             ? colors.primary
                             : colors.onSurfaceVariant,
                         fontWeight: unread ? FontWeight.w800 : FontWeight.w500,
+                        fontFeatures: _tabular,
                       ),
                     ),
                   ],
@@ -468,7 +505,6 @@ class _MessageTile extends StatelessWidget {
     );
     final tile = style == MessageListStyle.cards
         ? Card(
-            margin: const EdgeInsets.symmetric(vertical: 4),
             clipBehavior: Clip.antiAlias,
             child: InkWell(
               onTap: () => _showMessageDetail(context, controller, item),
@@ -492,7 +528,8 @@ class _MessageTile extends StatelessWidget {
                 onTap: () => _showMessageDetail(context, controller, item),
                 child: content,
               ),
-              const Divider(height: 1, indent: 60),
+              // Under the text, past the avatar: 12 + 40 + 12.
+              const Divider(height: 1, indent: 64),
             ],
           );
     if (!unread) return tile;
@@ -511,7 +548,7 @@ class _MessageTile extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
-              Icons.mark_email_read_outlined,
+              Icons.mark_email_read_rounded,
               color: colors.onPrimaryContainer,
             ),
             const SizedBox(width: 8),
@@ -775,6 +812,8 @@ class _MessageDetailSheetState extends State<_MessageDetailSheet> {
               }
               final message = snapshot.data!;
               return ListView(
+                // Scrolls only when it does not fit; a sheet that fits moves as a whole.
+                primary: false,
                 padding: EdgeInsets.fromLTRB(
                   20,
                   20,
@@ -793,13 +832,8 @@ class _MessageDetailSheetState extends State<_MessageDetailSheet> {
                   else
                     Row(
                       children: [
-                        CircleAvatar(
-                          child: Text(
-                            message.sender.isEmpty
-                                ? '?'
-                                : message.sender.characters.first.toUpperCase(),
-                          ),
-                        ),
+                        // The same avatar as in the list.
+                        _SenderAvatar(message.sender),
                         const SizedBox(width: 12),
                         Expanded(
                           child: Column(
@@ -837,7 +871,8 @@ class _MessageDetailSheetState extends State<_MessageDetailSheet> {
                     const SizedBox(height: 8),
                     ...message.attachments.map(
                       (attachment) => Card(
-                        margin: const EdgeInsets.only(bottom: 8),
+                        margin: const EdgeInsets.only(bottom: _Space.item),
+                        clipBehavior: Clip.antiAlias,
                         child: ListTile(
                           leading: const Icon(Icons.attach_file_rounded),
                           title: Text(attachment.name),

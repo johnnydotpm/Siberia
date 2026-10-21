@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/timezone.dart' as tz;
 
 import 'domain/models.dart';
+import 'homework_done.dart';
 import 'l10n/app_localizations.dart';
 import 'test_reminders.dart';
 
@@ -461,9 +462,15 @@ class SchoolNotificationService {
     final signedIn =
         snapshot.profile.provider == 'Librus Synergia' &&
         snapshot.lastSync.millisecondsSinceEpoch != 0;
+    // Homework the student marked as done is not reminded of.
+    final done = HomeworkDoneStore.read(await _preferences);
     final reminders = signedIn && settings.remindersOn
         ? buildTestReminders(
-            snapshot.events,
+            snapshot.events.where(
+              (event) =>
+                  event.kind != EventKind.homework ||
+                  !done.containsKey(event.id),
+            ),
             settings.reminders,
             now ?? DateTime.now(),
             translations,

@@ -303,7 +303,7 @@ class _AveragePreview extends StatelessWidget {
     );
     return ListTile(
       key: const ValueKey('settings-average-preview'),
-      leading: const _SettingsIcon(Icons.calculate_outlined),
+      leading: const _SettingsIcon(Icons.calculate_rounded),
       title: Text(context.tr('averagePreview')),
       subtitle: Text(
         own != null

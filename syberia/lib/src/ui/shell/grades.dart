@@ -24,61 +24,74 @@ class _GradesState extends State<_Grades> {
     for (final item in grades) {
       groups.putIfAbsent(item.subject, () => []).add(item);
     }
-    return _PageList(
-      padding: const EdgeInsets.all(16),
-      children: [
-        Row(
-          children: [
-            Expanded(
-              child: SegmentedButton<int>(
-                segments: [
-                  ButtonSegment(value: 1, label: Text(context.tr('period1'))),
-                  ButtonSegment(value: 2, label: Text(context.tr('period2'))),
-                ],
-                selected: {semester},
-                onSelectionChanged: (selection) =>
-                    setState(() => semester = selection.first),
+    final subjects = groups.entries.toList(growable: false);
+    return _Refresh(
+      controller: controller,
+      child: _PageList(
+        padding: const EdgeInsets.all(_Space.page),
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: SegmentedButton<int>(
+                  showSelectedIcon: false,
+                  segments: [
+                    ButtonSegment(value: 1, label: Text(context.tr('period1'))),
+                    ButtonSegment(value: 2, label: Text(context.tr('period2'))),
+                  ],
+                  selected: {semester},
+                  onSelectionChanged: (selection) {
+                    HapticFeedback.selectionClick();
+                    setState(() => semester = selection.first);
+                  },
+                ),
               ),
-            ),
-            IconButton(
-              key: const ValueKey('grades-view-toggle'),
-              tooltip: context.tr(
-                view == GradesView.compact
-                    ? 'gradesViewCards'
-                    : 'gradesViewCompact',
+              IconButton(
+                key: const ValueKey('grades-view-toggle'),
+                tooltip: context.tr(
+                  view == GradesView.compact
+                      ? 'gradesViewCards'
+                      : 'gradesViewCompact',
+                ),
+                onPressed: () => controller.setGradesView(
+                  view == GradesView.compact
+                      ? GradesView.cards
+                      : GradesView.compact,
+                ),
+                icon: Icon(
+                  view == GradesView.compact
+                      ? Icons.view_agenda_rounded
+                      : Icons.view_list_rounded,
+                ),
               ),
-              onPressed: () => controller.setGradesView(
-                view == GradesView.compact
-                    ? GradesView.cards
-                    : GradesView.compact,
-              ),
-              icon: Icon(
-                view == GradesView.compact
-                    ? Icons.view_agenda_outlined
-                    : Icons.view_list_rounded,
-              ),
-            ),
+            ],
+          ),
+          const SizedBox(height: _Space.card),
+          // An average of nothing is left out, not shown as "—".
+          if (subjects.isNotEmpty) ...[
+            _GradesOverview(grades, settings),
+            const SizedBox(height: _Space.card),
           ],
-        ),
-        const SizedBox(height: 12),
-        _GradesOverview(grades, settings),
-        const SizedBox(height: 8),
-        if (groups.isEmpty)
-          _Empty(context.tr('noData'))
-        else
-          for (final MapEntry(key: subject, value: items) in groups.entries)
-            view == GradesView.compact
-                ? _SubjectGradesRow(
-                    subject: subject,
-                    grades: items,
-                    settings: settings,
-                  )
-                : _SubjectGradesTile(
-                    subject: subject,
-                    grades: items,
-                    settings: settings,
-                  ),
-      ],
+          if (subjects.isEmpty)
+            _Empty(context.tr('emptyGrades'), icon: Icons.school_rounded)
+          else
+            for (final (index, MapEntry(key: subject, value: items))
+                in subjects.indexed) ...[
+              if (index > 0) const SizedBox(height: _Space.item),
+              view == GradesView.compact
+                  ? _SubjectGradesRow(
+                      subject: subject,
+                      grades: items,
+                      settings: settings,
+                    )
+                  : _SubjectGradesTile(
+                      subject: subject,
+                      grades: items,
+                      settings: settings,
+                    ),
+            ],
+        ],
+      ),
     );
   }
 }
@@ -344,7 +357,6 @@ class _SubjectGradesRow extends StatelessWidget {
     final chronological = grades.reversed.toList(growable: false);
     return Card(
       key: ValueKey('grades-subject-$subject'),
-      margin: const EdgeInsets.symmetric(vertical: 4),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: () => _showSubjectGrades(context, subject, grades, settings),
@@ -352,7 +364,8 @@ class _SubjectGradesRow extends StatelessWidget {
           decoration: BoxDecoration(
             border: Border(left: BorderSide(color: accent, width: 4)),
           ),
-          padding: const EdgeInsets.fromLTRB(14, 12, 12, 12),
+          // With the stripe, 16 from the card's edge.
+          padding: const EdgeInsetsDirectional.fromSTEB(12, 12, 16, 12),
           child: Row(
             children: [
               Expanded(
@@ -363,9 +376,7 @@ class _SubjectGradesRow extends StatelessWidget {
                       _SubjectScope.of(context, subject),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.w800,
-                      ),
+                      style: _rowTitleStyle(context),
                     ),
                     const SizedBox(height: 8),
                     Wrap(
@@ -410,7 +421,6 @@ class _SubjectGradesTile extends StatelessWidget {
     final average = settings.average(grades);
     return Card(
       key: ValueKey('grades-subject-$subject'),
-      margin: const EdgeInsets.symmetric(vertical: 4),
       clipBehavior: Clip.antiAlias,
       child: Container(
         decoration: BoxDecoration(
@@ -419,7 +429,7 @@ class _SubjectGradesTile extends StatelessWidget {
         child: ExpansionTile(
           shape: const Border(),
           collapsedShape: const Border(),
-          tilePadding: const EdgeInsets.fromLTRB(14, 4, 12, 4),
+          tilePadding: const EdgeInsetsDirectional.fromSTEB(12, 4, 16, 4),
           title: Row(
             children: [
               Expanded(
@@ -427,9 +437,7 @@ class _SubjectGradesTile extends StatelessWidget {
                   _SubjectScope.of(context, subject),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: theme.textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.w800,
-                  ),
+                  style: _rowTitleStyle(context),
                 ),
               ),
               const SizedBox(width: 8),
@@ -457,7 +465,7 @@ class _SubjectGradesTile extends StatelessWidget {
                   key: ValueKey('grade-calculator-open-$subject'),
                   onPressed: () =>
                       _showGradeCalculator(context, subject, grades, settings),
-                  icon: const Icon(Icons.calculate_outlined),
+                  icon: const Icon(Icons.calculate_rounded),
                   label: Text(context.tr('gradeCalculator')),
                 ),
               ),
@@ -487,9 +495,9 @@ class _GradeRow extends StatelessWidget {
                 : context.tr('grade')),
     ),
     subtitle: Text(
-      '${_date(grade.date)} · ${context.tr('weight').toLowerCase()} ${_decimal(context, grade.weight)}',
+      '${_shortDate(context, grade.date)} · ${context.tr('weight').toLowerCase()} ${_decimal(context, grade.weight)}',
     ),
-    trailing: const Icon(Icons.chevron_right_rounded),
+    trailing: const _Chevron(),
   );
 }
 
@@ -523,11 +531,10 @@ Future<void> _showSubjectGrades(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        // Whole, not shortened, with a capital letter.
                         Text(
-                          subject,
-                          style: theme.textTheme.headlineSmall?.copyWith(
-                            fontWeight: FontWeight.w900,
-                          ),
+                          displaySubject(subject, const {}),
+                          style: _sheetTitleStyle(context),
                         ),
                         const SizedBox(height: 4),
                         Text(
@@ -550,14 +557,17 @@ Future<void> _showSubjectGrades(
                 key: const ValueKey('grade-calculator-open'),
                 onPressed: () =>
                     _showGradeCalculator(context, subject, grades, settings),
-                icon: const Icon(Icons.calculate_outlined),
+                icon: const Icon(Icons.calculate_rounded),
                 label: Text(context.tr('gradeCalculator')),
               ),
             ),
             Flexible(
               child: ListView(
                 shrinkWrap: true,
-                padding: const EdgeInsets.only(bottom: 16),
+                // Scrolls only when it does not fit; a sheet that fits moves as a whole.
+                primary: false,
+                // The rows' own 16 makes the sheet's 20.
+                padding: const EdgeInsets.fromLTRB(4, 0, 4, 16),
                 children: [
                   for (final grade in grades)
                     _GradeRow(grade, settings: settings),
@@ -585,18 +595,19 @@ Future<void> _showGradeDetails(BuildContext context, Grade grade) =>
               maxHeight: MediaQuery.sizeOf(context).height * 0.85,
             ),
             child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
+              padding: const EdgeInsets.fromLTRB(
+                _Space.sheet,
+                4,
+                _Space.sheet,
+                24,
+              ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    child: Text(
-                      context.tr('gradeDetails'),
-                      style: Theme.of(context).textTheme.headlineSmall
-                          ?.copyWith(fontWeight: FontWeight.w900),
-                    ),
+                  Text(
+                    context.tr('gradeDetails'),
+                    style: _sheetTitleStyle(context),
                   ),
                   const SizedBox(height: 12),
                   for (var index = 0; index < history.length; index++) ...[
@@ -637,20 +648,27 @@ class _GradeHistoryCard extends StatelessWidget {
         children: [
           Text(
             grade.value,
+            // In the grade's own colour, as everywhere else.
             style: Theme.of(context).textTheme.headlineMedium?.copyWith(
               fontWeight: FontWeight.w900,
-              color: Theme.of(context).colorScheme.primary,
+              color: SubjectColors.grade(
+                const GradeAverageSettings().valueOf(grade.value),
+                Theme.of(context).brightness,
+              ).accent,
             ),
           ),
           const SizedBox(height: 8),
-          _GradeDetailRow(context.tr('subject'), grade.subject),
+          _GradeDetailRow(
+            context.tr('subject'),
+            displaySubject(grade.subject, const {}),
+          ),
           if (grade.category.isNotEmpty)
             _GradeDetailRow(context.tr('category'), grade.category),
           _GradeDetailRow(
             context.tr('description'),
             grade.description.isEmpty ? '—' : grade.description,
           ),
-          _GradeDetailRow(context.tr('date'), _date(grade.date)),
+          _GradeDetailRow(context.tr('date'), _shortDate(context, grade.date)),
           _GradeDetailRow(
             context.tr('weight'),
             _decimal(context, grade.weight),
@@ -676,7 +694,9 @@ class _GradeDetailRow extends StatelessWidget {
           width: 112,
           child: Text(
             label,
-            style: TextStyle(color: Theme.of(context).colorScheme.outline),
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
         ),
         Expanded(

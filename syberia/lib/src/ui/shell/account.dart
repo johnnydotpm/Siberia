@@ -36,6 +36,7 @@ class _LoginRequired extends StatelessWidget {
                 SizedBox(
                   width: double.infinity,
                   child: FilledButton.icon(
+                    style: _wideButton,
                     onPressed: () => showModalBottomSheet<void>(
                       context: context,
                       isScrollControlled: true,
@@ -44,10 +45,7 @@ class _LoginRequired extends StatelessWidget {
                       builder: (_) => _Login(controller),
                     ),
                     icon: const Icon(Icons.login_rounded),
-                    label: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 13),
-                      child: Text(context.tr('connect')),
-                    ),
+                    label: Text(context.tr('connect')),
                   ),
                 ),
               ],
@@ -73,9 +71,9 @@ Future<void> _showAccount(BuildContext context, AppController controller) =>
         listenable: controller,
         builder: (sheetContext, _) => Padding(
           padding: EdgeInsets.fromLTRB(
-            22,
+            _Space.sheet,
             0,
-            22,
+            _Space.sheet,
             24 + MediaQuery.viewPaddingOf(sheetContext).bottom,
           ),
           child: Column(
@@ -84,10 +82,15 @@ Future<void> _showAccount(BuildContext context, AppController controller) =>
             children: [
               Text(
                 controller.snapshot.profile.name,
-                style: Theme.of(context).textTheme.headlineSmall
-                    ?.copyWith(fontWeight: FontWeight.bold),
+                style: _sheetTitleStyle(context),
               ),
-              Text(controller.snapshot.profile.school),
+              const SizedBox(height: 4),
+              Text(
+                controller.snapshot.profile.school,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
               const SizedBox(height: 20),
               OutlinedButton.icon(
                 onPressed: controller.syncing
@@ -102,18 +105,32 @@ Future<void> _showAccount(BuildContext context, AppController controller) =>
                           builder: (_) => _LinkedSynergiaAccounts(controller),
                         );
                       },
-                icon: const Icon(Icons.switch_account_outlined),
+                icon: const Icon(Icons.switch_account_rounded),
                 label: Text(context.tr('synergiaAccounts')),
               ),
-              // A sync that runs on after logging out would bring back an
-              // error, or the old account's data.
-              FilledButton.icon(
+              const SizedBox(height: 12),
+              // Red and asked first, like resetting the settings. A sync
+              // that runs on after logging out would bring back an error,
+              // or the old account's data.
+              TextButton.icon(
                 key: const ValueKey('account-logout'),
+                style: TextButton.styleFrom(
+                  foregroundColor: Theme.of(context).colorScheme.error,
+                ),
                 onPressed: controller.syncing
                     ? null
-                    : () {
+                    : () async {
                         Navigator.pop(sheetContext);
-                        controller.logout();
+                        final confirmed = await _confirm(
+                          context,
+                          title: context.tr('logout'),
+                          message: context.tr('logoutConfirm'),
+                          action: context.tr('logout'),
+                          actionKey: const ValueKey('account-logout-confirm'),
+                        );
+                        if (confirmed && !controller.syncing) {
+                          await controller.logout();
+                        }
                       },
                 icon: const Icon(Icons.logout_rounded),
                 label: Text(context.tr('logout')),
@@ -145,10 +162,12 @@ class _LinkedSynergiaAccountsState extends State<_LinkedSynergiaAccounts> {
       future: accounts,
       builder: (context, result) => ListView(
         shrinkWrap: true,
+        // Scrolls only when it does not fit; a sheet that fits moves as a whole.
+        primary: false,
         children: [
           Text(
             context.tr('synergiaAccounts'),
-            style: Theme.of(context).textTheme.titleLarge,
+            style: _sheetTitleStyle(context),
           ),
           const SizedBox(height: 12),
           if (result.connectionState != ConnectionState.done || selecting)
@@ -157,7 +176,9 @@ class _LinkedSynergiaAccountsState extends State<_LinkedSynergiaAccounts> {
             ListTile(
               title: Text(context.trError(AppError.from(result.error!))),
               trailing: IconButton(
-                icon: const Icon(Icons.refresh),
+                icon: const Icon(Icons.refresh_rounded),
+                tooltip: MaterialLocalizations.of(context)
+                    .refreshIndicatorSemanticLabel,
                 onPressed: () => setState(() {
                   accounts = widget.controller.fetchSynergiaAccounts();
                 }),
@@ -168,7 +189,12 @@ class _LinkedSynergiaAccountsState extends State<_LinkedSynergiaAccounts> {
             ListTile(
               title: Text(account.name.isEmpty ? account.login : account.name),
               subtitle: account.name.isEmpty ? null : Text(account.login),
-              trailing: account.selected ? const Icon(Icons.check) : null,
+              trailing: account.selected
+                  ? Icon(
+                      Icons.check_rounded,
+                      color: Theme.of(context).colorScheme.primary,
+                    )
+                  : null,
               enabled: !selecting,
               onTap: () async {
                 setState(() {
@@ -233,9 +259,9 @@ class _LoginState extends State<_Login> {
   Widget build(BuildContext context) => AnimatedPadding(
     duration: const Duration(milliseconds: 180),
     padding: EdgeInsets.fromLTRB(
-      24,
+      _Space.sheet,
       0,
-      24,
+      _Space.sheet,
       // The list below already keeps clear of the system buttons.
       24 + MediaQuery.viewInsetsOf(context).bottom,
     ),
@@ -243,12 +269,10 @@ class _LoginState extends State<_Login> {
       key: form,
       child: ListView(
         shrinkWrap: true,
+        // Scrolls only when the form does not fit, as with the keyboard up.
+        primary: false,
         children: [
-          Text(
-            context.tr('account'),
-            style: Theme.of(context).textTheme.headlineSmall
-                ?.copyWith(fontWeight: FontWeight.bold),
-          ),
+          Text(context.tr('account'), style: _sheetTitleStyle(context)),
           const SizedBox(height: 8),
           Text(context.tr('loginHelp')),
           const SizedBox(height: 12),
@@ -260,10 +284,10 @@ class _LoginState extends State<_Login> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Icon(
-                    Icons.vpn_lock_outlined,
+                    Icons.vpn_lock_rounded,
                     color: Theme.of(context).colorScheme.onSecondaryContainer,
                   ),
-                  const SizedBox(width: 10),
+                  const SizedBox(width: 12),
                   Expanded(child: Text(context.tr('vpnWarning'))),
                 ],
               ),
@@ -277,7 +301,6 @@ class _LoginState extends State<_Login> {
             decoration: InputDecoration(
               labelText: context.tr('email'),
               prefixIcon: const Icon(Icons.alternate_email_rounded),
-              border: const OutlineInputBorder(),
             ),
             validator: (value) => value == null || value.trim().isEmpty
                 ? context.tr('requiredEmail')
@@ -292,13 +315,12 @@ class _LoginState extends State<_Login> {
             decoration: InputDecoration(
               labelText: context.tr('password'),
               prefixIcon: const Icon(Icons.lock_outline_rounded),
-              border: const OutlineInputBorder(),
               suffixIcon: IconButton(
                 onPressed: () => setState(() => obscure = !obscure),
                 icon: Icon(
                   obscure
-                      ? Icons.visibility_outlined
-                      : Icons.visibility_off_outlined,
+                      ? Icons.visibility_rounded
+                      : Icons.visibility_off_rounded,
                 ),
               ),
             ),
@@ -317,16 +339,14 @@ class _LoginState extends State<_Login> {
           ListenableBuilder(
             listenable: widget.controller,
             builder: (context, _) => FilledButton(
+              style: _wideButton,
               onPressed: widget.controller.syncing ? null : submit,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 13),
-                child: widget.controller.syncing
-                    ? const SizedBox.square(
-                        dimension: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : Text(context.tr('login')),
-              ),
+              child: widget.controller.syncing
+                  ? const SizedBox.square(
+                      dimension: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : Text(context.tr('login')),
             ),
           ),
         ],

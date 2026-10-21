@@ -99,8 +99,10 @@ void main() {
       block: TodayBlock.currentLesson,
       visible: true,
     ));
-    expect(layout.blocks[1], (block: TodayBlock.grades, visible: false));
-    expect(layout.blocks[2].block, TodayBlock.events);
+    // The days off, added later, come right after the lesson card.
+    expect(layout.blocks[1], (block: TodayBlock.freeDays, visible: true));
+    expect(layout.blocks[2], (block: TodayBlock.grades, visible: false));
+    expect(layout.blocks[3].block, TodayBlock.events);
     // Blocks the saved list did not know about come back, visible.
     expect(layout.blocks, hasLength(TodayBlock.values.length));
     expect(layout.visible, isNot(contains(TodayBlock.grades)));
@@ -362,7 +364,11 @@ void main() {
         matching: find.byType(Scrollable),
       ),
     );
-    await tester.tap(find.descendant(of: last, matching: find.byType(Switch)));
+    // Wholly in view, not just its first pixels.
+    final toggle = find.descendant(of: last, matching: find.byType(Switch));
+    await tester.ensureVisible(toggle);
+    await tester.pumpAndSettle();
+    await tester.tap(toggle);
     await tester.pumpAndSettle();
     expect(
       controller.todayLayout.visible,

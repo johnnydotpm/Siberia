@@ -83,6 +83,8 @@ class _HomeWidgetSettingsFormState extends State<HomeWidgetSettingsForm> {
       children: [
         Expanded(
           child: ListView(
+            // Scrolls only when the settings do not fit.
+            primary: false,
             padding: const EdgeInsets.symmetric(vertical: 8),
             children: [
               _SectionTitle(context.tr('widgetStyle')),
@@ -150,11 +152,14 @@ class _HomeWidgetSettingsFormState extends State<HomeWidgetSettingsForm> {
         SafeArea(
           top: false,
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+            padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
             child: SizedBox(
               width: double.infinity,
               child: FilledButton(
                 key: const ValueKey('widget-settings-save'),
+                style: FilledButton.styleFrom(
+                  minimumSize: const Size.fromHeight(48),
+                ),
                 onPressed: _saving ? null : _save,
                 child: Text(context.tr('widgetSave')),
               ),
@@ -307,7 +312,8 @@ class _HomeWidgetsSheetState extends State<HomeWidgetsSheet> {
             padding: const EdgeInsets.fromLTRB(20, 0, 20, 4),
             child: Text(
               context.tr('homeWidgets'),
-              style: Theme.of(context).textTheme.titleLarge
+              // Sheet titles are the same across the app.
+              style: Theme.of(context).textTheme.headlineSmall
                   ?.copyWith(fontWeight: FontWeight.w800),
             ),
           ),
@@ -325,10 +331,12 @@ class _HomeWidgetsSheetState extends State<HomeWidgetsSheet> {
                   child: Text(context.tr('homeWidgetsNone')),
                 ),
               (final List<PlacedHomeWidget> list, _) => ListView(
+                // Scrolls only when the widgets do not fit.
+                primary: false,
                 children: [
                   for (final (index, placed) in list.indexed)
                     ListTile(
-                      leading: const Icon(Icons.widgets_outlined),
+                      leading: const Icon(Icons.widgets_rounded),
                       title: Text(
                         context.trArgs('homeWidgetItem', {
                           'number': '${index + 1}',
@@ -370,22 +378,30 @@ class SubjectShortNamesSheet extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(20, 0, 20, 4),
             child: Text(
               context.tr('shortSubjectNames'),
-              style: Theme.of(context).textTheme.titleLarge
+              // Sheet titles are the same across the app.
+              style: Theme.of(context).textTheme.headlineSmall
                   ?.copyWith(fontWeight: FontWeight.w800),
             ),
           ),
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
-            child: Text(context.tr('shortSubjectNamesDescription')),
+            child: Text(
+              context.tr('shortSubjectNamesDescription'),
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
           ),
           Expanded(
             child: subjects.isEmpty
                 ? Center(child: Text(context.tr('noData')))
                 : ListView.separated(
+                    // Scrolls only when the subjects do not fit.
+                    primary: false,
                     padding: EdgeInsets.fromLTRB(
-                      16,
+                      20,
                       8,
-                      16,
+                      20,
                       16 + MediaQuery.viewInsetsOf(context).bottom,
                     ),
                     itemCount: subjects.length,
@@ -399,7 +415,6 @@ class SubjectShortNamesSheet extends StatelessWidget {
                         decoration: InputDecoration(
                           labelText: subject,
                           hintText: context.tr('shortNameHint'),
-                          border: const OutlineInputBorder(),
                         ),
                         onChanged: (value) =>
                             controller.setSubjectShortName(subject, value),

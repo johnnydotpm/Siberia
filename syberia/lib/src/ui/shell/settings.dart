@@ -26,7 +26,7 @@ class _Settings extends StatelessWidget {
         .where(notifications.allows)
         .length;
     return _PageList(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(_Space.page),
       children: [
         _SettingsProfile(controller),
         _SettingsSection(
@@ -34,7 +34,7 @@ class _Settings extends StatelessWidget {
           children: [
             _PreviewChoice<AppColorMode>(
               title: context.tr('colorMode'),
-              icon: Icons.brightness_6_outlined,
+              icon: Icons.brightness_6_rounded,
               selected: controller.colorMode,
               onSelected: controller.setColorMode,
               options: [
@@ -51,7 +51,7 @@ class _Settings extends StatelessWidget {
             if (GlassPlatform.supported)
               _PreviewChoice<AppDesign>(
                 title: context.tr('design'),
-                icon: Icons.auto_awesome_outlined,
+                icon: Icons.auto_awesome_rounded,
                 selected: controller.design,
                 onSelected: controller.setDesign,
                 options: [
@@ -69,7 +69,7 @@ class _Settings extends StatelessWidget {
               leading: const _SettingsIcon(Icons.language_rounded),
               title: Text(context.tr('language')),
               subtitle: Text(_languageName(context, controller.locale)),
-              trailing: const Icon(Icons.chevron_right_rounded),
+              trailing: const _Chevron(),
               onTap: () => _showLanguageSheet(context, controller),
             ),
           ],
@@ -86,7 +86,7 @@ class _Settings extends StatelessWidget {
             ),
             ListTile(
               key: const ValueKey('settings-notifications'),
-              leading: const _SettingsIcon(Icons.notifications_active_outlined),
+              leading: const _SettingsIcon(Icons.notifications_active_rounded),
               title: Text(context.tr('notifications')),
               subtitle: Text(
                 notifications.enabled
@@ -96,7 +96,7 @@ class _Settings extends StatelessWidget {
                       })
                     : context.tr('notificationsOff'),
               ),
-              trailing: const Icon(Icons.chevron_right_rounded),
+              trailing: const _Chevron(),
               onTap: () => _showNotificationSettings(context, controller),
             ),
           ],
@@ -106,17 +106,17 @@ class _Settings extends StatelessWidget {
           children: [
             ListTile(
               key: const ValueKey('settings-today-screen'),
-              leading: const _SettingsIcon(Icons.dashboard_customize_outlined),
+              leading: const _SettingsIcon(Icons.dashboard_customize_rounded),
               title: Text(context.tr('todayCustomizeSettings')),
-              trailing: const Icon(Icons.chevron_right_rounded),
+              trailing: const _Chevron(),
               onTap: () => _showTodayLayoutSheet(context, controller),
             ),
             ListTile(
               key: const ValueKey('settings-timetable'),
-              leading: const _SettingsIcon(Icons.calendar_view_week_outlined),
+              leading: const _SettingsIcon(Icons.calendar_view_week_rounded),
               title: Text(context.tr('timetable')),
               subtitle: Text(context.tr('timetableStyle')),
-              trailing: const Icon(Icons.chevron_right_rounded),
+              trailing: const _Chevron(),
               onTap: () => _showTimetableSettings(context, controller),
             ),
             ListTile(
@@ -124,7 +124,7 @@ class _Settings extends StatelessWidget {
               leading: const _SettingsIcon(Icons.short_text_rounded),
               title: Text(context.tr('shortSubjectNames')),
               subtitle: Text(context.tr('shortSubjectNamesDescription')),
-              trailing: const Icon(Icons.chevron_right_rounded),
+              trailing: const _Chevron(),
               onTap: () => showAppSheet<void>(
                 context: context,
                 isScrollControlled: true,
@@ -242,7 +242,7 @@ class _Settings extends StatelessWidget {
             _CheckUpdatesRow(controller),
             ListTile(
               key: const ValueKey('settings-whats-new'),
-              leading: const _SettingsIcon(Icons.new_releases_outlined),
+              leading: const _SettingsIcon(Icons.new_releases_rounded),
               title: Text(context.tr('whatsNew')),
               trailing: const Icon(Icons.open_in_new_rounded, size: 20),
               onTap: () => _openLink(context, '$_repositoryUrl/releases'),
@@ -257,7 +257,7 @@ class _Settings extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: _Space.section),
         Center(
           child: TextButton.icon(
             key: const ValueKey('settings-reset'),
@@ -283,28 +283,20 @@ class _SettingsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return Padding(
-      padding: const EdgeInsets.only(top: 22),
+      padding: const EdgeInsets.only(top: _Space.section),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
-            child: Text(
-              title,
-              style: theme.textTheme.labelLarge?.copyWith(
-                color: theme.colorScheme.primary,
-                fontWeight: FontWeight.w800,
-              ),
-            ),
-          ),
+          _GroupLabel(title, accent: true),
           Card(
             clipBehavior: Clip.antiAlias,
             child: Column(
               children: [
                 for (final (index, child) in children.indexed) ...[
-                  if (index > 0) const Divider(height: 1, indent: 16),
+                  // From the text on, past the icon, as in the system's
+                  // own settings.
+                  if (index > 0) const Divider(height: 1, indent: 66),
                   child,
                 ],
               ],
@@ -387,7 +379,7 @@ class _SettingsProfile extends StatelessWidget {
                     const SizedBox(height: 4),
                     Row(
                       children: [
-                        Icon(Icons.cloud_done_outlined, size: 15, color: muted),
+                        Icon(Icons.cloud_done_rounded, size: 15, color: muted),
                         const SizedBox(width: 5),
                         Flexible(
                           child: Text(
@@ -438,7 +430,7 @@ String _syncedAgo(BuildContext context, DateTime lastSync) {
     return context.trArgs('syncedHoursAgo', {'hours': '${elapsed.inHours}'});
   }
   return context.trArgs('syncedAt', {
-    'date': DateFormat('dd.MM.yyyy HH:mm').format(lastSync),
+    'date': '${_shortDate(context, lastSync)}, ${_time(lastSync)}',
   });
 }
 
@@ -466,10 +458,19 @@ Future<void> _showLanguageSheet(
   builder: (sheetContext) => SafeArea(
     child: Padding(
       key: const ValueKey('language-sheet'),
-      padding: const EdgeInsets.fromLTRB(8, 0, 8, 16),
+      // The rows' own 16 makes the sheet's 20.
+      padding: const EdgeInsets.fromLTRB(4, 0, 4, 16),
       child: Column(
         mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+            child: Text(
+              sheetContext.tr('language'),
+              style: _sheetTitleStyle(sheetContext),
+            ),
+          ),
           for (final code in [null, ..._languageCodes])
             ListTile(
               key: ValueKey('language-${code ?? 'system'}'),
@@ -509,7 +510,7 @@ class _HomeWidgetsRowState extends State<_HomeWidgetsRow> {
     final android = widget.bridge.configurableInApp;
     return ListTile(
       key: const ValueKey('settings-home-widgets'),
-      leading: const _SettingsIcon(Icons.widgets_outlined),
+      leading: const _SettingsIcon(Icons.widgets_rounded),
       title: Text(context.tr('homeWidgets')),
       subtitle: android
           ? Text(context.tr('homeWidgetsDescription'))
@@ -530,7 +531,7 @@ class _HomeWidgetsRowState extends State<_HomeWidgetsRow> {
                 return Text(context.tr('homeWidgetsIosHint'));
               },
             ),
-      trailing: android ? const Icon(Icons.chevron_right_rounded) : null,
+      trailing: android ? const _Chevron() : null,
       onTap: android
           ? () => showAppSheet<void>(
               context: context,
@@ -588,14 +589,14 @@ class _CheckUpdatesRowState extends State<_CheckUpdatesRow> {
   @override
   Widget build(BuildContext context) => ListTile(
     key: const ValueKey('settings-check-updates'),
-    leading: const _SettingsIcon(Icons.system_update_outlined),
+    leading: const _SettingsIcon(Icons.system_update_rounded),
     title: Text(context.tr('checkUpdates')),
     trailing: _checking
         ? const SizedBox.square(
             dimension: 20,
             child: CircularProgressIndicator(strokeWidth: 2),
           )
-        : const Icon(Icons.chevron_right_rounded),
+        : const _Chevron(),
     onTap: _checking ? null : _check,
   );
 }
@@ -604,31 +605,14 @@ Future<void> _confirmResetSettings(
   BuildContext context,
   AppController controller,
 ) async {
-  final confirmed = await showDialog<bool>(
-    context: context,
-    builder: (dialogContext) => AlertDialog(
-      title: Text(dialogContext.tr('resetSettings')),
-      content: Text(dialogContext.tr('resetSettingsConfirm')),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(dialogContext, false),
-          child: Text(
-            MaterialLocalizations.of(dialogContext).cancelButtonLabel,
-          ),
-        ),
-        FilledButton(
-          key: const ValueKey('settings-reset-confirm'),
-          style: FilledButton.styleFrom(
-            backgroundColor: Theme.of(dialogContext).colorScheme.error,
-            foregroundColor: Theme.of(dialogContext).colorScheme.onError,
-          ),
-          onPressed: () => Navigator.pop(dialogContext, true),
-          child: Text(dialogContext.tr('resetDefaults')),
-        ),
-      ],
-    ),
+  final confirmed = await _confirm(
+    context,
+    title: context.tr('resetSettings'),
+    message: context.tr('resetSettingsConfirm'),
+    action: context.tr('resetDefaults'),
+    actionKey: const ValueKey('settings-reset-confirm'),
   );
-  if (confirmed != true) return;
+  if (!confirmed) return;
   await controller.resetSettings();
   if (!context.mounted) return;
   ScaffoldMessenger.of(context)

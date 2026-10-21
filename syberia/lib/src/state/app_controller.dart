@@ -49,6 +49,7 @@ class AppController extends ChangeNotifier {
   MessageListStyle _messageListStyle = MessageListStyle.list;
   GradesView _gradesView = GradesView.compact;
   TodayLayout _todayLayout = TodayLayout.defaults;
+  Map<String, DateTime> _doneHomework = const {};
   Timer? _homeWidgetDebounce;
   SchoolNotificationSettings _notificationSettings =
       const SchoolNotificationSettings();
@@ -75,6 +76,9 @@ class AppController extends ChangeNotifier {
   MessageListStyle get messageListStyle => _messageListStyle;
   GradesView get gradesView => _gradesView;
   TodayLayout get todayLayout => _todayLayout;
+
+  /// Whether the student marked [item] as done.
+  bool isHomeworkDone(SchoolEvent item) => _doneHomework.containsKey(item.id);
 
   /// The name to show for [subject]: the student's short name if they set one.
   String displaySubject(String subject) =>
@@ -114,6 +118,7 @@ class AppController extends ChangeNotifier {
     _messageListStyle = await _repository.loadMessageListStyle();
     _gradesView = await _repository.loadGradesView();
     _todayLayout = await _repository.loadTodayLayout();
+    _doneHomework = await _repository.loadDoneHomework();
     _autoSyncOnOpen = await _repository.loadAutoSyncOnOpen();
     if (notifications != null) {
       _notificationSettings = await notifications!.loadSettings();
@@ -541,6 +546,19 @@ class AppController extends ChangeNotifier {
     await _repository.saveGradesView(view);
   }
 
+  /// Marks [item] as done, or not. Done work is no longer reminded of.
+  Future<void> setHomeworkDone(SchoolEvent item, bool done) async {
+    if (isHomeworkDone(item) == done) return;
+    _doneHomework = {
+      for (final entry in _doneHomework.entries)
+        if (entry.key != item.id) entry.key: entry.value,
+      if (done) item.id: item.date,
+    };
+    notifyListeners();
+    await _repository.saveDoneHomework(_doneHomework);
+    await _updateReminders();
+  }
+
   Future<void> setTodayLayout(TodayLayout layout) async {
     if (_todayLayout == layout) return;
     _todayLayout = layout;
@@ -642,6 +660,7 @@ class AppController extends ChangeNotifier {
 
   Future<void> logout() async {
     _snapshot = await _repository.logout();
+    _doneHomework = const {};
     _forgetSentMessages();
     _error = null;
     _tabIndex = 0;

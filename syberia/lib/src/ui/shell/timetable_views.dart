@@ -196,10 +196,12 @@ class _TimelineRail extends StatelessWidget {
               ),
             ),
           ),
+        // Times line up down the rail, digit under digit.
         Text(
           _time(block.lesson.start),
           style: theme.textTheme.labelLarge?.copyWith(
             fontWeight: FontWeight.w800,
+            fontFeatures: _tabular,
           ),
         ),
         if (showEnd)
@@ -207,6 +209,7 @@ class _TimelineRail extends StatelessWidget {
             _time(block.lesson.end),
             style: theme.textTheme.labelSmall?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
+              fontFeatures: _tabular,
             ),
           ),
       ],
@@ -286,7 +289,7 @@ class _TimelineLessonCard extends StatelessWidget {
         child: Container(
           decoration: BoxDecoration(
             color: palette.background,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(14),
             border: current
                 ? Border.all(color: palette.accent, width: 2)
                 : null,
@@ -527,7 +530,8 @@ class _TimetableRow extends StatelessWidget {
       child: Material(
         color: current
             ? palette.background.withValues(alpha: 0.6)
-            : theme.colorScheme.surfaceContainerLow,
+            // The cards' colour, as on every other page.
+            : theme.cardTheme.color ?? theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(14),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
@@ -560,12 +564,14 @@ class _TimetableRow extends StatelessWidget {
                         _time(lesson.start),
                         style: theme.textTheme.labelLarge?.copyWith(
                           fontWeight: FontWeight.w800,
+                          fontFeatures: _tabular,
                         ),
                       ),
                       Text(
                         _time(lesson.end),
                         style: theme.textTheme.labelSmall?.copyWith(
                           color: muted,
+                          fontFeatures: _tabular,
                         ),
                       ),
                     ],
@@ -588,8 +594,7 @@ class _TimetableRow extends StatelessWidget {
                         _SubjectScope.of(context, lesson.subject),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: theme.textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.w800,
+                        style: _rowTitleStyle(context)?.copyWith(
                           decoration: lesson.cancelled
                               ? TextDecoration.lineThrough
                               : null,
@@ -657,6 +662,17 @@ void _showLessonDetails(BuildContext context, _LessonBlock block) {
     lesson.teacher,
     if (lesson.room.isNotEmpty) _room(context, lesson.room),
   ].where((value) => value.isNotEmpty).join(' · ');
+  final absence = _FreeDaysScope.absenceFor(context, lesson);
+  String clock(int minutes) =>
+      '${(minutes ~/ 60).toString().padLeft(2, '0')}:'
+      '${(minutes % 60).toString().padLeft(2, '0')}';
+  final absenceDetails = absence == null
+      ? ''
+      : [
+          if (absence.name.isNotEmpty) _capitalize(absence.name),
+          if (absence.timeFrom != null && absence.timeTo != null)
+            '${clock(absence.timeFrom!)}–${clock(absence.timeTo!)}',
+        ].join(' · ');
   // Scrolls when the tests' descriptions are long, like the homework sheet.
   showAppSheet<void>(
     context: context,
@@ -671,7 +687,7 @@ void _showLessonDetails(BuildContext context, _LessonBlock block) {
     builder: (context) => SafeArea(
       child: SingleChildScrollView(
         key: const ValueKey('lesson-details-sheet'),
-        padding: const EdgeInsets.fromLTRB(20, 4, 20, 24),
+        padding: const EdgeInsets.fromLTRB(_Space.sheet, 4, _Space.sheet, 24),
         child: SizedBox(
           width: double.infinity,
           child: Column(
@@ -679,12 +695,11 @@ void _showLessonDetails(BuildContext context, _LessonBlock block) {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                lesson.subject,
-                style: Theme.of(context).textTheme.headlineSmall
-                    ?.copyWith(fontWeight: FontWeight.w800),
+                displaySubject(lesson.subject, const {}),
+                style: _sheetTitleStyle(context),
               ),
               const SizedBox(height: 10),
-              Text('${_time(lesson.start)} – ${_time(lesson.end)}'),
+              Text('${_time(lesson.start)}–${_time(lesson.end)}'),
               if (details.isNotEmpty) ...[
                 const SizedBox(height: 6),
                 Text(details),
@@ -720,6 +735,29 @@ void _showLessonDetails(BuildContext context, _LessonBlock block) {
                           ].where((value) => value.isNotEmpty).join(' · '),
                         }),
                 ),
+              ],
+              if (absence != null) ...[
+                const SizedBox(height: 14),
+                Row(
+                  key: const ValueKey('lesson-teacher-absent'),
+                  children: [
+                    Icon(
+                      Icons.person_off_rounded,
+                      color: Theme.of(context).colorScheme.error,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        context.tr('teacherAbsence'),
+                        style: const TextStyle(fontWeight: FontWeight.w800),
+                      ),
+                    ),
+                  ],
+                ),
+                if (absenceDetails.isNotEmpty) ...[
+                  const SizedBox(height: 6),
+                  Text(absenceDetails),
+                ],
               ],
               for (final test in tests) ...[
                 const SizedBox(height: 16),

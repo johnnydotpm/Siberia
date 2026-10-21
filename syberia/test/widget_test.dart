@@ -77,7 +77,7 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.byIcon(Icons.person_rounded).first);
     await tester.pumpAndSettle();
-    FilledButton logout() =>
+    ButtonStyleButton logout() =>
         tester.widget(find.byKey(const ValueKey('account-logout')));
     expect(logout().onPressed, isNotNull);
 
@@ -393,12 +393,14 @@ void main() {
 
       controller.selectTab(8);
       await tester.pumpAndSettle();
-      expect(find.text('Positive'), findsOneWidget);
+      // What the note is leads; its tone shows once it opens.
+      expect(find.text('Pochwała'), findsOneWidget);
       expect(find.text('Nauczyciel A'), findsOneWidget);
       expect(find.text('Aktywna praca'), findsNothing);
-      await tester.tap(find.text('Positive'));
+      await tester.tap(find.text('Pochwała'));
       await tester.pumpAndSettle();
       expect(find.text('Aktywna praca'), findsOneWidget);
+      expect(find.text('Positive'), findsOneWidget);
     },
   );
 
