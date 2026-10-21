@@ -657,6 +657,17 @@ void _showLessonDetails(BuildContext context, _LessonBlock block) {
     lesson.teacher,
     if (lesson.room.isNotEmpty) _room(context, lesson.room),
   ].where((value) => value.isNotEmpty).join(' · ');
+  final absence = _FreeDaysScope.absenceFor(context, lesson);
+  String clock(int minutes) =>
+      '${(minutes ~/ 60).toString().padLeft(2, '0')}:'
+      '${(minutes % 60).toString().padLeft(2, '0')}';
+  final absenceDetails = absence == null
+      ? ''
+      : [
+          if (absence.name.isNotEmpty) _capitalize(absence.name),
+          if (absence.timeFrom != null && absence.timeTo != null)
+            '${clock(absence.timeFrom!)}–${clock(absence.timeTo!)}',
+        ].join(' · ');
   // Scrolls when the tests' descriptions are long, like the homework sheet.
   showAppSheet<void>(
     context: context,
@@ -719,6 +730,29 @@ void _showLessonDetails(BuildContext context, _LessonBlock block) {
                           ].where((value) => value.isNotEmpty).join(' · '),
                         }),
                 ),
+              ],
+              if (absence != null) ...[
+                const SizedBox(height: 14),
+                Row(
+                  key: const ValueKey('lesson-teacher-absent'),
+                  children: [
+                    Icon(
+                      Icons.person_off_rounded,
+                      color: Theme.of(context).colorScheme.error,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        context.tr('teacherAbsence'),
+                        style: const TextStyle(fontWeight: FontWeight.w800),
+                      ),
+                    ),
+                  ],
+                ),
+                if (absenceDetails.isNotEmpty) ...[
+                  const SizedBox(height: 6),
+                  Text(absenceDetails),
+                ],
               ],
               for (final test in tests) ...[
                 const SizedBox(height: 16),

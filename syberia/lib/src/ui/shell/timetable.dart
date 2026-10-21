@@ -190,6 +190,10 @@ class _TimetableState extends State<_Timetable> {
               _sameDay(event.date, selectedDay!),
         )
         .toList(growable: false);
+    final dayOff = _freeDayOn(
+      widget.controller.snapshot.freeDays,
+      selectedDay!,
+    );
     final mergeLessons = widget.controller.mergeTimetableLessons;
     final showBreaks = widget.controller.showTimetableBreaks;
     final placed = _placeTests(
@@ -270,11 +274,17 @@ class _TimetableState extends State<_Timetable> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
+                      // A holiday says so, instead of "No data".
+                      if (dayOff != null) ...[
+                        _FreeDayCard(dayOff),
+                        const SizedBox(height: 8),
+                      ],
                       for (final event in dayEvents) ...[
                         _EventTile(event),
                         const SizedBox(height: 8),
                       ],
-                      if (dayEvents.isEmpty) _Empty(context.tr('noData')),
+                      if (dayEvents.isEmpty && dayOff == null)
+                        _Empty(context.tr('noData')),
                     ],
                   ),
                 )
@@ -283,6 +293,12 @@ class _TimetableState extends State<_Timetable> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
+                      // Some lessons off for the class.
+                      if (dayOff != null)
+                        Padding(
+                          padding: const EdgeInsets.only(left: 4, bottom: 8),
+                          child: _FreeDayCard(dayOff),
+                        ),
                       // Entries that belong to no lesson of the day.
                       for (final event in placed.unplaced)
                         Padding(
@@ -456,12 +472,17 @@ List<_LessonBlock> _lessonBlocks(
 }
 
 /// "s. 207 · Teacher Alpha", or "2 lessons · s. 207 · …" for a double lesson.
+/// An absent teacher is said to be.
 String _blockDetails(BuildContext context, _LessonBlock block) {
   final lesson = block.lesson;
+  final absent = _FreeDaysScope.absenceFor(context, lesson) != null;
   return [
     if (block.count > 1) _lessonCount(context, block.count),
     if (lesson.room.isNotEmpty) _room(context, lesson.room),
-    lesson.teacher,
+    if (absent && lesson.teacher.isNotEmpty)
+      '${lesson.teacher} – ${context.tr('teacherAbsent')}'
+    else
+      lesson.teacher,
   ].where((value) => value.isNotEmpty).join(' · ');
 }
 

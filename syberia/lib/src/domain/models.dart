@@ -279,7 +279,15 @@ enum MessageListStyle { list, cards }
 enum GradesView { compact, cards }
 
 /// The configurable parts of the Today screen.
-enum TodayBlock { currentLesson, summary, grades, homework, events, messages }
+enum TodayBlock {
+  currentLesson,
+  freeDays,
+  summary,
+  grades,
+  homework,
+  events,
+  messages,
+}
 
 /// Which Today blocks show, and in what order.
 class TodayLayout {
@@ -287,6 +295,7 @@ class TodayLayout {
 
   static const defaults = TodayLayout([
     (block: TodayBlock.currentLesson, visible: true),
+    (block: TodayBlock.freeDays, visible: true),
     (block: TodayBlock.summary, visible: true),
     (block: TodayBlock.grades, visible: true),
     (block: TodayBlock.homework, visible: true),
@@ -307,7 +316,8 @@ class TodayLayout {
 
   /// Reads [encode]'s output. Unknown names are skipped and blocks added in
   /// a later version are visible. The lesson card is inserted first for
-  /// layouts saved before it became configurable.
+  /// layouts saved before it became configurable, and the days off right
+  /// after it.
   factory TodayLayout.decode(List<String> saved) {
     final blocks = <({TodayBlock block, bool visible})>[];
     for (final item in saved) {
@@ -323,6 +333,11 @@ class TodayLayout {
       if (!blocks.any((entry) => entry.block == block)) {
         if (block == TodayBlock.currentLesson) {
           blocks.insert(0, (block: block, visible: true));
+        } else if (block == TodayBlock.freeDays) {
+          final lesson = blocks.indexWhere(
+            (entry) => entry.block == TodayBlock.currentLesson,
+          );
+          blocks.insert(lesson + 1, (block: block, visible: true));
         } else {
           blocks.add((block: block, visible: true));
         }
@@ -466,6 +481,82 @@ class AttendanceRecord {
   bool get isExcused => kind.isExcused;
 }
 
+/// What gives a day off.
+enum FreeDayKind {
+  /// The whole school: holidays and days off.
+  school,
+
+  /// The student's class only, sometimes for some lessons only.
+  classDay,
+
+  /// A teacher's absence.
+  teacher,
+}
+
+/// One or more days without (some) lessons: a school holiday, a day off for
+/// the class, or a teacher's absence.
+class FreeDay {
+  const FreeDay({
+    required this.id,
+    required this.kind,
+    required this.name,
+    required this.from,
+    required this.to,
+    this.teacher = '',
+    this.lessonFrom,
+    this.lessonTo,
+    this.timeFrom,
+    this.timeTo,
+  });
+
+  final String id;
+  final FreeDayKind kind;
+
+  /// "Ferie zimowe", the kind of the class's day off or of the absence. May
+  /// be empty.
+  final String name;
+
+  /// The first and the last day, both whole.
+  final DateTime from;
+  final DateTime to;
+
+  /// Who is absent, for [FreeDayKind.teacher].
+  final String teacher;
+
+  /// The lessons a class's day off covers, when not all of them.
+  final int? lessonFrom;
+  final int? lessonTo;
+
+  /// The part of a day a teacher is absent for, in minutes after midnight.
+  final int? timeFrom;
+  final int? timeTo;
+
+  /// Whether [day] is one of these days.
+  bool covers(DateTime day) {
+    final date = DateTime(day.year, day.month, day.day);
+    return !date.isBefore(DateTime(from.year, from.month, from.day)) &&
+        !date.isAfter(DateTime(to.year, to.month, to.day));
+  }
+
+  /// No lessons at all for the student on these days.
+  bool get wholeDays =>
+      kind != FreeDayKind.teacher && lessonFrom == null && lessonTo == null;
+
+  /// Whether this is [lesson]'s teacher being absent while it is on.
+  bool absentFor(Lesson lesson) {
+    if (kind != FreeDayKind.teacher ||
+        teacher.isEmpty ||
+        lesson.teacher != teacher ||
+        !covers(lesson.start)) {
+      return false;
+    }
+    final start = lesson.start.hour * 60 + lesson.start.minute;
+    final end = lesson.end.hour * 60 + lesson.end.minute;
+    return (timeFrom == null || timeFrom! < end) &&
+        (timeTo == null || timeTo! > start);
+  }
+}
+
 class SchoolAnnouncement {
   const SchoolAnnouncement({
     required this.id,
@@ -517,6 +608,7 @@ class AppSnapshot {
     required this.lastSync,
     this.messagesError,
     this.sentMessages = const [],
+    this.freeDays = const [],
   });
   final StudentProfile profile;
   final List<Lesson> lessons;
@@ -530,6 +622,9 @@ class AppSnapshot {
   final List<AttendanceRecord> attendance;
   final List<SchoolAnnouncement> announcements;
   final List<StudentNotice> notices;
+
+  /// Holidays, the class's days off and teachers' absences.
+  final List<FreeDay> freeDays;
   final DateTime lastSync;
   int get unreadMessages => messages.where((item) => item.unread).length;
   int get absences => attendance
@@ -544,6 +639,7 @@ class AppSnapshot {
     List<SchoolEvent>? events,
     List<SchoolMessage>? messages,
     List<SchoolMessage>? sentMessages,
+    List<FreeDay>? freeDays,
     DateTime? lastSync,
   }) => AppSnapshot(
     profile: profile,
@@ -556,6 +652,7 @@ class AppSnapshot {
     attendance: attendance,
     announcements: announcements,
     notices: notices,
+    freeDays: freeDays ?? this.freeDays,
     lastSync: lastSync ?? this.lastSync,
   );
 

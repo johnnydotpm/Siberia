@@ -166,6 +166,13 @@ class _TodayState extends State<_Today> {
                 _NowCard(controller: controller, now: now),
           ),
         );
+      case TodayBlock.freeDays:
+        final next = _nextFreeDays(data.freeDays, now);
+        if (next == null) return null;
+        return KeyedSubtree(
+          key: const ValueKey('today-free-days'),
+          child: _FreeDayCard(next, now: now),
+        );
       case TodayBlock.summary:
         return _Summary(controller);
       case TodayBlock.grades:
@@ -183,7 +190,9 @@ class _TodayState extends State<_Today> {
                 .where(
                   (item) =>
                       item.kind == EventKind.homework &&
-                      !item.date.isBefore(today),
+                      !item.date.isBefore(today) &&
+                      // Done is off the list of what is to do.
+                      !controller.isHomeworkDone(item),
                 )
                 .toList()
               ..sort((a, b) => a.date.compareTo(b.date));
@@ -764,6 +773,7 @@ Future<void> _showTodayLayoutSheet(
 
 String _todayBlockLabel(TodayBlock block) => switch (block) {
   TodayBlock.currentLesson => 'todayCurrentLesson',
+  TodayBlock.freeDays => 'freeDays',
   TodayBlock.summary => 'todayBlockSummary',
   TodayBlock.grades => 'todayRecentGrades',
   TodayBlock.homework => 'homework',
@@ -773,6 +783,7 @@ String _todayBlockLabel(TodayBlock block) => switch (block) {
 
 IconData _todayBlockIcon(TodayBlock block) => switch (block) {
   TodayBlock.currentLesson => Icons.schedule_rounded,
+  TodayBlock.freeDays => Icons.beach_access_rounded,
   TodayBlock.summary => Icons.dashboard_rounded,
   TodayBlock.grades => Icons.school_rounded,
   TodayBlock.homework => Icons.assignment_rounded,

@@ -368,6 +368,7 @@ class LibrusClient {
         data(LibrusPart.announcements, 'SchoolNotices', optional: true),
         data(LibrusPart.notices, 'Notes', optional: true),
         data(LibrusPart.grades, 'Grades/Comments', optional: true),
+        data(LibrusPart.timetable, 'TeacherFreeDays', optional: true),
       ]),
       if (withMessages)
         _apiGet(_apiInboxEndpoint).then<Object?>(
@@ -425,6 +426,7 @@ class LibrusClient {
       attendance: parsed.attendance,
       announcements: parsed.announcements,
       notices: parsed.notices,
+      freeDays: parsed.freeDays,
       lastSync: DateTime.now(),
     );
   }
@@ -498,6 +500,12 @@ class LibrusClient {
     'Lessons': true,
     'Notes/Categories': true,
     'HomeWorks/Categories': true,
+    // Holidays and the class's days off change seldom; teachers' absences
+    // come with each sync.
+    'SchoolFreeDays': true,
+    'ClassFreeDays': true,
+    'ClassFreeDays/Types': true,
+    'TeacherFreeDays/Types': true,
   };
 
   /// Names the cached lists after the account without storing its address.
@@ -1719,6 +1727,88 @@ class LibrusClient {
           .toList(growable: false)
         ..sort((a, b) => b.date.compareTo(a.date));
 
+  /// Holidays, the class's days off and teachers' absences, by their first
+  /// day. Absences that are over are left out: a school lists everyone's.
+  static List<FreeDay> _parseFreeDays({
+    required Map<String, dynamic> school,
+    required Map<String, dynamic> classDays,
+    required Map<int, String> classTypes,
+    required Map<String, dynamic> teacherDays,
+    required Map<int, String> teacherTypes,
+    required Map<int, String> people,
+    required DateTime today,
+  }) {
+    final days = <FreeDay>[];
+    (DateTime, DateTime)? range(Map<String, dynamic> item) {
+      final from = _parseDate(item['DateFrom']);
+      final to = _parseDate(item['DateTo']) ?? from;
+      return from == null || to == null ? null : (from, to);
+    }
+
+    int? lesson(Object? value) => switch (_integer(value)) {
+      final number? when number > 0 => number,
+      _ => null,
+    };
+    for (final item in _list(school['SchoolFreeDays'])) {
+      if (range(item) case (final from, final to)) {
+        days.add(
+          FreeDay(
+            id: 'school-${item['Id']}',
+            kind: FreeDayKind.school,
+            name: item['Name']?.toString().trim() ?? '',
+            from: from,
+            to: to,
+          ),
+        );
+      }
+    }
+    for (final item in _list(classDays['ClassFreeDays'])) {
+      if (range(item) case (final from, final to)) {
+        days.add(
+          FreeDay(
+            id: 'class-${item['Id']}',
+            kind: FreeDayKind.classDay,
+            name:
+                classTypes[_referenceId(item['Type'])]?.trim() ??
+                item['Name']?.toString().trim() ??
+                '',
+            from: from,
+            to: to,
+            lessonFrom: lesson(item['LessonNoFrom']),
+            lessonTo: lesson(item['LessonNoTo']),
+          ),
+        );
+      }
+    }
+    final yesterday = DateTime(today.year, today.month, today.day - 1);
+    for (final item in _list(teacherDays['TeacherFreeDays'])) {
+      final teacher = people[_referenceId(item['Teacher'])] ?? '';
+      if (teacher.isEmpty) continue;
+      if (range(item) case (final from, final to) when to.isAfter(yesterday)) {
+        days.add(
+          FreeDay(
+            id: 'teacher-${item['Id']}',
+            kind: FreeDayKind.teacher,
+            name: teacherTypes[_referenceId(item['Type'])]?.trim() ?? '',
+            from: from,
+            to: to,
+            teacher: teacher,
+            timeFrom: _minutesOfDay(item['TimeFrom']),
+            timeTo: _minutesOfDay(item['TimeTo']),
+          ),
+        );
+      }
+    }
+    return days..sort((a, b) => a.from.compareTo(b.from));
+  }
+
+  /// "08:30:00" as minutes after midnight.
+  static int? _minutesOfDay(Object? value) {
+    final match = RegExp(r'^(\d{1,2}):(\d{2})').firstMatch('${value ?? ''}');
+    if (match == null) return null;
+    return int.parse(match[1]!) * 60 + int.parse(match[2]!);
+  }
+
   static Map<int, String> _idNameMap(
     Map<String, dynamic> root,
     String key,
@@ -1792,6 +1882,7 @@ class _ParsedSnapshot {
     required this.attendance,
     required this.announcements,
     required this.notices,
+    required this.freeDays,
     required this.apiMessages,
     required this.unknown,
   });
@@ -1803,6 +1894,7 @@ class _ParsedSnapshot {
   final List<AttendanceRecord> attendance;
   final List<SchoolAnnouncement> announcements;
   final List<StudentNotice> notices;
+  final List<FreeDay> freeDays;
 
   /// The mobile inbox, or null when it gave no messages.
   final List<SchoolMessage>? apiMessages;
@@ -1897,6 +1989,23 @@ _ParsedSnapshot _parseSnapshot(_SnapshotInput input) {
     ),
     announcements: LibrusClient._parseAnnouncements(data[5], people),
     notices: LibrusClient._parseNotices(data[6], noticeCategories, people),
+    freeDays: LibrusClient._parseFreeDays(
+      school: reference('SchoolFreeDays'),
+      classDays: reference('ClassFreeDays'),
+      classTypes: LibrusClient._idNameMap(
+        reference('ClassFreeDays/Types'),
+        'Types',
+        'Name',
+      ),
+      teacherDays: data[8],
+      teacherTypes: LibrusClient._idNameMap(
+        reference('TeacherFreeDays/Types'),
+        'Types',
+        'Name',
+      ),
+      people: people,
+      today: DateTime.now(),
+    ),
     apiMessages: inbox == null
         ? null
         : LibrusClient._apiMessages(inbox, people),

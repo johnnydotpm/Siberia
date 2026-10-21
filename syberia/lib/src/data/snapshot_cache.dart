@@ -25,6 +25,7 @@ abstract final class SnapshotCache {
       for (final item in value.announcements) _announcement(item),
     ],
     'notices': [for (final item in value.notices) _notice(item)],
+    'freeDays': [for (final item in value.freeDays) _freeDay(item)],
   });
 
   static AppSnapshot? decode(String? raw) {
@@ -59,6 +60,10 @@ abstract final class SnapshotCache {
         attendance: _list(value['attendance'], _readAttendance),
         announcements: _list(value['announcements'], _readAnnouncement),
         notices: _list(value['notices'], _readNotice),
+        // Caches written before free days have none.
+        freeDays: value['freeDays'] == null
+            ? const []
+            : _list(value['freeDays'], _readFreeDay),
       );
     } on Object {
       return null;
@@ -237,5 +242,30 @@ abstract final class SnapshotCache {
     teacher: item['teacher']! as String,
     date: _parseDate(item['date']),
     tone: NoticeTone.values.byName(item['tone']! as String),
+  );
+
+  static Map<String, Object?> _freeDay(FreeDay item) => {
+    'id': item.id,
+    'kind': item.kind.name,
+    'name': item.name,
+    'from': _date(item.from),
+    'to': _date(item.to),
+    'teacher': item.teacher,
+    'lessonFrom': item.lessonFrom,
+    'lessonTo': item.lessonTo,
+    'timeFrom': item.timeFrom,
+    'timeTo': item.timeTo,
+  };
+  static FreeDay _readFreeDay(Map<String, Object?> item) => FreeDay(
+    id: item['id']! as String,
+    kind: FreeDayKind.values.byName(item['kind']! as String),
+    name: item['name']! as String,
+    from: _parseDate(item['from']),
+    to: _parseDate(item['to']),
+    teacher: item['teacher'] as String? ?? '',
+    lessonFrom: item['lessonFrom'] as int?,
+    lessonTo: item['lessonTo'] as int?,
+    timeFrom: item['timeFrom'] as int?,
+    timeTo: item['timeTo'] as int?,
   );
 }

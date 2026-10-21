@@ -120,6 +120,21 @@ class _InfoCard extends StatelessWidget {
   );
 }
 
+/// The app's controller, for widgets deep in a page that act on it. Pages
+/// rebuild when it changes, so this never needs to tell them.
+class _ControllerScope extends InheritedWidget {
+  const _ControllerScope({required this.controller, required super.child});
+  final AppController controller;
+
+  static AppController? maybeOf(BuildContext context) => context
+      .dependOnInheritedWidgetOfExactType<_ControllerScope>()
+      ?.controller;
+
+  @override
+  bool updateShouldNotify(_ControllerScope oldWidget) =>
+      controller != oldWidget.controller;
+}
+
 /// The one spacing scale of the pages, so that they line up with each
 /// other.
 abstract final class _Space {
@@ -152,6 +167,31 @@ List<Widget> _spaced(Iterable<Widget> items, [double gap = _Space.item]) => [
     item,
   ],
 ];
+
+/// "{count} days" in the right form: Polish, Russian and Ukrainian have
+/// three of them, English and German two. [key] names the three texts:
+/// `${key}One`, `${key}Few` and `${key}Many`.
+String _plural(BuildContext context, int count, String key) {
+  final ones = count % 10;
+  final tens = count % 100;
+  final few = ones >= 2 && ones <= 4 && (tens < 12 || tens > 14);
+  final form = switch (Localizations.localeOf(context).languageCode) {
+    'ru' || 'uk' =>
+      ones == 1 && tens != 11
+          ? 'One'
+          : few
+          ? 'Few'
+          : 'Many',
+    'pl' =>
+      count == 1
+          ? 'One'
+          : few
+          ? 'Few'
+          : 'Many',
+    _ => count == 1 ? 'One' : 'Many',
+  };
+  return context.trArgs('$key$form', {'count': '$count'});
+}
 
 /// The label over a group of a list: a day, a month, a part of the
 /// settings. [accent] draws it in the theme's colour, as the settings do.

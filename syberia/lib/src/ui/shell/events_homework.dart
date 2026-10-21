@@ -74,6 +74,9 @@ class _HomeworkState extends State<_Homework> {
   final _search = TextEditingController();
   bool _past = false;
 
+  /// Whether the upcoming work already done is shown.
+  bool _showDone = false;
+
   @override
   void dispose() {
     _search.dispose();
@@ -106,24 +109,26 @@ class _HomeworkState extends State<_Homework> {
         .where((item) => item.kind == EventKind.homework)
         .toList();
     if (all.isEmpty) return _PageEmpty(context.tr('noData'));
-    final upcoming = all.where((item) => !item.date.isBefore(today)).toList()
+    final controller = widget.controller;
+    final future = all.where((item) => !item.date.isBefore(today)).toList()
       ..sort((a, b) => a.date.compareTo(b.date));
+    // Work marked as done leaves the upcoming list for a group of its own.
+    final upcoming = future
+        .where((item) => !controller.isHomeworkDone(item))
+        .toList(growable: false);
     final past = all.where((item) => item.date.isBefore(today)).toList()
       ..sort((a, b) => b.date.compareTo(a.date));
     final query = _search.text.trim().toLowerCase();
-    final shown = (_past ? past : upcoming)
-        .where(
-          (item) =>
-              query.isEmpty ||
-              item.title.toLowerCase().contains(query) ||
-              item.subject.toLowerCase().contains(query) ||
-              _SubjectScope.of(
-                context,
-                item.subject,
-              ).toLowerCase().contains(query) ||
-              item.description.toLowerCase().contains(query),
-        )
-        .toList();
+    bool matches(SchoolEvent item) =>
+        query.isEmpty ||
+        item.title.toLowerCase().contains(query) ||
+        item.subject.toLowerCase().contains(query) ||
+        _SubjectScope.of(context, item.subject).toLowerCase().contains(query) ||
+        item.description.toLowerCase().contains(query);
+    final shown = (_past ? past : upcoming).where(matches).toList();
+    final done = _past
+        ? const <SchoolEvent>[]
+        : future.where(controller.isHomeworkDone).where(matches).toList();
     final rows = <Widget>[];
     String? lastSection;
     for (final item in shown) {
@@ -141,6 +146,43 @@ class _HomeworkState extends State<_Homework> {
         rows.add(const SizedBox(height: _Space.item));
       }
       rows.add(_HomeworkCard(item, now: now));
+    }
+    if (done.isNotEmpty) {
+      rows.add(
+        InkWell(
+          key: const ValueKey('homework-done-toggle'),
+          borderRadius: BorderRadius.circular(8),
+          onTap: () => setState(() => _showDone = !_showDone),
+          child: Row(
+            children: [
+              Expanded(
+                child: _GroupLabel(
+                  '${context.tr('homeworkDoneSection')} (${done.length})',
+                  top: _Space.card,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsetsDirectional.only(
+                  top: _Space.card,
+                  bottom: _Space.heading,
+                  end: 8,
+                ),
+                child: AnimatedRotation(
+                  turns: _showDone ? 0.5 : 0,
+                  duration: const Duration(milliseconds: 200),
+                  child: Icon(
+                    Icons.expand_more_rounded,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+      if (_showDone) {
+        rows.addAll(_spaced(done.map((item) => _HomeworkCard(item, now: now))));
+      }
     }
 
     String counted(String key, int count) =>
@@ -192,7 +234,8 @@ class _HomeworkState extends State<_Homework> {
             onSelectionChanged: (selection) =>
                 setState(() => _past = selection.first),
           ),
-          if (shown.isEmpty) _Empty(context.tr('noData')),
+          // All done is not "no data".
+          if (shown.isEmpty && done.isEmpty) _Empty(context.tr('noData')),
           ...rows,
         ],
       ),
@@ -469,6 +512,63 @@ class _HomeworkCard extends StatelessWidget {
     // Due today or tomorrow: the one to do first.
     final soon = days == 0 || days == 1;
     final due = _dueLabel(context, item.date, now);
+    final controller = _ControllerScope.maybeOf(context);
+    final done = controller?.isHomeworkDone(item) ?? false;
+    final content = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                item.subject.isEmpty
+                    ? context.tr('homeworkItem')
+                    : _SubjectScope.of(context, item.subject),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: theme.textTheme.labelLarge?.copyWith(
+                  color: palette.accent,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Icon(
+              Icons.event_rounded,
+              size: 14,
+              color: soon && !done ? colors.error : colors.onSurfaceVariant,
+            ),
+            const SizedBox(width: 4),
+            Text(
+              due,
+              style: theme.textTheme.labelMedium?.copyWith(
+                color: soon && !done ? colors.error : colors.onSurfaceVariant,
+                fontWeight: soon && !done ? FontWeight.w800 : FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 4),
+        Text(
+          _homeworkTitle(context, item),
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          style: _rowTitleStyle(context)
+              ?.copyWith(decoration: done ? TextDecoration.lineThrough : null),
+        ),
+        if (details.isNotEmpty) ...[
+          const SizedBox(height: 3),
+          Text(
+            details,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: colors.onSurfaceVariant,
+            ),
+          ),
+        ],
+      ],
+    );
     return Card(
       key: ValueKey('homework-${item.id}'),
       clipBehavior: Clip.antiAlias,
@@ -478,61 +578,102 @@ class _HomeworkCard extends StatelessWidget {
           decoration: BoxDecoration(
             border: Border(left: BorderSide(color: palette.accent, width: 4)),
           ),
-          // With the stripe, 16 from the card's edge.
-          padding: const EdgeInsetsDirectional.fromSTEB(12, 12, 16, 12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      item.subject.isEmpty
-                          ? context.tr('homeworkItem')
-                          : _SubjectScope.of(context, item.subject),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.labelLarge?.copyWith(
-                        color: palette.accent,
-                        fontWeight: FontWeight.w800,
-                      ),
+          // With the stripe, 16 from the card's edge; the check's own room
+          // makes up the rest.
+          padding: controller == null
+              ? const EdgeInsetsDirectional.fromSTEB(12, 12, 16, 12)
+              : const EdgeInsetsDirectional.fromSTEB(4, 12, 16, 12),
+          child: controller == null
+              ? content
+              : Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _DoneCheck(
+                      key: ValueKey('homework-done-${item.id}'),
+                      done: done,
+                      onChanged: (value) =>
+                          _setHomeworkDone(context, controller, item, value),
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  Icon(
-                    Icons.event_rounded,
-                    size: 14,
-                    color: soon ? colors.error : colors.onSurfaceVariant,
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    due,
-                    style: theme.textTheme.labelMedium?.copyWith(
-                      color: soon ? colors.error : colors.onSurfaceVariant,
-                      fontWeight: soon ? FontWeight.w800 : FontWeight.w600,
+                    const SizedBox(width: 4),
+                    // Done work steps back.
+                    Expanded(
+                      child: Opacity(opacity: done ? 0.6 : 1, child: content),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 4),
-              Text(
-                _homeworkTitle(context, item),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: _rowTitleStyle(context),
-              ),
-              if (details.isNotEmpty) ...[
-                const SizedBox(height: 3),
-                Text(
-                  details,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: colors.onSurfaceVariant,
+                  ],
+                ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Marks [item] done or not; a mark from a list can be taken back at once.
+void _setHomeworkDone(
+  BuildContext context,
+  AppController controller,
+  SchoolEvent item,
+  bool done,
+) {
+  unawaited(controller.setHomeworkDone(item, done));
+  if (!done) return;
+  final messenger = ScaffoldMessenger.of(context);
+  messenger.hideCurrentSnackBar();
+  messenger.showSnackBar(
+    SnackBar(
+      content: Text(context.tr('homeworkMarkedDone')),
+      action: SnackBarAction(
+        label: context.tr('undo'),
+        onPressed: () => controller.setHomeworkDone(item, false),
+      ),
+    ),
+  );
+}
+
+/// The round check in front of an assignment.
+class _DoneCheck extends StatelessWidget {
+  const _DoneCheck({required this.done, required this.onChanged, super.key});
+  final bool done;
+  final ValueChanged<bool> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    final label = context.tr(done ? 'homeworkMarkNotDone' : 'homeworkMarkDone');
+    return Semantics(
+      button: true,
+      checked: done,
+      label: label,
+      excludeSemantics: true,
+      child: Tooltip(
+        message: label,
+        child: InkResponse(
+          onTap: () => onChanged(!done),
+          radius: 20,
+          // A 40-point target around a 24-point circle.
+          child: SizedBox.square(
+            dimension: 40,
+            child: Center(
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 150),
+                width: 24,
+                height: 24,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: done ? colors.primary : Colors.transparent,
+                  border: Border.all(
+                    color: done ? colors.primary : colors.outline,
+                    width: 2,
                   ),
                 ),
-              ],
-            ],
+                child: done
+                    ? Icon(
+                        Icons.check_rounded,
+                        size: 16,
+                        color: colors.onPrimary,
+                      )
+                    : null,
+              ),
+            ),
           ),
         ),
       ),
@@ -555,6 +696,7 @@ void _showHomeworkDetails(BuildContext context, SchoolEvent item) {
   );
   final details = _homeworkDetails(item);
   final screen = MediaQuery.sizeOf(context);
+  final controller = _ControllerScope.maybeOf(context);
   showAppSheet<void>(
     context: context,
     compact: true,
@@ -606,6 +748,31 @@ void _showHomeworkDetails(BuildContext context, SchoolEvent item) {
                   ),
                 ],
               ),
+              if (controller != null) ...[
+                const SizedBox(height: 16),
+                ListenableBuilder(
+                  listenable: controller,
+                  builder: (context, _) {
+                    final done = controller.isHomeworkDone(item);
+                    final button = done
+                        ? OutlinedButton.icon(
+                            key: const ValueKey('homework-sheet-not-done'),
+                            onPressed: () =>
+                                controller.setHomeworkDone(item, false),
+                            icon: const Icon(Icons.undo_rounded),
+                            label: Text(context.tr('homeworkMarkNotDone')),
+                          )
+                        : FilledButton.tonalIcon(
+                            key: const ValueKey('homework-sheet-done'),
+                            onPressed: () =>
+                                controller.setHomeworkDone(item, true),
+                            icon: const Icon(Icons.check_rounded),
+                            label: Text(context.tr('homeworkMarkDone')),
+                          );
+                    return SizedBox(width: double.infinity, child: button);
+                  },
+                ),
+              ],
               if (details.isNotEmpty) ...[
                 const SizedBox(height: 16),
                 SelectableText(details, style: theme.textTheme.bodyLarge),

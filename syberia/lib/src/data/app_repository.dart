@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../domain/librus_error.dart';
 import '../domain/models.dart';
+import '../homework_done.dart';
 import 'librus/librus_client.dart';
 import 'snapshot_store.dart';
 
@@ -253,6 +254,8 @@ class AppRepository {
         previous.announcements,
       ),
       notices: pick(LibrusPart.notices, fetched.notices, previous.notices),
+      // Teachers' absences come with the timetable.
+      freeDays: pick(LibrusPart.timetable, fetched.freeDays, previous.freeDays),
       lastSync: fetched.lastSync,
     );
   }
@@ -279,6 +282,8 @@ class AppRepository {
     await clearCredential();
     final preferences = await _preferences;
     await preferences.remove(_profileKey);
+    // The account's homework marks go with it.
+    await preferences.remove(HomeworkDoneStore.key);
     await _snapshots.clear();
     return _emptySnapshot(_signedOutProfile);
   }
@@ -383,6 +388,12 @@ class AppRepository {
 
   Future<void> saveGradesView(GradesView view) async =>
       (await _preferences).setString(_gradesViewKey, view.name);
+
+  Future<Map<String, DateTime>> loadDoneHomework() async =>
+      HomeworkDoneStore.read(await _preferences);
+
+  Future<void> saveDoneHomework(Map<String, DateTime> marks) async =>
+      HomeworkDoneStore.write(await _preferences, marks);
 
   Future<TodayLayout> loadTodayLayout() async {
     final saved = (await _preferences).getStringList(_todayLayoutKey);

@@ -38,6 +38,7 @@ part 'shell/settings.dart';
 part 'shell/settings_previews.dart';
 part 'shell/notification_settings.dart';
 part 'shell/account.dart';
+part 'shell/free_days.dart';
 
 class AppShell extends StatefulWidget {
   const AppShell({required this.controller, super.key});
@@ -126,7 +127,13 @@ class _AppShellState extends State<AppShell> {
         final body = _SubjectScope(
           names: controller.subjectShortNames,
           colors: _subjectColors(),
-          child: IndexedStack(index: current, children: pages),
+          child: _FreeDaysScope(
+            days: controller.snapshot.freeDays,
+            child: _ControllerScope(
+              controller: controller,
+              child: IndexedStack(index: current, children: pages),
+            ),
+          ),
         );
         if (wide) {
           return Scaffold(
