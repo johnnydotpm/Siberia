@@ -77,22 +77,58 @@ Future<void> _showNotificationSettings(
                   ),
                   const Divider(height: 1),
                   for (final category in SchoolNotificationCategory.values)
-                    SwitchListTile.adaptive(
-                      key: ValueKey('notification-${category.name}'),
-                      secondary: Icon(_notificationIcon(category)),
-                      title: Text(
-                        sheetContext.tr('notification_${category.name}'),
+                    switch (category) {
+                      SchoolNotificationCategory.attendance =>
+                        _NotificationKindsTile<AttendanceKind>(
+                          controller: controller,
+                          category: category,
+                          onPermission: denied,
+                          // The ones that matter most first.
+                          options: const [
+                            AttendanceKind.absent,
+                            AttendanceKind.absentExcused,
+                            AttendanceKind.late,
+                            AttendanceKind.lateExcused,
+                            AttendanceKind.released,
+                            AttendanceKind.present,
+                            AttendanceKind.other,
+                          ],
+                          label: (kind) => kind == AttendanceKind.other
+                              ? 'otherAttendance'
+                              : kind.name,
+                          chosen: settings.attendanceKinds,
+                          onChosen: (kinds) => controller.setNotificationKinds(
+                            attendance: kinds,
+                          ),
+                        ),
+                      SchoolNotificationCategory.timetable =>
+                        _NotificationKindsTile<TimetableChange>(
+                          controller: controller,
+                          category: category,
+                          onPermission: denied,
+                          options: TimetableChange.values,
+                          label: (change) => change.label,
+                          chosen: settings.timetableChanges,
+                          onChosen: (changes) => controller
+                              .setNotificationKinds(timetable: changes),
+                        ),
+                      _ => SwitchListTile.adaptive(
+                        key: ValueKey('notification-${category.name}'),
+                        secondary: Icon(_notificationIcon(category)),
+                        title: Text(
+                          sheetContext.tr('notification_${category.name}'),
+                        ),
+                        value: settings.categories[category] ?? true,
+                        onChanged: settings.enabled
+                            ? (value) async => denied(
+                                await controller.setNotificationCategoryEnabled(
+                                  category,
+                                  value,
+                                ),
+                              )
+                            : null,
                       ),
-                      value: settings.categories[category] ?? true,
-                      onChanged: settings.enabled
-                          ? (value) async => denied(
-                              await controller.setNotificationCategoryEnabled(
-                                category,
-                                value,
-                              ),
-                            )
-                          : null,
-                    ),
+                    },
                   const Divider(height: 24),
                   _ReminderSettings(controller, onPermission: denied),
                 ],
@@ -106,6 +142,131 @@ Future<void> _showNotificationSettings(
     open = false;
     permissionDenied.dispose();
   });
+}
+
+/// A category with a switch that also opens, to pick which kinds of new
+/// entries notify: only absences, say, or only cancelled lessons.
+class _NotificationKindsTile<T extends Enum> extends StatefulWidget {
+  const _NotificationKindsTile({
+    required this.controller,
+    required this.category,
+    required this.onPermission,
+    required this.options,
+    required this.label,
+    required this.chosen,
+    required this.onChosen,
+  });
+  final AppController controller;
+  final SchoolNotificationCategory category;
+  final void Function(bool? granted) onPermission;
+  final List<T> options;
+
+  /// The translation key of an option.
+  final String Function(T option) label;
+  final Set<T> chosen;
+  final Future<bool?> Function(Set<T> chosen) onChosen;
+
+  @override
+  State<_NotificationKindsTile<T>> createState() =>
+      _NotificationKindsTileState<T>();
+}
+
+class _NotificationKindsTileState<T extends Enum>
+    extends State<_NotificationKindsTile<T>> {
+  bool expanded = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final settings = widget.controller.notificationSettings;
+    final category = widget.category;
+    final on = settings.categories[category] ?? true;
+    final active = settings.enabled && on;
+    final chosen = [
+      for (final option in widget.options)
+        if (widget.chosen.contains(option)) option,
+    ];
+    final summary = chosen.length == widget.options.length
+        ? context.tr('notificationKindsAll')
+        : chosen.isEmpty
+        ? context.tr('notificationKindsNone')
+        : chosen.map((option) => context.tr(widget.label(option))).join(', ');
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        ListTile(
+          key: ValueKey('notification-${category.name}-open'),
+          leading: Icon(_notificationIcon(category)),
+          title: Text(context.tr('notification_${category.name}')),
+          subtitle: Text(
+            summary,
+            key: ValueKey('notification-${category.name}-summary'),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          onTap: () => setState(() => expanded = !expanded),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              AnimatedRotation(
+                turns: expanded ? 0.5 : 0,
+                duration: const Duration(milliseconds: 200),
+                child: Icon(
+                  Icons.expand_more_rounded,
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+              Switch.adaptive(
+                key: ValueKey('notification-${category.name}'),
+                value: on,
+                onChanged: settings.enabled
+                    ? (value) async => widget.onPermission(
+                        await widget.controller.setNotificationCategoryEnabled(
+                          category,
+                          value,
+                        ),
+                      )
+                    : null,
+              ),
+            ],
+          ),
+        ),
+        AnimatedSize(
+          duration: const Duration(milliseconds: 200),
+          alignment: Alignment.topCenter,
+          child: expanded
+              ? Padding(
+                  padding: const EdgeInsets.only(left: 40, bottom: 4),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      for (final option in widget.options)
+                        CheckboxListTile.adaptive(
+                          key: ValueKey(
+                            'notification-${category.name}-${option.name}',
+                          ),
+                          dense: true,
+                          controlAffinity: ListTileControlAffinity.leading,
+                          title: Text(context.tr(widget.label(option))),
+                          value: widget.chosen.contains(option),
+                          onChanged: active
+                              ? (value) async => widget.onPermission(
+                                  await widget.onChosen(
+                                    value == true
+                                        ? {...widget.chosen, option}
+                                        : ({...widget.chosen}..remove(option)),
+                                  ),
+                                )
+                              : null,
+                        ),
+                    ],
+                  ),
+                )
+              : const SizedBox(width: double.infinity),
+        ),
+      ],
+    );
+  }
 }
 
 /// Notifications were turned on, but the system does not allow them.

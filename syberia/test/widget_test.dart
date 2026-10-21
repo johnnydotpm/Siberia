@@ -335,6 +335,17 @@ void main() {
       final attendanceDayKey = ValueKey(
         'attendance-day-${DateTime(day.year, day.month, day.day).toIso8601String()}',
       );
+      // The subjects come first, so the calendar is further down.
+      expect(
+        find.byKey(const ValueKey('attendance-by-subject')),
+        findsOneWidget,
+      );
+      await tester.scrollUntilVisible(
+        find.byKey(const ValueKey('attendance-calendar-legend')),
+        200,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.pumpAndSettle();
       final attendanceDay = tester.widget<Container>(
         find.byKey(attendanceDayKey).first,
       );
@@ -352,6 +363,9 @@ void main() {
       expect(find.text('Pn'), findsNothing);
       expect(find.textContaining('lekcja'), findsNothing);
       await controller.setAttendanceChartStyle(AttendanceChartStyle.bar);
+      await tester.pumpAndSettle();
+      // Back to the summary at the top.
+      await tester.drag(find.byType(Scrollable).first, const Offset(0, 2000));
       await tester.pumpAndSettle();
       final flatChart = find.byKey(const ValueKey('attendance-flat-chart'));
       expect(flatChart, findsOneWidget);
@@ -708,8 +722,9 @@ void main() {
     controller.selectTab(1);
     await tester.pumpAndSettle();
 
+    // Shown with a capital letter, as Librus's lower case looks careless.
     expect(
-      find.text('przykładowy przedmiot z bardzo długą nazwą'),
+      find.text('Przykładowy przedmiot z bardzo długą nazwą'),
       findsOneWidget,
     );
     expect(find.text('08:00'), findsOneWidget);

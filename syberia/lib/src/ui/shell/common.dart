@@ -29,7 +29,7 @@ class _SubjectScope extends InheritedWidget {
   /// The short name for [subject], or the subject itself.
   static String of(BuildContext context, String subject) {
     final scope = context.dependOnInheritedWidgetOfExactType<_SubjectScope>();
-    return scope == null ? subject : displaySubject(subject, scope.names);
+    return displaySubject(subject, scope?.names ?? const {});
   }
 
   static SubjectColors colorsOf(BuildContext context) =>
@@ -45,18 +45,32 @@ class _Heading extends StatelessWidget {
   const _Heading(this.text, {this.onAll});
   final String text;
   final VoidCallback? onAll;
+  // A step below the cards' own titles, so the content leads.
   @override
   Widget build(BuildContext context) => Row(
     children: [
       Expanded(
         child: Text(
           text,
-          style: Theme.of(context).textTheme.titleLarge
+          style: Theme.of(context).textTheme.titleMedium
               ?.copyWith(fontWeight: FontWeight.w800),
         ),
       ),
       if (onAll != null)
-        TextButton(onPressed: onAll, child: Text(context.tr('all'))),
+        TextButton(
+          onPressed: onAll,
+          style: TextButton.styleFrom(
+            visualDensity: VisualDensity.compact,
+            padding: const EdgeInsetsDirectional.only(start: 10, end: 2),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(context.tr('all')),
+              const Icon(Icons.chevron_right_rounded, size: 20),
+            ],
+          ),
+        ),
     ],
   );
 }

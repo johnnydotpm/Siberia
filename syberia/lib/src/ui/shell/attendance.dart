@@ -61,6 +61,17 @@ class _AttendanceState extends State<_Attendance> {
           counts: counts,
           style: widget.controller.attendanceChartStyle,
         ),
+        if (records.any((item) => item.subject.trim().isNotEmpty)) ...[
+          const SizedBox(height: 16),
+          _AttendanceBySubject(
+            records: records,
+            style: widget.controller.attendanceChartStyle,
+          ),
+        ] else if (records.isNotEmpty) ...[
+          // Said, not hidden: a sync may still bring the subjects.
+          const SizedBox(height: 16),
+          _AttendanceNoSubjects(widget.controller),
+        ],
         const SizedBox(height: 16),
         _AttendanceCalendar(
           records: records,
@@ -151,6 +162,275 @@ class _AttendanceChart extends StatelessWidget {
     );
   }
 }
+
+/// Entries came without their subjects, so there is nothing to split by
+/// subject yet; a sync may bring them.
+class _AttendanceNoSubjects extends StatelessWidget {
+  const _AttendanceNoSubjects(this.controller);
+  final AppController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    return Card(
+      key: const ValueKey('attendance-no-subjects'),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
+        child: Row(
+          children: [
+            Icon(Icons.info_outline_rounded, color: colors.onSurfaceVariant),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                context.tr('attendanceNoSubjects'),
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: colors.onSurfaceVariant,
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            TextButton(
+              onPressed: controller.syncing ? null : controller.sync,
+              child: Text(
+                MaterialLocalizations.of(context).refreshIndicatorSemanticLabel,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// The attendance of each subject, the lowest first; a tap shows the
+/// subject's own summary and entries.
+class _AttendanceBySubject extends StatelessWidget {
+  const _AttendanceBySubject({required this.records, required this.style});
+  final List<AttendanceRecord> records;
+  final AttendanceChartStyle style;
+
+  /// Below this a student may not be graded in the subject.
+  static const _gradingThreshold = 50.0;
+
+  @override
+  Widget build(BuildContext context) {
+    final bySubject = <String, List<AttendanceRecord>>{};
+    for (final record in records) {
+      final subject = record.subject.trim();
+      if (subject.isNotEmpty) {
+        bySubject.putIfAbsent(subject, () => []).add(record);
+      }
+    }
+    double rate(List<AttendanceRecord> items) =>
+        items.where((item) => item.isPresence).length / items.length * 100;
+    final subjects = bySubject.keys.toList()
+      ..sort((a, b) {
+        final byRate = rate(bySubject[a]!).compareTo(rate(bySubject[b]!));
+        return byRate != 0 ? byRate : a.compareTo(b);
+      });
+    return Card(
+      key: const ValueKey('attendance-by-subject'),
+      clipBehavior: Clip.antiAlias,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(18, 6, 18, 6),
+              child: Text(
+                context.tr('attendanceBySubject'),
+                style: Theme.of(context).textTheme.titleMedium
+                    ?.copyWith(fontWeight: FontWeight.w800),
+              ),
+            ),
+            for (final subject in subjects)
+              _SubjectAttendanceRow(
+                subject: subject,
+                records: bySubject[subject]!,
+                percentage: rate(bySubject[subject]!),
+                low: rate(bySubject[subject]!) < _gradingThreshold,
+                style: style,
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SubjectAttendanceRow extends StatelessWidget {
+  const _SubjectAttendanceRow({
+    required this.subject,
+    required this.records,
+    required this.percentage,
+    required this.low,
+    required this.style,
+  });
+  final String subject;
+  final List<AttendanceRecord> records;
+  final double percentage;
+  final bool low;
+  final AttendanceChartStyle style;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    final name = _SubjectScope.of(context, subject);
+    final accent = SubjectColors.colors(
+      _SubjectScope.colorsOf(context).indexOf(subject),
+      theme.brightness,
+    ).accent;
+    int count(bool Function(AttendanceKind kind) test) =>
+        records.where((item) => test(item.kind)).length;
+    final absences = count(
+      (kind) =>
+          kind == AttendanceKind.absent || kind == AttendanceKind.absentExcused,
+    );
+    final late = count(
+      (kind) =>
+          kind == AttendanceKind.late || kind == AttendanceKind.lateExcused,
+    );
+    final kinds = [
+      for (final kind in AttendanceKind.values)
+        (kind: kind, count: count((value) => value == kind)),
+    ].where((entry) => entry.count > 0);
+    return InkWell(
+      key: ValueKey('attendance-subject-$subject'),
+      onTap: () => _showSubjectAttendance(context, name, records, style),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(18, 8, 14, 8),
+        child: Row(
+          children: [
+            Container(
+              width: 4,
+              height: 40,
+              decoration: BoxDecoration(
+                color: accent,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          name,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.titleSmall?.copyWith(
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        _percent(context, percentage),
+                        key: ValueKey('attendance-subject-rate-$subject'),
+                        style: theme.textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w800,
+                          color: low ? colors.error : null,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  // The same colours as the summary above, in proportion.
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(4),
+                    child: SizedBox(
+                      height: 7,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          for (final entry in kinds)
+                            Expanded(
+                              flex: entry.count,
+                              child: ColoredBox(
+                                color: _attendanceColor(entry.kind),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 5),
+                  Text(
+                    [
+                      if (absences > 0)
+                        '${context.tr('attendanceAbsences')}: $absences',
+                      if (late > 0) '${context.tr('late')}: $late',
+                      '${context.tr('attendanceLessons')}: ${records.length}',
+                    ].join(' · '),
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: colors.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 4),
+            Icon(Icons.chevron_right_rounded, color: colors.onSurfaceVariant),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// One subject's summary and its entries, the latest first.
+Future<void> _showSubjectAttendance(
+  BuildContext context,
+  String name,
+  List<AttendanceRecord> records,
+  AttendanceChartStyle style,
+) => showAppSheet<void>(
+  context: context,
+  compact: true,
+  showDragHandle: true,
+  isScrollControlled: true,
+  builder: (context) {
+    final latest = records.toList()..sort((a, b) => b.date.compareTo(a.date));
+    return SafeArea(
+      child: ConstrainedBox(
+        key: const ValueKey('subject-attendance-sheet'),
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.sizeOf(context).height * 0.85,
+        ),
+        child: ListView(
+          shrinkWrap: true,
+          padding: const EdgeInsets.fromLTRB(12, 0, 12, 16),
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(8, 0, 8, 12),
+              child: Text(
+                name,
+                style: Theme.of(context).textTheme.headlineSmall
+                    ?.copyWith(fontWeight: FontWeight.w900),
+              ),
+            ),
+            _AttendanceChart(
+              counts: {
+                for (final kind in AttendanceKind.values)
+                  kind: records.where((item) => item.kind == kind).length,
+              },
+              style: style,
+            ),
+            const SizedBox(height: 8),
+            for (final item in latest)
+              _AttendanceTile(item, showSubject: false),
+          ],
+        ),
+      ),
+    );
+  },
+);
 
 class _AttendanceGraphic extends StatelessWidget {
   const _AttendanceGraphic({
@@ -449,8 +729,11 @@ class _AttendanceCalendar extends StatelessWidget {
 }
 
 class _AttendanceTile extends StatelessWidget {
-  const _AttendanceTile(this.item);
+  const _AttendanceTile(this.item, {this.showSubject = true});
   final AttendanceRecord item;
+
+  /// Off where every entry is of the same subject.
+  final bool showSubject;
   @override
   Widget build(BuildContext context) => Card(
     child: ListTile(
@@ -461,7 +744,7 @@ class _AttendanceTile extends StatelessWidget {
       title: Text(item.type),
       subtitle: Text(
         [
-          if (item.subject.isNotEmpty) item.subject,
+          if (showSubject && item.subject.isNotEmpty) item.subject,
           if (item.lessonNumber > 0)
             context.trArgs('lessonNumber', {'number': '${item.lessonNumber}'}),
         ].join(' · '),

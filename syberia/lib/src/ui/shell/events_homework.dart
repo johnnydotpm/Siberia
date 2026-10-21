@@ -220,6 +220,103 @@ String _homeworkTitle(BuildContext context, SchoolEvent item) =>
 String _homeworkDetails(SchoolEvent item) =>
     item.description == item.title ? '' : item.description;
 
+/// What a calendar entry is, for its icon and colour.
+enum _EventType {
+  exam(Icons.assignment_rounded, 0),
+  quiz(Icons.quiz_rounded, 28),
+  oral(Icons.record_voice_over_rounded, 46),
+  project(Icons.co_present_rounded, 172),
+  trip(Icons.directions_bus_rounded, 135),
+  meeting(Icons.groups_rounded, 215),
+  other(Icons.event_rounded, null);
+
+  const _EventType(this.icon, this.hue);
+  final IconData icon;
+
+  /// Null for the grey of entries of no particular kind.
+  final double? hue;
+
+  ({Color background, Color foreground, Color accent}) colors(
+    Brightness brightness,
+  ) => hue == null
+      ? SubjectColors.grade(null, brightness)
+      : SubjectColors.tone(hue!, brightness);
+}
+
+/// The words, without Polish accents, a category or the start of an entry
+/// names its kind with. Kartkówka comes before the tests.
+const _eventTypeWords = [
+  (_EventType.quiz, ['kartkowka']),
+  (
+    _EventType.exam,
+    ['sprawdzian', 'praca klasowa', 'klasowka', 'test', 'egzamin'],
+  ),
+  (_EventType.oral, ['odpowiedz', 'odpytywanie']),
+  (_EventType.project, ['projekt', 'prezentacja', 'referat']),
+  (_EventType.trip, ['wycieczka', 'wyjscie']),
+  (_EventType.meeting, ['zebranie', 'wywiadowka', 'spotkanie']),
+];
+
+/// Categories that say nothing about the entry.
+const _genericEventTypes = {'', 'inne', 'other', 'wydarzenie'};
+
+/// Lower case without Polish accents, one letter for one, so positions
+/// stay the same as in the original.
+String _plainPolish(String value) {
+  const from = 'ąćęłńóśźż';
+  const to = 'acelnoszz';
+  final lower = value.toLowerCase();
+  final out = StringBuffer();
+  for (final unit in lower.split('')) {
+    final index = from.indexOf(unit);
+    out.write(index < 0 ? unit : to[index]);
+  }
+  return out.toString();
+}
+
+/// The kind of [item], the word to show for it, if any, and the text
+/// without that word when the kind came from it. The category decides; a
+/// category of no kind ("inne") leaves it to the start of the text, as in
+/// "kartkówka z ostatnich 3 lekcji".
+({_EventType type, String? label, String text}) _eventType(SchoolEvent item) {
+  final category = item.typeLabel.trim();
+  final plainCategory = _plainPolish(category);
+  if (!_genericEventTypes.contains(plainCategory)) {
+    for (final (type, words) in _eventTypeWords) {
+      if (words.any(plainCategory.contains)) {
+        return (type: type, label: _capitalize(category), text: item.title);
+      }
+    }
+    return (
+      type: _EventType.other,
+      label: _capitalize(category),
+      text: item.title,
+    );
+  }
+  final text = item.title.trim();
+  final plainText = _plainPolish(text);
+  for (final (type, words) in _eventTypeWords) {
+    for (final word in words) {
+      if (plainText.startsWith(word)) {
+        // Lower case can change the length of rare letters.
+        final original = text.length >= word.length
+            ? text.substring(0, word.length)
+            : word;
+        // "kartkówka--elektryzowanie" reads "Elektryzowanie" under it.
+        final rest = text
+            .substring(original.length)
+            .replaceFirst(RegExp(r'^[\s\-–—:,.;]+'), '');
+        return (
+          type: type,
+          label: _capitalize(original),
+          text: _capitalize(rest),
+        );
+      }
+    }
+  }
+  return (type: _EventType.other, label: null, text: item.title);
+}
+
 class _EventTile extends StatelessWidget {
   const _EventTile(this.item);
   final SchoolEvent item;
@@ -239,52 +336,100 @@ class _EventTile extends StatelessWidget {
         '${_shortWeekday(context, item.date)}, '
             '${DateFormat(item.date.year == now.year ? 'dd.MM' : 'dd.MM.yyyy', locale).format(item.date)}',
     };
-    final exam = item.kind == EventKind.exam;
+    final (:type, :label, :text) = _eventType(item);
+    final tone = type.colors(theme.brightness);
+    // Entries of no subject come from the client as "Librus".
+    final hasSubject = item.subject.isNotEmpty && item.subject != 'Librus';
+    final subjectAccent = SubjectColors.colors(
+      _SubjectScope.colorsOf(context).indexOf(item.subject),
+      theme.brightness,
+    ).accent;
+    // The subject leads; the teacher's text follows, unless it only repeats
+    // the kind.
+    final title = hasSubject
+        ? _SubjectScope.of(context, item.subject)
+        : item.title;
+    final details =
+        !hasSubject || _plainPolish(text.trim()) == _plainPolish(label ?? '')
+        ? ''
+        : text.trim();
     return Card(
+      key: ValueKey('event-${item.id}'),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(12, 12, 14, 12),
         child: Row(
           children: [
             Container(
+              key: ValueKey('event-type-${item.id}-${type.name}'),
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: exam
-                    ? colors.tertiaryContainer
-                    : colors.secondaryContainer,
+                color: tone.background,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(
-                exam ? Icons.quiz_rounded : Icons.event_rounded,
-                size: 22,
-                color: exam
-                    ? colors.onTertiaryContainer
-                    : colors.onSecondaryContainer,
-              ),
+              child: Icon(type.icon, size: 22, color: tone.foreground),
             ),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    item.title,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: theme.textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.w700,
-                    ),
+                  Row(
+                    children: [
+                      if (hasSubject) ...[
+                        Container(
+                          width: 8,
+                          height: 8,
+                          decoration: BoxDecoration(
+                            color: subjectAccent,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                      ],
+                      Flexible(
+                        child: Text(
+                          title,
+                          maxLines: hasSubject ? 1 : 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.titleSmall?.copyWith(
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                      ),
+                      // "Wycieczka do Krakowa" needs no "Wycieczka" next to it.
+                      if (label != null &&
+                          !_plainPolish(title)
+                              .startsWith(_plainPolish(label))) ...[
+                        const SizedBox(width: 6),
+                        Container(
+                          key: ValueKey('event-label-${item.id}'),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 7,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: tone.background,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            label,
+                            maxLines: 1,
+                            style: theme.textTheme.labelSmall?.copyWith(
+                              color: tone.foreground,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
                   ),
-                  if (item.typeLabel.isNotEmpty || item.subject.isNotEmpty)
+                  if (details.isNotEmpty)
                     Padding(
-                      padding: const EdgeInsets.only(top: 2),
+                      padding: const EdgeInsets.only(top: 3),
                       child: Text(
-                        [
-                          if (item.typeLabel.isNotEmpty) item.typeLabel,
-                          if (item.subject.isNotEmpty)
-                            _SubjectScope.of(context, item.subject),
-                        ].join(' · '),
-                        maxLines: 1,
+                        details,
+                        maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: colors.onSurfaceVariant,

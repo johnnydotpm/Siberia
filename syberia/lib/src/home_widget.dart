@@ -66,9 +66,13 @@ String buildHomeWidgetPayload(
 }
 
 /// The student's own short name for [subject], if they gave it one.
+/// The student's short name for [subject], or the subject with a capital
+/// first letter: some schools write every subject in lower case.
 String displaySubject(String subject, Map<String, String> shortNames) {
   final short = shortNames[subject]?.trim() ?? '';
-  return short.isEmpty ? subject : short;
+  if (short.isNotEmpty) return short;
+  if (subject.isEmpty) return subject;
+  return subject[0].toUpperCase() + subject.substring(1);
 }
 
 /// The look of one widget.

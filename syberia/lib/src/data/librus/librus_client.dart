@@ -60,6 +60,8 @@ class LibrusClient {
   DateTime? _synergiaSessionExpiresAt;
   DateTime? _messagesSessionExpiresAt;
   Future<void>? _refreshInFlight;
+  Future<void>? _webSessionInFlight;
+  Future<void>? _messagesSessionInFlight;
 
   bool _validUntil(DateTime? expiry) =>
       expiry != null &&
@@ -186,7 +188,8 @@ class LibrusClient {
     return recipients.values.toList()..sort((a, b) => a.name.compareTo(b.name));
   }
 
-  Future<void> sendMessage({
+  /// Returns the id of the new message.
+  Future<String> sendMessage({
     required List<int> recipientIds,
     required String subject,
     required String body,
@@ -204,10 +207,12 @@ class LibrusClient {
     final confirmed = response
         .findAllElements('status')
         .any((e) => e.innerText == 'ok');
-    if (!confirmed ||
-        !response
-            .findAllElements('data')
-            .any((e) => int.tryParse(e.innerText.trim()) != null)) {
+    final id = response
+        .findAllElements('data')
+        .map((e) => int.tryParse(e.innerText.trim()))
+        .nonNulls
+        .firstOrNull;
+    if (!confirmed || id == null) {
       // The translation shows the detail, so there always is one.
       throw LibrusException(
         LibrusErrorCode.messageNotSent,
@@ -215,6 +220,24 @@ class LibrusClient {
             ? 'Messages: XML SendMessage no message id'
             : 'Messages: XML SendMessage not confirmed',
       );
+    }
+    return '$id';
+  }
+
+  /// The messages the student sent this school year. The XML mailbox says
+  /// who read them; the web mailbox is tried when it fails.
+  Future<List<SchoolMessage>> fetchSentMessages() async {
+    try {
+      return await _fetchXmlOutbox();
+    } on LibrusException catch (xmlError) {
+      try {
+        return await _fetchSynergiaOutbox();
+      } on LibrusException catch (webError) {
+        throw LibrusException(
+          LibrusErrorCode.serverReply,
+          detail: '${_mailboxFailure(xmlError)}; ${_mailboxFailure(webError)}',
+        );
+      }
     }
   }
 
@@ -293,6 +316,18 @@ class LibrusClient {
       subject: summary.subject,
       body: _plainText(body.replaceAll('<![CDATA[', '').replaceAll(']]>', '')),
       receivedAt: summary.receivedAt,
+      recipients: summary.sent
+          ? [
+              for (final receiver
+                  in data.getElement('receivers')?.findElements('ArrayItem') ??
+                      <XmlElement>[])
+                if (_fullName(
+                  _xmlText(receiver, 'firstName'),
+                  _xmlText(receiver, 'lastName'),
+                ).isNotEmpty)
+                  _receiver(receiver),
+            ]
+          : const [],
       attachments: [
         for (final attachment
             in data.getElement('attachments')?.findElements('ArrayItem') ??
@@ -459,6 +494,8 @@ class LibrusClient {
     'Classrooms': false,
     'Grades/Categories': false,
     'Attendances/Types': true,
+    // Which subject each lesson is: attendance names only the lesson.
+    'Lessons': true,
     'Notes/Categories': true,
     'HomeWorks/Categories': true,
   };
@@ -477,7 +514,12 @@ class LibrusClient {
     final account = _referenceAccount;
     if (!fresh) {
       final cached = await _referenceCache.read(account);
-      if (cached != null) {
+      // A list that failed is saved empty; one missing altogether means an
+      // older version saved them, before that list was fetched.
+      final complete =
+          cached != null &&
+          _referenceEndpoints.keys.every(cached.responses.containsKey);
+      if (cached != null && complete) {
         final age = _clock().difference(cached.fetchedAt);
         if (!age.isNegative && age < LibrusReferenceCache.maxAge) {
           return (cached, false);
@@ -742,7 +784,16 @@ class LibrusClient {
   static const _webUserAgent =
       'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Gecko/20100101 Firefox/62.0';
 
-  Future<void> _prepareSynergiaWebSession() async {
+  /// Logging in twice at once would clear the cookies of the first login.
+  Future<void> _prepareSynergiaWebSession() => _webSessionInFlight ??=
+      _openSynergiaWebSession().whenComplete(() => _webSessionInFlight = null);
+
+  Future<void> _prepareMessagesSession() =>
+      _messagesSessionInFlight ??= _openMessagesSession().whenComplete(
+        () => _messagesSessionInFlight = null,
+      );
+
+  Future<void> _openSynergiaWebSession() async {
     await _prepareFreshSession();
     if (_validUntil(_synergiaSessionExpiresAt) &&
         _hasCookieFor('https://synergia.librus.pl/')) {
@@ -778,7 +829,7 @@ class LibrusClient {
     _synergiaSessionExpiresAt = _clock().add(const Duration(minutes: 45));
   }
 
-  Future<void> _prepareMessagesSession() async {
+  Future<void> _openMessagesSession() async {
     await _prepareSynergiaWebSession();
     if (_validUntil(_messagesSessionExpiresAt) &&
         _hasCookieFor(_messagesBase)) {
@@ -1031,6 +1082,129 @@ class LibrusClient {
     ];
   }
 
+  Future<List<SchoolMessage>> _fetchXmlOutbox() async {
+    await _prepareMessagesSession();
+    final response = await _messagesRequest('Outbox/action/GetList', {
+      'archive': 0,
+    });
+    final data = response
+        .findAllElements('GetList')
+        .firstOrNull
+        ?.getElement('data');
+    if (data == null) {
+      throw const LibrusException(
+        LibrusErrorCode.serverReply,
+        detail: 'Messages: invalid outbox response',
+      );
+    }
+    return [
+      for (final item in data.childElements)
+        if (_xmlText(item, 'messageId').isNotEmpty)
+          SchoolMessage(
+            id: _xmlText(item, 'messageId'),
+            sender: '',
+            subject: _xmlText(item, 'topic'),
+            preview: '',
+            receivedAt: _flexDate(_xmlText(item, 'sendDate')) ?? DateTime.now(),
+            hasAttachments: _xmlText(item, 'isAnyFileAttached') == '1',
+            sent: true,
+            recipients: [
+              _fullName(
+                _xmlText(item, 'receiverFirstName'),
+                _xmlText(item, 'receiverLastName'),
+              ),
+            ].where((name) => name.isNotEmpty).toList(growable: false),
+            recipientRead: item.getElement('readDate') == null
+                ? null
+                : _readDate(_xmlText(item, 'readDate')) != null,
+          ),
+    ];
+  }
+
+  /// A recipient in GetMessage: "readed" holds when they read it.
+  MessageReceiver _receiver(XmlElement receiver) {
+    final field =
+        receiver.getElement('readed') ?? receiver.getElement('readDate');
+    final readAt = field == null ? null : _readDate(field.innerText.trim());
+    return MessageReceiver(
+      name: _fullName(
+        _xmlText(receiver, 'firstName'),
+        _xmlText(receiver, 'lastName'),
+      ),
+      read: field == null ? null : readAt != null,
+      readAt: readAt,
+    );
+  }
+
+  /// Unread messages have an empty, zero or all-zero read date.
+  static DateTime? _readDate(String value) =>
+      value.isEmpty || value == '0' || value.startsWith('0000')
+      ? null
+      : _flexDate(value);
+
+  Future<List<SchoolMessage>> _fetchSynergiaOutbox() async {
+    await _prepareSynergiaWebSession();
+    final response = await _request(
+      'GET',
+      'https://synergia.librus.pl/wiadomosci/6',
+      headers: {'User-Agent': _webUserAgent},
+    );
+    final doc = html_parser.parse(response.data?.toString() ?? '');
+    final table = doc.querySelector('.decorated.stretch');
+    if (response.statusCode != 200 || table == null) {
+      throw LibrusException(
+        LibrusErrorCode.serverReply,
+        detail:
+            'Messages: Synergia outbox HTTP ${response.statusCode ?? 0}, missing outbox',
+      );
+    }
+    final messages = <SchoolMessage>[];
+    for (final row in table.querySelectorAll('tbody > tr')) {
+      final cells = row.children;
+      final link = row.querySelector('a[href]')?.attributes['href'] ?? '';
+      final id = RegExp(r'(?:^|/)wiadomosci/1/6/([0-9]+)(?:/|$)')
+          .firstMatch(link)
+          ?.group(1);
+      if (id == null) continue;
+      if (cells.length < 5) {
+        throw const LibrusException(
+          LibrusErrorCode.serverReply,
+          detail: 'Messages: Synergia outbox invalid row',
+        );
+      }
+      final recipient = cells[2].text.split('(').first.trim();
+      messages.add(
+        SchoolMessage(
+          id: id,
+          sender: '',
+          subject: cells[3].text.trim(),
+          preview: '',
+          receivedAt: _flexDate(cells[4].text.trim()) ?? DateTime.now(),
+          hasAttachments: cells[1].querySelector('img') != null,
+          sent: true,
+          recipients: [if (recipient.isNotEmpty) recipient],
+        ),
+      );
+    }
+    // A login or error page is not an empty outbox.
+    if (messages.isEmpty &&
+        (table.querySelector('tbody') == null ||
+            !table
+                .querySelectorAll('th')
+                .any(
+                  (cell) => const [
+                    'temat',
+                    'subject',
+                  ].contains(cell.text.trim().toLowerCase()),
+                ))) {
+      throw const LibrusException(
+        LibrusErrorCode.serverReply,
+        detail: 'Messages: Synergia outbox missing rows',
+      );
+    }
+    return messages;
+  }
+
   Future<List<SchoolMessage>> _fetchSynergiaInbox() async {
     await _prepareSynergiaWebSession();
     final response = await _request(
@@ -1098,7 +1272,7 @@ class LibrusClient {
     await _prepareSynergiaWebSession();
     final response = await _request(
       'GET',
-      'https://synergia.librus.pl/wiadomosci/1/5/${Uri.encodeComponent(summary.id)}/f0',
+      'https://synergia.librus.pl/wiadomosci/1/${summary.sent ? 6 : 5}/${Uri.encodeComponent(summary.id)}/f0',
       headers: {'User-Agent': _webUserAgent},
     );
     final doc = html_parser.parse(response.data?.toString() ?? '');
@@ -1396,13 +1570,20 @@ class LibrusClient {
   static List<SchoolEvent> _parseHomework(
     Map<String, dynamic> root,
     Map<int, String> subjects,
+    Map<int, int> lessonSubjects,
   ) => _list(root['HomeWorkAssignments'])
       .map((item) {
         final topic = item['Topic']?.toString().trim() ?? '';
         final text = item['Text']?.toString().trim() ?? '';
         final lesson = _map(item['Lesson']);
+        // Only when neither names the subject: the lesson it belongs to.
         final subjectId =
-            _referenceId(item['Subject']) ?? _referenceId(lesson?['Subject']);
+            _referenceId(item['Subject']) ??
+            _referenceId(lesson?['Subject']) ??
+            switch (_referenceId(lesson)) {
+              final id? => lessonSubjects[id],
+              null => null,
+            };
         return SchoolEvent(
           id: 'homework-${item['Id'] ?? item.hashCode}',
           title: topic.isNotEmpty
@@ -1420,6 +1601,7 @@ class LibrusClient {
   static List<AttendanceRecord> _parseAttendance(
     Map<String, dynamic> root,
     Map<int, String> subjects,
+    Map<int, int> lessonSubjects,
     Map<int, _AttendanceType> types,
   ) =>
       _list(root['Attendances'])
@@ -1436,17 +1618,23 @@ class LibrusClient {
                       _integer(embeddedType?['Id']) ??
                       -1,
                 );
+            final lesson = _map(item['Lesson']);
             final embeddedSubject = _map(
-              _map(item['Lesson'])?['Subject'],
+              lesson?['Subject'],
             )?['Name']?.toString();
+            // Librus sends only the lesson's id; its subject comes from the
+            // list of lessons.
+            final subjectId =
+                _referenceId(lesson?['Subject']) ??
+                switch (_referenceId(lesson)) {
+                  final id? => lessonSubjects[id],
+                  null => null,
+                };
             return AttendanceRecord(
               id: item['Id']?.toString() ?? item.hashCode.toString(),
               date: _parseDate(item['Date']) ?? DateTime.now(),
               lessonNumber: _integer(item['LessonNo']) ?? 0,
-              subject:
-                  embeddedSubject ??
-                  subjects[_referenceId(_map(item['Lesson'])?['Subject'])] ??
-                  '',
+              subject: embeddedSubject ?? subjects[subjectId] ?? '',
               type:
                   (type.name.isNotEmpty ? type.name : null) ??
                   _map(item['Type'])?['Name']?.toString() ??
@@ -1538,6 +1726,26 @@ class LibrusClient {
   ) => {
     for (final item in _list(root[key]))
       ?_integer(item['Id']): item[nameKey]?.toString() ?? '',
+  };
+
+  /// Lesson id to subject id. A lesson is a subject taught by a teacher to
+  /// a class; attendance and homework point at it instead of the subject.
+  static Map<int, int> _lessonSubjects(Map<String, dynamic> root) => {
+    for (final item in _list(root['Lessons']))
+      ?_integer(item['Id']): ?_referenceId(item['Subject']),
+  };
+
+  /// The same from the timetable, which every sync fetches: each entry
+  /// names its lesson and its subject. A week holds nearly every lesson.
+  static Map<int, int> _timetableLessonSubjects(Map<String, dynamic> root) => {
+    for (final day in (_map(root['Timetable']) ?? const {}).values)
+      if (day is List)
+        for (final range in day)
+          if (range is List)
+            for (final item in range)
+              ?_referenceId(_map(item)?['Lesson']): ?_referenceId(
+                _map(item)?['Subject'],
+              ),
   };
   static Map<int, String> _peopleMap(Map<String, dynamic> root, String key) => {
     for (final item in _list(root[key]))
@@ -1650,6 +1858,10 @@ _ParsedSnapshot _parseSnapshot(_SnapshotInput input) {
       'Name',
     ),
   );
+  final lessonSubjects = unknown.track('lesson', {
+    ...LibrusClient._timetableLessonSubjects(data[1]),
+    ...LibrusClient._lessonSubjects(reference('Lessons')),
+  });
   final gradeComments = LibrusClient._idNameMap(data[7], 'Comments', 'Text');
 
   final profileName = _fullName(user?['FirstName'], user?['LastName']);
@@ -1675,11 +1887,12 @@ _ParsedSnapshot _parseSnapshot(_SnapshotInput input) {
     ),
     events: [
       ...LibrusClient._parseEvents(data[2], subjects, eventTypes),
-      ...LibrusClient._parseHomework(data[3], subjects),
+      ...LibrusClient._parseHomework(data[3], subjects, lessonSubjects),
     ]..sort((a, b) => a.date.compareTo(b.date)),
     attendance: LibrusClient._parseAttendance(
       data[4],
       subjects,
+      lessonSubjects,
       attendanceTypes,
     ),
     announcements: LibrusClient._parseAnnouncements(data[5], people),

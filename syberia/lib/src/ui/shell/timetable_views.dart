@@ -655,7 +655,7 @@ void _showLessonDetails(BuildContext context, _LessonBlock block) {
   final details = [
     if (block.count > 1) _lessonCount(context, block.count),
     lesson.teacher,
-    if (lesson.room.isNotEmpty) 's. ${lesson.room}',
+    if (lesson.room.isNotEmpty) _room(context, lesson.room),
   ].where((value) => value.isNotEmpty).join(' · ');
   // Scrolls when the tests' descriptions are long, like the homework sheet.
   showAppSheet<void>(
@@ -712,10 +712,11 @@ void _showLessonDetails(BuildContext context, _LessonBlock block) {
                         })
                       : context.trArgs('insteadOf', {
                           'details': [
-                            lesson.originalSubject,
+                            if (lesson.originalSubject.isNotEmpty)
+                              _SubjectScope.of(context, lesson.originalSubject),
                             lesson.originalTeacher,
                             if (lesson.originalRoom.isNotEmpty)
-                              's. ${lesson.originalRoom}',
+                              _room(context, lesson.originalRoom),
                           ].where((value) => value.isNotEmpty).join(' · '),
                         }),
                 ),

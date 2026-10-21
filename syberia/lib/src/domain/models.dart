@@ -162,15 +162,33 @@ class SchoolMessage {
     required this.receivedAt,
     this.unread = false,
     this.hasAttachments = false,
+    this.sent = false,
+    this.recipients = const [],
+    this.recipientRead,
   });
   final String id;
   final String sender;
   final String subject;
   final String preview;
+
+  /// When it was sent; for a received message, when it came.
   final DateTime receivedAt;
   final bool unread;
   final bool hasAttachments;
-  SchoolMessage copyWith({bool? unread}) => SchoolMessage(
+
+  /// Written by the student. Sent messages have [recipients] and no sender.
+  final bool sent;
+  final List<String> recipients;
+
+  /// Whether the recipients have read a sent message, or null when Librus
+  /// does not say.
+  final bool? recipientRead;
+
+  SchoolMessage copyWith({
+    bool? unread,
+    List<String>? recipients,
+    bool? recipientRead,
+  }) => SchoolMessage(
     id: id,
     sender: sender,
     subject: subject,
@@ -178,6 +196,9 @@ class SchoolMessage {
     receivedAt: receivedAt,
     unread: unread ?? this.unread,
     hasAttachments: hasAttachments,
+    sent: sent,
+    recipients: recipients ?? this.recipients,
+    recipientRead: recipientRead ?? this.recipientRead,
   );
 }
 
@@ -189,6 +210,7 @@ class SchoolMessageContent {
     required this.body,
     required this.receivedAt,
     this.attachments = const [],
+    this.recipients = const [],
   });
   final String id;
   final String sender;
@@ -196,6 +218,19 @@ class SchoolMessageContent {
   final String body;
   final DateTime receivedAt;
   final List<MessageAttachment> attachments;
+
+  /// Who a sent message went to; empty for received ones.
+  final List<MessageReceiver> recipients;
+}
+
+/// A recipient of a sent message and whether they have read it.
+class MessageReceiver {
+  const MessageReceiver({required this.name, this.read, this.readAt});
+  final String name;
+
+  /// Null when Librus does not say.
+  final bool? read;
+  final DateTime? readAt;
 }
 
 class MessageAttachment {
@@ -481,6 +516,7 @@ class AppSnapshot {
     required this.notices,
     required this.lastSync,
     this.messagesError,
+    this.sentMessages = const [],
   });
   final StudentProfile profile;
   final List<Lesson> lessons;
@@ -488,6 +524,9 @@ class AppSnapshot {
   final List<SchoolEvent> events;
   final List<SchoolMessage> messages;
   final AppError? messagesError;
+
+  /// Loaded when the Sent folder is opened; a sync leaves them as they are.
+  final List<SchoolMessage> sentMessages;
   final List<AttendanceRecord> attendance;
   final List<SchoolAnnouncement> announcements;
   final List<StudentNotice> notices;
@@ -504,6 +543,7 @@ class AppSnapshot {
     List<Lesson>? lessons,
     List<SchoolEvent>? events,
     List<SchoolMessage>? messages,
+    List<SchoolMessage>? sentMessages,
     DateTime? lastSync,
   }) => AppSnapshot(
     profile: profile,
@@ -512,9 +552,50 @@ class AppSnapshot {
     events: events ?? this.events,
     messages: messages ?? this.messages,
     messagesError: messagesError,
+    sentMessages: sentMessages ?? this.sentMessages,
     attendance: attendance,
     announcements: announcements,
     notices: notices,
     lastSync: lastSync ?? this.lastSync,
   );
+
+  /// [message] just sent, at the top of the Sent folder.
+  AppSnapshot withSent(SchoolMessage message) => copyWith(
+    sentMessages: [
+      message,
+      ...sentMessages.where((item) => item.id != message.id),
+    ],
+  );
+
+  /// After [message] was opened: a received one is read now, and a sent one
+  /// learns all its recipients and whether they have read it.
+  AppSnapshot withOpened(SchoolMessage message, SchoolMessageContent content) {
+    if (!message.sent) {
+      return copyWith(
+        messages: [
+          for (final item in messages)
+            item.id == message.id ? item.copyWith(unread: false) : item,
+        ],
+      );
+    }
+    if (content.recipients.isEmpty) return this;
+    final states = content.recipients.map((item) => item.read);
+    final read = states.contains(null)
+        ? null
+        : states.every((value) => value == true);
+    return copyWith(
+      sentMessages: [
+        for (final item in sentMessages)
+          item.id == message.id
+              ? item.copyWith(
+                  recipients: [
+                    for (final recipient in content.recipients) recipient.name,
+                  ],
+                  // An unknown state leaves what the list said.
+                  recipientRead: read,
+                )
+              : item,
+      ],
+    );
+  }
 }

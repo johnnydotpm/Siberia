@@ -19,6 +19,7 @@ abstract final class SnapshotCache {
             'raw': value.messagesError!.raw,
           },
     'messages': [for (final item in value.messages) _message(item)],
+    'sentMessages': [for (final item in value.sentMessages) _message(item)],
     'attendance': [for (final item in value.attendance) _attendance(item)],
     'announcements': [
       for (final item in value.announcements) _announcement(item),
@@ -51,6 +52,10 @@ abstract final class SnapshotCache {
                 raw: (value['messagesError'] as Map)['raw'] as String?,
               )
             : null,
+        // Caches written before the Sent folder have none.
+        sentMessages: value['sentMessages'] == null
+            ? const []
+            : _list(value['sentMessages'], _readMessage),
         attendance: _list(value['attendance'], _readAttendance),
         announcements: _list(value['announcements'], _readAnnouncement),
         notices: _list(value['notices'], _readNotice),
@@ -154,6 +159,11 @@ abstract final class SnapshotCache {
     'receivedAt': _date(item.receivedAt),
     'unread': item.unread,
     'hasAttachments': item.hasAttachments,
+    if (item.sent) ...{
+      'sent': true,
+      'recipients': item.recipients,
+      'recipientRead': item.recipientRead,
+    },
   };
   static SchoolMessage _readMessage(Map<String, Object?> item) => SchoolMessage(
     id: item['id']! as String,
@@ -163,6 +173,11 @@ abstract final class SnapshotCache {
     receivedAt: _parseDate(item['receivedAt']),
     unread: item['unread'] as bool? ?? false,
     hasAttachments: item['hasAttachments'] as bool? ?? false,
+    sent: item['sent'] as bool? ?? false,
+    recipients: [
+      for (final name in item['recipients'] as List? ?? const []) '$name',
+    ],
+    recipientRead: item['recipientRead'] as bool?,
   );
 
   static Map<String, Object?> _attendance(AttendanceRecord item) => {
