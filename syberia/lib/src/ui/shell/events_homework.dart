@@ -47,14 +47,14 @@ class _EventsState extends State<_Events> {
           _Heading(context.tr('selectedDay')),
           const SizedBox(height: _Space.heading),
           if (selectedEvents.isEmpty)
-            _Empty(context.tr('noData'))
+            _Empty(context.tr('emptyEvents'), icon: Icons.event_note_rounded)
           else
             ..._spaced(selectedEvents.map(_EventTile.new)),
           const SizedBox(height: _Space.section),
           _Heading(context.tr('upcomingEvents')),
           const SizedBox(height: _Space.heading),
           if (upcoming.isEmpty)
-            _Empty(context.tr('noData'))
+            _Empty(context.tr('emptyEvents'), icon: Icons.event_note_rounded)
           else
             ..._spaced(upcoming.map(_EventTile.new)),
         ],
@@ -108,7 +108,12 @@ class _HomeworkState extends State<_Homework> {
     final all = widget.controller.snapshot.events
         .where((item) => item.kind == EventKind.homework)
         .toList();
-    if (all.isEmpty) return _PageEmpty(context.tr('noData'));
+    if (all.isEmpty) {
+      return _PageEmpty(
+        context.tr('emptyHomework'),
+        icon: Icons.assignment_rounded,
+      );
+    }
     final controller = widget.controller;
     final future = all.where((item) => !item.date.isBefore(today)).toList()
       ..sort((a, b) => a.date.compareTo(b.date));
@@ -231,11 +236,26 @@ class _HomeworkState extends State<_Homework> {
               ),
             ],
             selected: {_past},
-            onSelectionChanged: (selection) =>
-                setState(() => _past = selection.first),
+            onSelectionChanged: (selection) {
+              HapticFeedback.selectionClick();
+              setState(() => _past = selection.first);
+            },
           ),
-          // All done is not "no data".
-          if (shown.isEmpty && done.isEmpty) _Empty(context.tr('noData')),
+          if (shown.isEmpty)
+            if (query.isNotEmpty && done.isEmpty)
+              _Empty(context.tr('noResults'), icon: Icons.search_off_rounded)
+            else if (done.isNotEmpty)
+              // Everything due is done: said with a check, as a good thing.
+              _Empty(
+                context.tr('homeworkAllDone'),
+                icon: Icons.task_alt_rounded,
+                color: Theme.of(context).colorScheme.primary,
+              )
+            else
+              _Empty(
+                context.tr('emptyHomework'),
+                icon: Icons.assignment_rounded,
+              ),
           ...rows,
         ],
       ),
@@ -615,7 +635,8 @@ void _setHomeworkDone(
   bool done,
 ) {
   unawaited(controller.setHomeworkDone(item, done));
-  if (!done) return;
+  // Marked after the card left the screen: nothing to show the message on.
+  if (!done || !context.mounted) return;
   final messenger = ScaffoldMessenger.of(context);
   messenger.hideCurrentSnackBar();
   messenger.showSnackBar(
@@ -629,25 +650,70 @@ void _setHomeworkDone(
   );
 }
 
-/// The round check in front of an assignment.
-class _DoneCheck extends StatelessWidget {
+/// The round check in front of an assignment. As in Reminders, a tick
+/// fills the circle at once and the work leaves the list a moment later, so
+/// the tick is seen; a second tap meanwhile takes it back.
+class _DoneCheck extends StatefulWidget {
   const _DoneCheck({required this.done, required this.onChanged, super.key});
   final bool done;
   final ValueChanged<bool> onChanged;
 
+  /// How long a ticked circle shows before the work is marked.
+  static const delay = Duration(milliseconds: 700);
+
+  @override
+  State<_DoneCheck> createState() => _DoneCheckState();
+}
+
+class _DoneCheckState extends State<_DoneCheck> {
+  Timer? _ticking;
+
+  void _tap() {
+    if (_ticking != null) {
+      _ticking!.cancel();
+      setState(() => _ticking = null);
+      return;
+    }
+    if (widget.done) {
+      HapticFeedback.selectionClick();
+      widget.onChanged(false);
+      return;
+    }
+    HapticFeedback.lightImpact();
+    setState(() => _ticking = Timer(_DoneCheck.delay, _commit));
+  }
+
+  void _commit() {
+    _ticking = null;
+    widget.onChanged(true);
+  }
+
+  @override
+  void dispose() {
+    // Gone from the screen before the moment passed: still marked.
+    if (_ticking?.isActive ?? false) {
+      _ticking!.cancel();
+      _commit();
+    }
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
-    final label = context.tr(done ? 'homeworkMarkNotDone' : 'homeworkMarkDone');
+    final ticked = widget.done || _ticking != null;
+    final label = context.tr(
+      widget.done ? 'homeworkMarkNotDone' : 'homeworkMarkDone',
+    );
     return Semantics(
       button: true,
-      checked: done,
+      checked: ticked,
       label: label,
       excludeSemantics: true,
       child: Tooltip(
         message: label,
         child: InkResponse(
-          onTap: () => onChanged(!done),
+          onTap: _tap,
           radius: 20,
           // A 40-point target around a 24-point circle.
           child: SizedBox.square(
@@ -659,13 +725,13 @@ class _DoneCheck extends StatelessWidget {
                 height: 24,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: done ? colors.primary : Colors.transparent,
+                  color: ticked ? colors.primary : Colors.transparent,
                   border: Border.all(
-                    color: done ? colors.primary : colors.outline,
+                    color: ticked ? colors.primary : colors.outline,
                     width: 2,
                   ),
                 ),
-                child: done
+                child: ticked
                     ? Icon(
                         Icons.check_rounded,
                         size: 16,

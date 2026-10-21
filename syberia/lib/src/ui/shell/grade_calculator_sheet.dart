@@ -181,9 +181,12 @@ class _GradeCalculatorState extends State<_GradeCalculator> {
                   ButtonSegment(value: 1, label: Text('+')),
                 ],
                 selected: {if (_modifier != 0) _modifier},
-                onSelectionChanged: (selection) => setState(
-                  () => _modifier = selection.isEmpty ? 0 : selection.first,
-                ),
+                onSelectionChanged: (selection) {
+                  HapticFeedback.selectionClick();
+                  setState(
+                    () => _modifier = selection.isEmpty ? 0 : selection.first,
+                  );
+                },
               ),
             ],
           ),

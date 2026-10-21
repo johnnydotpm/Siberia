@@ -77,6 +77,11 @@ void main() {
     expect(find.text('Upcoming (2)'), findsOneWidget);
 
     await tester.tap(find.byKey(const ValueKey('homework-done-hw1')));
+    await tester.pump();
+    // As in Reminders: ticked at once, still in the list for a moment.
+    expect(controller.isHomeworkDone(_maths), isFalse);
+    expect(_card('hw1'), findsOneWidget);
+    await tester.pump(const Duration(milliseconds: 800));
     await tester.pumpAndSettle();
     expect(controller.isHomeworkDone(_maths), isTrue);
     // Out of what is to do, into a closed group of its own.
@@ -92,7 +97,16 @@ void main() {
     expect(_card('hw1'), findsOneWidget);
     expect(find.text('Done (1)'), findsNothing);
 
+    // A second tap within the moment takes the tick back.
     await tester.tap(find.byKey(const ValueKey('homework-done-hw1')));
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('homework-done-hw1')));
+    await tester.pump(const Duration(milliseconds: 800));
+    await tester.pumpAndSettle();
+    expect(controller.isHomeworkDone(_maths), isFalse);
+
+    await tester.tap(find.byKey(const ValueKey('homework-done-hw1')));
+    await tester.pump(const Duration(milliseconds: 800));
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey('homework-done-toggle')));
     await tester.pumpAndSettle();

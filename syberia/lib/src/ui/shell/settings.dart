@@ -69,7 +69,7 @@ class _Settings extends StatelessWidget {
               leading: const _SettingsIcon(Icons.language_rounded),
               title: Text(context.tr('language')),
               subtitle: Text(_languageName(context, controller.locale)),
-              trailing: const Icon(Icons.chevron_right_rounded),
+              trailing: const _Chevron(),
               onTap: () => _showLanguageSheet(context, controller),
             ),
           ],
@@ -96,7 +96,7 @@ class _Settings extends StatelessWidget {
                       })
                     : context.tr('notificationsOff'),
               ),
-              trailing: const Icon(Icons.chevron_right_rounded),
+              trailing: const _Chevron(),
               onTap: () => _showNotificationSettings(context, controller),
             ),
           ],
@@ -108,7 +108,7 @@ class _Settings extends StatelessWidget {
               key: const ValueKey('settings-today-screen'),
               leading: const _SettingsIcon(Icons.dashboard_customize_rounded),
               title: Text(context.tr('todayCustomizeSettings')),
-              trailing: const Icon(Icons.chevron_right_rounded),
+              trailing: const _Chevron(),
               onTap: () => _showTodayLayoutSheet(context, controller),
             ),
             ListTile(
@@ -116,7 +116,7 @@ class _Settings extends StatelessWidget {
               leading: const _SettingsIcon(Icons.calendar_view_week_rounded),
               title: Text(context.tr('timetable')),
               subtitle: Text(context.tr('timetableStyle')),
-              trailing: const Icon(Icons.chevron_right_rounded),
+              trailing: const _Chevron(),
               onTap: () => _showTimetableSettings(context, controller),
             ),
             ListTile(
@@ -124,7 +124,7 @@ class _Settings extends StatelessWidget {
               leading: const _SettingsIcon(Icons.short_text_rounded),
               title: Text(context.tr('shortSubjectNames')),
               subtitle: Text(context.tr('shortSubjectNamesDescription')),
-              trailing: const Icon(Icons.chevron_right_rounded),
+              trailing: const _Chevron(),
               onTap: () => showAppSheet<void>(
                 context: context,
                 isScrollControlled: true,
@@ -294,7 +294,9 @@ class _SettingsSection extends StatelessWidget {
             child: Column(
               children: [
                 for (final (index, child) in children.indexed) ...[
-                  if (index > 0) const Divider(height: 1, indent: 16),
+                  // From the text on, past the icon, as in the system's
+                  // own settings.
+                  if (index > 0) const Divider(height: 1, indent: 66),
                   child,
                 ],
               ],
@@ -529,7 +531,7 @@ class _HomeWidgetsRowState extends State<_HomeWidgetsRow> {
                 return Text(context.tr('homeWidgetsIosHint'));
               },
             ),
-      trailing: android ? const Icon(Icons.chevron_right_rounded) : null,
+      trailing: android ? const _Chevron() : null,
       onTap: android
           ? () => showAppSheet<void>(
               context: context,
@@ -594,7 +596,7 @@ class _CheckUpdatesRowState extends State<_CheckUpdatesRow> {
             dimension: 20,
             child: CircularProgressIndicator(strokeWidth: 2),
           )
-        : const Icon(Icons.chevron_right_rounded),
+        : const _Chevron(),
     onTap: _checking ? null : _check,
   );
 }

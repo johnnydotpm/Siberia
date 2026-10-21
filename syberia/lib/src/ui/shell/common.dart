@@ -75,26 +75,52 @@ class _Heading extends StatelessWidget {
   );
 }
 
+/// Nothing to show, said the way the system does: the page's own symbol
+/// and what is missing, rather than a generic "no data".
 class _Empty extends StatelessWidget {
-  const _Empty(this.text);
+  const _Empty(this.text, {this.icon = Icons.inbox_rounded, this.color});
   final String text;
+  final IconData icon;
+
+  /// The symbol's colour, when it says something good, like all done.
+  final Color? color;
   @override
-  Widget build(BuildContext context) => Center(
-    child: Padding(
-      padding: const EdgeInsets.all(40),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            Icons.inbox_rounded,
-            size: 48,
-            color: Theme.of(context).colorScheme.outline,
-          ),
-          const SizedBox(height: 10),
-          Text(text),
-        ],
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(40),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 44, color: color ?? theme.colorScheme.outline),
+            const SizedBox(height: 12),
+            Text(
+              text,
+              textAlign: TextAlign.center,
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ],
+        ),
       ),
-    ),
+    );
+  }
+}
+
+/// Digits of one width, so times and counts that change do not shift the
+/// text around them.
+const _tabular = [FontFeature.tabularFigures()];
+
+/// The quiet chevron at the end of a row that opens something.
+class _Chevron extends StatelessWidget {
+  const _Chevron();
+  @override
+  Widget build(BuildContext context) => Icon(
+    Icons.chevron_right_rounded,
+    size: 20,
+    color: Theme.of(context).colorScheme.outline,
   );
 }
 
@@ -361,7 +387,11 @@ class _Refresh extends StatelessWidget {
   final Future<void> Function()? onRefresh;
   @override
   Widget build(BuildContext context) => RefreshIndicator.adaptive(
-    onRefresh: onRefresh ?? controller.sync,
+    // A tap felt the moment the pull takes, as in the system apps.
+    onRefresh: () {
+      HapticFeedback.mediumImpact();
+      return (onRefresh ?? controller.sync)();
+    },
     // Under a glass top bar the indicator would otherwise appear behind it.
     edgeOffset: _chromeInsets(context).top,
     child: child,
@@ -412,13 +442,14 @@ class _PageList extends StatelessWidget {
 /// A page with nothing to list. Inside the glass chrome the large title stays
 /// in place above the placeholder.
 class _PageEmpty extends StatelessWidget {
-  const _PageEmpty(this.text);
+  const _PageEmpty(this.text, {this.icon = Icons.inbox_rounded});
   final String text;
+  final IconData icon;
 
   @override
   Widget build(BuildContext context) {
     final scope = GlassPageScope.maybeOf(context);
-    if (scope == null) return _Empty(text);
+    if (scope == null) return _Empty(text, icon: icon);
     final insets = MediaQuery.paddingOf(context);
     final title = scope.largeTitle;
     return Padding(
@@ -433,7 +464,7 @@ class _PageEmpty extends StatelessWidget {
               ),
               child: GlassLargeTitle(title),
             ),
-          Expanded(child: _Empty(text)),
+          Expanded(child: _Empty(text, icon: icon)),
         ],
       ),
     );

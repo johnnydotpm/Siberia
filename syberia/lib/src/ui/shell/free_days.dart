@@ -118,8 +118,11 @@ class _FreeDayCard extends StatelessWidget {
                 countdown,
                 key: const ValueKey('free-days-countdown'),
                 textAlign: TextAlign.end,
-                style: Theme.of(context).textTheme.labelLarge
-                    ?.copyWith(color: tone.accent, fontWeight: FontWeight.w800),
+                style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                  color: tone.accent,
+                  fontWeight: FontWeight.w800,
+                  fontFeatures: _tabular,
+                ),
               ),
             ],
           ],

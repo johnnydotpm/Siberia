@@ -425,7 +425,9 @@ class _NowCard extends StatelessWidget {
                       ),
                     )
                   else
-                    Flexible(
+                    // All the room the time leaves: beside a Spacer it
+                    // got only half of it, and "Next lesson" broke in two.
+                    Expanded(
                       child: Text(
                         label,
                         maxLines: 2,
@@ -437,13 +439,14 @@ class _NowCard extends StatelessWidget {
                       ),
                     ),
                   if (sameDay || current != null) ...[
-                    const Spacer(),
+                    if (current != null) const Spacer(),
                     const SizedBox(width: 8),
                     Text(
                       when,
                       style: theme.textTheme.labelLarge?.copyWith(
                         color: foreground,
                         fontWeight: FontWeight.w800,
+                        fontFeatures: _tabular,
                       ),
                     ),
                   ],
@@ -517,6 +520,7 @@ class _NowCard extends StatelessWidget {
                       style: theme.textTheme.labelLarge?.copyWith(
                         color: foreground,
                         fontWeight: FontWeight.w800,
+                        fontFeatures: _tabular,
                       ),
                     ),
                   ],

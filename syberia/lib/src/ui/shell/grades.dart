@@ -40,8 +40,10 @@ class _GradesState extends State<_Grades> {
                     ButtonSegment(value: 2, label: Text(context.tr('period2'))),
                   ],
                   selected: {semester},
-                  onSelectionChanged: (selection) =>
-                      setState(() => semester = selection.first),
+                  onSelectionChanged: (selection) {
+                    HapticFeedback.selectionClick();
+                    setState(() => semester = selection.first);
+                  },
                 ),
               ),
               IconButton(
@@ -65,10 +67,13 @@ class _GradesState extends State<_Grades> {
             ],
           ),
           const SizedBox(height: _Space.card),
-          _GradesOverview(grades, settings),
-          const SizedBox(height: _Space.card),
+          // An average of nothing is left out, not shown as "—".
+          if (subjects.isNotEmpty) ...[
+            _GradesOverview(grades, settings),
+            const SizedBox(height: _Space.card),
+          ],
           if (subjects.isEmpty)
-            _Empty(context.tr('noData'))
+            _Empty(context.tr('emptyGrades'), icon: Icons.school_rounded)
           else
             for (final (index, MapEntry(key: subject, value: items))
                 in subjects.indexed) ...[
@@ -492,7 +497,7 @@ class _GradeRow extends StatelessWidget {
     subtitle: Text(
       '${_shortDate(context, grade.date)} · ${context.tr('weight').toLowerCase()} ${_decimal(context, grade.weight)}',
     ),
-    trailing: const Icon(Icons.chevron_right_rounded),
+    trailing: const _Chevron(),
   );
 }
 

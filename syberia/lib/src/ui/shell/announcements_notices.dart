@@ -6,7 +6,12 @@ class _Announcements extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final announcements = controller.snapshot.announcements;
-    if (announcements.isEmpty) return _PageEmpty(context.tr('noData'));
+    if (announcements.isEmpty) {
+      return _PageEmpty(
+        context.tr('emptyAnnouncements'),
+        icon: Icons.campaign_rounded,
+      );
+    }
     final colors = Theme.of(context).colorScheme;
     return _Refresh(
       controller: controller,
@@ -70,7 +75,12 @@ class _Notices extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final notices = controller.snapshot.notices;
-    if (notices.isEmpty) return _PageEmpty(context.tr('noData'));
+    if (notices.isEmpty) {
+      return _PageEmpty(
+        context.tr('emptyNotices'),
+        icon: Icons.chat_bubble_rounded,
+      );
+    }
     final brightness = Theme.of(context).brightness;
     return _Refresh(
       controller: controller,
@@ -107,8 +117,12 @@ class _Notices extends StatelessWidget {
                   background: tone.background,
                   foreground: tone.foreground,
                 ),
+                // What the note is, "Pochwała", says more than its tone,
+                // which the colour and the symbol show already.
                 title: Text(
-                  toneLabel,
+                  item.category.isEmpty
+                      ? toneLabel
+                      : _capitalize(item.category),
                   style: _rowTitleStyle(context)?.copyWith(color: tone.accent),
                 ),
                 subtitle: Text(item.teacher),
@@ -131,7 +145,7 @@ class _Notices extends StatelessWidget {
                         children: [
                           if (item.category.isNotEmpty) ...[
                             Text(
-                              item.category,
+                              toneLabel,
                               style: Theme.of(context).textTheme.labelLarge
                                   ?.copyWith(color: tone.accent),
                             ),

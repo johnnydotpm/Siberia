@@ -39,8 +39,10 @@ Future<void> _showTimetableSettings(
                 ),
               ],
               selected: {controller.timetableView},
-              onSelectionChanged: (selection) =>
-                  controller.setTimetableView(selection.first),
+              onSelectionChanged: (selection) {
+                HapticFeedback.selectionClick();
+                controller.setTimetableView(selection.first);
+              },
             ),
             const SizedBox(height: 12),
             SwitchListTile.adaptive(
@@ -154,6 +156,7 @@ class _TimetableState extends State<_Timetable> {
   }
 
   void _selectFromStrip(DateTime requested, Iterable<DateTime> lessonDays) {
+    HapticFeedback.selectionClick();
     setState(() {
       selectedDay = _nearestDayWithLessons(requested, lessonDays);
     });
@@ -284,7 +287,10 @@ class _TimetableState extends State<_Timetable> {
                         const SizedBox(height: 8),
                       ],
                       if (dayEvents.isEmpty && dayOff == null)
-                        _Empty(context.tr('noData')),
+                        _Empty(
+                          context.tr('emptyDay'),
+                          icon: Icons.free_breakfast_rounded,
+                        ),
                     ],
                   ),
                 )

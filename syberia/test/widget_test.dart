@@ -393,12 +393,14 @@ void main() {
 
       controller.selectTab(8);
       await tester.pumpAndSettle();
-      expect(find.text('Positive'), findsOneWidget);
+      // What the note is leads; its tone shows once it opens.
+      expect(find.text('Pochwała'), findsOneWidget);
       expect(find.text('Nauczyciel A'), findsOneWidget);
       expect(find.text('Aktywna praca'), findsNothing);
-      await tester.tap(find.text('Positive'));
+      await tester.tap(find.text('Pochwała'));
       await tester.pumpAndSettle();
       expect(find.text('Aktywna praca'), findsOneWidget);
+      expect(find.text('Positive'), findsOneWidget);
     },
   );
 

@@ -196,10 +196,12 @@ class _TimelineRail extends StatelessWidget {
               ),
             ),
           ),
+        // Times line up down the rail, digit under digit.
         Text(
           _time(block.lesson.start),
           style: theme.textTheme.labelLarge?.copyWith(
             fontWeight: FontWeight.w800,
+            fontFeatures: _tabular,
           ),
         ),
         if (showEnd)
@@ -207,6 +209,7 @@ class _TimelineRail extends StatelessWidget {
             _time(block.lesson.end),
             style: theme.textTheme.labelSmall?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
+              fontFeatures: _tabular,
             ),
           ),
       ],
@@ -561,12 +564,14 @@ class _TimetableRow extends StatelessWidget {
                         _time(lesson.start),
                         style: theme.textTheme.labelLarge?.copyWith(
                           fontWeight: FontWeight.w800,
+                          fontFeatures: _tabular,
                         ),
                       ),
                       Text(
                         _time(lesson.end),
                         style: theme.textTheme.labelSmall?.copyWith(
                           color: muted,
+                          fontFeatures: _tabular,
                         ),
                       ),
                     ],

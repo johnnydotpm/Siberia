@@ -344,7 +344,7 @@ void main() {
     tester,
   ) async {
     await _pump(tester, tab: 6, data: _snapshot(attendance: const []));
-    expect(find.text('No data'), findsOneWidget);
+    expect(find.text('No attendance yet'), findsOneWidget);
     expect(find.text('Attendance summary'), findsNothing);
     expect(find.byType(Card), findsNothing);
     await tester.pumpWidget(const SizedBox.shrink());

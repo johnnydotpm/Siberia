@@ -19,7 +19,10 @@ class _AttendanceState extends State<_Attendance> {
     // Nothing yet, as at the start of the year: said as on the other pages,
     // not drawn as 0 %.
     if (widget.controller.snapshot.attendance.isEmpty) {
-      return _PageEmpty(context.tr('noData'));
+      return _PageEmpty(
+        context.tr('emptyAttendance'),
+        icon: Icons.fact_check_rounded,
+      );
     }
     final records = widget.controller.snapshot.attendance
         .where(
@@ -50,8 +53,10 @@ class _AttendanceState extends State<_Attendance> {
             child: SegmentedButton<_AttendancePeriod>(
               showSelectedIcon: false,
               selected: {period},
-              onSelectionChanged: (value) =>
-                  setState(() => period = value.first),
+              onSelectionChanged: (value) {
+                HapticFeedback.selectionClick();
+                setState(() => period = value.first);
+              },
               segments: [
                 ButtonSegment(
                   value: _AttendancePeriod.first,
@@ -90,7 +95,10 @@ class _AttendanceState extends State<_Attendance> {
             month: month,
             selectedDay: selectedDay,
             onMonthChanged: (value) => setState(() => month = value),
-            onDaySelected: (value) => setState(() => selectedDay = value),
+            onDaySelected: (value) {
+              HapticFeedback.selectionClick();
+              setState(() => selectedDay = value);
+            },
           ),
           if (selectedDay != null) ...[
             const SizedBox(height: _Space.section),
@@ -99,7 +107,7 @@ class _AttendanceState extends State<_Attendance> {
             ),
             const SizedBox(height: _Space.heading),
             if (selected.isEmpty)
-              _Empty(context.tr('noData'))
+              _Empty(context.tr('emptyEntries'), icon: Icons.fact_check_rounded)
             else
               ..._spaced(selected.map(_AttendanceTile.new)),
           ],
@@ -162,10 +170,11 @@ class _AttendanceChart extends StatelessWidget {
               percentage: percentage,
             ),
             const SizedBox(height: 12),
+            // Only what there is: a row of zeros says nothing.
             Wrap(
               spacing: 18,
               runSpacing: 10,
-              children: entries
+              children: visibleEntries
                   .map(
                     (entry) => _Legend(
                       color: entry.color,
@@ -398,7 +407,7 @@ class _SubjectAttendanceRow extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 4),
-            Icon(Icons.chevron_right_rounded, color: colors.onSurfaceVariant),
+            const _Chevron(),
           ],
         ),
       ),

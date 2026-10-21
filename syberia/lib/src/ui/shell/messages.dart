@@ -16,6 +16,7 @@ class _MessagesState extends State<_Messages> {
   _MessageFolder _folder = _MessageFolder.inbox;
 
   void _openFolder(_MessageFolder folder) {
+    HapticFeedback.selectionClick();
     setState(() => _folder = folder);
     // A sync leaves the Sent folder out, so it is loaded when opened.
     if (folder == _MessageFolder.sent) {
@@ -261,9 +262,18 @@ class _MessagesState extends State<_Messages> {
           child: Center(child: CircularProgressIndicator()),
         )
       else if (messages.isEmpty && error == null)
-        _Empty(
-          context.tr(sentFolder && query.isEmpty ? 'noSentMessages' : 'noData'),
-        ),
+        if (query.isNotEmpty)
+          _Empty(context.tr('noResults'), icon: Icons.search_off_rounded)
+        else if (sentFolder)
+          _Empty(context.tr('noSentMessages'), icon: Icons.send_rounded)
+        else if (_unreadOnly)
+          _Empty(
+            context.tr('noUnreadMessages'),
+            icon: Icons.mark_email_read_rounded,
+            color: Theme.of(context).colorScheme.primary,
+          )
+        else
+          _Empty(context.tr('emptyMessages'), icon: Icons.mail_rounded),
       ...rows,
     ];
     final scope = GlassPageScope.maybeOf(context);
@@ -430,6 +440,7 @@ class _MessageTile extends StatelessWidget {
                             ? colors.primary
                             : colors.onSurfaceVariant,
                         fontWeight: unread ? FontWeight.w800 : FontWeight.w500,
+                        fontFeatures: _tabular,
                       ),
                     ),
                   ],
