@@ -39,6 +39,8 @@ Na iOS aplikację należy zainstalować we własnym zakresie za pomocą [AltStor
 
 Widżet „Następna lekcja” na ekranie głównym działa przy instalacji przez AltStore, SideStore lub płatny certyfikat; LiveContainer nie obsługuje widżetów. Na darmowym Apple ID widżet zajmuje jeden dodatkowy App ID.
 
+Na iOS standardowy widżet „Następna lekcja” korzysta bezpośrednio z WidgetKit i nie wymaga konfiguracji App Intents. Wariant „Następna lekcja · konfigurowalna” oferuje ustawienia dla każdego widżetu, gdy działa konfiguracja App Intents. Jeśli po aktualizacji widżet nadal pokazuje szkielet ładowania, usuń go, otwórz i zsynchronizuj aplikację, a następnie dodaj ponownie standardowy widżet.
+
 ## Instrukcje budowania
 
 Każdy lokalny build wymaga [Flutter SDK](https://docs.flutter.dev/get-started/install). W katalogu głównym projektu wykonaj najpierw:

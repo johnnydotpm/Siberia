@@ -39,6 +39,8 @@ On iOS, install the application yourself using [AltStore](https://altstore.io/),
 
 The “Next lesson” home screen widget works when the app is installed with AltStore, SideStore or a paid certificate; LiveContainer does not support widgets. With a free Apple ID the widget uses one extra App ID.
 
+On iOS, the standard “Next lesson” widget uses WidgetKit directly and does not require App Intents configuration. “Next lesson · customizable” offers per-widget settings when App Intents configuration works. If an existing widget stays on the loading skeleton after an update, remove it, open and sync the app, then add the standard widget again.
+
 ## Build instructions
 
 Every local build requires the [Flutter SDK](https://docs.flutter.dev/get-started/install). Run this first from the project root:

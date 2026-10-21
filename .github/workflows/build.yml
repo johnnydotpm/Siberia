@@ -52,6 +52,21 @@ jobs:
       - run: flutter analyze --fatal-infos
       - run: flutter test
 
+  ios-widget:
+    name: Type-check native iOS widgets
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check both WidgetKit providers against the iOS Simulator SDK
+        working-directory: syberia
+        run: |
+          xcrun --sdk iphonesimulator swiftc -typecheck -parse-as-library \
+            -sdk "$(xcrun --sdk iphonesimulator --show-sdk-path)" \
+            -target "$(uname -m)-apple-ios17.0-simulator" \
+            ios/SiberiaWidget/HomeWidgetStore.swift \
+            ios/SiberiaWidget/WidgetOptions.swift \
+            ios/SiberiaWidget/SiberiaWidget.swift
+
   android:
     name: Android release APK
     if: github.event_name == 'workflow_dispatch' && inputs.build_android
@@ -136,7 +151,7 @@ jobs:
   ios:
     name: iOS signer-ready IPA
     if: github.event_name == 'workflow_dispatch' && inputs.build_ios
-    needs: quality
+    needs: [quality, ios-widget]
     runs-on: macos-26
     defaults:
       run:
