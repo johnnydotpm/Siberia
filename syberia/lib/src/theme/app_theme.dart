@@ -98,6 +98,11 @@ abstract final class AppTheme {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
         margin: EdgeInsets.zero,
       ),
+      // Fields round their corners like the rest of the app. Search fields
+      // set their own filled look.
+      inputDecorationTheme: InputDecorationTheme(
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+      ),
       navigationBarTheme: NavigationBarThemeData(
         height: 66,
         backgroundColor: amoled

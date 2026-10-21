@@ -202,7 +202,6 @@ class _ComposeMessageSheetState extends State<_ComposeMessageSheet> {
                                       prefixIcon: const Icon(
                                         Icons.person_search_rounded,
                                       ),
-                                      border: const OutlineInputBorder(),
                                     ),
                                   );
                                 },
@@ -248,7 +247,6 @@ class _ComposeMessageSheetState extends State<_ComposeMessageSheet> {
                     textCapitalization: TextCapitalization.sentences,
                     decoration: InputDecoration(
                       labelText: context.tr('subject'),
-                      border: const OutlineInputBorder(),
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -261,7 +259,6 @@ class _ComposeMessageSheetState extends State<_ComposeMessageSheet> {
                     decoration: InputDecoration(
                       labelText: context.tr('messageBody'),
                       alignLabelWithHint: true,
-                      border: const OutlineInputBorder(),
                     ),
                   ),
                   if (validationError != null) ...[
@@ -281,14 +278,15 @@ class _ComposeMessageSheetState extends State<_ComposeMessageSheet> {
           const Divider(height: 1),
           Padding(
             padding: EdgeInsets.fromLTRB(
+              _Space.sheet,
               16,
-              16,
-              16,
+              _Space.sheet,
               16 + _systemButtonsRoom(context),
             ),
             child: SizedBox(
               width: double.infinity,
               child: FilledButton.icon(
+                style: _wideButton,
                 onPressed: sending ? null : send,
                 icon: sending
                     ? const SizedBox.square(
@@ -322,11 +320,20 @@ class _RecipientError extends StatelessWidget {
             Icons.error_outline_rounded,
             color: Theme.of(context).colorScheme.onErrorContainer,
           ),
-          const SizedBox(width: 10),
-          Expanded(child: Text(message)),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              message,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onErrorContainer,
+              ),
+            ),
+          ),
           IconButton(
             onPressed: onRetry,
             icon: const Icon(Icons.refresh_rounded),
+            tooltip: MaterialLocalizations.of(context)
+                .refreshIndicatorSemanticLabel,
           ),
         ],
       ),

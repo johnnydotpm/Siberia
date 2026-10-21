@@ -77,7 +77,7 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.byIcon(Icons.person_rounded).first);
     await tester.pumpAndSettle();
-    FilledButton logout() =>
+    ButtonStyleButton logout() =>
         tester.widget(find.byKey(const ValueKey('account-logout')));
     expect(logout().onPressed, isNotNull);
 

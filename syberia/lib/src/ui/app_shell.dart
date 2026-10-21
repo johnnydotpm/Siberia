@@ -70,8 +70,8 @@ class _AppShellState extends State<AppShell> {
     4 => _Homework(controller),
     5 => _Messages(controller),
     6 => _Attendance(controller),
-    7 => _Announcements(controller.snapshot),
-    8 => _Notices(controller.snapshot),
+    7 => _Announcements(controller),
+    8 => _Notices(controller),
     _ => _Settings(controller),
   };
 

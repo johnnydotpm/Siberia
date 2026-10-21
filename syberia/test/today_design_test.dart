@@ -222,7 +222,15 @@ void main() {
     expect(icon('quiz', 'quiz').icon, isNot(icon('exam', 'exam').icon));
     expect(icon('trip', 'trip').icon, isNot(icon('exam', 'exam').icon));
     Color tile(String id, String kind) =>
-        (tester.widget<Container>(type(id, kind)).decoration! as BoxDecoration)
+        (tester
+                    .widget<Container>(
+                      find.descendant(
+                        of: type(id, kind),
+                        matching: find.byType(Container),
+                      ),
+                    )
+                    .decoration!
+                as BoxDecoration)
             .color!;
     expect(tile('quiz', 'quiz'), isNot(tile('exam', 'exam')));
     expect(tile('trip', 'trip'), isNot(tile('quiz', 'quiz')));

@@ -23,39 +23,42 @@ class _EventsState extends State<_Events> {
               !item.date.isBefore(DateTime(today.year, today.month, today.day)),
         )
         .take(8);
-    return _PageList(
-      padding: const EdgeInsets.all(12),
-      children: [
-        Card(
-          child: MediaQuery.removePadding(
-            context: context,
-            removeTop: true,
-            removeBottom: true,
-            child: PrimaryScrollController.none(
-              child: CalendarDatePicker(
-                initialDate: selected,
-                firstDate: DateTime(today.year - 2),
-                lastDate: DateTime(today.year + 3, 12, 31),
-                onDateChanged: (value) => setState(() => selected = value),
+    return _Refresh(
+      controller: widget.controller,
+      child: _PageList(
+        padding: const EdgeInsets.all(_Space.page),
+        children: [
+          Card(
+            child: MediaQuery.removePadding(
+              context: context,
+              removeTop: true,
+              removeBottom: true,
+              child: PrimaryScrollController.none(
+                child: CalendarDatePicker(
+                  initialDate: selected,
+                  firstDate: DateTime(today.year - 2),
+                  lastDate: DateTime(today.year + 3, 12, 31),
+                  onDateChanged: (value) => setState(() => selected = value),
+                ),
               ),
             ),
           ),
-        ),
-        const SizedBox(height: 18),
-        _Heading(context.tr('selectedDay')),
-        const SizedBox(height: 8),
-        if (selectedEvents.isEmpty)
-          _Empty(context.tr('noData'))
-        else
-          ...selectedEvents.map(_EventTile.new),
-        const SizedBox(height: 18),
-        _Heading(context.tr('upcomingEvents')),
-        const SizedBox(height: 8),
-        if (upcoming.isEmpty)
-          _Empty(context.tr('noData'))
-        else
-          ...upcoming.map(_EventTile.new),
-      ],
+          const SizedBox(height: _Space.section),
+          _Heading(context.tr('selectedDay')),
+          const SizedBox(height: _Space.heading),
+          if (selectedEvents.isEmpty)
+            _Empty(context.tr('noData'))
+          else
+            ..._spaced(selectedEvents.map(_EventTile.new)),
+          const SizedBox(height: _Space.section),
+          _Heading(context.tr('upcomingEvents')),
+          const SizedBox(height: _Space.heading),
+          if (upcoming.isEmpty)
+            _Empty(context.tr('noData'))
+          else
+            ..._spaced(upcoming.map(_EventTile.new)),
+        ],
+      ),
     );
   }
 }
@@ -121,86 +124,89 @@ class _HomeworkState extends State<_Homework> {
               item.description.toLowerCase().contains(query),
         )
         .toList();
-    final colors = Theme.of(context).colorScheme;
-
     final rows = <Widget>[];
     String? lastSection;
     for (final item in shown) {
       final section = _section(item.date, today);
       if (section != lastSection) {
         rows.add(
-          Padding(
+          _GroupLabel(
+            section,
             key: ValueKey('homework-section-$section'),
-            padding: const EdgeInsets.fromLTRB(8, 14, 8, 6),
-            child: Text(
-              section,
-              style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                color: colors.onSurfaceVariant,
-                fontWeight: FontWeight.w800,
-              ),
-            ),
+            top: _Space.card,
           ),
         );
         lastSection = section;
       } else {
-        rows.add(const SizedBox(height: 8));
+        rows.add(const SizedBox(height: _Space.item));
       }
       rows.add(_HomeworkCard(item, now: now));
     }
 
     String counted(String key, int count) =>
         count == 0 ? context.tr(key) : '${context.tr(key)} ($count)';
-    return _PageList(
-      padding: const EdgeInsets.all(12),
-      children: [
-        TextField(
-          key: const ValueKey('homework-search'),
-          controller: _search,
-          onChanged: (_) => setState(() {}),
-          textInputAction: TextInputAction.search,
-          decoration: InputDecoration(
-            hintText: context.tr('homeworkSearch'),
-            prefixIcon: const Icon(Icons.search_rounded),
-            suffixIcon: _search.text.isEmpty
-                ? null
-                : IconButton(
-                    icon: const Icon(Icons.clear_rounded),
-                    tooltip: MaterialLocalizations.of(context)
-                        .deleteButtonTooltip,
-                    onPressed: () => setState(_search.clear),
-                  ),
-            filled: true,
-            isDense: true,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide.none,
+    return _Refresh(
+      controller: widget.controller,
+      child: _PageList(
+        padding: const EdgeInsets.all(_Space.page),
+        children: [
+          TextField(
+            key: const ValueKey('homework-search'),
+            controller: _search,
+            onChanged: (_) => setState(() {}),
+            textInputAction: TextInputAction.search,
+            decoration: InputDecoration(
+              hintText: context.tr('homeworkSearch'),
+              prefixIcon: const Icon(Icons.search_rounded),
+              suffixIcon: _search.text.isEmpty
+                  ? null
+                  : IconButton(
+                      icon: const Icon(Icons.clear_rounded),
+                      tooltip: MaterialLocalizations.of(context)
+                          .deleteButtonTooltip,
+                      onPressed: () => setState(_search.clear),
+                    ),
+              filled: true,
+              isDense: true,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: BorderSide.none,
+              ),
             ),
           ),
-        ),
-        const SizedBox(height: 10),
-        SegmentedButton<bool>(
-          key: const ValueKey('homework-filter'),
-          showSelectedIcon: false,
-          segments: [
-            ButtonSegment(
-              value: false,
-              label: Text(counted('homeworkUpcoming', upcoming.length)),
-            ),
-            ButtonSegment(
-              value: true,
-              label: Text(counted('homeworkPast', past.length)),
-            ),
-          ],
-          selected: {_past},
-          onSelectionChanged: (selection) =>
-              setState(() => _past = selection.first),
-        ),
-        if (shown.isEmpty) _Empty(context.tr('noData')),
-        ...rows,
-      ],
+          const SizedBox(height: 12),
+          SegmentedButton<bool>(
+            key: const ValueKey('homework-filter'),
+            showSelectedIcon: false,
+            segments: [
+              ButtonSegment(
+                value: false,
+                label: Text(counted('homeworkUpcoming', upcoming.length)),
+              ),
+              ButtonSegment(
+                value: true,
+                label: Text(counted('homeworkPast', past.length)),
+              ),
+            ],
+            selected: {_past},
+            onSelectionChanged: (selection) =>
+                setState(() => _past = selection.first),
+          ),
+          if (shown.isEmpty) _Empty(context.tr('noData')),
+          ...rows,
+        ],
+      ),
     );
   }
 }
+
+/// When an entry is due: "Today", "Tomorrow", or the weekday and date.
+String _dueLabel(BuildContext context, DateTime date, DateTime now) =>
+    switch (_daysBetween(now, date)) {
+      0 => context.tr('messagesToday'),
+      1 => context.tr('widgetTomorrow'),
+      _ => '${_shortWeekday(context, date)}, ${_shortDate(context, date)}',
+    };
 
 /// Whole days from [from] to [to], unaffected by daylight saving.
 int _daysBetween(DateTime from, DateTime to) => DateTime.utc(
@@ -328,14 +334,7 @@ class _EventTile extends StatelessWidget {
     final colors = theme.colorScheme;
     final days = _daysBetween(now, item.date);
     final soon = days == 0 || days == 1;
-    final locale = Localizations.localeOf(context).toLanguageTag();
-    final when = switch (days) {
-      0 => context.tr('messagesToday'),
-      1 => context.tr('widgetTomorrow'),
-      _ =>
-        '${_shortWeekday(context, item.date)}, '
-            '${DateFormat(item.date.year == now.year ? 'dd.MM' : 'dd.MM.yyyy', locale).format(item.date)}',
-    };
+    final when = _dueLabel(context, item.date, now);
     final (:type, :label, :text) = _eventType(item);
     final tone = type.colors(theme.brightness);
     // Entries of no subject come from the client as "Librus".
@@ -356,18 +355,17 @@ class _EventTile extends StatelessWidget {
     return Card(
       key: ValueKey('event-${item.id}'),
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(12, 12, 14, 12),
+        padding: const EdgeInsets.symmetric(
+          horizontal: _Space.inset,
+          vertical: 12,
+        ),
         child: Row(
           children: [
-            Container(
+            _IconTile(
               key: ValueKey('event-type-${item.id}-${type.name}'),
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: tone.background,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(type.icon, size: 22, color: tone.foreground),
+              icon: type.icon,
+              background: tone.background,
+              foreground: tone.foreground,
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -392,9 +390,7 @@ class _EventTile extends StatelessWidget {
                           title,
                           maxLines: hasSubject ? 1 : 2,
                           overflow: TextOverflow.ellipsis,
-                          style: theme.textTheme.titleSmall?.copyWith(
-                            fontWeight: FontWeight.w800,
-                          ),
+                          style: _rowTitleStyle(context),
                         ),
                       ),
                       // "Wycieczka do Krakowa" needs no "Wycieczka" next to it.
@@ -472,10 +468,7 @@ class _HomeworkCard extends StatelessWidget {
     final days = _daysBetween(now, item.date);
     // Due today or tomorrow: the one to do first.
     final soon = days == 0 || days == 1;
-    final locale = Localizations.localeOf(context).toLanguageTag();
-    final due =
-        '${_shortWeekday(context, item.date)}, '
-        '${DateFormat(item.date.year == now.year ? 'dd.MM' : 'dd.MM.yyyy', locale).format(item.date)}';
+    final due = _dueLabel(context, item.date, now);
     return Card(
       key: ValueKey('homework-${item.id}'),
       clipBehavior: Clip.antiAlias,
@@ -485,7 +478,8 @@ class _HomeworkCard extends StatelessWidget {
           decoration: BoxDecoration(
             border: Border(left: BorderSide(color: palette.accent, width: 4)),
           ),
-          padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
+          // With the stripe, 16 from the card's edge.
+          padding: const EdgeInsetsDirectional.fromSTEB(12, 12, 16, 12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -525,9 +519,7 @@ class _HomeworkCard extends StatelessWidget {
                 _homeworkTitle(context, item),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: theme.textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w700,
-                ),
+                style: _rowTitleStyle(context),
               ),
               if (details.isNotEmpty) ...[
                 const SizedBox(height: 3),
@@ -575,7 +567,7 @@ void _showHomeworkDetails(BuildContext context, SchoolEvent item) {
     builder: (context) => SafeArea(
       child: SingleChildScrollView(
         key: const ValueKey('homework-details-sheet'),
-        padding: const EdgeInsets.fromLTRB(20, 4, 20, 24),
+        padding: const EdgeInsets.fromLTRB(_Space.sheet, 4, _Space.sheet, 24),
         child: SizedBox(
           width: double.infinity,
           child: Column(
@@ -584,7 +576,7 @@ void _showHomeworkDetails(BuildContext context, SchoolEvent item) {
             children: [
               if (item.subject.isNotEmpty)
                 Text(
-                  item.subject,
+                  displaySubject(item.subject, const {}),
                   style: theme.textTheme.titleSmall?.copyWith(
                     color: palette.accent,
                     fontWeight: FontWeight.w800,
@@ -593,9 +585,7 @@ void _showHomeworkDetails(BuildContext context, SchoolEvent item) {
               const SizedBox(height: 6),
               SelectableText(
                 _homeworkTitle(context, item),
-                style: theme.textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.w800,
-                ),
+                style: _sheetTitleStyle(context),
               ),
               const SizedBox(height: 12),
               Row(

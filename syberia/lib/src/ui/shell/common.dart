@@ -86,7 +86,7 @@ class _Empty extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
-            Icons.inbox_outlined,
+            Icons.inbox_rounded,
             size: 48,
             color: Theme.of(context).colorScheme.outline,
           ),
@@ -103,26 +103,225 @@ class _InfoCard extends StatelessWidget {
     required this.icon,
     required this.text,
     required this.color,
+    this.trailing,
+    super.key,
   });
   final IconData icon;
   final String text;
   final Color color;
+  final Widget? trailing;
   @override
   Widget build(BuildContext context) => Card(
     child: ListTile(
       leading: Icon(icon, color: color),
       title: Text(text, style: TextStyle(color: color)),
+      trailing: trailing,
     ),
   );
 }
 
+/// The one spacing scale of the pages, so that they line up with each
+/// other.
+abstract final class _Space {
+  /// From the edge of the screen to a page's content.
+  static const double page = 16;
+
+  /// Between the cards of one list.
+  static const double item = 8;
+
+  /// Between cards that stand on their own.
+  static const double card = 16;
+
+  /// Above a section's heading.
+  static const double section = 24;
+
+  /// From a heading to what it heads.
+  static const double heading = 8;
+
+  /// From a card's edge to its content.
+  static const double inset = 16;
+
+  /// From a sheet's edge to its content.
+  static const double sheet = 20;
+}
+
+/// [items] with the gap of a list between them.
+List<Widget> _spaced(Iterable<Widget> items, [double gap = _Space.item]) => [
+  for (final (index, item) in items.indexed) ...[
+    if (index > 0) SizedBox(height: gap),
+    item,
+  ],
+];
+
+/// The label over a group of a list: a day, a month, a part of the
+/// settings. [accent] draws it in the theme's colour, as the settings do.
+class _GroupLabel extends StatelessWidget {
+  const _GroupLabel(this.text, {this.accent = false, this.top = 0, super.key});
+  final String text;
+  final bool accent;
+  final double top;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Padding(
+      padding: EdgeInsetsDirectional.fromSTEB(12, top, 12, _Space.heading),
+      child: Text(
+        text,
+        style: theme.textTheme.labelLarge?.copyWith(
+          color: accent
+              ? theme.colorScheme.primary
+              : theme.colorScheme.onSurfaceVariant,
+          fontWeight: FontWeight.w800,
+        ),
+      ),
+    );
+  }
+}
+
+/// A button across the whole width: one height for all of them.
+final _wideButton = FilledButton.styleFrom(
+  minimumSize: const Size.fromHeight(48),
+);
+
+/// A sheet's title.
+TextStyle? _sheetTitleStyle(BuildContext context) =>
+    Theme.of(context).textTheme.headlineSmall
+        ?.copyWith(fontWeight: FontWeight.w800);
+
+/// A row's title in a list of cards.
+TextStyle? _rowTitleStyle(BuildContext context) =>
+    Theme.of(context).textTheme.titleSmall
+        ?.copyWith(fontWeight: FontWeight.w700);
+
+/// The quiet line under or beside a row's title: a date, a teacher.
+TextStyle? _metaStyle(BuildContext context) =>
+    Theme.of(context).textTheme.labelMedium?.copyWith(
+      color: Theme.of(context).colorScheme.onSurfaceVariant,
+      fontWeight: FontWeight.w600,
+    );
+
+/// The square in front of a row that stands for a kind of thing; people
+/// get a round avatar instead.
+class _IconTile extends StatelessWidget {
+  const _IconTile({
+    required this.background,
+    required this.foreground,
+    this.icon,
+    this.label,
+    super.key,
+  });
+  final Color background;
+  final Color foreground;
+  final IconData? icon;
+  final String? label;
+
+  static const double size = 40;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    width: size,
+    height: size,
+    alignment: Alignment.center,
+    decoration: BoxDecoration(
+      color: background,
+      borderRadius: BorderRadius.circular(12),
+    ),
+    child: icon != null
+        ? Icon(icon, size: 22, color: foreground)
+        : Text(
+            label ?? '',
+            maxLines: 1,
+            style: Theme.of(context).textTheme.labelLarge
+                ?.copyWith(color: foreground, fontWeight: FontWeight.w800),
+          ),
+  );
+}
+
+/// Asks before something that cannot be undone. True once confirmed.
+Future<bool> _confirm(
+  BuildContext context, {
+  required String title,
+  required String message,
+  required String action,
+  Key? actionKey,
+}) async {
+  final confirmed = await showAppDialog<bool>(
+    context: context,
+    builder: (dialogContext) {
+      final theme = Theme.of(dialogContext);
+      return AppDialog(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(24, 22, 16, 12),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsetsDirectional.only(end: 8),
+                child: Text(
+                  title,
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              Padding(
+                padding: const EdgeInsetsDirectional.only(end: 8),
+                child: Text(
+                  message,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Wrap(
+                alignment: WrapAlignment.end,
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(dialogContext, false),
+                    child: Text(
+                      MaterialLocalizations.of(dialogContext).cancelButtonLabel,
+                    ),
+                  ),
+                  FilledButton(
+                    key: actionKey,
+                    style: FilledButton.styleFrom(
+                      backgroundColor: theme.colorScheme.error,
+                      foregroundColor: theme.colorScheme.onError,
+                    ),
+                    onPressed: () => Navigator.pop(dialogContext, true),
+                    child: Text(action),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+  return confirmed ?? false;
+}
+
 class _Refresh extends StatelessWidget {
-  const _Refresh({required this.controller, required this.child});
+  const _Refresh({
+    required this.controller,
+    required this.child,
+    this.onRefresh,
+  });
   final AppController controller;
   final Widget child;
+
+  /// What a pull does, when not a sync of everything.
+  final Future<void> Function()? onRefresh;
   @override
   Widget build(BuildContext context) => RefreshIndicator.adaptive(
-    onRefresh: controller.sync,
+    onRefresh: onRefresh ?? controller.sync,
     // Under a glass top bar the indicator would otherwise appear behind it.
     edgeOffset: _chromeInsets(context).top,
     child: child,
@@ -205,6 +404,13 @@ bool _sameDay(DateTime a, DateTime b) =>
     a.year == b.year && a.month == b.month && a.day == b.day;
 
 String _date(DateTime value) => DateFormat('dd.MM.yyyy').format(value);
+
+/// A date in a list: the day and month, and the year only when it is not
+/// this one.
+String _shortDate(BuildContext context, DateTime value) => DateFormat(
+  value.year == DateTime.now().year ? 'dd.MM' : 'dd.MM.yyyy',
+  Localizations.localeOf(context).toLanguageTag(),
+).format(value);
 
 String _percent(BuildContext context, double value) =>
     NumberFormat.decimalPercentPattern(

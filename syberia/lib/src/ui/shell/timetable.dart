@@ -13,28 +13,29 @@ Future<void> _showTimetableSettings(
     builder: (context, _) => SafeArea(
       child: SingleChildScrollView(
         key: const ValueKey('timetable-settings-sheet'),
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
+        padding: const EdgeInsets.fromLTRB(_Space.sheet, 0, _Space.sheet, 24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
               context.tr('timetableStyle'),
-              style: Theme.of(context).textTheme.titleLarge,
+              style: _sheetTitleStyle(context),
             ),
             const SizedBox(height: 12),
             SegmentedButton<TimetableView>(
               key: const ValueKey('settings-timetable-style'),
+              showSelectedIcon: false,
               segments: [
                 ButtonSegment(
                   value: TimetableView.timeline,
                   label: Text(context.tr('timetableStyleClassic')),
-                  icon: const Icon(Icons.view_timeline_outlined),
+                  icon: const Icon(Icons.view_timeline_rounded),
                 ),
                 ButtonSegment(
                   value: TimetableView.list,
                   label: Text(context.tr('timetableStyleCompact')),
-                  icon: const Icon(Icons.view_agenda_outlined),
+                  icon: const Icon(Icons.view_agenda_rounded),
                 ),
               ],
               selected: {controller.timetableView},
@@ -655,6 +656,7 @@ class _TimetableCalendarDialogState extends State<_TimetableCalendarDialog> {
                           )
                         : null,
                     icon: const Icon(Icons.chevron_left_rounded),
+                    tooltip: localizations.previousMonthTooltip,
                   ),
                   Expanded(
                     child: Text(
@@ -670,6 +672,7 @@ class _TimetableCalendarDialogState extends State<_TimetableCalendarDialog> {
                           )
                         : null,
                     icon: const Icon(Icons.chevron_right_rounded),
+                    tooltip: localizations.nextMonthTooltip,
                   ),
                 ],
               ),
@@ -716,12 +719,13 @@ class _TimetableCalendarDialogState extends State<_TimetableCalendarDialog> {
                     key: ValueKey('timetable-day-${day.toIso8601String()}'),
                     borderRadius: BorderRadius.circular(12),
                     onTap: enabled ? () => Navigator.pop(context, day) : null,
+                    // Marked as in the strip of days above it.
                     child: Container(
                       decoration: BoxDecoration(
-                        color: selected ? colors.primaryContainer : null,
+                        color: selected ? colors.primary : null,
                         borderRadius: BorderRadius.circular(12),
                         border: today && !selected
-                            ? Border.all(color: colors.outline)
+                            ? Border.all(color: colors.primary, width: 1.5)
                             : null,
                       ),
                       child: Stack(
@@ -730,9 +734,11 @@ class _TimetableCalendarDialogState extends State<_TimetableCalendarDialog> {
                           Text(
                             '$dayNumber',
                             style: TextStyle(
-                              color: enabled
+                              color: selected
+                                  ? colors.onPrimary
+                                  : enabled
                                   ? null
-                                  : colors.onSurface.withAlpha(90),
+                                  : colors.onSurface.withValues(alpha: 0.38),
                               fontWeight: selected || hasLessons
                                   ? FontWeight.w800
                                   : FontWeight.w500,
@@ -754,7 +760,9 @@ class _TimetableCalendarDialogState extends State<_TimetableCalendarDialog> {
                                 width: 5,
                                 height: 5,
                                 decoration: BoxDecoration(
-                                  color: colors.primary,
+                                  color: selected
+                                      ? colors.onPrimary
+                                      : colors.primary,
                                   shape: BoxShape.circle,
                                 ),
                               ),

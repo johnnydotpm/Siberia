@@ -286,7 +286,7 @@ class _TimelineLessonCard extends StatelessWidget {
         child: Container(
           decoration: BoxDecoration(
             color: palette.background,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(14),
             border: current
                 ? Border.all(color: palette.accent, width: 2)
                 : null,
@@ -527,7 +527,8 @@ class _TimetableRow extends StatelessWidget {
       child: Material(
         color: current
             ? palette.background.withValues(alpha: 0.6)
-            : theme.colorScheme.surfaceContainerLow,
+            // The cards' colour, as on every other page.
+            : theme.cardTheme.color ?? theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(14),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
@@ -588,8 +589,7 @@ class _TimetableRow extends StatelessWidget {
                         _SubjectScope.of(context, lesson.subject),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: theme.textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.w800,
+                        style: _rowTitleStyle(context)?.copyWith(
                           decoration: lesson.cancelled
                               ? TextDecoration.lineThrough
                               : null,
@@ -671,7 +671,7 @@ void _showLessonDetails(BuildContext context, _LessonBlock block) {
     builder: (context) => SafeArea(
       child: SingleChildScrollView(
         key: const ValueKey('lesson-details-sheet'),
-        padding: const EdgeInsets.fromLTRB(20, 4, 20, 24),
+        padding: const EdgeInsets.fromLTRB(_Space.sheet, 4, _Space.sheet, 24),
         child: SizedBox(
           width: double.infinity,
           child: Column(
@@ -679,12 +679,11 @@ void _showLessonDetails(BuildContext context, _LessonBlock block) {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                lesson.subject,
-                style: Theme.of(context).textTheme.headlineSmall
-                    ?.copyWith(fontWeight: FontWeight.w800),
+                displaySubject(lesson.subject, const {}),
+                style: _sheetTitleStyle(context),
               ),
               const SizedBox(height: 10),
-              Text('${_time(lesson.start)} – ${_time(lesson.end)}'),
+              Text('${_time(lesson.start)}–${_time(lesson.end)}'),
               if (details.isNotEmpty) ...[
                 const SizedBox(height: 6),
                 Text(details),
