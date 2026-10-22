@@ -13,7 +13,7 @@ SiberiaGB is a fully functional, cross-platform Librus client written using the 
 - Schedule, calendar, and upcoming events
 - Homework grouped by due date, with search
 - A Today screen with the current and next lesson and blocks you can hide and reorder
-- A "Next lesson" home screen widget (Android and iOS) with settings for each widget
+- A "Next lesson" home screen widget (Android and iOS), with per-widget settings on Android
 - Full messaging support
 - Announcements
 - Attendance with an attendance chart

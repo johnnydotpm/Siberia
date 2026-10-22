@@ -13,7 +13,7 @@ SiberiaGB to w pełni funkcjonalny, wieloplatformowy klient Librus napisany w fr
 - Terminarz, kalendarz oraz nadchodzące wydarzenia
 - Lista zadań domowych pogrupowana według terminu, z wyszukiwaniem
 - Ekran „Dzisiaj” z bieżącą i następną lekcją oraz blokami, które można ukrywać i przestawiać
-- Widżet „Następna lekcja” na ekranie głównym (Android i iOS) z osobnymi ustawieniami dla każdego widżetu
+- Widżet „Następna lekcja” na ekranie głównym (Android i iOS), z osobnymi ustawieniami dla każdego widżetu na Androidzie
 - Pełna obsługa wiadomości
 - Ogłoszenia
 - Frekwencja z wykresem obecności
