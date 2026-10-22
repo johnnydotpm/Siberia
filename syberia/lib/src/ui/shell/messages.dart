@@ -256,10 +256,11 @@ class _MessagesState extends State<_Messages> {
         ),
       ],
       if (loadingSent && all.isEmpty)
+        // The rows to come, in place of a spinner.
         const Padding(
           key: ValueKey('sent-loading'),
-          padding: EdgeInsets.all(32),
-          child: Center(child: CircularProgressIndicator()),
+          padding: EdgeInsets.only(top: _Space.card),
+          child: _MessageRowsSkeleton(),
         )
       else if (messages.isEmpty && error == null)
         if (query.isNotEmpty)
@@ -464,16 +465,22 @@ class _MessageTile extends StatelessWidget {
                         ),
                       ),
                     ),
-                    if (unread)
-                      Container(
-                        key: ValueKey('message-unread-${item.id}'),
-                        width: 9,
-                        height: 9,
-                        margin: const EdgeInsets.only(left: 8, top: 6),
-                        decoration: BoxDecoration(
-                          color: colors.primary,
-                          shape: BoxShape.circle,
-                        ),
+                    // Read, the dot fades away rather than vanish.
+                    if (!item.sent)
+                      AnimatedSwitcher(
+                        duration: _Motion.list,
+                        child: unread
+                            ? Container(
+                                key: ValueKey('message-unread-${item.id}'),
+                                width: 9,
+                                height: 9,
+                                margin: const EdgeInsets.only(left: 8, top: 6),
+                                decoration: BoxDecoration(
+                                  color: colors.primary,
+                                  shape: BoxShape.circle,
+                                ),
+                              )
+                            : const SizedBox.shrink(),
                       ),
                     if (item.sent && item.recipientRead != null)
                       Padding(
@@ -532,10 +539,11 @@ class _MessageTile extends StatelessWidget {
               const Divider(height: 1, indent: 64),
             ],
           );
-    if (!unread) return tile;
+    if (item.sent) return tile;
+    // Kept once read, only no longer swiped, so the row changes in place.
     return Dismissible(
       key: ValueKey('message-${item.id}'),
-      direction: DismissDirection.startToEnd,
+      direction: unread ? DismissDirection.startToEnd : DismissDirection.none,
       confirmDismiss: (_) => _markRead(context),
       background: Container(
         alignment: AlignmentDirectional.centerStart,
@@ -769,6 +777,60 @@ class _MessageDetailSheetState extends State<_MessageDetailSheet> {
     }
   }
 
+  /// While the text loads: what the list knows already, the subject and
+  /// who it is from, and grey lines where the text will be.
+  Widget _loadingMessage(BuildContext context) {
+    final message = widget.message;
+    return ListView(
+      key: const ValueKey('message-loading'),
+      primary: false,
+      padding: const EdgeInsets.all(20),
+      children: [
+        Text(
+          message.subject,
+          style: Theme.of(context).textTheme.headlineSmall
+              ?.copyWith(fontWeight: FontWeight.w800),
+        ),
+        const SizedBox(height: 12),
+        if (message.sent)
+          const _Skeleton(
+            child: Row(
+              children: [
+                _Bone.circle(36),
+                SizedBox(width: 12),
+                _Bone(width: 140, height: 13),
+              ],
+            ),
+          )
+        else
+          Row(
+            children: [
+              _SenderAvatar(message.sender),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      message.sender,
+                      style: const TextStyle(fontWeight: FontWeight.w700),
+                    ),
+                    Text(
+                      DateFormat('dd.MM.yyyy, HH:mm')
+                          .format(message.receivedAt),
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        const Divider(height: 32),
+        const _TextSkeleton(),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) => FractionallySizedBox(
     heightFactor: 0.92,
@@ -799,7 +861,7 @@ class _MessageDetailSheetState extends State<_MessageDetailSheet> {
             future: content,
             builder: (context, snapshot) {
               if (snapshot.connectionState != ConnectionState.done) {
-                return const Center(child: CircularProgressIndicator());
+                return _loadingMessage(context);
               }
               if (snapshot.hasError) {
                 return Padding(

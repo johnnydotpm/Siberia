@@ -78,7 +78,12 @@ class _Heading extends StatelessWidget {
 /// Nothing to show, said the way the system does: the page's own symbol
 /// and what is missing, rather than a generic "no data".
 class _Empty extends StatelessWidget {
-  const _Empty(this.text, {this.icon = Icons.inbox_rounded, this.color});
+  const _Empty(
+    this.text, {
+    this.icon = Icons.inbox_rounded,
+    this.color,
+    super.key,
+  });
   final String text;
   final IconData icon;
 

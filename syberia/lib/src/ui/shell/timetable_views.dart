@@ -1,13 +1,30 @@
 part of '../app_shell.dart';
 
+/// The lesson to open a day at: the one on now, or else the next one.
+_LessonBlock? _focusBlock(
+  List<_LessonBlock> blocks,
+  _LessonBlock? current,
+  DateTime now,
+) =>
+    current ??
+    blocks
+        .where(
+          (block) => !block.lesson.cancelled && block.lesson.start.isAfter(now),
+        )
+        .firstOrNull;
+
 class _TimetableTimeline extends StatelessWidget {
   const _TimetableTimeline(
     this.lessons, {
     required this.mergeLessons,
     required this.showBreaks,
+    this.focusKey,
   });
   final bool mergeLessons;
   final bool showBreaks;
+
+  /// Given to the lesson on now, or else the next one, to open the day at.
+  final GlobalKey? focusKey;
 
   static const _pixelsPerMinute = 1.75;
   static const _axisWidth = 62.0;
@@ -52,6 +69,7 @@ class _TimetableTimeline extends StatelessWidget {
     final height = math.max(60.0, offset(last));
     final now = DateTime.now();
     final current = _currentBlock(blocks, now);
+    final focus = _focusBlock(blocks, current, now);
     final currentBreak = current == null ? _currentBreak(blocks, now) : null;
     final currentTop = (current != null || currentBreak != null)
         ? offset(now)
@@ -80,12 +98,15 @@ class _TimetableTimeline extends StatelessWidget {
               left: _axisWidth,
               right: 0,
               height: blockHeight(block),
-              child: _TimelineLessonCard(
-                key: ValueKey('timeline-lesson-${block.lesson.id}'),
-                block: block,
-                hue: colors[block.lesson.subject] ?? 0,
-                current: identical(block, current),
-                now: now,
+              child: KeyedSubtree(
+                key: identical(block, focus) ? focusKey : null,
+                child: _TimelineLessonCard(
+                  key: ValueKey('timeline-lesson-${block.lesson.id}'),
+                  block: block,
+                  hue: colors[block.lesson.subject] ?? 0,
+                  current: identical(block, current),
+                  now: now,
+                ),
               ),
             ),
           ],
@@ -449,9 +470,13 @@ class _TimetableList extends StatelessWidget {
     this.lessons, {
     required this.mergeLessons,
     required this.showBreaks,
+    this.focusKey,
   });
   final bool mergeLessons;
   final bool showBreaks;
+
+  /// Given to the lesson on now, or else the next one, to open the day at.
+  final GlobalKey? focusKey;
   final List<Lesson> lessons;
 
   @override
@@ -459,6 +484,7 @@ class _TimetableList extends StatelessWidget {
     final blocks = _lessonBlocks(lessons, merge: mergeLessons);
     final now = DateTime.now();
     final current = _currentBlock(blocks, now);
+    final focus = _focusBlock(blocks, current, now);
     final colors = _SubjectScope.colorsOf(context)
         .forDay(blocks.map((block) => block.lesson.subject));
     return Column(
@@ -489,12 +515,15 @@ class _TimetableList extends StatelessWidget {
               )
             else
               const SizedBox(height: 4),
-          _TimetableRow(
-            key: ValueKey('timetable-row-${blocks[index].lesson.id}'),
-            block: blocks[index],
-            hue: colors[blocks[index].lesson.subject] ?? 0,
-            current: identical(blocks[index], current),
-            now: now,
+          KeyedSubtree(
+            key: identical(blocks[index], focus) ? focusKey : null,
+            child: _TimetableRow(
+              key: ValueKey('timetable-row-${blocks[index].lesson.id}'),
+              block: blocks[index],
+              hue: colors[blocks[index].lesson.subject] ?? 0,
+              current: identical(blocks[index], current),
+              now: now,
+            ),
           ),
         ],
       ],

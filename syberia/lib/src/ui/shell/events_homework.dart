@@ -138,7 +138,8 @@ class _HomeworkState extends State<_Homework> {
     String? lastSection;
     for (final item in shown) {
       final section = _section(item.date, today);
-      if (section != lastSection) {
+      final first = section != lastSection;
+      if (first) {
         rows.add(
           _GroupLabel(
             section,
@@ -147,10 +148,18 @@ class _HomeworkState extends State<_Homework> {
           ),
         );
         lastSection = section;
-      } else {
-        rows.add(const SizedBox(height: _Space.item));
       }
-      rows.add(_HomeworkCard(item, now: now));
+      rows.add(
+        AnimatedPadding(
+          key: ValueKey('homework-row-${item.id}'),
+          duration: _Motion.list,
+          curve: _Motion.curve,
+          // The first of its group sits under the label; the next one under
+          // it slides up when it goes.
+          padding: EdgeInsets.only(top: first ? 0 : _Space.item),
+          child: _HomeworkCard(item, now: now),
+        ),
+      );
     }
     if (done.isNotEmpty) {
       rows.add(
@@ -174,7 +183,8 @@ class _HomeworkState extends State<_Homework> {
                 ),
                 child: AnimatedRotation(
                   turns: _showDone ? 0.5 : 0,
-                  duration: const Duration(milliseconds: 200),
+                  duration: _Motion.list,
+                  curve: _Motion.curve,
                   child: Icon(
                     Icons.expand_more_rounded,
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -186,9 +196,42 @@ class _HomeworkState extends State<_Homework> {
         ),
       );
       if (_showDone) {
-        rows.addAll(_spaced(done.map((item) => _HomeworkCard(item, now: now))));
+        for (final (index, item) in done.indexed) {
+          rows.add(
+            AnimatedPadding(
+              // Apart from its row above, so one moves out and one in.
+              key: ValueKey('homework-done-row-${item.id}'),
+              duration: _Motion.list,
+              curve: _Motion.curve,
+              padding: EdgeInsets.only(top: index == 0 ? 0 : _Space.item),
+              child: _HomeworkCard(item, now: now),
+            ),
+          );
+        }
       }
     }
+    final empty = shown.isEmpty
+        ? query.isNotEmpty && done.isEmpty
+              ? _Empty(
+                  key: const ValueKey('homework-empty-search'),
+                  context.tr('noResults'),
+                  icon: Icons.search_off_rounded,
+                )
+              : done.isNotEmpty
+              // Everything due is done: said with a check, as a good thing.
+              ? _Empty(
+                  key: const ValueKey('homework-empty-done'),
+                  context.tr('homeworkAllDone'),
+                  icon: Icons.task_alt_rounded,
+                  color: Theme.of(context).colorScheme.primary,
+                )
+              : _Empty(
+                  key: const ValueKey('homework-empty'),
+                  context.tr('emptyHomework'),
+                  icon: Icons.assignment_rounded,
+                )
+        : null;
+    final list = [?empty, ...rows];
 
     String counted(String key, int count) =>
         count == 0 ? context.tr(key) : '${context.tr(key)} ($count)';
@@ -241,22 +284,13 @@ class _HomeworkState extends State<_Homework> {
               setState(() => _past = selection.first);
             },
           ),
-          if (shown.isEmpty)
-            if (query.isNotEmpty && done.isEmpty)
-              _Empty(context.tr('noResults'), icon: Icons.search_off_rounded)
-            else if (done.isNotEmpty)
-              // Everything due is done: said with a check, as a good thing.
-              _Empty(
-                context.tr('homeworkAllDone'),
-                icon: Icons.task_alt_rounded,
-                color: Theme.of(context).colorScheme.primary,
-              )
-            else
-              _Empty(
-                context.tr('emptyHomework'),
-                icon: Icons.assignment_rounded,
-              ),
-          ...rows,
+          // Past work is a long list that only changes with a sync, so it
+          // is built as it scrolls in. What is to do comes and goes smoothly;
+          // a search or the other list shows at once, as in Reminders.
+          if (_past)
+            ...list
+          else
+            _AnimatedColumn(key: ValueKey(query), children: list),
         ],
       ),
     );

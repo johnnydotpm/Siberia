@@ -99,7 +99,11 @@ class _TodayState extends State<_Today> {
     final locale = Localizations.localeOf(context).toLanguageTag();
     final blocks = <Widget>[
       for (final block in controller.todayLayout.visible)
-        ?_todayBlock(context, block, now),
+        if (_todayBlock(context, block, now) case final child?)
+          KeyedSubtree(
+            key: ValueKey('today-block-${block.name}'),
+            child: child,
+          ),
     ];
     return _Refresh(
       controller: controller,
@@ -117,18 +121,22 @@ class _TodayState extends State<_Today> {
           if (controller.snapshot.lastSync.millisecondsSinceEpoch != 0)
             _LastSync(controller, now: now),
           const SizedBox(height: _Space.card),
-          if (controller.error != null) ...[
-            _InfoCard(
-              icon: Icons.error_outline_rounded,
-              text: context.trError(controller.error!),
-              color: Theme.of(context).colorScheme.error,
-            ),
-            const SizedBox(height: _Space.card),
-          ],
-          for (final (index, block) in blocks.indexed) ...[
-            if (index > 0) const SizedBox(height: _Space.section),
-            block,
-          ],
+          // What a sync brings comes and goes smoothly.
+          _AnimatedColumn(
+            children: [
+              if (controller.error != null)
+                Padding(
+                  key: const ValueKey('today-error'),
+                  padding: const EdgeInsets.only(bottom: _Space.card),
+                  child: _InfoCard(
+                    icon: Icons.error_outline_rounded,
+                    text: context.trError(controller.error!),
+                    color: Theme.of(context).colorScheme.error,
+                  ),
+                ),
+            ],
+          ),
+          _AnimatedColumn(spacing: _Space.section, children: blocks),
         ],
       ),
     );
@@ -148,13 +156,11 @@ class _TodayState extends State<_Today> {
         child,
       ],
     );
-    Widget spaced(Iterable<Widget> items) => Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+    Widget spaced(Iterable<(String, Widget)> items) => _AnimatedColumn(
+      spacing: _Space.item,
       children: [
-        for (final (index, item) in items.indexed) ...[
-          if (index > 0) const SizedBox(height: _Space.item),
-          item,
-        ],
+        for (final (id, item) in items)
+          KeyedSubtree(key: ValueKey(id), child: item),
       ],
     );
     switch (block) {
@@ -200,7 +206,11 @@ class _TodayState extends State<_Today> {
         return section(
           context.tr('homework'),
           4,
-          spaced(homework.take(3).map((item) => _HomeworkCard(item, now: now))),
+          spaced(
+            homework
+                .take(3)
+                .map((item) => (item.id, _HomeworkCard(item, now: now))),
+          ),
           key: const ValueKey('today-homework'),
         );
       case TodayBlock.events:
@@ -217,7 +227,7 @@ class _TodayState extends State<_Today> {
         return section(
           context.tr('todayExams'),
           3,
-          spaced(events.take(3).map(_EventTile.new)),
+          spaced(events.take(3).map((item) => (item.id, _EventTile(item)))),
           key: const ValueKey('today-events'),
         );
       case TodayBlock.messages:
@@ -231,11 +241,14 @@ class _TodayState extends State<_Today> {
             unread
                 .take(2)
                 .map(
-                  (item) => _MessageTile(
-                    controller,
-                    item,
-                    style: MessageListStyle.cards,
-                    now: now,
+                  (item) => (
+                    item.id,
+                    _MessageTile(
+                      controller,
+                      item,
+                      style: MessageListStyle.cards,
+                      now: now,
+                    ),
                   ),
                 ),
           ),

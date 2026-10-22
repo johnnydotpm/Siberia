@@ -121,11 +121,10 @@ class _ComposeMessageSheetState extends State<_ComposeMessageSheet> {
                     future: recipients,
                     builder: (context, snapshot) {
                       if (snapshot.connectionState != ConnectionState.done) {
-                        return const Center(
-                          child: Padding(
-                            padding: EdgeInsets.all(24),
-                            child: CircularProgressIndicator(),
-                          ),
+                        // Where the recipient field will be.
+                        return const _Skeleton(
+                          key: ValueKey('recipients-loading'),
+                          child: _Bone(height: 56, radius: 12),
                         );
                       }
                       if (snapshot.hasError) {

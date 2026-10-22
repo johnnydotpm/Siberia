@@ -79,6 +79,29 @@ class _TimetableState extends State<_Timetable> {
   bool loading = false;
   Timer? _clock;
 
+  /// The pages are days, counted from [_anchor] at page [_anchorPage]:
+  /// weekdays, and weekend days with lessons, as in the strip.
+  static const _anchorPage = 100000;
+  DateTime _anchor = DateTime(2000);
+  Set<DateTime> _weekendDays = const {};
+  PageController? _pages;
+
+  /// Changes with the anchor, for pages counted afresh.
+  int _generation = 0;
+
+  /// While the pages move to a day picked in the strip, the days they pass
+  /// are not picked on the way.
+  bool _moving = false;
+
+  /// Which way the last change of week went: 1 later, -1 earlier.
+  int _weekStep = 1;
+
+  /// Weeks, by their Monday, on their way, and those that came back with
+  /// no lessons, as in the holidays. A week with lessons is known by them,
+  /// so one a sync leaves out is loaded again.
+  final _loadingWeeks = <DateTime>{};
+  final _emptyWeeks = <DateTime>{};
+
   @override
   void initState() {
     super.initState();
@@ -90,10 +113,14 @@ class _TimetableState extends State<_Timetable> {
   @override
   void dispose() {
     _clock?.cancel();
+    _pages?.dispose();
     super.dispose();
   }
 
   DateTime _day(DateTime value) => DateTime(value.year, value.month, value.day);
+
+  DateTime _mondayOf(DateTime day) =>
+      DateTime(day.year, day.month, day.day - day.weekday + 1);
 
   DateTime _nearestDayWithLessons(
     DateTime requested,
@@ -104,6 +131,101 @@ class _TimetableState extends State<_Timetable> {
         lessonDays.map(_day).where((day) => !day.isBefore(normalized)).toList()
           ..sort();
     return candidates.isEmpty ? normalized : candidates.first;
+  }
+
+  bool _schoolDay(DateTime day) =>
+      day.weekday <= 5 || _weekendDays.contains(day);
+
+  /// The next day of the strip after [day], or before it.
+  DateTime _step(DateTime day, int step) {
+    var next = day;
+    do {
+      next = DateTime(next.year, next.month, next.day + step);
+    } while (!_schoolDay(next));
+    return next;
+  }
+
+  DateTime _dayAt(int page) {
+    final steps = page - _anchorPage;
+    var day = _anchor;
+    for (var index = 0; index < steps.abs(); index++) {
+      day = _step(day, steps.sign);
+    }
+    return day;
+  }
+
+  int _pageOf(DateTime day) {
+    var page = _anchorPage;
+    if (day.isAfter(_anchor)) {
+      var next = _step(_anchor, 1);
+      while (!next.isAfter(day)) {
+        page++;
+        next = _step(next, 1);
+      }
+    } else {
+      var next = _step(_anchor, -1);
+      while (!next.isBefore(day)) {
+        page--;
+        next = _step(next, -1);
+      }
+    }
+    return page;
+  }
+
+  /// Counts the pages from [day] afresh, which shows it at once.
+  void _anchorAt(DateTime day) {
+    final old = _pages;
+    _anchor = day;
+    _pages = PageController(initialPage: _anchorPage);
+    _generation++;
+    if (old != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => old.dispose());
+    }
+  }
+
+  /// Picks [day], noting which way the week went for the strip.
+  void _select(DateTime day) {
+    final before = selectedDay;
+    if (before != null && _mondayOf(before) != _mondayOf(day)) {
+      _weekStep = day.isAfter(before) ? 1 : -1;
+    }
+    selectedDay = day;
+  }
+
+  /// A day swiped to.
+  void _pageChanged(int page) {
+    if (_moving) return;
+    final day = _dayAt(page);
+    setState(() => _select(day));
+    _loadWeekOf(day);
+  }
+
+  /// Loads the week of [day] when nothing of it is here yet, as when the
+  /// days are swiped back past Monday.
+  Future<void> _loadWeekOf(DateTime day) async {
+    final monday = _mondayOf(day);
+    final weekEnd = DateTime(monday.year, monday.month, monday.day + 7);
+    if (_loadingWeeks.contains(monday) || _emptyWeeks.contains(monday)) {
+      return;
+    }
+    final known = widget.controller.snapshot.lessons.any(
+      (lesson) =>
+          !lesson.start.isBefore(monday) && lesson.start.isBefore(weekEnd),
+    );
+    if (known) return;
+    setState(() => _loadingWeeks.add(monday));
+    try {
+      final lessons = await widget.controller.fetchTimetableWeek(monday);
+      if (lessons.isEmpty) _emptyWeeks.add(monday);
+    } on Object {
+      if (mounted && _mondayOf(selectedDay!) == monday) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(context.tr('timetableLoadFailed'))),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _loadingWeeks.remove(monday));
+    }
   }
 
   Future<void> _pickDay() async {
@@ -121,9 +243,12 @@ class _TimetableState extends State<_Timetable> {
       ),
     );
     if (picked == null || !mounted) return;
+    final week = _mondayOf(_day(picked));
     setState(() {
-      selectedDay = _day(picked);
+      _select(_day(picked));
+      _anchorAt(_day(picked));
       loading = true;
+      _loadingWeeks.add(week);
     });
     try {
       var probe = picked;
@@ -140,9 +265,13 @@ class _TimetableState extends State<_Timetable> {
         final availableDays = widget.controller.snapshot.lessons.map(
           (lesson) => _day(lesson.start),
         );
-        setState(() {
-          selectedDay = _nearestDayWithLessons(picked, availableDays);
-        });
+        final day = _nearestDayWithLessons(picked, availableDays);
+        if (day != selectedDay) {
+          setState(() {
+            _select(day);
+            _anchorAt(day);
+          });
+        }
       }
     } on Object {
       if (mounted) {
@@ -151,15 +280,42 @@ class _TimetableState extends State<_Timetable> {
         );
       }
     } finally {
-      if (mounted) setState(() => loading = false);
+      if (mounted) {
+        setState(() {
+          loading = false;
+          _loadingWeeks.remove(week);
+        });
+      }
     }
   }
 
   void _selectFromStrip(DateTime requested, Iterable<DateTime> lessonDays) {
     HapticFeedback.selectionClick();
-    setState(() {
-      selectedDay = _nearestDayWithLessons(requested, lessonDays);
-    });
+    _goTo(_nearestDayWithLessons(requested, lessonDays));
+  }
+
+  /// Slides the pages to [day], or shows it at once when it is far.
+  Future<void> _goTo(DateTime day) async {
+    final pages = _pages;
+    setState(() => _select(day));
+    if (pages == null || !pages.hasClients) return;
+    final from = pages.page?.round() ?? _anchorPage;
+    final to = _pageOf(day);
+    if (to == from) return;
+    if ((to - from).abs() > 5 || _reduceMotion(context)) {
+      setState(() => _anchorAt(day));
+      return;
+    }
+    _moving = true;
+    try {
+      await pages.animateToPage(
+        to,
+        duration: _Motion.page,
+        curve: Curves.easeOutCubic,
+      );
+    } finally {
+      _moving = false;
+    }
   }
 
   @override
@@ -171,12 +327,17 @@ class _TimetableState extends State<_Timetable> {
     }
     final now = DateTime.now();
     selectedDay ??= _nearestDayWithLessons(now, groups.keys);
-    final anchor = selectedDay!;
-    final monday = DateTime(
-      anchor.year,
-      anchor.month,
-      anchor.day,
-    ).subtract(Duration(days: anchor.weekday - 1));
+    final weekendDays = {
+      for (final day in groups.keys)
+        if (day.weekday > 5) day,
+    };
+    // Days come in as weeks load; with a weekend day among them, the pages
+    // are counted afresh from the day on screen.
+    if (_pages == null || !setEquals(weekendDays, _weekendDays)) {
+      _weekendDays = weekendDays;
+      _anchorAt(selectedDay!);
+    }
+    final monday = _mondayOf(selectedDay!);
     final days = List.generate(5, (index) => monday.add(Duration(days: index)));
     final weekEnd = monday.add(const Duration(days: 7));
     for (final day in groups.keys.where(
@@ -185,37 +346,32 @@ class _TimetableState extends State<_Timetable> {
     )) {
       if (!days.any((item) => _sameDay(item, day))) days.add(day);
     }
-    final lessons = groups[selectedDay] ?? const <Lesson>[];
-    final dayEvents = widget.controller.snapshot.events
-        .where(
-          (event) =>
-              event.kind == EventKind.exam &&
-              _sameDay(event.date, selectedDay!),
-        )
-        .toList(growable: false);
-    final dayOff = _freeDayOn(
-      widget.controller.snapshot.freeDays,
-      selectedDay!,
-    );
-    final mergeLessons = widget.controller.mergeTimetableLessons;
-    final showBreaks = widget.controller.showTimetableBreaks;
-    final placed = _placeTests(
-      _lessonBlocks(lessons, merge: mergeLessons),
-      dayEvents,
-    );
     final eventDays = {
       for (final event in widget.controller.snapshot.events) _day(event.date),
     };
     final today = _day(now);
-    final view = widget.controller.timetableView;
-    final locale = Localizations.localeOf(context).toLanguageTag();
-    final title = _capitalize(
-      (selectedDay!.year == now.year
-              ? DateFormat.MMMMEEEEd(locale)
-              : DateFormat.yMMMMEEEEd(locale))
-          .format(selectedDay!),
-    );
     final insets = _chromeInsets(context);
+    final strip = Row(
+      key: ValueKey(monday),
+      children: [
+        for (final (index, day) in days.indexed) ...[
+          if (index > 0) const SizedBox(width: 6),
+          Expanded(
+            child: _DayChip(
+              key: ValueKey(
+                'timetable-day-${DateFormat('yyyy-MM-dd').format(day)}',
+              ),
+              day: day,
+              selected: _sameDay(day, selectedDay!),
+              today: _sameDay(day, today),
+              hasLessons: groups.containsKey(day),
+              hasEvents: eventDays.contains(day),
+              onTap: () => _selectFromStrip(day, groups.keys),
+            ),
+          ),
+        ],
+      ],
+    );
     return Column(
       children: [
         SizedBox(height: insets.top),
@@ -234,105 +390,227 @@ class _TimetableState extends State<_Timetable> {
                 tooltip: context.tr('chooseDate'),
               ),
               Expanded(
-                child: Row(
-                  children: [
-                    for (final (index, day) in days.indexed) ...[
-                      if (index > 0) const SizedBox(width: 6),
-                      Expanded(
-                        child: _DayChip(
-                          key: ValueKey(
-                            'timetable-day-${DateFormat('yyyy-MM-dd').format(day)}',
-                          ),
-                          day: day,
-                          selected: _sameDay(day, selectedDay!),
-                          today: _sameDay(day, today),
-                          hasLessons: groups.containsKey(day),
-                          hasEvents: eventDays.contains(day),
-                          onTap: () => _selectFromStrip(day, groups.keys),
-                        ),
-                      ),
-                    ],
-                  ],
+                // Another week slides in from the side it lies on.
+                child: ClipRect(
+                  child: AnimatedSwitcher(
+                    duration: _Motion.page,
+                    switchInCurve: Curves.easeOutCubic,
+                    switchOutCurve: Curves.easeOutCubic,
+                    transitionBuilder: (child, animation) {
+                      final incoming = child.key == ValueKey(monday);
+                      final from = (incoming ? _weekStep : -_weekStep)
+                          .toDouble();
+                      return SlideTransition(
+                        position: Tween(
+                          begin: Offset(from, 0),
+                          end: Offset.zero,
+                        ).animate(animation),
+                        child: child,
+                      );
+                    },
+                    layoutBuilder: (current, previous) =>
+                        Stack(children: [...previous, ?current]),
+                    child: strip,
+                  ),
                 ),
               ),
             ],
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 14, 16, 10),
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              title,
-              style: Theme.of(context).textTheme.titleLarge
-                  ?.copyWith(fontWeight: FontWeight.w800),
+        Expanded(
+          // Days swipe like pages, as in the Calendar of an iPhone.
+          child: ClipRect(
+            child: PageView.builder(
+              key: ValueKey(_generation),
+              controller: _pages,
+              onPageChanged: _pageChanged,
+              itemBuilder: (context, page) =>
+                  _dayPage(context, _dayAt(page), groups, now),
             ),
           ),
-        ),
-        Expanded(
-          child: lessons.isEmpty
-              // Like a day with lessons: scrolls only when it does not fit.
-              ? SingleChildScrollView(
-                  padding: EdgeInsets.fromLTRB(16, 0, 16, 24 + insets.bottom),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      // A holiday says so, instead of "No data".
-                      if (dayOff != null) ...[
-                        _FreeDayCard(dayOff),
-                        const SizedBox(height: 8),
-                      ],
-                      for (final event in dayEvents) ...[
-                        _EventTile(event),
-                        const SizedBox(height: 8),
-                      ],
-                      if (dayEvents.isEmpty && dayOff == null)
-                        _Empty(
-                          context.tr('emptyDay'),
-                          icon: Icons.free_breakfast_rounded,
-                        ),
-                    ],
-                  ),
-                )
-              : SingleChildScrollView(
-                  padding: EdgeInsets.fromLTRB(12, 4, 16, 24 + insets.bottom),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      // Some lessons off for the class.
-                      if (dayOff != null)
-                        Padding(
-                          padding: const EdgeInsets.only(left: 4, bottom: 8),
-                          child: _FreeDayCard(dayOff),
-                        ),
-                      // Entries that belong to no lesson of the day.
-                      for (final event in placed.unplaced)
-                        Padding(
-                          key: ValueKey('timetable-day-event-${event.id}'),
-                          padding: const EdgeInsets.only(left: 4, bottom: 8),
-                          child: _EventTile(event),
-                        ),
-                      _DayTests(
-                        byLesson: placed.byLesson,
-                        child: view == TimetableView.timeline
-                            ? _TimetableTimeline(
-                                lessons,
-                                mergeLessons: mergeLessons,
-                                showBreaks: showBreaks,
-                              )
-                            : _TimetableList(
-                                lessons,
-                                mergeLessons: mergeLessons,
-                                showBreaks: showBreaks,
-                              ),
-                      ),
-                    ],
-                  ),
-                ),
         ),
       ],
     );
   }
+
+  /// One day: its date, and its lessons under it.
+  Widget _dayPage(
+    BuildContext context,
+    DateTime day,
+    Map<DateTime, List<Lesson>> groups,
+    DateTime now,
+  ) {
+    final controller = widget.controller;
+    final lessons = groups[day] ?? const <Lesson>[];
+    final dayEvents = controller.snapshot.events
+        .where(
+          (event) => event.kind == EventKind.exam && _sameDay(event.date, day),
+        )
+        .toList(growable: false);
+    final dayOff = _freeDayOn(controller.snapshot.freeDays, day);
+    final mergeLessons = controller.mergeTimetableLessons;
+    final showBreaks = controller.showTimetableBreaks;
+    final placed = _placeTests(
+      _lessonBlocks(lessons, merge: mergeLessons),
+      dayEvents,
+    );
+    final view = controller.timetableView;
+    final locale = Localizations.localeOf(context).toLanguageTag();
+    final title = _capitalize(
+      (day.year == now.year
+              ? DateFormat.MMMMEEEEd(locale)
+              : DateFormat.yMMMMEEEEd(locale))
+          .format(day),
+    );
+    final insets = _chromeInsets(context);
+    final waiting = lessons.isEmpty && _loadingWeeks.contains(_mondayOf(day));
+    return _TimetableDay(
+      key: ValueKey(day),
+      title: title,
+      // Today opens at the lesson on now, or the next one.
+      focus: _sameDay(day, now),
+      padding: lessons.isEmpty
+          ? EdgeInsets.fromLTRB(16, 0, 16, 24 + insets.bottom)
+          : EdgeInsets.fromLTRB(12, 4, 16, 24 + insets.bottom),
+      builder: (context, focusKey) => lessons.isEmpty
+          ? Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                if (waiting)
+                  const _LessonsSkeleton(key: ValueKey('timetable-loading'))
+                else ...[
+                  // A holiday says so, instead of "No data".
+                  if (dayOff != null) ...[
+                    _FreeDayCard(dayOff),
+                    const SizedBox(height: 8),
+                  ],
+                  for (final event in dayEvents) ...[
+                    _EventTile(event),
+                    const SizedBox(height: 8),
+                  ],
+                  if (dayEvents.isEmpty && dayOff == null)
+                    _Empty(
+                      context.tr('emptyDay'),
+                      icon: Icons.free_breakfast_rounded,
+                    ),
+                ],
+              ],
+            )
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Some lessons off for the class.
+                if (dayOff != null)
+                  Padding(
+                    padding: const EdgeInsets.only(left: 4, bottom: 8),
+                    child: _FreeDayCard(dayOff),
+                  ),
+                // Entries that belong to no lesson of the day.
+                for (final event in placed.unplaced)
+                  Padding(
+                    key: ValueKey('timetable-day-event-${event.id}'),
+                    padding: const EdgeInsets.only(left: 4, bottom: 8),
+                    child: _EventTile(event),
+                  ),
+                _DayTests(
+                  byLesson: placed.byLesson,
+                  child: view == TimetableView.timeline
+                      ? _TimetableTimeline(
+                          lessons,
+                          mergeLessons: mergeLessons,
+                          showBreaks: showBreaks,
+                          focusKey: focusKey,
+                        )
+                      : _TimetableList(
+                          lessons,
+                          mergeLessons: mergeLessons,
+                          showBreaks: showBreaks,
+                          focusKey: focusKey,
+                        ),
+                ),
+              ],
+            ),
+    );
+  }
+}
+
+/// A page of the timetable: the date, and the day under it, which scrolls
+/// only when it does not fit. With [focus], it opens at the lesson on now
+/// or the next one, with a little of the one before above it.
+class _TimetableDay extends StatefulWidget {
+  const _TimetableDay({
+    required this.title,
+    required this.padding,
+    required this.builder,
+    this.focus = false,
+    super.key,
+  });
+
+  final String title;
+  final EdgeInsets padding;
+  final bool focus;
+
+  /// The day's content; the lesson to open at takes the key.
+  final Widget Function(BuildContext context, GlobalKey focusKey) builder;
+
+  @override
+  State<_TimetableDay> createState() => _TimetableDayState();
+}
+
+class _TimetableDayState extends State<_TimetableDay> {
+  final _scroll = ScrollController();
+  final _focusKey = GlobalKey();
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.focus) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => _reveal());
+    }
+  }
+
+  @override
+  void dispose() {
+    _scroll.dispose();
+    super.dispose();
+  }
+
+  void _reveal() {
+    final box = _focusKey.currentContext?.findRenderObject();
+    if (!mounted || box == null || !_scroll.hasClients) return;
+    final viewport = RenderAbstractViewport.maybeOf(box);
+    if (viewport == null) return;
+    final position = _scroll.position;
+    final top = viewport.getOffsetToReveal(box, 0).offset;
+    final bottom = viewport.getOffsetToReveal(box, 1).offset;
+    // Seen whole already.
+    if (position.pixels <= top && position.pixels >= bottom) return;
+    position.jumpTo(
+      (top - 48).clamp(position.minScrollExtent, position.maxScrollExtent),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+      Padding(
+        padding: const EdgeInsets.fromLTRB(16, 14, 16, 10),
+        child: Text(
+          widget.title,
+          style: Theme.of(context).textTheme.titleLarge
+              ?.copyWith(fontWeight: FontWeight.w800),
+        ),
+      ),
+      Expanded(
+        child: SingleChildScrollView(
+          controller: _scroll,
+          padding: widget.padding,
+          child: widget.builder(context, _focusKey),
+        ),
+      ),
+    ],
+  );
 }
 
 /// The tests of the day in the timetable, by the lesson they are written in.
@@ -540,25 +818,34 @@ class _DayChip extends StatelessWidget {
   final VoidCallback onTap;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => TweenAnimationBuilder<double>(
+    // The highlight moves from day to day, as in the Calendar.
+    tween: Tween(end: selected ? 1 : 0),
+    duration: const Duration(milliseconds: 200),
+    curve: Curves.easeOut,
+    builder: (context, picked, _) => _chip(context, picked),
+  );
+
+  /// The chip, [picked] of the way from plain to selected.
+  Widget _chip(BuildContext context, double picked) {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-    final foreground = selected
-        ? colors.onPrimary
-        : hasLessons
+    final plain = hasLessons
         ? colors.onSurface
         : colors.onSurface.withValues(alpha: 0.38);
+    final foreground = Color.lerp(plain, colors.onPrimary, picked)!;
+    final border = today ? colors.primary : colors.outlineVariant;
     return Semantics(
       selected: selected,
       button: true,
       child: Material(
-        color: selected ? colors.primary : Colors.transparent,
+        color: colors.primary.withValues(alpha: picked),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(14),
-          side: selected
+          side: picked == 1
               ? BorderSide.none
               : BorderSide(
-                  color: today ? colors.primary : colors.outlineVariant,
+                  color: border.withValues(alpha: border.a * (1 - picked)),
                   width: today ? 1.5 : 1,
                 ),
         ),
@@ -594,9 +881,7 @@ class _DayChip extends StatelessWidget {
                     shape: BoxShape.circle,
                     color: !hasEvents
                         ? Colors.transparent
-                        : selected
-                        ? colors.onPrimary
-                        : colors.primary,
+                        : Color.lerp(colors.primary, colors.onPrimary, picked),
                   ),
                 ),
               ],

@@ -7,6 +7,7 @@ import '../app_build_info.dart';
 import '../data/app_repository.dart';
 import '../domain/librus_error.dart';
 import '../domain/models.dart';
+import '../domain/sync_news.dart';
 import '../home_widget.dart';
 import '../home_widget.dart' as home_widget show displaySubject;
 import '../l10n/app_localizations.dart';
@@ -50,6 +51,7 @@ class AppController extends ChangeNotifier {
   GradesView _gradesView = GradesView.compact;
   TodayLayout _todayLayout = TodayLayout.defaults;
   Map<String, DateTime> _doneHomework = const {};
+  SyncNews? _syncNews;
   Timer? _homeWidgetDebounce;
   SchoolNotificationSettings _notificationSettings =
       const SchoolNotificationSettings();
@@ -76,6 +78,15 @@ class AppController extends ChangeNotifier {
   MessageListStyle get messageListStyle => _messageListStyle;
   GradesView get gradesView => _gradesView;
   TodayLayout get todayLayout => _todayLayout;
+
+  /// What the last sync brought, until it is seen or dismissed.
+  SyncNews? get syncNews => _syncNews;
+
+  void dismissSyncNews() {
+    if (_syncNews == null) return;
+    _syncNews = null;
+    notifyListeners();
+  }
 
   /// Whether the student marked [item] as done.
   bool isHomeworkDone(SchoolEvent item) => _doneHomework.containsKey(item.id);
@@ -596,6 +607,7 @@ class AppController extends ChangeNotifier {
     notifyListeners();
     try {
       _snapshot = await _repository.selectSynergiaAccount(login);
+      _syncNews = null;
       _forgetSentMessages();
       await _recordNotifications();
       _updateHomeWidget();
@@ -615,11 +627,18 @@ class AppController extends ChangeNotifier {
     _error = null;
     notifyListeners();
     try {
+      final before = snapshot;
       final result = await _repository.sync(snapshot);
+      final sameProfile = result.profile.id == snapshot.profile.id;
       // A Sent folder loaded or a message sent while this sync ran stays.
-      _snapshot = result.profile.id == snapshot.profile.id
+      _snapshot = sameProfile
           ? result.copyWith(sentMessages: snapshot.sentMessages)
           : result;
+      // Nothing is news on the first sync or for another account.
+      final news = sameProfile && before.lastSync.millisecondsSinceEpoch != 0
+          ? SyncNews.between(before, snapshot)
+          : null;
+      _syncNews = news == null || news.isEmpty ? null : news;
       await _recordNotifications();
       _updateHomeWidget();
     } on Object catch (error) {
@@ -643,6 +662,7 @@ class AppController extends ChangeNotifier {
         username: username,
         password: password,
       );
+      _syncNews = null;
       _forgetSentMessages();
       await _recordNotifications();
       _updateHomeWidget();
@@ -661,6 +681,7 @@ class AppController extends ChangeNotifier {
   Future<void> logout() async {
     _snapshot = await _repository.logout();
     _doneHomework = const {};
+    _syncNews = null;
     _forgetSentMessages();
     _error = null;
     _tabIndex = 0;

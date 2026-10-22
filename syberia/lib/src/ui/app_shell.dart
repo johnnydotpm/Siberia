@@ -3,6 +3,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show RenderAbstractViewport;
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -11,6 +12,7 @@ import '../app_build_info.dart';
 import '../domain/grade_calculator.dart';
 import '../domain/librus_error.dart';
 import '../domain/models.dart';
+import '../domain/sync_news.dart';
 import '../home_widget.dart';
 import '../l10n/app_localizations.dart';
 import '../school_notifications.dart';
@@ -40,6 +42,8 @@ part 'shell/settings_previews.dart';
 part 'shell/notification_settings.dart';
 part 'shell/account.dart';
 part 'shell/free_days.dart';
+part 'shell/motion.dart';
+part 'shell/sync_news.dart';
 
 class AppShell extends StatefulWidget {
   const AppShell({required this.controller, super.key});
@@ -132,7 +136,26 @@ class _AppShellState extends State<AppShell> {
             days: controller.snapshot.freeDays,
             child: _ControllerScope(
               controller: controller,
-              child: IndexedStack(index: current, children: pages),
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  IndexedStack(index: current, children: pages),
+                  // Under the top bar, over the page.
+                  Positioned(
+                    top: 0,
+                    left: _Space.page,
+                    right: _Space.page,
+                    child: Builder(
+                      builder: (context) => Padding(
+                        padding: EdgeInsets.only(
+                          top: MediaQuery.paddingOf(context).top + 8,
+                        ),
+                        child: Center(child: _SyncNewsBanner(controller)),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         );
