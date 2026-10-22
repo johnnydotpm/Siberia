@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart' show RenderAbstractViewport;
 import 'package:flutter/services.dart';
@@ -100,7 +101,8 @@ class _AppShellState extends State<AppShell> {
     listenable: controller,
     builder: (context, _) => LayoutBuilder(
       builder: (context, constraints) {
-        if (controller.snapshot.profile.provider != 'Librus Synergia') {
+        if (!controller.isDemo &&
+            controller.snapshot.profile.provider != 'Librus Synergia') {
           _pages.clear();
           return _LoginRequired(controller: controller);
         }
@@ -360,6 +362,21 @@ String _title(BuildContext context, int index) => context.tr(
   ][index],
 );
 
+/// Keep a menu that fits stationary, even when inherited scroll physics
+/// allow dragging short lists. Overflowing menus retain platform scrolling.
+class _MenuScrollPhysics extends ScrollPhysics {
+  const _MenuScrollPhysics({super.parent});
+
+  @override
+  _MenuScrollPhysics applyTo(ScrollPhysics? ancestor) =>
+      _MenuScrollPhysics(parent: buildParent(ancestor));
+
+  @override
+  bool shouldAcceptUserOffset(ScrollMetrics position) =>
+      position.maxScrollExtent > position.minScrollExtent &&
+      super.shouldAcceptUserOffset(position);
+}
+
 class _SideNavigation extends StatelessWidget {
   const _SideNavigation({
     required this.controller,
@@ -407,6 +424,7 @@ class _SideNavigation extends StatelessWidget {
                 // Scrolls only when the entries do not fit, as on a short
                 // screen or with large text.
                 primary: false,
+                physics: const _MenuScrollPhysics(),
                 itemCount: entries.length,
                 itemBuilder: (context, index) {
                   final entry = entries[index];

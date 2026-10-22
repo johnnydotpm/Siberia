@@ -187,21 +187,39 @@ struct LessonEntry: TimelineEntry {
   }
 }
 
-struct LessonProvider: AppIntentTimelineProvider {
+/// The default widget uses WidgetKit directly. It must be able to request a
+/// timeline even when a sideloaded build cannot resolve App Intents metadata.
+struct LessonProvider: TimelineProvider {
   func placeholder(in context: Context) -> LessonEntry { .sample(WidgetOptions()) }
 
-  func snapshot(for configuration: WidgetOptionsIntent, in context: Context) async -> LessonEntry {
-    let options = WidgetOptions(configuration)
-    let entry = entry(at: Date(), payload: WidgetPayload.load(), options: options)
-    return context.isPreview && entry.remaining.isEmpty ? .sample(options) : entry
+  func getSnapshot(in context: Context, completion: @escaping (LessonEntry) -> Void) {
+    completion(LessonTimeline.snapshot(payload: WidgetPayload.load(), preview: context.isPreview))
   }
 
-  func timeline(for configuration: WidgetOptionsIntent, in context: Context) async -> Timeline<LessonEntry> {
-    let options = WidgetOptions(configuration)
-    let now = Date()
-    guard let payload = WidgetPayload.load() else {
-      // The app reloads the widget as soon as it has synced.
-      return Timeline(entries: [entry(at: now, payload: nil, options: options)], policy: .never)
+  func getTimeline(in context: Context, completion: @escaping (Timeline<LessonEntry>) -> Void) {
+    completion(LessonTimeline.timeline(payload: WidgetPayload.load()))
+  }
+}
+
+/// Lesson selection and refresh rules for the home and lock screen widgets.
+enum LessonTimeline {
+  static func snapshot(
+    payload: WidgetPayload?, options: WidgetOptions = WidgetOptions(), preview: Bool,
+    now: Date = Date()
+  ) -> LessonEntry {
+    let entry = entry(at: now, payload: payload, options: options)
+    return preview && entry.remaining.isEmpty ? .sample(options) : entry
+  }
+
+  static func timeline(
+    payload: WidgetPayload?, options: WidgetOptions = WidgetOptions(), now: Date = Date()
+  ) -> Timeline<LessonEntry> {
+    guard let payload else {
+      // Reload requests from the app can be coalesced, or arrive before shared
+      // storage is readable. Always give WidgetKit another chance to read it.
+      return Timeline(
+        entries: [entry(at: now, payload: nil, options: options)],
+        policy: .after(now.addingTimeInterval(5 * 60)))
     }
     // A new entry at every lesson start and end, and when a lesson comes
     // close enough for its countdown, keeps the widget right through the day
@@ -211,10 +229,13 @@ struct LessonProvider: AppIntentTimelineProvider {
       .filter { $0 > now }
     let dates = [now] + Array(Set(boundaries)).sorted().prefix(60)
     let entries = dates.map { entry(at: $0, payload: payload, options: options) }
-    return Timeline(entries: entries, policy: .atEnd)
+    // Re-read shared storage periodically, including empty or exhausted
+    // payloads, without relying exclusively on reload requests from the app.
+    let refresh = min(now.addingTimeInterval(15 * 60), dates.last!.addingTimeInterval(5 * 60))
+    return Timeline(entries: entries, policy: .after(refresh))
   }
 
-  private func entry(at date: Date, payload: WidgetPayload?, options: WidgetOptions) -> LessonEntry {
+  private static func entry(at date: Date, payload: WidgetPayload?, options: WidgetOptions) -> LessonEntry {
     LessonEntry(
       date: date,
       labels: payload?.labels,
@@ -564,9 +585,7 @@ enum WidgetStrings {
 
 struct NextLessonWidget: Widget {
   var body: some WidgetConfiguration {
-    AppIntentConfiguration(
-      kind: "NextLessonWidget", intent: WidgetOptionsIntent.self, provider: LessonProvider()
-    ) { entry in
+    StaticConfiguration(kind: "NextLessonWidget", provider: LessonProvider()) { entry in
       LessonWidgetView(entry: entry)
         .containerBackground(for: .widget) {
           ThemedBackground(theme: entry.options.theme)

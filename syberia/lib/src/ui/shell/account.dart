@@ -13,7 +13,22 @@ class _LoginRequired extends StatelessWidget {
             constraints: const BoxConstraints(maxWidth: 480),
             child: Column(
               children: [
-                const AppLogo(),
+                RawGestureDetector(
+                  key: const ValueKey('login-demo-logo'),
+                  gestures: {
+                    LongPressGestureRecognizer:
+                        GestureRecognizerFactoryWithHandlers<
+                          LongPressGestureRecognizer
+                        >(
+                          () => LongPressGestureRecognizer(
+                            duration: const Duration(seconds: 5),
+                          ),
+                          (recognizer) =>
+                              recognizer.onLongPress = controller.startDemo,
+                        ),
+                  },
+                  child: const AppLogo(),
+                ),
                 const SizedBox(height: 24),
                 const FittedBox(
                   fit: BoxFit.scaleDown,
@@ -80,6 +95,10 @@ Future<void> _showAccount(BuildContext context, AppController controller) =>
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              if (controller.isDemo) ...[
+                Text(context.tr('demoMode'), style: _sheetTitleStyle(context)),
+                const SizedBox(height: 8),
+              ],
               Text(
                 controller.snapshot.profile.name,
                 style: _sheetTitleStyle(context),
@@ -92,22 +111,23 @@ Future<void> _showAccount(BuildContext context, AppController controller) =>
                 ),
               ),
               const SizedBox(height: 20),
-              OutlinedButton.icon(
-                onPressed: controller.syncing
-                    ? null
-                    : () {
-                        Navigator.pop(sheetContext);
-                        showAppSheet<void>(
-                          context: context,
-                          useSafeArea: true,
-                          isScrollControlled: true,
-                          showDragHandle: true,
-                          builder: (_) => _LinkedSynergiaAccounts(controller),
-                        );
-                      },
-                icon: const Icon(Icons.switch_account_rounded),
-                label: Text(context.tr('synergiaAccounts')),
-              ),
+              if (!controller.isDemo)
+                OutlinedButton.icon(
+                  onPressed: controller.syncing
+                      ? null
+                      : () {
+                          Navigator.pop(sheetContext);
+                          showAppSheet<void>(
+                            context: context,
+                            useSafeArea: true,
+                            isScrollControlled: true,
+                            showDragHandle: true,
+                            builder: (_) => _LinkedSynergiaAccounts(controller),
+                          );
+                        },
+                  icon: const Icon(Icons.switch_account_rounded),
+                  label: Text(context.tr('synergiaAccounts')),
+                ),
               const SizedBox(height: 12),
               // Red and asked first, like resetting the settings. A sync
               // that runs on after logging out would bring back an error,
