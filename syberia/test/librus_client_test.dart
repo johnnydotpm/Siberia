@@ -947,6 +947,63 @@ void main() {
       },
     );
 
+    test("only the student's own class days off count", () async {
+      Map<String, Object> classDay(int id, int? forClass) => {
+        'Id': id,
+        'Class': ?(forClass == null ? null : {'Id': forClass}),
+        'Type': {'Id': 5},
+        'DateFrom': day(-20),
+        'DateTo': day(5),
+      };
+      Future<Set<String>> classDays({required int? ownClass}) async {
+        final client = LibrusClient(
+          referenceCache: _MemoryReferenceCache(),
+          dio: Dio()
+            ..httpClientAdapter = _FixtureAdapter((options) {
+              final path = options.uri.path;
+              if (path.endsWith('/2.0/Me')) {
+                return (
+                  200,
+                  {
+                    'Me': {
+                      'Account': {'Id': 7},
+                      'User': {'FirstName': 'Uczeń', 'LastName': 'Testowy'},
+                      'Class': ?(ownClass == null ? null : {'Id': ownClass}),
+                    },
+                  },
+                );
+              }
+              if (path.endsWith('/2.0/ClassFreeDays')) {
+                return (
+                  200,
+                  {
+                    'ClassFreeDays': [
+                      classDay(10, 50),
+                      // Another class's work placement.
+                      classDay(11, 51),
+                      classDay(12, null),
+                    ],
+                  },
+                );
+              }
+              return freeDays(options) ?? _successfulResponse(options);
+            }),
+        );
+        final snapshot = await client.loginAndFetch(
+          username: 'parent@example.com',
+          password: 'secret',
+        );
+        return {
+          for (final item in snapshot.freeDays)
+            if (item.kind == FreeDayKind.classDay) item.id,
+        };
+      }
+
+      expect(await classDays(ownClass: 50), {'class-10', 'class-12'});
+      // With no class known, only those named for no class.
+      expect(await classDays(ownClass: null), {'class-12'});
+    });
+
     test('without the lists of days off the sync still works', () async {
       final client = LibrusClient(
         referenceCache: _MemoryReferenceCache(),

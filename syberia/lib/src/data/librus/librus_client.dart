@@ -1737,6 +1737,7 @@ class LibrusClient {
     required Map<int, String> teacherTypes,
     required Map<int, String> people,
     required DateTime today,
+    int? ownClass,
   }) {
     final days = <FreeDay>[];
     (DateTime, DateTime)? range(Map<String, dynamic> item) {
@@ -1763,6 +1764,11 @@ class LibrusClient {
       }
     }
     for (final item in _list(classDays['ClassFreeDays'])) {
+      // Librus lists every class's days off, a work placement of another
+      // class among them: only the student's own class counts, and with
+      // no class known, none named for a class does.
+      final forClass = _referenceId(item['Class']);
+      if (forClass != null && forClass != ownClass) continue;
       if (range(item) case (final from, final to)) {
         days.add(
           FreeDay(
@@ -2005,6 +2011,7 @@ _ParsedSnapshot _parseSnapshot(_SnapshotInput input) {
       ),
       people: people,
       today: DateTime.now(),
+      ownClass: _referenceId(me?['Class']),
     ),
     apiMessages: inbox == null
         ? null
