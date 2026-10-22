@@ -337,6 +337,21 @@ String _title(BuildContext context, int index) => context.tr(
   ][index],
 );
 
+/// Keep a menu that fits stationary, even when inherited scroll physics
+/// allow dragging short lists. Overflowing menus retain platform scrolling.
+class _MenuScrollPhysics extends ScrollPhysics {
+  const _MenuScrollPhysics({super.parent});
+
+  @override
+  _MenuScrollPhysics applyTo(ScrollPhysics? ancestor) =>
+      _MenuScrollPhysics(parent: buildParent(ancestor));
+
+  @override
+  bool shouldAcceptUserOffset(ScrollMetrics position) =>
+      position.maxScrollExtent > position.minScrollExtent &&
+      super.shouldAcceptUserOffset(position);
+}
+
 class _SideNavigation extends StatelessWidget {
   const _SideNavigation({
     required this.controller,
@@ -384,6 +399,7 @@ class _SideNavigation extends StatelessWidget {
                 // Scrolls only when the entries do not fit, as on a short
                 // screen or with large text.
                 primary: false,
+                physics: const _MenuScrollPhysics(),
                 itemCount: entries.length,
                 itemBuilder: (context, index) {
                   final entry = entries[index];

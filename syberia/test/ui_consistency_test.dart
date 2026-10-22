@@ -156,32 +156,83 @@ void _expectStill(WidgetTester tester, Finder area, String what) {
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('the side menu scrolls only when it does not fit', (
+  testWidgets(
+    'the side menu scrolls only when it does not fit',
+    (tester) async {
+      Future<void> openMenu() async {
+        await tester.tap(find.byTooltip('Open navigation menu'));
+        await tester.pumpAndSettle();
+      }
+
+      await _pump(tester);
+      await openMenu();
+      _expectStill(tester, find.byType(Drawer), 'menu');
+      await tester.pumpWidget(const SizedBox.shrink());
+
+      // On a short screen it still scrolls.
+      await _pump(tester, height: 500);
+      await openMenu();
+      final menu = tester.state<ScrollableState>(
+        find.descendant(
+          of: find.byType(Drawer),
+          matching: find.byType(Scrollable),
+        ),
+      );
+      expect(menu.position.maxScrollExtent, greaterThan(0));
+      expect(
+        menu.position.physics.shouldAcceptUserOffset(menu.position),
+        isTrue,
+      );
+      await tester.pumpWidget(const SizedBox.shrink());
+    },
+    variant: TargetPlatformVariant({
+      TargetPlatform.android,
+      TargetPlatform.iOS,
+    }),
+  );
+
+  testWidgets('a fitting menu rejects inherited always-scrollable physics', (
     tester,
   ) async {
-    Future<void> openMenu() async {
-      await tester.tap(find.byTooltip('Open navigation menu'));
-      await tester.pumpAndSettle();
-    }
-
     await _pump(tester);
-    await openMenu();
-    _expectStill(tester, find.byType(Drawer), 'menu');
-    await tester.pumpWidget(const SizedBox.shrink());
-
-    // On a short screen it still scrolls.
-    await _pump(tester, height: 500);
-    await openMenu();
+    await tester.tap(find.byTooltip('Open navigation menu'));
+    await tester.pumpAndSettle();
     final menu = tester.state<ScrollableState>(
       find.descendant(
         of: find.byType(Drawer),
         matching: find.byType(Scrollable),
       ),
     );
-    expect(menu.position.maxScrollExtent, greaterThan(0));
-    expect(menu.position.physics.shouldAcceptUserOffset(menu.position), isTrue);
+    expect(menu.position.maxScrollExtent, 0);
+    final physics = menu.position.physics.applyTo(
+      const AlwaysScrollableScrollPhysics(),
+    );
+    expect(physics.shouldAcceptUserOffset(menu.position), isFalse);
+    // A short menu must not start bouncing just because it has a stale offset.
+    expect(
+      physics.shouldAcceptUserOffset(
+        FixedScrollMetrics(
+          minScrollExtent: 0,
+          maxScrollExtent: 0,
+          pixels: 20,
+          viewportDimension: menu.position.viewportDimension,
+          axisDirection: AxisDirection.down,
+          devicePixelRatio: 1,
+        ),
+      ),
+      isFalse,
+    );
+    final origin = tester.getTopLeft(find.text('Today').last);
+    final gesture = await tester.startGesture(
+      tester.getCenter(find.byType(Drawer)),
+    );
+    await gesture.moveBy(const Offset(0, 100));
+    await tester.pump();
+    expect(tester.getTopLeft(find.text('Today').last), origin);
+    await gesture.up();
+    await tester.pumpAndSettle();
     await tester.pumpWidget(const SizedBox.shrink());
-  });
+  }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
 
   testWidgets('sheets that fit move as a whole', (tester) async {
     final (controller, _) = await _pump(tester, tab: 2);
