@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../domain/librus_error.dart';
 import '../domain/models.dart';
 import '../homework_done.dart';
+import 'demo_data.dart';
 import 'librus/librus_client.dart';
 import 'snapshot_store.dart';
 
@@ -73,6 +74,11 @@ class AppRepository {
   static const _latestReleaseUrl =
       'https://api.github.com/repos/johnnydotpm/Siberia/releases/latest';
 
+  DemoData? _demo;
+
+  /// Starts an in-memory session without writing accounts or credentials.
+  AppSnapshot enterDemo() => (_demo = DemoData()).snapshot;
+
   final Future<SharedPreferences> _preferences;
   final SnapshotStore _snapshots;
   final FlutterSecureStorage _secureStorage;
@@ -82,6 +88,7 @@ class AppRepository {
   /// Reads the saved account and its last snapshot without the network, so
   /// the app opens at once; the launch sync refreshes it afterwards.
   Future<AppSnapshot> load() async {
+    if (_demo != null) return _demo!.snapshot;
     final preferences = await _preferences;
     final rawProfile = preferences.getString(_profileKey);
     final profile = rawProfile == null
@@ -104,6 +111,9 @@ class AppRepository {
     required String username,
     required String password,
   }) async {
+    if (_demo != null) {
+      throw StateError('Exit demo mode before connecting an account.');
+    }
     final snapshot = await _librusClient.loginAndFetch(
       username: username,
       password: password,
@@ -117,10 +127,13 @@ class AppRepository {
     return snapshot;
   }
 
-  Future<List<LinkedSynergiaAccount>> fetchSynergiaAccounts() =>
-      _librusClient.fetchSynergiaAccounts();
+  Future<List<LinkedSynergiaAccount>> fetchSynergiaAccounts() async =>
+      _demo != null ? const [] : _librusClient.fetchSynergiaAccounts();
 
   Future<AppSnapshot> selectSynergiaAccount(String login) async {
+    if (_demo != null) {
+      throw StateError('Exit demo mode before switching accounts.');
+    }
     final snapshot = await _librusClient.selectSynergiaAccount(login);
     final preferences = await _preferences;
     await preferences.setString(
@@ -132,6 +145,9 @@ class AppRepository {
   }
 
   Future<AppSnapshot> sync(AppSnapshot current) async {
+    if (_demo != null) {
+      return _demo!.snapshot = current.copyWith(lastSync: DateTime.now());
+    }
     if (current.profile.provider != 'Librus Synergia') {
       await Future<void>.delayed(const Duration(milliseconds: 650));
       return current.copyWith(lastSync: DateTime.now());
@@ -189,6 +205,7 @@ class AppRepository {
   /// The background check. [parts] are what notifications are on for; the
   /// rest is kept from the saved snapshot instead of being downloaded.
   Future<AppSnapshot?> fetchBackgroundSnapshot({Set<LibrusPart>? parts}) async {
+    if (_demo != null) return null;
     if (!await loadAutoSyncOnOpen()) return null;
     if (parts != null && parts.isEmpty) return null;
     final preferences = await _preferences;
@@ -278,6 +295,10 @@ class AppRepository {
       _snapshots.write(snapshot);
 
   Future<AppSnapshot> logout() async {
+    if (_demo != null) {
+      _demo = null;
+      return _emptySnapshot(_signedOutProfile);
+    }
     await _librusClient.logout();
     await clearCredential();
     final preferences = await _preferences;
@@ -390,10 +411,15 @@ class AppRepository {
       (await _preferences).setString(_gradesViewKey, view.name);
 
   Future<Map<String, DateTime>> loadDoneHomework() async =>
-      HomeworkDoneStore.read(await _preferences);
+      _demo?.doneHomework ?? HomeworkDoneStore.read(await _preferences);
 
-  Future<void> saveDoneHomework(Map<String, DateTime> marks) async =>
-      HomeworkDoneStore.write(await _preferences, marks);
+  Future<void> saveDoneHomework(Map<String, DateTime> marks) async {
+    if (_demo != null) {
+      _demo!.doneHomework = Map.of(marks);
+      return;
+    }
+    await HomeworkDoneStore.write(await _preferences, marks);
+  }
 
   Future<TodayLayout> loadTodayLayout() async {
     final saved = (await _preferences).getStringList(_todayLayoutKey);
@@ -441,6 +467,7 @@ class AppRepository {
       (await _preferences).setString(_designKey, design.name);
 
   Future<String?> fetchLatestReleaseVersion() async {
+    if (_demo != null) return null;
     try {
       final response = await _githubClient.get<Object?>(_latestReleaseUrl);
       final data = response.data;
@@ -483,8 +510,9 @@ class AppRepository {
     await (await _preferences).setString(_dismissedUpdateKey, version);
   }
 
-  Future<List<MessageRecipient>> fetchMessageRecipients() =>
-      _librusClient.fetchMessageRecipients();
+  Future<List<MessageRecipient>> fetchMessageRecipients() async => _demo != null
+      ? DemoData.recipients
+      : _librusClient.fetchMessageRecipients();
 
   /// Sends a message and puts it at the top of the saved Sent folder.
   Future<SchoolMessage> sendMessage({
@@ -492,6 +520,13 @@ class AppRepository {
     required String subject,
     required String body,
   }) async {
+    if (_demo != null) {
+      return _demo!.sendMessage(
+        recipients: recipients,
+        subject: subject,
+        body: body,
+      );
+    }
     final profile = (await _preferences).getString(_profileKey);
     final names = {
       for (final recipient in recipients) recipient.id: recipient.name,
@@ -516,6 +551,7 @@ class AppRepository {
   }
 
   Future<List<SchoolMessage>> fetchSentMessages() async {
+    if (_demo != null) return _demo!.snapshot.sentMessages;
     final profile = (await _preferences).getString(_profileKey);
     final sent = await _librusClient.fetchSentMessages();
     await _updateCached(
@@ -528,6 +564,7 @@ class AppRepository {
   Future<SchoolMessageContent> fetchMessageContent(
     SchoolMessage message,
   ) async {
+    if (_demo != null) return _demo!.openMessage(message);
     final profile = (await _preferences).getString(_profileKey);
     final content = await _librusClient.fetchMessageContent(message);
     await _updateCached(
@@ -554,13 +591,15 @@ class AppRepository {
   Future<Uri> fetchMessageAttachmentUrl({
     required String messageId,
     required String attachmentId,
-  }) => _librusClient.fetchMessageAttachmentUrl(
-    messageId: messageId,
-    attachmentId: attachmentId,
-  );
+  }) => _demo != null
+      ? Future.error(UnsupportedError('Demo messages have no attachments.'))
+      : _librusClient.fetchMessageAttachmentUrl(
+          messageId: messageId,
+          attachmentId: attachmentId,
+        );
 
-  Future<List<Lesson>> fetchTimetableWeek(DateTime day) =>
-      _librusClient.fetchTimetableWeek(day);
+  Future<List<Lesson>> fetchTimetableWeek(DateTime day) async =>
+      _demo?.timetableWeek(day) ?? await _librusClient.fetchTimetableWeek(day);
 
   AppSnapshot _emptySnapshot(StudentProfile profile) => AppSnapshot(
     profile: profile,

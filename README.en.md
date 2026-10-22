@@ -39,6 +39,8 @@ On iOS, install the application yourself using [AltStore](https://altstore.io/),
 
 The “Next lesson” home screen widget works when the app is installed with AltStore, SideStore or a paid certificate; LiveContainer does not support widgets. With a free Apple ID the widget uses one extra App ID.
 
+For UI testing without a school account, hold the logo on the login screen for five seconds. Demo mode supplies fictional grades, messages, remarks, attendance, lessons, and calendar entries. Messages and refreshes run locally; sign out to leave the demo. Demo school data is not saved between app launches.
+
 ## Build instructions
 
 Every local build requires the [Flutter SDK](https://docs.flutter.dev/get-started/install). Run this first from the project root:

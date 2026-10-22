@@ -39,6 +39,8 @@ Na iOS aplikację należy zainstalować we własnym zakresie za pomocą [AltStor
 
 Widżet „Następna lekcja” na ekranie głównym działa przy instalacji przez AltStore, SideStore lub płatny certyfikat; LiveContainer nie obsługuje widżetów. Na darmowym Apple ID widżet zajmuje jeden dodatkowy App ID.
 
+Aby testować interfejs bez konta szkolnego, przytrzymaj logo na ekranie logowania przez pięć sekund. Tryb demonstracyjny zawiera fikcyjne oceny, wiadomości, uwagi, frekwencję, lekcje i wpisy w kalendarzu. Wiadomości i odświeżanie działają lokalnie; wyloguj się, aby zakończyć demo. Dane demonstracyjne nie są zapisywane między uruchomieniami aplikacji.
+
 ## Instrukcje budowania
 
 Każdy lokalny build wymaga [Flutter SDK](https://docs.flutter.dev/get-started/install). W katalogu głównym projektu wykonaj najpierw:

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -96,7 +97,8 @@ class _AppShellState extends State<AppShell> {
     listenable: controller,
     builder: (context, _) => LayoutBuilder(
       builder: (context, constraints) {
-        if (controller.snapshot.profile.provider != 'Librus Synergia') {
+        if (!controller.isDemo &&
+            controller.snapshot.profile.provider != 'Librus Synergia') {
           _pages.clear();
           return _LoginRequired(controller: controller);
         }
