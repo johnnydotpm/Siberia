@@ -442,79 +442,86 @@ class _TimetableState extends State<_Timetable> {
         ],
       ),
     );
-    return Column(
-      children: [
-        SizedBox(height: insets.top),
-        Padding(
-          // With the strip's own 3, the last day stays 4 from the edge.
-          padding: const EdgeInsets.fromLTRB(4, 8, 1, 0),
-          child: Row(
-            children: [
-              IconButton(
-                onPressed: loading ? null : _pickDay,
-                icon: loading
-                    ? const SizedBox.square(
-                        dimension: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Icon(Icons.calendar_month_rounded),
-                tooltip: context.tr('chooseDate'),
-              ),
-              Expanded(
-                // Another week slides in from the side it lies on.
-                child: ClipRect(
-                  // Read by the chips, so a week sliding away lets go of its
-                  // day too and one day shows picked. Above the switcher, so
-                  // the week stays what tells one strip from the next.
-                  child: _StripSelection(
-                    day: selectedDay!,
-                    child: AnimatedSwitcher(
-                      duration: _motion(context, _Motion.page),
-                      // The leaving week runs the animation backwards; the
-                      // flipped curve keeps it in step with the coming one,
-                      // so the two move as one band and never overlap.
-                      switchInCurve: Curves.easeOutCubic,
-                      switchOutCurve: Curves.easeOutCubic.flipped,
-                      transitionBuilder: (child, animation) {
-                        final incoming = child.key == ValueKey(monday);
-                        final from = (incoming ? _weekStep : -_weekStep)
-                            .toDouble();
-                        return SlideTransition(
-                          position: Tween(
-                            begin: Offset(from, 0),
-                            end: Offset.zero,
-                          ).animate(animation),
-                          child: child,
-                        );
-                      },
-                      layoutBuilder: (current, previous) =>
-                          Stack(children: [...previous, ?current]),
-                      child: strip,
+    // A pull on a day refreshes. The indicator comes at the top, under the
+    // bar, as on the other pages, not below the strip and the date.
+    return _Refresh(
+      controller: widget.controller,
+      onRefresh: _refresh,
+      nested: true,
+      child: Column(
+        children: [
+          SizedBox(height: insets.top),
+          Padding(
+            // With the strip's own 3, the last day stays 4 from the edge.
+            padding: const EdgeInsets.fromLTRB(4, 8, 1, 0),
+            child: Row(
+              children: [
+                IconButton(
+                  onPressed: loading ? null : _pickDay,
+                  icon: loading
+                      ? const SizedBox.square(
+                          dimension: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Icon(Icons.calendar_month_rounded),
+                  tooltip: context.tr('chooseDate'),
+                ),
+                Expanded(
+                  // Another week slides in from the side it lies on.
+                  child: ClipRect(
+                    // Read by the chips, so a week sliding away lets go of its
+                    // day too and one day shows picked. Above the switcher, so
+                    // the week stays what tells one strip from the next.
+                    child: _StripSelection(
+                      day: selectedDay!,
+                      child: AnimatedSwitcher(
+                        duration: _motion(context, _Motion.page),
+                        // The leaving week runs the animation backwards; the
+                        // flipped curve keeps it in step with the coming one,
+                        // so the two move as one band and never overlap.
+                        switchInCurve: Curves.easeOutCubic,
+                        switchOutCurve: Curves.easeOutCubic.flipped,
+                        transitionBuilder: (child, animation) {
+                          final incoming = child.key == ValueKey(monday);
+                          final from = (incoming ? _weekStep : -_weekStep)
+                              .toDouble();
+                          return SlideTransition(
+                            position: Tween(
+                              begin: Offset(from, 0),
+                              end: Offset.zero,
+                            ).animate(animation),
+                            child: child,
+                          );
+                        },
+                        layoutBuilder: (current, previous) =>
+                            Stack(children: [...previous, ?current]),
+                        child: strip,
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
-          ),
-        ),
-        Expanded(
-          // Days swipe like pages, as in the Calendar of an iPhone.
-          child: ClipRect(
-            child: PageView.builder(
-              key: ValueKey(_generation),
-              controller: _pages,
-              // The days either side are drawn while nothing moves, not as
-              // a swipe begins.
-              allowImplicitScrolling: true,
-              onPageChanged: _pageChanged,
-              itemBuilder: (context, page) {
-                final day = _dayAt(page);
-                return _dayPages[day] ??= _dayPage(context, day, groups, now);
-              },
+              ],
             ),
           ),
-        ),
-      ],
+          Expanded(
+            // Days swipe like pages, as in the Calendar of an iPhone.
+            child: ClipRect(
+              child: PageView.builder(
+                key: ValueKey(_generation),
+                controller: _pages,
+                // The days either side are drawn while nothing moves, not as
+                // a swipe begins.
+                allowImplicitScrolling: true,
+                onPageChanged: _pageChanged,
+                itemBuilder: (context, page) {
+                  final day = _dayAt(page);
+                  return _dayPages[day] ??= _dayPage(context, day, groups, now);
+                },
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -551,8 +558,6 @@ class _TimetableState extends State<_Timetable> {
     final waiting = lessons.isEmpty && _loadingWeeks.contains(_mondayOf(day));
     return _TimetableDay(
       key: ValueKey(day),
-      controller: controller,
-      onRefresh: _refresh,
       title: title,
       // Away from today, the way back.
       onToday: day == _home() ? null : _goToToday,
@@ -628,8 +633,6 @@ class _TimetableState extends State<_Timetable> {
 /// or the next one, with a little of the one before above it.
 class _TimetableDay extends StatefulWidget {
   const _TimetableDay({
-    required this.controller,
-    required this.onRefresh,
     required this.title,
     required this.padding,
     required this.builder,
@@ -637,11 +640,6 @@ class _TimetableDay extends StatefulWidget {
     this.onToday,
     super.key,
   });
-
-  final AppController controller;
-
-  /// What a pull down does.
-  final Future<void> Function() onRefresh;
 
   final String title;
 
@@ -727,17 +725,13 @@ class _TimetableDayState extends State<_TimetableDay> {
         ),
       ),
       Expanded(
-        // Pulled down, it refreshes, as the other pages do; so it moves
-        // even when the day fits.
-        child: _Refresh(
-          controller: widget.controller,
-          onRefresh: widget.onRefresh,
-          child: SingleChildScrollView(
-            controller: _scroll,
-            physics: const AlwaysScrollableScrollPhysics(),
-            padding: widget.padding,
-            child: widget.builder(context, _focusKey),
-          ),
+        // Pulled down, the timetable refreshes; so it moves even when the
+        // day fits.
+        child: SingleChildScrollView(
+          controller: _scroll,
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: widget.padding,
+          child: widget.builder(context, _focusKey),
         ),
       ),
     ],

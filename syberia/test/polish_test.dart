@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart' show CupertinoActivityIndicator;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -8,6 +9,7 @@ import 'package:syberia/src/data/app_repository.dart';
 import 'package:syberia/src/domain/librus_error.dart';
 import 'package:syberia/src/domain/models.dart';
 import 'package:syberia/src/state/app_controller.dart';
+import 'package:syberia/src/ui/glass/glass_platform.dart';
 
 final _now = DateTime.now();
 final _today = DateTime(_now.year, _now.month, _now.day);
@@ -458,6 +460,55 @@ void main() {
       expect(repository.syncs, 1);
       await tester.pumpWidget(const SizedBox.shrink());
     });
+
+    for (final design in ['classic', 'glass']) {
+      testWidgets('in $design, the pull shows at the top, over the strip', (
+        tester,
+      ) async {
+        SharedPreferences.setMockInitialValues({
+          'app_design_v1': design,
+          'app_locale_v1': 'en',
+        });
+        if (design == 'glass') {
+          GlassPlatform.debugSetBackend(GlassBackend.rendered);
+          addTearDown(() => GlassPlatform.debugSetBackend(GlassBackend.none));
+        }
+        final repository = _Repository(_snapshot(lessons: _week(_monday)));
+        await _pump(tester, repository, tab: 1);
+        final pull = await tester.startGesture(
+          tester.getCenter(find.text('Przedmiot 0')),
+        );
+        for (var step = 0; step < 8; step++) {
+          await pull.moveBy(const Offset(0, 25));
+          await tester.pump(const Duration(milliseconds: 16));
+        }
+        final spinner = find.byWidgetPredicate(
+          (widget) =>
+              widget is RefreshProgressIndicator ||
+              widget is CupertinoActivityIndicator,
+        );
+        expect(spinner, findsOneWidget);
+        // Up where it is on every page: above the end of the week strip,
+        // not down by the lessons.
+        final strip = tester.getRect(
+          find.byKey(
+            ValueKey(
+              'timetable-day-${DateFormat('yyyy-MM-dd').format(_monday)}',
+            ),
+          ),
+        );
+        expect(tester.getCenter(spinner).dy, lessThan(strip.bottom));
+        // Further, far enough to set it off.
+        for (var step = 0; step < 20; step++) {
+          await pull.moveBy(const Offset(0, 40));
+          await tester.pump(const Duration(milliseconds: 16));
+        }
+        await pull.up();
+        await tester.pumpAndSettle();
+        expect(repository.syncs, 1);
+        await tester.pumpWidget(const SizedBox.shrink());
+      });
+    }
   });
 
   group('smoothness', () {

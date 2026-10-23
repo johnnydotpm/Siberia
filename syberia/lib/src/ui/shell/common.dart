@@ -384,12 +384,18 @@ class _Refresh extends StatelessWidget {
     required this.controller,
     required this.child,
     this.onRefresh,
+    this.nested = false,
   });
   final AppController controller;
   final Widget child;
 
   /// What a pull does, when not a sync of everything.
   final Future<void> Function()? onRefresh;
+
+  /// Whether the list pulled is deeper down, as a day inside the timetable's
+  /// pages: the indicator still comes at the top of the page, under the bar.
+  final bool nested;
+
   @override
   Widget build(BuildContext context) => RefreshIndicator.adaptive(
     // A tap felt the moment the pull takes, as in the system apps.
@@ -397,6 +403,9 @@ class _Refresh extends StatelessWidget {
       HapticFeedback.mediumImpact();
       return (onRefresh ?? controller.sync)();
     },
+    notificationPredicate: nested
+        ? (notification) => notification.metrics.axis == Axis.vertical
+        : defaultScrollNotificationPredicate,
     // Under a glass top bar the indicator would otherwise appear behind it.
     edgeOffset: _chromeInsets(context).top,
     child: child,
