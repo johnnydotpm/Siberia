@@ -307,6 +307,54 @@ void main() {
       await tester.pumpWidget(const SizedBox.shrink());
     });
 
+    testWidgets('the next week slides in as one band with the last', (
+      tester,
+    ) async {
+      final next = _day(_monday, 7);
+      await _pump(
+        tester,
+        _Repository(_snapshot(lessons: [...week(_monday), ...week(next)])),
+        tab: 1,
+      );
+      for (var day = 0; day < 4; day++) {
+        await tester.fling(find.byType(PageView), const Offset(-300, 0), 1000);
+        await tester.pumpAndSettle();
+      }
+      Finder chip(DateTime day) => find.byKey(
+        ValueKey('timetable-day-${DateFormat('yyyy-MM-dd').format(day)}'),
+      );
+      final friday = chip(_day(_monday, 4));
+      final monday = chip(next);
+      await tester.fling(find.byType(PageView), const Offset(-300, 0), 1000);
+      var frames = 0;
+      for (var frame = 0; frame < 30; frame++) {
+        await tester.pump(const Duration(milliseconds: 16));
+        if (friday.evaluate().isEmpty || monday.evaluate().isEmpty) continue;
+        frames++;
+        // Monday comes right after Friday, as far as day from day: never
+        // over it, never apart.
+        final gap = tester.getRect(monday).left - tester.getRect(friday).right;
+        expect(gap, closeTo(6, 0.5), reason: 'frame $frame');
+      }
+      expect(frames, greaterThan(5));
+      await tester.pumpAndSettle();
+      expect(_picked(tester, next), 1);
+
+      // Back again: the week sliding away lets go of its day on the way,
+      // so one day shows picked.
+      await tester.fling(find.byType(PageView), const Offset(300, 0), 1000);
+      double? leaving;
+      for (var frame = 0; frame < 30; frame++) {
+        await tester.pump(const Duration(milliseconds: 16));
+        if (friday.evaluate().isEmpty || monday.evaluate().isEmpty) continue;
+        leaving = _picked(tester, next);
+        expect(_picked(tester, _day(_monday, 4)), greaterThan(0));
+      }
+      // Faded by the time it is gone.
+      expect(leaving, lessThan(0.2));
+      await tester.pumpWidget(const SizedBox.shrink());
+    });
+
     testWidgets('a day picked in the strip slides in, passing no other', (
       tester,
     ) async {
@@ -357,9 +405,9 @@ void main() {
         tester,
         _Repository(_snapshot(lessons: lessons)),
         tab: 1,
-        // Wide enough for the lesson's progress line in the tests' font,
-        // where every letter is as wide as it is tall.
-        size: const Size(600, 700),
+        // A phone's width. In the tests' font every letter is as wide as it
+        // is tall, so the lesson's progress line must give way to fit.
+        size: const Size(393, 700),
       );
       final card = find.byKey(const ValueKey('timeline-lesson-n7'));
       final scrollable = find.ancestor(

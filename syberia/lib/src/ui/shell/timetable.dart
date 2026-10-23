@@ -351,32 +351,37 @@ class _TimetableState extends State<_Timetable> {
     };
     final today = _day(now);
     final insets = _chromeInsets(context);
-    final strip = Row(
+    // Half the gap between days at each end, so in a change of week the
+    // weeks pass one another with the same gap.
+    final strip = Padding(
       key: ValueKey(monday),
-      children: [
-        for (final (index, day) in days.indexed) ...[
-          if (index > 0) const SizedBox(width: 6),
-          Expanded(
-            child: _DayChip(
-              key: ValueKey(
-                'timetable-day-${DateFormat('yyyy-MM-dd').format(day)}',
+      padding: const EdgeInsets.symmetric(horizontal: 3),
+      child: Row(
+        children: [
+          for (final (index, day) in days.indexed) ...[
+            if (index > 0) const SizedBox(width: 6),
+            Expanded(
+              child: _DayChip(
+                key: ValueKey(
+                  'timetable-day-${DateFormat('yyyy-MM-dd').format(day)}',
+                ),
+                day: day,
+                today: _sameDay(day, today),
+                hasLessons: groups.containsKey(day),
+                hasEvents: eventDays.contains(day),
+                onTap: () => _selectFromStrip(day, groups.keys),
               ),
-              day: day,
-              selected: _sameDay(day, selectedDay!),
-              today: _sameDay(day, today),
-              hasLessons: groups.containsKey(day),
-              hasEvents: eventDays.contains(day),
-              onTap: () => _selectFromStrip(day, groups.keys),
             ),
-          ),
+          ],
         ],
-      ],
+      ),
     );
     return Column(
       children: [
         SizedBox(height: insets.top),
         Padding(
-          padding: const EdgeInsets.fromLTRB(4, 8, 4, 0),
+          // With the strip's own 3, the last day stays 4 from the edge.
+          padding: const EdgeInsets.fromLTRB(4, 8, 1, 0),
           child: Row(
             children: [
               IconButton(
@@ -392,25 +397,34 @@ class _TimetableState extends State<_Timetable> {
               Expanded(
                 // Another week slides in from the side it lies on.
                 child: ClipRect(
-                  child: AnimatedSwitcher(
-                    duration: _Motion.page,
-                    switchInCurve: Curves.easeOutCubic,
-                    switchOutCurve: Curves.easeOutCubic,
-                    transitionBuilder: (child, animation) {
-                      final incoming = child.key == ValueKey(monday);
-                      final from = (incoming ? _weekStep : -_weekStep)
-                          .toDouble();
-                      return SlideTransition(
-                        position: Tween(
-                          begin: Offset(from, 0),
-                          end: Offset.zero,
-                        ).animate(animation),
-                        child: child,
-                      );
-                    },
-                    layoutBuilder: (current, previous) =>
-                        Stack(children: [...previous, ?current]),
-                    child: strip,
+                  // Read by the chips, so a week sliding away lets go of its
+                  // day too and one day shows picked. Above the switcher, so
+                  // the week stays what tells one strip from the next.
+                  child: _StripSelection(
+                    day: selectedDay!,
+                    child: AnimatedSwitcher(
+                      duration: _Motion.page,
+                      // The leaving week runs the animation backwards; the
+                      // flipped curve keeps it in step with the coming one,
+                      // so the two move as one band and never overlap.
+                      switchInCurve: Curves.easeOutCubic,
+                      switchOutCurve: Curves.easeOutCubic.flipped,
+                      transitionBuilder: (child, animation) {
+                        final incoming = child.key == ValueKey(monday);
+                        final from = (incoming ? _weekStep : -_weekStep)
+                            .toDouble();
+                        return SlideTransition(
+                          position: Tween(
+                            begin: Offset(from, 0),
+                            end: Offset.zero,
+                          ).animate(animation),
+                          child: child,
+                        );
+                      },
+                      layoutBuilder: (current, previous) =>
+                          Stack(children: [...previous, ?current]),
+                      child: strip,
+                    ),
                   ),
                 ),
               ),
@@ -799,11 +813,24 @@ _LessonBlock? _currentBlock(List<_LessonBlock> blocks, DateTime now) {
 }
 
 /// A weekday in the strip above the timetable.
+/// The day picked in the timetable, for the chips of the strip, those of a
+/// week sliding away included.
+class _StripSelection extends InheritedWidget {
+  const _StripSelection({required this.day, required super.child});
+
+  final DateTime day;
+
+  static DateTime of(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<_StripSelection>()!.day;
+
+  @override
+  bool updateShouldNotify(_StripSelection oldWidget) => day != oldWidget.day;
+}
+
 class _DayChip extends StatelessWidget {
   const _DayChip({
     super.key,
     required this.day,
-    required this.selected,
     required this.today,
     required this.hasLessons,
     required this.hasEvents,
@@ -811,23 +838,25 @@ class _DayChip extends StatelessWidget {
   });
 
   final DateTime day;
-  final bool selected;
   final bool today;
   final bool hasLessons;
   final bool hasEvents;
   final VoidCallback onTap;
 
   @override
-  Widget build(BuildContext context) => TweenAnimationBuilder<double>(
-    // The highlight moves from day to day, as in the Calendar.
-    tween: Tween(end: selected ? 1 : 0),
-    duration: const Duration(milliseconds: 200),
-    curve: Curves.easeOut,
-    builder: (context, picked, _) => _chip(context, picked),
-  );
+  Widget build(BuildContext context) {
+    final selected = _sameDay(day, _StripSelection.of(context));
+    return TweenAnimationBuilder<double>(
+      // The highlight moves from day to day, as in the Calendar.
+      tween: Tween(end: selected ? 1 : 0),
+      duration: const Duration(milliseconds: 200),
+      curve: Curves.easeOut,
+      builder: (context, picked, _) => _chip(context, picked, selected),
+    );
+  }
 
   /// The chip, [picked] of the way from plain to selected.
-  Widget _chip(BuildContext context, double picked) {
+  Widget _chip(BuildContext context, double picked, bool selected) {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
     final plain = hasLessons
