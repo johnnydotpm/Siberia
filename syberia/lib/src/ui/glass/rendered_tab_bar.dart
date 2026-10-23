@@ -370,7 +370,9 @@ class _RenderedGlassTabBarState extends State<RenderedGlassTabBar> {
         Positioned.fill(
           child: selecting
               ? ClipPath(
-                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                  // No layer of its own, which Impeller would make on every
+                  // frame: tabs need no smoother edge than the clip gives.
+                  clipBehavior: Clip.antiAlias,
                   clipper: _AroundSelection(grown, squash),
                   child: tabs(selected: false),
                 )

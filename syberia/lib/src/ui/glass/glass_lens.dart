@@ -80,7 +80,9 @@ class _RenderGlassEdgeLens extends RenderProxyBox {
   double _band;
   set band(double value) {
     if (_band == value) return;
+    final bent = _bends;
     _band = value;
+    if (bent != _bends) markNeedsCompositingBitsUpdate();
     markNeedsPaint();
   }
 
@@ -88,7 +90,9 @@ class _RenderGlassEdgeLens extends RenderProxyBox {
   double _fold;
   set fold(double value) {
     if (_fold == value) return;
+    final bent = _bends;
     _fold = value;
+    if (bent != _bends) markNeedsCompositingBitsUpdate();
     markNeedsPaint();
   }
 
@@ -96,8 +100,12 @@ class _RenderGlassEdgeLens extends RenderProxyBox {
   /// even if the shader gives out later.
   final bool _layered = GlassLens.available;
 
+  /// Whether it bends anything now. A lens that does not, as the tab bar's
+  /// selection at rest, needs no layer of its own.
+  bool get _bends => band > 0 && fold >= 0.002;
+
   @override
-  bool get alwaysNeedsCompositing => _layered;
+  bool get alwaysNeedsCompositing => _layered && _bends;
 
   @override
   void paint(PaintingContext context, Offset offset) {

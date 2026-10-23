@@ -491,6 +491,8 @@ class _MessageTile extends StatelessWidget {
                     if (!item.sent)
                       AnimatedSwitcher(
                         duration: _motion(context, _Motion.list),
+                        transitionBuilder: (child, animation) =>
+                            _Fade(opacity: animation, child: child),
                         child: unread
                             ? Container(
                                 key: ValueKey('message-unread-${item.id}'),

@@ -676,7 +676,10 @@ class _HomeworkCard extends StatelessWidget {
                     const SizedBox(width: 4),
                     // Done work steps back.
                     Expanded(
-                      child: Opacity(opacity: done ? 0.6 : 1, child: content),
+                      child: _LightOpacity(
+                        opacity: done ? 0.6 : 1,
+                        child: content,
+                      ),
                     ),
                   ],
                 ),

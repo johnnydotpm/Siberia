@@ -66,16 +66,34 @@ class _SyncNewsBannerState extends State<_SyncNewsBanner> {
         offset: visible ? Offset.zero : const Offset(0, -0.6),
         duration: _motion(context, _Motion.page),
         curve: visible ? Curves.easeOutBack : Curves.easeInCubic,
-        child: AnimatedOpacity(
-          opacity: visible ? 1 : 0,
-          duration: _motion(context, _Motion.list),
-          child: news == null ? const SizedBox.shrink() : _capsule(news),
-        ),
+        child: news != null && _drawnGlass(context)
+            // Glass that Flutter draws cannot fade inside a layer: a layer
+            // has no page behind it to show. The glass comes up out of the
+            // page instead, as a dialog's does.
+            ? TweenAnimationBuilder<double>(
+                // From nothing as it first shows; after that, from where
+                // it is.
+                tween: Tween(begin: 0, end: visible ? 1 : 0),
+                duration: _motion(context, _Motion.list),
+                builder: (context, shown, _) => shown <= 0
+                    ? const SizedBox.shrink()
+                    : _capsule(news, reveal: AlwaysStoppedAnimation(shown)),
+              )
+            : AnimatedOpacity(
+                opacity: visible ? 1 : 0,
+                duration: _motion(context, _Motion.list),
+                child: news == null ? const SizedBox.shrink() : _capsule(news),
+              ),
       ),
     );
   }
 
-  Widget _capsule(SyncNews news) {
+  /// Whether the capsule is glass that Flutter draws itself.
+  static bool _drawnGlass(BuildContext context) =>
+      GlassStyle.of(context) && GlassPlatform.backend == GlassBackend.rendered;
+
+  /// [reveal] brings drawn glass up out of the page.
+  Widget _capsule(SyncNews news, {Animation<double>? reveal}) {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
     final dark = theme.brightness == Brightness.dark;
@@ -145,7 +163,7 @@ class _SyncNewsBannerState extends State<_SyncNewsBanner> {
         }
       },
       child: GlassStyle.of(context)
-          ? GlassPanel(radius: 24, child: content)
+          ? GlassPanel(radius: 24, reveal: reveal, child: content)
           : DecoratedBox(
               // A soft shadow and a hairline edge, as iOS floats things.
               decoration: ShapeDecoration(

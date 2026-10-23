@@ -302,7 +302,8 @@ class _TimelineLessonCard extends StatelessWidget {
         : 0;
     final tests = _DayTests.of(context, block);
     final details = _blockDetails(context, block);
-    return Opacity(
+    // No layer of its own for a lesson that is on.
+    return _LightOpacity(
       opacity: lesson.cancelled ? 0.55 : 1,
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
@@ -563,7 +564,8 @@ class _TimetableRow extends StatelessWidget {
     final details = _blockDetails(context, block);
     final muted = theme.colorScheme.onSurfaceVariant;
     final duration = lesson.end.difference(lesson.start).inMinutes;
-    return Opacity(
+    // No layer of its own for a lesson that is on.
+    return _LightOpacity(
       opacity: lesson.cancelled ? 0.55 : 1,
       child: Material(
         color: current

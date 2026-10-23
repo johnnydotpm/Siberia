@@ -356,23 +356,136 @@ class _AnimatedColumnState extends State<_AnimatedColumn>
             child: IgnorePointer(
               // On its way out, it takes no taps.
               ignoring: entry.leaving,
-              child: SizeTransition(
-                sizeFactor: entry.size,
-                alignment: AlignmentDirectional.topStart,
-                child: FadeTransition(
-                  opacity: entry.controller,
-                  child: AnimatedPadding(
-                    duration: _motion(context, _Motion.list),
-                    curve: _Motion.curve,
-                    padding: EdgeInsets.only(top: entry.gap),
-                    child: entry.widget,
-                  ),
+              child: _Unfold(
+                size: entry.size,
+                opacity: entry.controller,
+                child: AnimatedPadding(
+                  duration: _motion(context, _Motion.list),
+                  curve: _Motion.curve,
+                  padding: EdgeInsets.only(top: entry.gap),
+                  child: entry.widget,
                 ),
               ),
             ),
           ),
       ],
     );
+  }
+}
+
+/// [child] unfolding to its height and fading in as [size] and [opacity]
+/// run from 0 to 1, from the top down. Fully there, it is the child itself,
+/// with no clip and no layer of its own, which a row at rest would otherwise
+/// cost on every frame of a scroll.
+class _Unfold extends AnimatedWidget {
+  const _Unfold({
+    required Animation<double> size,
+    required this.opacity,
+    required this.child,
+  }) : super(listenable: size);
+
+  final Animation<double> opacity;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final shown = (listenable as Animation<double>).value.clamp(0.0, 1.0);
+    return ClipRect(
+      clipBehavior: shown < 1 ? Clip.hardEdge : Clip.none,
+      child: Align(
+        alignment: AlignmentDirectional.topStart,
+        heightFactor: shown,
+        child: _LightOpacity(
+          opacity: opacity.value.clamp(0.0, 1.0),
+          child: child,
+        ),
+      ),
+    );
+  }
+}
+
+/// [child] fading in as [opacity] runs from 0 to 1, with no layer of its
+/// own once it is fully there.
+class _Fade extends AnimatedWidget {
+  const _Fade({required Animation<double> opacity, required this.child})
+    : super(listenable: opacity);
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => _LightOpacity(
+    opacity: (listenable as Animation<double>).value.clamp(0.0, 1.0),
+    child: child,
+  );
+}
+
+/// Opacity that is no layer at all when its child shows fully or not at
+/// all. The framework's own is a layer whenever anything shows, which every
+/// row at rest would cost on every frame of a scroll.
+class _LightOpacity extends SingleChildRenderObjectWidget {
+  const _LightOpacity({required this.opacity, super.child});
+
+  final double opacity;
+
+  @override
+  RenderObject createRenderObject(BuildContext context) =>
+      _RenderLightOpacity(opacity);
+
+  @override
+  void updateRenderObject(BuildContext context, RenderObject renderObject) {
+    (renderObject as _RenderLightOpacity).opacity = opacity;
+  }
+}
+
+class _RenderLightOpacity extends RenderProxyBox {
+  _RenderLightOpacity(double opacity)
+    : _alpha = Color.getAlphaFromOpacity(opacity);
+
+  int _alpha;
+
+  set opacity(double value) {
+    final alpha = Color.getAlphaFromOpacity(value);
+    if (alpha == _alpha) return;
+    final layered = _layered;
+    final visible = _alpha > 0;
+    _alpha = alpha;
+    if (layered != _layered) markNeedsCompositingBitsUpdate();
+    // Gone, it is gone for screen readers too, as with the framework's own.
+    if (visible != (_alpha > 0)) markNeedsSemanticsUpdate();
+    markNeedsPaint();
+  }
+
+  /// Only part of the way there takes a layer to fade in.
+  bool get _layered => _alpha > 0 && _alpha < 255;
+
+  @override
+  bool get alwaysNeedsCompositing => child != null && _layered;
+
+  @override
+  bool paintsChild(RenderBox child) => _alpha > 0;
+
+  @override
+  void paint(PaintingContext context, Offset offset) {
+    if (child == null || _alpha == 0) {
+      layer = null;
+      return;
+    }
+    if (_alpha == 255) {
+      layer = null;
+      super.paint(context, offset);
+      return;
+    }
+    layer = context.pushOpacity(
+      offset,
+      _alpha,
+      super.paint,
+      oldLayer: layer as OpacityLayer?,
+    );
+  }
+
+  @override
+  void visitChildrenForSemantics(RenderObjectVisitor visitor) {
+    if (child != null && _alpha > 0) visitor(child!);
   }
 }
 

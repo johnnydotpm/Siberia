@@ -101,10 +101,18 @@ Future<AppController> _pump(
   return controller;
 }
 
-/// How much of [finder] shows while it unfolds or folds away.
+/// How much of [finder] shows while it unfolds or folds away: the size of
+/// the row that holds it.
 double _shownHeight(WidgetTester tester, Finder finder) => tester
     .getSize(
-      find.ancestor(of: finder, matching: find.byType(SizeTransition)).first,
+      find
+          .ancestor(
+            of: finder,
+            matching: find.byWidgetPredicate(
+              (widget) => '${widget.runtimeType}' == '_Unfold',
+            ),
+          )
+          .first,
     )
     .height;
 
@@ -204,10 +212,17 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
       expect(dot, findsOneWidget);
-      final fade = tester.widget<FadeTransition>(
-        find.ancestor(of: dot, matching: find.byType(FadeTransition)).first,
+      final fade = tester.widget(
+        find
+            .ancestor(
+              of: dot,
+              matching: find.byWidgetPredicate(
+                (widget) => '${widget.runtimeType}' == '_LightOpacity',
+              ),
+            )
+            .first,
       );
-      expect(fade.opacity.value, inExclusiveRange(0, 1));
+      expect((fade as dynamic).opacity, inExclusiveRange(0, 1));
       await tester.pumpAndSettle();
       expect(dot, findsNothing);
       await tester.pumpWidget(const SizedBox.shrink());

@@ -464,6 +464,14 @@ class _ScrollEdge extends StatelessWidget {
   /// How much of the background colour covers the blurred content.
   static const double _veil = 0.7;
 
+  /// A blur below this, in points, is too slight to see on any screen.
+  static const double _slightest = 0.5;
+
+  /// The blur of band [index] at full strength. Eases out, so the blur lets
+  /// go of the content gently.
+  static double _bandBlur(int index) =>
+      _blur * math.pow(1 - (index + 0.5) / _bands, 1.5).toDouble();
+
   /// The height, from the top, where the effect is at full strength.
   final double solidExtent;
 
@@ -485,14 +493,14 @@ class _ScrollEdge extends StatelessWidget {
               children: [
                 _band(0, solidExtent, _blur * value),
                 for (var index = 0; index < _bands; index++)
-                  _band(
-                    solidExtent + index * step,
-                    step,
-                    // Eases out, so the blur lets go of the content gently.
-                    _blur *
-                        value *
-                        math.pow(1 - (index + 0.5) / _bands, 1.5).toDouble(),
-                  ),
+                  // The last band blurs by a fifth of a point: as if not at
+                  // all, and a pass less on every frame.
+                  if (_bandBlur(index) >= _slightest)
+                    _band(
+                      solidExtent + index * step,
+                      step,
+                      _bandBlur(index) * value,
+                    ),
                 Positioned.fill(
                   child: DecoratedBox(
                     decoration: BoxDecoration(
