@@ -96,9 +96,11 @@ flutter:
     - assets/fonts/InterVariable.ttf
     - assets/fonts/Inter-LICENSE.txt
 
-  # The lens at the edge of the glass that Flutter draws.
+  # The lens at the edge of the glass that Flutter draws, and the blur that
+  # lets go smoothly under its bars.
   shaders:
     - shaders/glass_lens.frag
+    - shaders/glass_fade.frag
 
   # To add assets to your application, add an assets section, like this:
   # assets:
