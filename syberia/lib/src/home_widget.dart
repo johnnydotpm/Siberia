@@ -78,9 +78,8 @@ String displaySubject(String subject, Map<String, String> shortNames) {
 /// The look of one widget.
 enum HomeWidgetTheme { brand, system, light, dark, black, translucent }
 
-/// What one widget on the home screen looks like and shows. Android keeps
-/// one per widget; on iOS the system's Edit Widget sheet holds the same
-/// options.
+/// What one Android home screen widget looks like and shows.
+/// The iOS widget uses a fixed presentation.
 @immutable
 class HomeWidgetConfig {
   const HomeWidgetConfig({
@@ -223,8 +222,7 @@ class HomeWidgetBridge {
       (defaultTargetPlatform == TargetPlatform.iOS ||
           defaultTargetPlatform == TargetPlatform.android);
 
-  /// Whether widgets keep their settings in the app (Android). On iOS the
-  /// system's Edit Widget sheet holds them.
+  /// Whether widgets have per-widget settings in the app (Android only).
   bool get configurableInApp =>
       !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
 

@@ -13,7 +13,7 @@ SiberiaGB to w pełni funkcjonalny, wieloplatformowy klient Librus napisany w fr
 - Terminarz, kalendarz oraz nadchodzące wydarzenia
 - Lista zadań domowych pogrupowana według terminu, z wyszukiwaniem
 - Ekran „Dzisiaj” z bieżącą i następną lekcją oraz blokami, które można ukrywać i przestawiać
-- Widżet „Następna lekcja” na ekranie głównym (Android i iOS) z osobnymi ustawieniami dla każdego widżetu
+- Widżet „Następna lekcja” na ekranie głównym (Android i iOS), z osobnymi ustawieniami dla każdego widżetu na Androidzie
 - Pełna obsługa wiadomości
 - Ogłoszenia
 - Frekwencja z wykresem obecności
@@ -39,7 +39,7 @@ Na iOS aplikację należy zainstalować we własnym zakresie za pomocą [AltStor
 
 Widżet „Następna lekcja” na ekranie głównym działa przy instalacji przez AltStore, SideStore lub płatny certyfikat; LiveContainer nie obsługuje widżetów. Na darmowym Apple ID widżet zajmuje jeden dodatkowy App ID.
 
-Na iOS standardowy widżet „Następna lekcja” korzysta bezpośrednio z WidgetKit i nie wymaga konfiguracji App Intents. Wariant „Następna lekcja · konfigurowalna” oferuje ustawienia dla każdego widżetu, gdy działa konfiguracja App Intents. Jeśli po aktualizacji widżet nadal pokazuje szkielet ładowania, usuń go, otwórz i zsynchronizuj aplikację, a następnie dodaj ponownie standardowy widżet.
+Aby testować interfejs bez konta szkolnego, przytrzymaj logo na ekranie logowania przez pięć sekund. Tryb demonstracyjny zawiera fikcyjne oceny, wiadomości, uwagi, frekwencję, lekcje i wpisy w kalendarzu. Wiadomości i odświeżanie działają lokalnie; wyloguj się, aby zakończyć demo. Dane demonstracyjne nie są zapisywane między uruchomieniami aplikacji.
 
 ## Instrukcje budowania
 

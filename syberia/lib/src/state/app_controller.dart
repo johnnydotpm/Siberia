@@ -56,6 +56,24 @@ class AppController extends ChangeNotifier {
   bool _autoSyncOnOpen = true;
 
   AppSnapshot get snapshot => _snapshot!;
+  bool get isDemo => _snapshot?.profile.provider == 'Demo';
+
+  /// The login screen's hidden gesture enters a disposable local session.
+  void startDemo() {
+    if (_syncing ||
+        _markingMessagesRead ||
+        snapshot.profile.provider != 'Signed out') {
+      return;
+    }
+    _snapshot = _repository.enterDemo();
+    _doneHomework = const {};
+    _forgetSentMessages();
+    _error = null;
+    _tabIndex = 0;
+    notifyListeners();
+    _updateHomeWidget();
+  }
+
   bool get syncing => _syncing;
   bool get markingMessagesRead => _markingMessagesRead;
   bool get loadingSentMessages => _loadingSentMessages;
@@ -152,7 +170,7 @@ class AppController extends ChangeNotifier {
   void _updateHomeWidget() {
     final widget = homeWidget;
     if (widget == null) return;
-    if (snapshot.profile.provider != 'Librus Synergia') {
+    if (!isDemo && snapshot.profile.provider != 'Librus Synergia') {
       unawaited(widget.clear());
       return;
     }
@@ -364,7 +382,7 @@ class AppController extends ChangeNotifier {
   /// not loaded again within [sentMessagesPause].
   Future<void> refreshSentMessages({bool force = false}) async {
     if (_loadingSentMessages) return;
-    if (snapshot.profile.provider != 'Librus Synergia') return;
+    if (!isDemo && snapshot.profile.provider != 'Librus Synergia') return;
     final loadedAt = _sentMessagesLoadedAt;
     if (!force &&
         loadedAt != null &&

@@ -57,7 +57,7 @@ jobs:
     runs-on: macos-26
     steps:
       - uses: actions/checkout@v4
-      - name: Check both WidgetKit providers against the iOS Simulator SDK
+      - name: Check the WidgetKit provider against the iOS Simulator SDK
         working-directory: syberia
         run: |
           xcrun --sdk iphonesimulator swiftc -typecheck -parse-as-library \

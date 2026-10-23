@@ -201,22 +201,7 @@ struct LessonProvider: TimelineProvider {
   }
 }
 
-/// An optional, separately registered widget keeps per-widget customization
-/// for installations where the system can resolve its configuration intent.
-struct ConfigurableLessonProvider: AppIntentTimelineProvider {
-  func placeholder(in context: Context) -> LessonEntry { .sample(WidgetOptions()) }
-
-  func snapshot(for configuration: WidgetOptionsIntent, in context: Context) async -> LessonEntry {
-    LessonTimeline.snapshot(
-      payload: WidgetPayload.load(), options: WidgetOptions(configuration), preview: context.isPreview)
-  }
-
-  func timeline(for configuration: WidgetOptionsIntent, in context: Context) async -> Timeline<LessonEntry> {
-    LessonTimeline.timeline(payload: WidgetPayload.load(), options: WidgetOptions(configuration))
-  }
-}
-
-/// Both providers use identical lesson selection and refresh rules.
+/// Lesson selection and refresh rules for the home and lock screen widgets.
 enum LessonTimeline {
   static func snapshot(
     payload: WidgetPayload?, options: WidgetOptions = WidgetOptions(), preview: Bool,
@@ -566,16 +551,6 @@ enum WidgetStrings {
     }
   }
 
-  static var configurableName: String {
-    switch language {
-    case "ru": return "Следующий урок · настройки"
-    case "uk": return "Наступний урок · налаштування"
-    case "de": return "Nächste Stunde · anpassbar"
-    case "en": return "Next lesson · customizable"
-    default: return "Następna lekcja · konfigurowalna"
-    }
-  }
-
   static var description: String {
     switch language {
     case "ru": return "Текущий или следующий урок: время и кабинет."
@@ -622,23 +597,6 @@ struct NextLessonWidget: Widget {
   }
 }
 
-struct ConfigurableNextLessonWidget: Widget {
-  var body: some WidgetConfiguration {
-    AppIntentConfiguration(
-      kind: "ConfigurableNextLessonWidget", intent: WidgetOptionsIntent.self,
-      provider: ConfigurableLessonProvider()
-    ) { entry in
-      LessonWidgetView(entry: entry)
-        .containerBackground(for: .widget) {
-          ThemedBackground(theme: entry.options.theme)
-        }
-    }
-    .configurationDisplayName(WidgetStrings.configurableName)
-    .description(WidgetStrings.description)
-    .supportedFamilies([.systemSmall, .systemMedium, .accessoryRectangular, .accessoryInline])
-  }
-}
-
 /// The widget's background in its theme, following light and dark mode.
 private struct ThemedBackground: View {
   @Environment(\.colorScheme) private var scheme
@@ -651,6 +609,5 @@ private struct ThemedBackground: View {
 struct SiberiaWidgetBundle: WidgetBundle {
   var body: some Widget {
     NextLessonWidget()
-    ConfigurableNextLessonWidget()
   }
 }
