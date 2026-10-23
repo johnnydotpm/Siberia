@@ -67,11 +67,54 @@ class _AppShellState extends State<AppShell> {
   Set<String> _colorSubjects = const {};
   SubjectColors _colors = SubjectColors.empty;
 
+  /// The vertical list last scrolled on each page, to take back to the top.
+  final _lists = <int, BuildContext>{};
+
+  /// The page whose tab was tapped while open, for the page to act on.
+  final _reselected = _Reselect();
+
   AppController get controller => widget.controller;
+
+  @override
+  void dispose() {
+    _reselected.dispose();
+    super.dispose();
+  }
+
+  /// The open tab tapped again: its page back to the top, as in system
+  /// apps; the timetable back to today.
+  void _reselect(int page, {required bool glass}) {
+    _reselected.fire(page);
+    // The glass shell scrolls its own pages.
+    if (glass) return;
+    final list = _lists[page];
+    if (list == null || !list.mounted) return;
+    final position = Scrollable.maybeOf(list)?.position;
+    if (position == null) return;
+    if (_reduceMotion(context)) {
+      position.jumpTo(0);
+    } else {
+      position.animateTo(
+        0,
+        duration: const Duration(milliseconds: 350),
+        curve: Curves.easeOutCubic,
+      );
+    }
+  }
+
+  bool _onScroll(ScrollNotification notification) {
+    // The page's own list, not one nested in it or a horizontal strip.
+    if (notification.depth == 0 &&
+        notification.metrics.axis == Axis.vertical &&
+        notification.context != null) {
+      _lists[controller.tabIndex] = notification.context!;
+    }
+    return false;
+  }
 
   Widget _page(int index) => switch (index) {
     0 => _Today(controller),
-    1 => _Timetable(controller),
+    1 => _Timetable(controller, reselected: _reselected),
     2 => _Grades(controller),
     3 => _Events(controller),
     4 => _Homework(controller),
@@ -141,7 +184,10 @@ class _AppShellState extends State<AppShell> {
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  IndexedStack(index: current, children: pages),
+                  NotificationListener<ScrollNotification>(
+                    onNotification: _onScroll,
+                    child: IndexedStack(index: current, children: pages),
+                  ),
                   // Under the top bar, over the page.
                   Positioned(
                     top: 0,
@@ -220,6 +266,8 @@ class _AppShellState extends State<AppShell> {
             ],
             selectedTab: selected < 0 ? null : selected,
             onTabSelected: (index) => controller.selectTab(bottomTabs[index]),
+            onTabReselected: (index) =>
+                _reselect(bottomTabs[index], glass: true),
             menuLabel: MaterialLocalizations.of(context).openAppDrawerTooltip,
             actions: [
               if (controller.tabIndex == 5)
@@ -294,8 +342,14 @@ class _AppShellState extends State<AppShell> {
                   ),
             child: NavigationBar(
               selectedIndex: selected < 0 ? 0 : selected,
-              onDestinationSelected: (index) =>
-                  controller.selectTab(bottomTabs[index]),
+              onDestinationSelected: (index) {
+                final page = bottomTabs[index];
+                if (page == controller.tabIndex) {
+                  _reselect(page, glass: false);
+                } else {
+                  controller.selectTab(page);
+                }
+              },
               destinations: [
                 _destination(
                   Icons.home_outlined,
@@ -325,6 +379,16 @@ class _AppShellState extends State<AppShell> {
       },
     ),
   );
+}
+
+/// Tells a page that its tab was tapped while it was open.
+class _Reselect extends ChangeNotifier {
+  int? page;
+
+  void fire(int value) {
+    page = value;
+    notifyListeners();
+  }
 }
 
 NavigationDestination _destination(

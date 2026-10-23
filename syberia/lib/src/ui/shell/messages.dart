@@ -325,6 +325,7 @@ class _MessagesState extends State<_Messages> {
             controller: controller,
             onRefresh: refresh,
             child: ListView(
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
               padding: EdgeInsets.fromLTRB(
                 _Space.page,
                 _Space.page,
@@ -380,6 +381,27 @@ class _MessageTile extends StatelessWidget {
     // The row stays; it just turns read.
     return false;
   }
+
+  /// A long press: open it, or mark it read without opening it.
+  void _actions(BuildContext context, bool unread) => _showItemActions(
+    context,
+    title: item.subject.isEmpty ? item.sender : item.subject,
+    actions: [
+      (
+        key: ValueKey('message-action-open-${item.id}'),
+        icon: Icons.mail_outline_rounded,
+        label: context.tr('open'),
+        run: () => _showMessageDetail(context, controller, item),
+      ),
+      if (unread)
+        (
+          key: ValueKey('message-action-read-${item.id}'),
+          icon: Icons.mark_email_read_rounded,
+          label: context.tr('messageMarkRead'),
+          run: () => _markRead(context),
+        ),
+    ],
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -468,7 +490,7 @@ class _MessageTile extends StatelessWidget {
                     // Read, the dot fades away rather than vanish.
                     if (!item.sent)
                       AnimatedSwitcher(
-                        duration: _Motion.list,
+                        duration: _motion(context, _Motion.list),
                         child: unread
                             ? Container(
                                 key: ValueKey('message-unread-${item.id}'),
@@ -515,6 +537,7 @@ class _MessageTile extends StatelessWidget {
             clipBehavior: Clip.antiAlias,
             child: InkWell(
               onTap: () => _showMessageDetail(context, controller, item),
+              onLongPress: item.sent ? null : () => _actions(context, unread),
               child: Container(
                 decoration: BoxDecoration(
                   border: Border(
@@ -533,6 +556,7 @@ class _MessageTile extends StatelessWidget {
               InkWell(
                 borderRadius: BorderRadius.circular(14),
                 onTap: () => _showMessageDetail(context, controller, item),
+                onLongPress: item.sent ? null : () => _actions(context, unread),
                 child: content,
               ),
               // Under the text, past the avatar: 12 + 40 + 12.
@@ -545,30 +569,9 @@ class _MessageTile extends StatelessWidget {
       key: ValueKey('message-${item.id}'),
       direction: unread ? DismissDirection.startToEnd : DismissDirection.none,
       confirmDismiss: (_) => _markRead(context),
-      background: Container(
-        alignment: AlignmentDirectional.centerStart,
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        decoration: BoxDecoration(
-          color: colors.primaryContainer,
-          borderRadius: BorderRadius.circular(14),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.mark_email_read_rounded,
-              color: colors.onPrimaryContainer,
-            ),
-            const SizedBox(width: 8),
-            Text(
-              context.tr('messageMarkRead'),
-              style: TextStyle(
-                color: colors.onPrimaryContainer,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ],
-        ),
+      background: _SwipeAction(
+        icon: Icons.mark_email_read_rounded,
+        label: context.tr('messageMarkRead'),
       ),
       child: tile,
     );

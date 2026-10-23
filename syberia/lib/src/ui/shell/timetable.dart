@@ -68,8 +68,11 @@ Future<void> _showTimetableSettings(
 );
 
 class _Timetable extends StatefulWidget {
-  const _Timetable(this.controller);
+  const _Timetable(this.controller, {this.reselected});
   final AppController controller;
+
+  /// Fires when the tab is tapped while open: back to today.
+  final _Reselect? reselected;
   @override
   State<_Timetable> createState() => _TimetableState();
 }
@@ -96,6 +99,13 @@ class _TimetableState extends State<_Timetable> {
   /// Which way the last change of week went: 1 later, -1 earlier.
   int _weekStep = 1;
 
+  /// The days drawn already, and what they were drawn from. A swipe that
+  /// passes the middle picks another day, and the days on screen are handed
+  /// back as they were, so that frame, under the finger, stays light.
+  final _dayPages = <DateTime, Widget>{};
+  Object? _dayPagesFrom;
+  var _tick = 0;
+
   /// Weeks, by their Monday, on their way, and those that came back with
   /// no lessons, as in the holidays. A week with lessons is known by them,
   /// so one a sync leaves out is loaded again.
@@ -106,15 +116,53 @@ class _TimetableState extends State<_Timetable> {
   void initState() {
     super.initState();
     _clock = Timer.periodic(const Duration(seconds: 30), (_) {
-      if (mounted) setState(() {});
+      // The lesson on now moves on: the days are drawn again.
+      if (mounted) setState(() => _tick++);
     });
+    widget.reselected?.addListener(_onReselected);
+  }
+
+  @override
+  void didUpdateWidget(_Timetable oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.reselected != widget.reselected) {
+      oldWidget.reselected?.removeListener(_onReselected);
+      widget.reselected?.addListener(_onReselected);
+    }
   }
 
   @override
   void dispose() {
+    widget.reselected?.removeListener(_onReselected);
     _clock?.cancel();
     _pages?.dispose();
     super.dispose();
+  }
+
+  void _onReselected() {
+    if (widget.reselected?.page == 1 && mounted) _goToToday();
+  }
+
+  /// The day the timetable opens at: today, or the next day with lessons.
+  DateTime _home() => _nearestDayWithLessons(
+    DateTime.now(),
+    widget.controller.snapshot.lessons.map((lesson) => _day(lesson.start)),
+  );
+
+  /// A pull on a day: a sync, then the week on screen if the sync did not
+  /// bring it, as a week in the past.
+  Future<void> _refresh() async {
+    await widget.controller.sync();
+    final day = selectedDay;
+    if (mounted && day != null) await _loadWeekOf(day);
+  }
+
+  /// Back to [_home], as the Calendar's "Today" does.
+  void _goToToday() {
+    final home = _home();
+    if (home == selectedDay) return;
+    HapticFeedback.selectionClick();
+    _goTo(home);
   }
 
   DateTime _day(DateTime value) => DateTime(value.year, value.month, value.day);
@@ -346,6 +394,24 @@ class _TimetableState extends State<_Timetable> {
     )) {
       if (!days.any((item) => _sameDay(item, day))) days.add(day);
     }
+    // Everything the days are drawn from; when any of it changes, they are
+    // drawn afresh.
+    final controller = widget.controller;
+    final from = (
+      controller.snapshot.lessons,
+      controller.snapshot.events,
+      controller.snapshot.freeDays,
+      controller.timetableView,
+      controller.mergeTimetableLessons,
+      controller.showTimetableBreaks,
+      _loadingWeeks.join(),
+      _tick,
+      _home(),
+    );
+    if (from != _dayPagesFrom) {
+      _dayPagesFrom = from;
+      _dayPages.clear();
+    }
     final eventDays = {
       for (final event in widget.controller.snapshot.events) _day(event.date),
     };
@@ -403,7 +469,7 @@ class _TimetableState extends State<_Timetable> {
                   child: _StripSelection(
                     day: selectedDay!,
                     child: AnimatedSwitcher(
-                      duration: _Motion.page,
+                      duration: _motion(context, _Motion.page),
                       // The leaving week runs the animation backwards; the
                       // flipped curve keeps it in step with the coming one,
                       // so the two move as one band and never overlap.
@@ -437,9 +503,14 @@ class _TimetableState extends State<_Timetable> {
             child: PageView.builder(
               key: ValueKey(_generation),
               controller: _pages,
+              // The days either side are drawn while nothing moves, not as
+              // a swipe begins.
+              allowImplicitScrolling: true,
               onPageChanged: _pageChanged,
-              itemBuilder: (context, page) =>
-                  _dayPage(context, _dayAt(page), groups, now),
+              itemBuilder: (context, page) {
+                final day = _dayAt(page);
+                return _dayPages[day] ??= _dayPage(context, day, groups, now);
+              },
             ),
           ),
         ),
@@ -480,7 +551,11 @@ class _TimetableState extends State<_Timetable> {
     final waiting = lessons.isEmpty && _loadingWeeks.contains(_mondayOf(day));
     return _TimetableDay(
       key: ValueKey(day),
+      controller: controller,
+      onRefresh: _refresh,
       title: title,
+      // Away from today, the way back.
+      onToday: day == _home() ? null : _goToToday,
       // Today opens at the lesson on now, or the next one.
       focus: _sameDay(day, now),
       padding: lessons.isEmpty
@@ -553,14 +628,25 @@ class _TimetableState extends State<_Timetable> {
 /// or the next one, with a little of the one before above it.
 class _TimetableDay extends StatefulWidget {
   const _TimetableDay({
+    required this.controller,
+    required this.onRefresh,
     required this.title,
     required this.padding,
     required this.builder,
     this.focus = false,
+    this.onToday,
     super.key,
   });
 
+  final AppController controller;
+
+  /// What a pull down does.
+  final Future<void> Function() onRefresh;
+
   final String title;
+
+  /// Shows "Today" beside the date, to go back to it.
+  final VoidCallback? onToday;
   final EdgeInsets padding;
   final bool focus;
 
@@ -609,18 +695,49 @@ class _TimetableDayState extends State<_TimetableDay> {
     crossAxisAlignment: CrossAxisAlignment.stretch,
     children: [
       Padding(
-        padding: const EdgeInsets.fromLTRB(16, 14, 16, 10),
-        child: Text(
-          widget.title,
-          style: Theme.of(context).textTheme.titleLarge
-              ?.copyWith(fontWeight: FontWeight.w800),
+        padding: EdgeInsetsDirectional.fromSTEB(
+          16,
+          14,
+          widget.onToday == null ? 16 : 8,
+          10,
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(
+                widget.title,
+                style: Theme.of(context).textTheme.titleLarge
+                    ?.copyWith(fontWeight: FontWeight.w800),
+              ),
+            ),
+            if (widget.onToday != null)
+              TextButton(
+                key: const ValueKey('timetable-today'),
+                onPressed: widget.onToday,
+                style: TextButton.styleFrom(
+                  visualDensity: VisualDensity.compact,
+                ),
+                // Bolder, in the page's own typeface.
+                child: Text(
+                  context.tr('today'),
+                  style: const TextStyle(fontWeight: FontWeight.w700),
+                ),
+              ),
+          ],
         ),
       ),
       Expanded(
-        child: SingleChildScrollView(
-          controller: _scroll,
-          padding: widget.padding,
-          child: widget.builder(context, _focusKey),
+        // Pulled down, it refreshes, as the other pages do; so it moves
+        // even when the day fits.
+        child: _Refresh(
+          controller: widget.controller,
+          onRefresh: widget.onRefresh,
+          child: SingleChildScrollView(
+            controller: _scroll,
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: widget.padding,
+            child: widget.builder(context, _focusKey),
+          ),
         ),
       ),
     ],
@@ -849,7 +966,7 @@ class _DayChip extends StatelessWidget {
     return TweenAnimationBuilder<double>(
       // The highlight moves from day to day, as in the Calendar.
       tween: Tween(end: selected ? 1 : 0),
-      duration: const Duration(milliseconds: 200),
+      duration: _motion(context, const Duration(milliseconds: 200)),
       curve: Curves.easeOut,
       builder: (context, picked, _) => _chip(context, picked, selected),
     );

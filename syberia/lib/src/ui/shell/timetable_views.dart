@@ -410,18 +410,17 @@ class _TimelineLessonCard extends StatelessWidget {
                     Row(
                       children: [
                         Expanded(
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(3),
-                            child: LinearProgressIndicator(
-                              value: duration.inMinutes == 0
-                                  ? 0
-                                  : elapsed / duration.inMinutes,
-                              minHeight: 4,
-                              color: palette.accent,
-                              backgroundColor: foreground.withValues(
-                                alpha: 0.15,
-                              ),
-                            ),
+                          // Glides as the lesson goes on, to the second.
+                          child: _GlidingProgress(
+                            value: duration.inSeconds <= 0
+                                ? 0
+                                : (now.difference(lesson.start).inSeconds /
+                                          duration.inSeconds)
+                                      .clamp(0.0, 1.0),
+                            minHeight: 4,
+                            radius: 3,
+                            color: palette.accent,
+                            backgroundColor: foreground.withValues(alpha: 0.15),
                           ),
                         ),
                         const SizedBox(width: 8),

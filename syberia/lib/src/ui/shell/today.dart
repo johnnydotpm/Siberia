@@ -124,7 +124,10 @@ class _TodayState extends State<_Today> {
           // What a sync brings comes and goes smoothly.
           _AnimatedColumn(
             children: [
-              if (controller.error != null)
+              // No connection is said calmly in the line above instead.
+              if (controller.error != null &&
+                  !(_calmError(controller.error!) != null &&
+                      controller.snapshot.lastSync.millisecondsSinceEpoch != 0))
                 Padding(
                   key: const ValueKey('today-error'),
                   padding: const EdgeInsets.only(bottom: _Space.card),
@@ -454,8 +457,10 @@ class _NowCard extends StatelessWidget {
                   if (sameDay || current != null) ...[
                     if (current != null) const Spacer(),
                     const SizedBox(width: 8),
-                    Text(
+                    // "In 17 min" rolls to 16, as numbers do in iOS.
+                    _RollingText(
                       when,
+                      key: const ValueKey('today-now-when'),
                       style: theme.textTheme.labelLarge?.copyWith(
                         color: foreground,
                         fontWeight: FontWeight.w800,
@@ -515,21 +520,20 @@ class _NowCard extends StatelessWidget {
                 Row(
                   children: [
                     Expanded(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(4),
-                        child: LinearProgressIndicator(
-                          value: progress,
-                          minHeight: 6,
-                          color: palette.accent,
-                          backgroundColor: foreground.withValues(alpha: 0.15),
-                        ),
+                      child: _GlidingProgress(
+                        key: const ValueKey('today-now-progress'),
+                        value: progress,
+                        minHeight: 6,
+                        color: palette.accent,
+                        backgroundColor: foreground.withValues(alpha: 0.15),
                       ),
                     ),
                     const SizedBox(width: 12),
-                    Text(
+                    _RollingText(
                       context.trArgs('lessonEndsIn', {
                         'minutes': '$minutesLeft',
                       }),
+                      key: const ValueKey('today-now-left'),
                       style: theme.textTheme.labelLarge?.copyWith(
                         color: foreground,
                         fontWeight: FontWeight.w800,
@@ -645,7 +649,16 @@ String _gradeWhen(BuildContext context, DateTime date, DateTime now) {
   return _shortDate(context, date);
 }
 
-/// "Updated at 17:05" under the date; a tap syncs again.
+/// The line to say a sync failed for want of a connection with, rather than
+/// a red card: the data on screen is still good, only older.
+String? _calmError(AppError error) => switch (error.errorCode) {
+  LibrusErrorCode.networkUnavailable => 'syncOffline',
+  LibrusErrorCode.networkTimeout => 'syncNoAnswer',
+  _ => null,
+};
+
+/// "Updated at 17:05" under the date, or "No internet · data from 17:05";
+/// a tap syncs again.
 class _LastSync extends StatelessWidget {
   const _LastSync(this.controller, {required this.now});
   final AppController controller;
@@ -656,13 +669,18 @@ class _LastSync extends StatelessWidget {
     final theme = Theme.of(context);
     final color = theme.colorScheme.onSurfaceVariant;
     final last = controller.snapshot.lastSync;
+    final error = controller.error;
+    final calm = controller.syncing || error == null ? null : _calmError(error);
+    final when = _sameDay(last, now)
+        ? _time(last)
+        : '${_shortDate(context, last)}, ${_time(last)}';
     final text = controller.syncing
         ? context.tr('todayUpdating')
+        : calm != null
+        ? context.trArgs(calm, {'time': when})
         : _sameDay(last, now)
-        ? context.trArgs('todayUpdatedAt', {'time': _time(last)})
-        : context.trArgs('todayUpdatedOn', {
-            'date': '${_shortDate(context, last)}, ${_time(last)}',
-          });
+        ? context.trArgs('todayUpdatedAt', {'time': when})
+        : context.trArgs('todayUpdatedOn', {'date': when});
     return Align(
       alignment: AlignmentDirectional.centerStart,
       child: InkWell(
@@ -674,7 +692,11 @@ class _LastSync extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.sync_rounded, size: 14, color: color),
+              Icon(
+                calm == null ? Icons.sync_rounded : Icons.cloud_off_rounded,
+                size: 14,
+                color: color,
+              ),
               const SizedBox(width: 4),
               Flexible(
                 child: Text(
@@ -880,7 +902,8 @@ class _Summary extends StatelessWidget {
           children: [
             Expanded(
               child: _Metric(
-                average == null ? '—' : _decimal(context, average),
+                average,
+                (value) => _decimal(context, value),
                 context.tr('averageGrade'),
                 Icons.school_rounded,
                 key: const ValueKey('summary-grades'),
@@ -890,8 +913,9 @@ class _Summary extends StatelessWidget {
             Expanded(
               child: _Metric(
                 data.attendance.isEmpty
-                    ? '—'
-                    : _percent(context, present / data.attendance.length * 100),
+                    ? null
+                    : present / data.attendance.length * 100,
+                (value) => _percent(context, value),
                 context.tr('attendanceRate'),
                 Icons.fact_check_rounded,
                 key: const ValueKey('summary-absences'),
@@ -900,7 +924,8 @@ class _Summary extends StatelessWidget {
             ),
             Expanded(
               child: _Metric(
-                '${data.unreadMessages}',
+                data.unreadMessages.toDouble(),
+                (value) => '${value.round()}',
                 context.tr('messagesUnread'),
                 Icons.mail_rounded,
                 key: const ValueKey('summary-messages'),
@@ -917,12 +942,17 @@ class _Summary extends StatelessWidget {
 class _Metric extends StatelessWidget {
   const _Metric(
     this.value,
+    this.format,
     this.label,
     this.icon, {
     required this.onTap,
     super.key,
   });
-  final String value, label;
+
+  /// Counts its way to a new value after a sync; null shows a dash.
+  final double? value;
+  final String Function(double value) format;
+  final String label;
   final IconData icon;
   final VoidCallback onTap;
   @override
@@ -936,10 +966,11 @@ class _Metric extends StatelessWidget {
         children: [
           Icon(icon, color: Theme.of(context).colorScheme.primary),
           const SizedBox(height: 4),
-          Text(
+          _CountingText(
             value,
+            format: format,
             style: Theme.of(context).textTheme.titleLarge
-                ?.copyWith(fontWeight: FontWeight.w800),
+                ?.copyWith(fontWeight: FontWeight.w800, fontFeatures: _tabular),
           ),
           Text(
             label,

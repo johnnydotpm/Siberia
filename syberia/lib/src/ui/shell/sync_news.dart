@@ -64,11 +64,11 @@ class _SyncNewsBannerState extends State<_SyncNewsBanner> {
       ignoring: !visible,
       child: AnimatedSlide(
         offset: visible ? Offset.zero : const Offset(0, -0.6),
-        duration: _Motion.page,
+        duration: _motion(context, _Motion.page),
         curve: visible ? Curves.easeOutBack : Curves.easeInCubic,
         child: AnimatedOpacity(
           opacity: visible ? 1 : 0,
-          duration: _Motion.list,
+          duration: _motion(context, _Motion.list),
           child: news == null ? const SizedBox.shrink() : _capsule(news),
         ),
       ),

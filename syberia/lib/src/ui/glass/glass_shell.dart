@@ -128,6 +128,7 @@ class GlassShell extends StatefulWidget {
     required this.actions,
     required this.drawer,
     required this.body,
+    this.onTabReselected,
     super.key,
   });
 
@@ -147,6 +148,11 @@ class GlassShell extends StatefulWidget {
   final int? selectedTab;
 
   final ValueChanged<int> onTabSelected;
+
+  /// The tab already open was tapped again. Its page goes back to the top
+  /// in any case; a page may also do more, as the timetable going back to
+  /// today.
+  final ValueChanged<int>? onTabReselected;
 
   /// Read by VoiceOver for the button that opens [drawer].
   final String menuLabel;
@@ -221,6 +227,7 @@ class _GlassShellState extends State<GlassShell> {
       widget.onTabSelected(index);
       return;
     }
+    widget.onTabReselected?.call(index);
     final list = _lists[widget.pageIndex];
     if (list == null || !list.mounted) return;
     Scrollable.maybeOf(list)?.position.animateTo(

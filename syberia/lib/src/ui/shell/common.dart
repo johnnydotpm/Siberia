@@ -420,10 +420,18 @@ class _PageList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scope = GlassPageScope.maybeOf(context);
-    if (scope == null) return ListView(padding: padding, children: children);
+    if (scope == null) {
+      return ListView(
+        // A search field's keyboard goes once the list is moved.
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+        padding: padding,
+        children: children,
+      );
+    }
     final insets = MediaQuery.paddingOf(context);
     final title = scope.largeTitle;
     return ListView(
+      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
       padding: padding.copyWith(
         // The title brings its own spacing below the bar.
         top: (title == null ? padding.top : 0) + insets.top,
@@ -503,3 +511,97 @@ String _shortWeekday(BuildContext context, DateTime value) => _capitalize(
 String _capitalize(String value) => value.isEmpty
     ? value
     : '${value.characters.first.toUpperCase()}${value.substring(value.characters.first.length)}';
+
+/// What a swipe along a row does, shown under it as it slides.
+class _SwipeAction extends StatelessWidget {
+  const _SwipeAction({required this.icon, required this.label});
+  final IconData icon;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return Container(
+      alignment: AlignmentDirectional.centerStart,
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      decoration: BoxDecoration(
+        color: colors.primaryContainer,
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: colors.onPrimaryContainer),
+          const SizedBox(width: 8),
+          Text(
+            label,
+            style: TextStyle(
+              color: colors.onPrimaryContainer,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// One action of a row's long-press menu.
+typedef _ItemAction = ({
+  Key key,
+  IconData icon,
+  String label,
+  VoidCallback run,
+});
+
+/// What a long press on a row offers, as a menu sheet: the row's name and
+/// its actions. Felt as the press takes, as in iOS.
+Future<void> _showItemActions(
+  BuildContext context, {
+  required String title,
+  required List<_ItemAction> actions,
+}) {
+  HapticFeedback.mediumImpact();
+  return showAppSheet<void>(
+    context: context,
+    compact: true,
+    showDragHandle: true,
+    builder: (sheet) => SafeArea(
+      child: Column(
+        key: const ValueKey('item-actions'),
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(
+              _Space.sheet,
+              0,
+              _Space.sheet,
+              8,
+            ),
+            child: Text(
+              title,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: _rowTitleStyle(sheet),
+            ),
+          ),
+          for (final action in actions)
+            ListTile(
+              key: action.key,
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: _Space.sheet,
+              ),
+              leading: Icon(action.icon),
+              title: Text(action.label),
+              onTap: () {
+                Navigator.pop(sheet);
+                action.run();
+              },
+            ),
+          SizedBox(height: 8 + _systemButtonsRoom(sheet)),
+        ],
+      ),
+    ),
+  );
+}

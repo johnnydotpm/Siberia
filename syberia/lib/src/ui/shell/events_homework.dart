@@ -152,7 +152,7 @@ class _HomeworkState extends State<_Homework> {
       rows.add(
         AnimatedPadding(
           key: ValueKey('homework-row-${item.id}'),
-          duration: _Motion.list,
+          duration: _motion(context, _Motion.list),
           curve: _Motion.curve,
           // The first of its group sits under the label; the next one under
           // it slides up when it goes.
@@ -183,7 +183,7 @@ class _HomeworkState extends State<_Homework> {
                 ),
                 child: AnimatedRotation(
                   turns: _showDone ? 0.5 : 0,
-                  duration: _Motion.list,
+                  duration: _motion(context, _Motion.list),
                   curve: _Motion.curve,
                   child: Icon(
                     Icons.expand_more_rounded,
@@ -201,7 +201,7 @@ class _HomeworkState extends State<_Homework> {
             AnimatedPadding(
               // Apart from its row above, so one moves out and one in.
               key: ValueKey('homework-done-row-${item.id}'),
-              duration: _Motion.list,
+              duration: _motion(context, _Motion.list),
               curve: _Motion.curve,
               padding: EdgeInsets.only(top: index == 0 ? 0 : _Space.item),
               child: _HomeworkCard(item, now: now),
@@ -623,11 +623,36 @@ class _HomeworkCard extends StatelessWidget {
         ],
       ],
     );
-    return Card(
+    final card = Card(
       key: ValueKey('homework-${item.id}'),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: () => _showHomeworkDetails(context, item),
+        onLongPress: controller == null
+            ? null
+            : () => _showItemActions(
+                context,
+                title: _homeworkTitle(context, item),
+                actions: [
+                  (
+                    key: ValueKey('homework-action-open-${item.id}'),
+                    icon: Icons.assignment_outlined,
+                    label: context.tr('open'),
+                    run: () => _showHomeworkDetails(context, item),
+                  ),
+                  (
+                    key: ValueKey('homework-action-done-${item.id}'),
+                    icon: done
+                        ? Icons.remove_done_rounded
+                        : Icons.task_alt_rounded,
+                    label: context.tr(
+                      done ? 'homeworkMarkNotDone' : 'homeworkMarkDone',
+                    ),
+                    run: () =>
+                        _setHomeworkDone(context, controller, item, !done),
+                  ),
+                ],
+              ),
         child: Container(
           decoration: BoxDecoration(
             border: Border(left: BorderSide(color: palette.accent, width: 4)),
@@ -657,6 +682,24 @@ class _HomeworkCard extends StatelessWidget {
                 ),
         ),
       ),
+    );
+    if (controller == null) return card;
+    // A swipe marks it, as a swipe marks a message read; the card springs
+    // back and leaves the list.
+    return Dismissible(
+      key: ValueKey('homework-swipe-${item.id}'),
+      direction: DismissDirection.startToEnd,
+      confirmDismiss: (_) async {
+        HapticFeedback.lightImpact();
+        _setHomeworkDone(context, controller, item, !done);
+        return false;
+      },
+      // A short word, seen in the little room a swipe opens.
+      background: _SwipeAction(
+        icon: done ? Icons.remove_done_rounded : Icons.task_alt_rounded,
+        label: context.tr(done ? 'homeworkMarkNotDone' : 'homeworkDoneSection'),
+      ),
+      child: card,
     );
   }
 }
@@ -754,7 +797,7 @@ class _DoneCheckState extends State<_DoneCheck> {
             dimension: 40,
             child: Center(
               child: AnimatedContainer(
-                duration: const Duration(milliseconds: 150),
+                duration: _motion(context, const Duration(milliseconds: 150)),
                 width: 24,
                 height: 24,
                 decoration: BoxDecoration(

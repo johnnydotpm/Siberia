@@ -15,6 +15,195 @@ abstract final class _Motion {
 bool _reduceMotion(BuildContext context) =>
     MediaQuery.maybeDisableAnimationsOf(context) ?? false;
 
+/// [duration], or none when the system asks for less motion: then things
+/// change at once.
+Duration _motion(BuildContext context, Duration duration) =>
+    _reduceMotion(context) ? Duration.zero : duration;
+
+/// Text whose changed part rolls when it changes, as numbers do in iOS: the
+/// old digits slide up and away, the new ones come in from below, and the
+/// rest stays still. "In 17 min" to "In 16 min" rolls only the 7. At rest,
+/// and when the system asks for less motion, it is plain text.
+class _RollingText extends StatefulWidget {
+  const _RollingText(this.text, {required this.style, super.key});
+
+  final String text;
+  final TextStyle? style;
+
+  @override
+  State<_RollingText> createState() => _RollingTextState();
+}
+
+class _RollingTextState extends State<_RollingText>
+    with SingleTickerProviderStateMixin {
+  late final _roll = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 350),
+  );
+  late final _curve = CurvedAnimation(
+    parent: _roll,
+    curve: Curves.easeOutCubic,
+  );
+
+  /// The text rolling away; null at rest.
+  String? _from;
+
+  /// Counts the rolls, so one cut short by the next does not end it.
+  var _rolls = 0;
+
+  @override
+  void didUpdateWidget(_RollingText oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.text == widget.text) return;
+    if (_reduceMotion(context)) {
+      _from = null;
+      _roll.value = 1;
+      return;
+    }
+    _from = oldWidget.text;
+    final roll = ++_rolls;
+    _roll.forward(from: 0).whenCompleteOrCancel(() {
+      if (mounted && roll == _rolls) setState(() => _from = null);
+    });
+  }
+
+  @override
+  void dispose() {
+    _curve.dispose();
+    _roll.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final from = _from;
+    final text = widget.text;
+    if (from == null) return Text(text, style: widget.style);
+    // What the two have in common at either end stays; the middle rolls.
+    final old = from.characters.toList();
+    final now = text.characters.toList();
+    var start = 0;
+    while (start < old.length &&
+        start < now.length &&
+        old[start] == now[start]) {
+      start++;
+    }
+    var end = 0;
+    while (end < old.length - start &&
+        end < now.length - start &&
+        old[old.length - 1 - end] == now[now.length - 1 - end]) {
+      end++;
+    }
+    final prefix = now.take(start).join();
+    final suffix = now.skip(now.length - end).join();
+    final leaving = old.sublist(start, old.length - end).join();
+    final coming = now.sublist(start, now.length - end).join();
+    return Semantics(
+      label: text,
+      child: ExcludeSemantics(
+        child: ClipRect(
+          child: AnimatedBuilder(
+            animation: _curve,
+            builder: (context, _) {
+              final t = _curve.value;
+              return Row(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.baseline,
+                textBaseline: TextBaseline.alphabetic,
+                children: [
+                  if (prefix.isNotEmpty) Text(prefix, style: widget.style),
+                  Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      FractionalTranslation(
+                        translation: Offset(0, 1 - t),
+                        child: Opacity(
+                          opacity: t,
+                          child: Text(coming, style: widget.style),
+                        ),
+                      ),
+                      Positioned(
+                        left: 0,
+                        top: 0,
+                        child: FractionalTranslation(
+                          translation: Offset(0, -t),
+                          child: Opacity(
+                            opacity: 1 - t,
+                            child: Text(leaving, style: widget.style),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  if (suffix.isNotEmpty) Text(suffix, style: widget.style),
+                ],
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// A number that counts its way to a new value instead of jumping, as after
+/// a sync. The first value shows as it is.
+class _CountingText extends StatelessWidget {
+  const _CountingText(this.value, {required this.format, required this.style});
+
+  /// Null shows a dash.
+  final double? value;
+  final String Function(double value) format;
+  final TextStyle? style;
+
+  @override
+  Widget build(BuildContext context) {
+    final target = value;
+    if (target == null) return Text('—', style: style);
+    return TweenAnimationBuilder<double>(
+      tween: Tween(end: target),
+      duration: _motion(context, const Duration(milliseconds: 700)),
+      curve: Curves.easeOutCubic,
+      builder: (context, shown, _) => Text(format(shown), style: style),
+    );
+  }
+}
+
+/// A progress bar that glides to a new value rather than jumping, as the
+/// minutes of a lesson pass.
+class _GlidingProgress extends StatelessWidget {
+  const _GlidingProgress({
+    required this.value,
+    required this.minHeight,
+    required this.color,
+    required this.backgroundColor,
+    this.radius = 4,
+    super.key,
+  });
+
+  final double value;
+  final double minHeight;
+  final Color color;
+  final Color backgroundColor;
+  final double radius;
+
+  @override
+  Widget build(BuildContext context) => TweenAnimationBuilder<double>(
+    tween: Tween(end: value),
+    duration: _motion(context, const Duration(milliseconds: 900)),
+    curve: Curves.easeInOut,
+    builder: (context, shown, _) => ClipRRect(
+      borderRadius: BorderRadius.circular(radius),
+      child: LinearProgressIndicator(
+        value: shown,
+        minHeight: minHeight,
+        color: color,
+        backgroundColor: backgroundColor,
+      ),
+    ),
+  );
+}
+
 /// A column whose children come and go smoothly: a new one unfolds and
 /// fades in, one taken out fades and folds away, and the rest slide into
 /// place. Children are told apart by their keys, which must be unique.
@@ -173,7 +362,7 @@ class _AnimatedColumnState extends State<_AnimatedColumn>
                 child: FadeTransition(
                   opacity: entry.controller,
                   child: AnimatedPadding(
-                    duration: _Motion.list,
+                    duration: _motion(context, _Motion.list),
                     curve: _Motion.curve,
                     padding: EdgeInsets.only(top: entry.gap),
                     child: entry.widget,

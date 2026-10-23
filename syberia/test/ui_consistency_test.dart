@@ -267,38 +267,51 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
   });
 
-  testWidgets('the login form and an empty day do not scroll for nothing', (
-    tester,
-  ) async {
-    await _pump(
-      tester,
-      data: AppSnapshot(
-        profile: const StudentProfile(
-          id: '',
-          name: '',
-          school: '',
-          provider: '',
+  testWidgets(
+    'the login form stays still; an empty day only pulls to refresh',
+    (tester) async {
+      await _pump(
+        tester,
+        data: AppSnapshot(
+          profile: const StudentProfile(
+            id: '',
+            name: '',
+            school: '',
+            provider: '',
+          ),
+          lessons: const [],
+          grades: const [],
+          events: const [],
+          messages: const [],
+          attendance: const [],
+          announcements: const [],
+          notices: const [],
+          lastSync: DateTime.fromMillisecondsSinceEpoch(0),
         ),
-        lessons: const [],
-        grades: const [],
-        events: const [],
-        messages: const [],
-        attendance: const [],
-        announcements: const [],
-        notices: const [],
-        lastSync: DateTime.fromMillisecondsSinceEpoch(0),
-      ),
-    );
-    await tester.tap(find.byIcon(Icons.login_rounded));
-    await tester.pumpAndSettle();
-    _expectStill(tester, find.byType(BottomSheet), 'login');
-    await tester.pumpWidget(const SizedBox.shrink());
+      );
+      await tester.tap(find.byIcon(Icons.login_rounded));
+      await tester.pumpAndSettle();
+      _expectStill(tester, find.byType(BottomSheet), 'login');
+      await tester.pumpWidget(const SizedBox.shrink());
 
-    // A day with no lessons, as the timetable opens on one here.
-    await _pump(tester, tab: 1);
-    _expectStill(tester, find.byType(IndexedStack), 'empty day');
-    await tester.pumpWidget(const SizedBox.shrink());
-  });
+      // A day with no lessons, as the timetable opens on one here. It fits,
+      // and moves only to be pulled to refresh, as every other page.
+      await _pump(tester, tab: 1);
+      final day = find.byType(IndexedStack);
+      expect(
+        find.descendant(of: day, matching: find.byType(RefreshIndicator)),
+        findsOneWidget,
+      );
+      final position = tester
+          .stateList<ScrollableState>(
+            find.descendant(of: day, matching: find.byType(Scrollable)),
+          )
+          .map((state) => state.position)
+          .firstWhere((position) => position.axis == Axis.vertical);
+      expect(position.maxScrollExtent, 0, reason: 'empty day fits');
+      await tester.pumpWidget(const SizedBox.shrink());
+    },
+  );
 
   testWidgets('every page starts 16 from the edge', (tester) async {
     for (final tab in [0, 2, 3, 4, 6, 7, 8, 9]) {
