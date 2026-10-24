@@ -75,7 +75,7 @@ void main() {
     await controller.bootstrap();
     await tester.pumpWidget(SyberiaApp(controller: controller));
     await tester.pumpAndSettle();
-    await tester.tap(find.byIcon(Icons.person_rounded).first);
+    await tester.tap(_profileButton().first);
     await tester.pumpAndSettle();
     ButtonStyleButton logout() =>
         tester.widget(find.byKey(const ValueKey('account-logout')));
@@ -91,40 +91,6 @@ void main() {
     await tester.pumpAndSettle();
     expect(logout().onPressed, isNotNull);
     await tester.pumpWidget(const SizedBox.shrink());
-  });
-
-  testWidgets('account sheet lets the user choose a linked Synergia login', (
-    tester,
-  ) async {
-    final data = AppSnapshot(
-      profile: const StudentProfile(
-        id: '1',
-        name: 'Test',
-        school: 'School',
-        provider: 'Librus Synergia',
-      ),
-      lessons: const [],
-      grades: const [],
-      events: const [],
-      messages: const [],
-      attendance: const [],
-      announcements: const [],
-      notices: const [],
-      lastSync: DateTime.now(),
-    );
-    final repository = _AccountChoiceRepository(data);
-    final controller = AppController(repository, updatesEnabled: false);
-    await controller.bootstrap();
-    await tester.pumpWidget(SyberiaApp(controller: controller));
-    await tester.pumpAndSettle();
-    await tester.tap(find.byIcon(Icons.person_rounded).first);
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Synergia accounts'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('fixture-student-u'));
-    await tester.pumpAndSettle();
-    expect(repository.selected, 'fixture-student-u');
-    expect(tester.takeException(), isNull);
   });
 
   testWidgets('asks for Librus login instead of showing demo school', (
@@ -953,32 +919,16 @@ class _WeekAheadRepository extends _TestRepository {
   }
 }
 
-class _AccountChoiceRepository extends _TestRepository {
-  _AccountChoiceRepository(super.data);
-  String? selected;
-  @override
-  Future<List<LinkedSynergiaAccount>> fetchSynergiaAccounts() async => const [
-    LinkedSynergiaAccount(
-      login: 'fixture-parent',
-      name: 'Test',
-      selected: true,
-    ),
-    LinkedSynergiaAccount(
-      login: 'fixture-student-u',
-      name: 'Test',
-      selected: false,
-    ),
-  ];
-  @override
-  Future<AppSnapshot> selectSynergiaAccount(String login) async {
-    selected = login;
-    return data;
-  }
-}
-
 /// The weekday buttons above the timetable.
 Finder _dayChips() => find.byWidgetPredicate(
   (widget) =>
       widget.key is ValueKey<String> &&
       (widget.key! as ValueKey<String>).value.startsWith('timetable-day-'),
+);
+
+/// The profile button of the top bar, in either design.
+Finder _profileButton() => find.byWidgetPredicate(
+  (widget) =>
+      widget.key == const ValueKey('profile-button') ||
+      widget.key == const ValueKey('glass-bar-button-account'),
 );

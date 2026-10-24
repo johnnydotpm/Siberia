@@ -7,6 +7,7 @@ import '../app_build_info.dart';
 import '../data/app_repository.dart';
 import '../domain/librus_error.dart';
 import '../domain/models.dart';
+import '../domain/profiles.dart';
 import '../domain/sync_news.dart';
 import '../home_widget.dart';
 import '../home_widget.dart' as home_widget show displaySubject;
@@ -29,7 +30,12 @@ class AppController extends ChangeNotifier {
   final Future<void> Function(bool enabled)? backgroundScheduling;
   final HomeWidgetBridge? homeWidget;
   AppSnapshot? _snapshot;
-  bool _syncing = false;
+  List<SchoolProfile> _profiles = const [];
+  Set<String> _profileNews = const {};
+
+  /// The profiles a sync runs for; '' stands for none, as in demo mode.
+  final _syncingProfiles = <String>{};
+  bool _signingIn = false;
   bool _markingMessagesRead = false;
   bool _loadingSentMessages = false;
   AppError? _sentMessagesError;
@@ -62,7 +68,7 @@ class AppController extends ChangeNotifier {
 
   /// The login screen's hidden gesture enters a disposable local session.
   void startDemo() {
-    if (_syncing ||
+    if (syncing ||
         _markingMessagesRead ||
         snapshot.profile.provider != 'Signed out') {
       return;
@@ -76,7 +82,46 @@ class AppController extends ChangeNotifier {
     _updateHomeWidget();
   }
 
-  bool get syncing => _syncing;
+  /// Whether the open profile is syncing, or an account is being added.
+  /// Another profile's sync goes on unseen.
+  bool get syncing => _signingIn || _syncingProfiles.contains(_syncKey);
+
+  String get _syncKey => _repository.activeProfile?.id ?? '';
+
+  /// The profiles on the phone, in the order they were added.
+  List<SchoolProfile> get profiles => _profiles;
+
+  /// The open profile; null when signed out, in demo mode, or for data from
+  /// a repository without profiles.
+  SchoolProfile? get activeProfile => _repository.activeProfile;
+
+  /// Whether the profile [profileId] has news the user has not seen.
+  bool profileHasNews(String profileId) => _profileNews.contains(profileId);
+
+  /// Whether a profile other than the open one has news.
+  bool get otherProfilesHaveNews =>
+      _profileNews.any((id) => id != activeProfile?.id);
+
+  /// The name and colour the open profile is shown with.
+  ({String name, String school, int color}) get profileLook {
+    final profile = activeProfile;
+    if (profile != null) {
+      return (
+        name: profile.displayName,
+        school: profile.school.isEmpty
+            ? snapshot.profile.school
+            : profile.school,
+        color: profile.color,
+      );
+    }
+    final student = snapshot.profile;
+    return (
+      name: student.name,
+      school: student.school,
+      color: freeProfileColor(const [], student.name),
+    );
+  }
+
   bool get markingMessagesRead => _markingMessagesRead;
   bool get loadingSentMessages => _loadingSentMessages;
   AppError? get sentMessagesError => _sentMessagesError;
@@ -120,6 +165,8 @@ class AppController extends ChangeNotifier {
   Future<void> bootstrap() async {
     await _loadPreferences();
     _snapshot = await _repository.load();
+    _profiles = _repository.profiles;
+    _profileNews = await _repository.loadProfileNews();
     await _recordNotifications();
     _updateHomeWidget();
     if (updatesEnabled) unawaited(checkForUpdate());
@@ -139,19 +186,24 @@ class AppController extends ChangeNotifier {
     _attendanceChartStyle = await _repository.loadAttendanceChartStyle();
     _design = await _repository.loadDesign();
     _colorMode = await _repository.loadColorMode();
-    _gradeAverage = await _repository.loadGradeAverageSettings();
-    _subjectShortNames = await _repository.loadSubjectShortNames();
+    await _loadProfileSettings();
     _timetableView = await _repository.loadTimetableView();
     _mergeTimetableLessons = await _repository.loadMergeTimetableLessons();
     _showTimetableBreaks = await _repository.loadShowTimetableBreaks();
     _messageListStyle = await _repository.loadMessageListStyle();
     _gradesView = await _repository.loadGradesView();
     _todayLayout = await _repository.loadTodayLayout();
-    _doneHomework = await _repository.loadDoneHomework();
     _autoSyncOnOpen = await _repository.loadAutoSyncOnOpen();
     if (notifications != null) {
       _notificationSettings = await notifications!.loadSettings();
     }
+  }
+
+  /// The settings each profile keeps for itself.
+  Future<void> _loadProfileSettings() async {
+    _gradeAverage = await _repository.loadGradeAverageSettings();
+    _subjectShortNames = await _repository.loadSubjectShortNames();
+    _doneHomework = await _repository.loadDoneHomework();
   }
 
   /// Puts every setting back to its default. The account, the school data,
@@ -452,7 +504,7 @@ class AppController extends ChangeNotifier {
   }
 
   Future<void> markAllMessagesRead() async {
-    if (_markingMessagesRead || _syncing) return;
+    if (_markingMessagesRead || syncing) return;
     final profileId = snapshot.profile.id;
     final unread = snapshot.messages
         .where((message) => message.unread)
@@ -621,38 +673,256 @@ class AppController extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<List<LinkedSynergiaAccount>> fetchSynergiaAccounts() =>
-      _repository.fetchSynergiaAccounts();
+  /// Data this old opens with a sync when the user switches to its profile
+  /// and automatic sync is on.
+  static const switchSyncAfter = Duration(minutes: 20);
 
-  Future<bool> selectSynergiaAccount(String login) async {
-    if (_syncing || _markingMessagesRead) return false;
-    _syncing = true;
+  /// Opens the profile [profileId] at once with its saved data and its own
+  /// settings. A sync of the profile left behind goes on and saves its data.
+  Future<void> switchProfile(String profileId) async {
+    if (isDemo || activeProfile?.id == profileId) return;
+    _snapshot = await _repository.switchProfile(profileId);
+    await _loadProfileSettings();
+    _profiles = _repository.profiles;
+    _syncNews = null;
+    _forgetSentMessages();
+    _error = null;
+    _seeNews(profileId);
+    notifyListeners();
+    _updateHomeWidget();
+    unawaited(_updateReminders());
+    final age = DateTime.now().difference(snapshot.lastSync);
+    if (_autoSyncOnOpen && age >= switchSyncAfter) unawaited(sync());
+  }
+
+  void _seeNews(String profileId) {
+    if (!_profileNews.contains(profileId)) return;
+    _profileNews = {..._profileNews}..remove(profileId);
+    unawaited(_repository.setProfileNews(profileId, false));
+  }
+
+  /// Reads the profiles and their news again, as the background check may
+  /// have changed them while the app was away.
+  Future<void> refreshProfiles() async {
+    if (isDemo) return;
+    final profiles = await _repository.loadProfiles(reload: true);
+    final news = await _repository.loadProfileNews(reload: true);
+    final open = activeProfile?.id;
+    _profiles = profiles;
+    _profileNews = open == null || !news.contains(open)
+        ? news
+        : ({...news}..remove(open));
+    if (open != null && news.contains(open)) {
+      unawaited(_repository.setProfileNews(open, false));
+    }
+    notifyListeners();
+  }
+
+  /// The students of the phone's Librus logins that have no profile yet.
+  Future<List<LinkedSynergiaAccount>> availableStudents() async => [
+    for (final student in await _repository.availableStudents())
+      if (!student.selected) student,
+  ];
+
+  /// Adds a profile for [student] of a login the phone has, opens it and
+  /// syncs it. Returns the new profile, or null when it could not be added.
+  Future<SchoolProfile?> addStudent(LinkedSynergiaAccount student) async {
+    if (_signingIn) return null;
+    _signingIn = true;
     _error = null;
     notifyListeners();
     try {
-      _snapshot = await _repository.selectSynergiaAccount(login);
-      _syncNews = null;
-      _forgetSentMessages();
-      await _recordNotifications();
-      _updateHomeWidget();
+      final added = await _addAndOpen([student], student.account);
+      return added.isEmpty ? null : added.first;
+    } on Object catch (error) {
+      _error = AppError.from(error);
+      return null;
+    } finally {
+      _signingIn = false;
+      _profiles = _repository.profiles;
+      notifyListeners();
+    }
+  }
+
+  /// Signs in to a Librus account and adds its students as profiles. When
+  /// it has several new ones, [choose] picks them, offered as
+  /// [defaultStudentChoice] checks them; null or none adds nothing. Without
+  /// [choose], the student's own account is added. The first added profile
+  /// opens and syncs; the others sync after it.
+  Future<bool> loginLibrus({
+    required String username,
+    required String password,
+    Future<List<LinkedSynergiaAccount>?> Function(
+      List<LinkedSynergiaAccount> students,
+    )?
+    choose,
+  }) async {
+    if (_signingIn || _markingMessagesRead) return false;
+    _signingIn = true;
+    _error = null;
+    notifyListeners();
+    try {
+      final found = await _repository.signIn(
+        username: username,
+        password: password,
+      );
+      if (found.students.isEmpty) {
+        throw const LibrusException(LibrusErrorCode.noSynergiaAccount);
+      }
+      final fresh = [
+        for (final student in found.students)
+          if (!student.selected) student,
+      ];
+      List<LinkedSynergiaAccount> chosen;
+      if (fresh.isEmpty) {
+        chosen = const [];
+      } else if (choose != null && fresh.length > 1) {
+        chosen = await choose(fresh) ?? const [];
+        if (chosen.isEmpty) {
+          await _repository.discardLogin(found.account);
+          return false;
+        }
+      } else {
+        final defaults = defaultStudentChoice(fresh);
+        chosen = [
+          fresh.firstWhere(
+            (student) => defaults.contains(student.login) && !student.parent,
+            orElse: () => fresh.first,
+          ),
+        ];
+      }
+      final added = await _addAndOpen(chosen, found.account);
+      unawaited(_syncInTurn(added.skip(1).toList()));
+      unawaited(configureBackground());
+      unawaited(requestNotificationPermissionIfEnabled());
       return true;
     } on Object catch (error) {
       _error = AppError.from(error);
       return false;
     } finally {
-      _syncing = false;
+      _signingIn = false;
+      _profiles = _repository.profiles;
       notifyListeners();
     }
   }
 
+  /// Adds profiles for [students] of the login [account] and opens the
+  /// first, synced while the user waits. Signing in again to a login whose
+  /// students are all here opens the first of them. If that sync fails,
+  /// nothing is added and the profile open before stays open, as a failed
+  /// sign-in always left the app.
+  Future<List<SchoolProfile>> _addAndOpen(
+    List<LinkedSynergiaAccount> students,
+    String account,
+  ) async {
+    final before = activeProfile?.id;
+    final added = await _repository.addProfiles(students);
+    final first = added.isNotEmpty
+        ? added.first
+        : _repository.profiles.firstWhere(
+            (profile) => profile.account == account,
+          );
+    try {
+      await _repository.switchProfile(first.id);
+      final synced = await _repository.syncProfile(first.id);
+      _snapshot = synced;
+    } on Object {
+      for (final profile in added) {
+        await _repository.removeProfile(profile.id);
+      }
+      await _repository.discardLogin(account);
+      if (before != null && _repository.activeProfile?.id != before) {
+        await _repository.switchProfile(before);
+      }
+      rethrow;
+    }
+    await _loadProfileSettings();
+    _syncNews = null;
+    _forgetSentMessages();
+    _profiles = _repository.profiles;
+    _seeNews(first.id);
+    await _recordNotifications();
+    _updateHomeWidget();
+    return added;
+  }
+
+  /// Syncs newly added profiles one after another, so their names, schools
+  /// and data are ready before the user opens them.
+  Future<void> _syncInTurn(List<SchoolProfile> added) async {
+    for (final profile in added) {
+      try {
+        final result = await _repository.syncProfile(profile.id);
+        await notifications?.processSnapshot(result);
+      } on Object {
+        // Synced again when the user opens it.
+      }
+      _profiles = _repository.profiles;
+      notifyListeners();
+    }
+  }
+
+  /// Removes the profile [profileId] and its data from the phone. Librus
+  /// keeps everything. The last one leaves the app signed out.
+  Future<void> removeProfile(String profileId) async {
+    final open = activeProfile?.id == profileId;
+    final remaining = await _repository.removeProfile(profileId);
+    _profiles = _repository.profiles;
+    _profileNews = {..._profileNews}..remove(profileId);
+    if (open || _profiles.isEmpty) {
+      _snapshot = remaining;
+      await _loadProfileSettings();
+      _syncNews = null;
+      _forgetSentMessages();
+      _error = null;
+      if (_profiles.isEmpty) _tabIndex = 0;
+    }
+    notifyListeners();
+    _updateHomeWidget();
+    unawaited(configureBackground());
+    unawaited(_updateReminders());
+  }
+
+  Future<void> renameProfile(String profileId, String? label) async {
+    await _repository.renameProfile(profileId, label);
+    _profiles = _repository.profiles;
+    notifyListeners();
+  }
+
+  Future<void> setProfileColor(String profileId, int color) async {
+    await _repository.setProfileColor(profileId, color);
+    _profiles = _repository.profiles;
+    notifyListeners();
+  }
+
+  Future<void> setProfileNotify(String profileId, bool notify) async {
+    await _repository.setProfileNotify(profileId, notify);
+    _profiles = _repository.profiles;
+    notifyListeners();
+    await configureBackground();
+    await _updateReminders();
+  }
+
+  /// Syncs the open profile. Switching profiles meanwhile leaves the sync
+  /// to finish and save its data, without touching the screen.
   Future<void> sync() async {
-    if (_syncing || _markingMessagesRead) return;
-    _syncing = true;
+    final key = _syncKey;
+    if (_syncingProfiles.contains(key) || _signingIn || _markingMessagesRead) {
+      return;
+    }
+    _syncingProfiles.add(key);
     _error = null;
     notifyListeners();
     try {
       final before = snapshot;
       final result = await _repository.sync(snapshot);
+      if (_syncKey != key) {
+        try {
+          await notifications?.processSnapshot(result);
+        } on Object {
+          // Notifications are best effort.
+        }
+        return;
+      }
       final sameProfile = result.profile.id == snapshot.profile.id;
       // A Sent folder loaded or a message sent while this sync ran stays.
       _snapshot = sameProfile
@@ -666,45 +936,20 @@ class AppController extends ChangeNotifier {
       await _recordNotifications();
       _updateHomeWidget();
     } on Object catch (error) {
-      _error = AppError.from(error);
+      if (_syncKey == key) _error = AppError.from(error);
     } finally {
-      _syncing = false;
+      _syncingProfiles.remove(key);
+      _profiles = _repository.profiles;
       notifyListeners();
     }
   }
 
-  Future<bool> loginLibrus({
-    required String username,
-    required String password,
-  }) async {
-    if (_syncing || _markingMessagesRead) return false;
-    _syncing = true;
-    _error = null;
-    notifyListeners();
-    try {
-      _snapshot = await _repository.loginLibrus(
-        username: username,
-        password: password,
-      );
-      _syncNews = null;
-      _forgetSentMessages();
-      await _recordNotifications();
-      _updateHomeWidget();
-      unawaited(configureBackground());
-      unawaited(requestNotificationPermissionIfEnabled());
-      return true;
-    } on Object catch (error) {
-      _error = AppError.from(error);
-      return false;
-    } finally {
-      _syncing = false;
-      notifyListeners();
-    }
-  }
-
+  /// Signs out of every profile: their data and logins leave the phone.
   Future<void> logout() async {
     _snapshot = await _repository.logout();
-    _doneHomework = const {};
+    _profiles = const [];
+    _profileNews = const {};
+    await _loadProfileSettings();
     _syncNews = null;
     _forgetSentMessages();
     _error = null;

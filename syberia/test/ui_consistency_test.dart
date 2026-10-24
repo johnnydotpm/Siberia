@@ -261,9 +261,11 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('settings-short-names')));
     await check('short names');
     await tester.tap(find.byKey(const ValueKey('settings-profile')));
+    await check('profiles');
+    await tester.tap(find.byKey(const ValueKey('settings-profile')));
     await tester.pumpAndSettle();
-    await tester.tap(find.byIcon(Icons.switch_account_rounded));
-    await check('Synergia accounts');
+    await tester.tap(find.byKey(const ValueKey('profiles-add')));
+    await check('add profile');
     await tester.pumpWidget(const SizedBox.shrink());
   });
 
@@ -368,7 +370,7 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('settings-timetable')));
     styles['timetable'] = await title('Timetable style');
     await tester.tap(find.byKey(const ValueKey('settings-profile')));
-    styles['account'] = await title('Demo Student');
+    styles['profiles'] = await title('Profiles');
     for (final MapEntry(key: sheet, value: style) in styles.entries) {
       expect(style.fontSize, expected.fontSize, reason: sheet);
       expect(style.fontWeight, FontWeight.w800, reason: sheet);
@@ -463,12 +465,6 @@ class _Repository extends AppRepository {
 
   @override
   Future<List<Lesson>> fetchTimetableWeek(DateTime day) async => const [];
-
-  @override
-  Future<List<LinkedSynergiaAccount>> fetchSynergiaAccounts() async => const [
-    LinkedSynergiaAccount(login: '1u', name: 'Demo Student', selected: true),
-    LinkedSynergiaAccount(login: '2u', name: 'Uczeń Testowy', selected: false),
-  ];
 
   @override
   Future<SchoolMessageContent> fetchMessageContent(

@@ -13,6 +13,7 @@ import 'package:syberia/src/ui/glass/glass_platform.dart';
 import 'package:syberia/src/ui/glass/native_tab_bar.dart';
 import 'package:syberia/src/ui/glass/rendered_glass_surface.dart';
 import 'package:syberia/src/ui/glass/rendered_tab_bar.dart';
+import 'package:syberia/src/ui/profile_avatar.dart';
 
 const _tabBar = 'siberia/glass_tab_bar';
 const _barButtons = 'siberia/glass_bar_buttons';
@@ -247,7 +248,10 @@ void main() {
 
     controller.selectTab(9);
     await tester.pumpAndSettle();
-    await tester.scrollUntilVisible(find.text('Librus account'), 200);
+    await tester.scrollUntilVisible(
+      find.byKey(const ValueKey('settings-profile')),
+      200,
+    );
     expect(find.text('Design'), findsNothing);
   }, variant: onIos);
 
@@ -277,7 +281,14 @@ void main() {
     );
     double symbol(String id) => tester
         .getCenter(
-          find.descendant(of: barButton(id), matching: find.byType(Icon)),
+          find
+              .descendant(
+                of: barButton(id),
+                matching: find.byWidgetPredicate(
+                  (widget) => widget is Icon || widget is ProfileAvatar,
+                ),
+              )
+              .first,
         )
         .dx;
     expect(symbol('sync'), moreOrLessEquals(402 - 16 - 24 - 56, epsilon: 0.01));

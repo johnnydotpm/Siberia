@@ -42,6 +42,8 @@ class _SyberiaAppState extends State<SyberiaApp> with WidgetsBindingObserver {
       _wasBackgrounded = true;
     } else if (state == AppLifecycleState.resumed && _wasBackgrounded) {
       _wasBackgrounded = false;
+      // The background check may have found news for another profile.
+      unawaited(widget.controller.refreshProfiles());
       if (widget.controller.autoSyncOnOpen) unawaited(widget.controller.sync());
     }
   }

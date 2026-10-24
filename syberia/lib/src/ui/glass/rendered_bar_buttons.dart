@@ -169,6 +169,14 @@ class _Slot extends StatelessWidget {
             child: Center(
               child: button.loading
                   ? CupertinoActivityIndicator(color: color)
+                  : button.avatar != null
+                  ? Opacity(
+                      opacity: enabled ? 1 : 0.3,
+                      child: SizedBox.square(
+                        dimension: 32,
+                        child: FittedBox(child: button.avatar),
+                      ),
+                    )
                   : Icon(
                       button.symbol.icon,
                       size: 26,

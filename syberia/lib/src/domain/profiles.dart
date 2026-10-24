@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 
+import 'models.dart';
 import 'stable_hash.dart';
 
 /// One student at one school: a Librus Synergia account kept on the phone.
@@ -202,4 +203,21 @@ int freeProfileColor(
     }
   }
   return best;
+}
+
+/// The logins of [students] a sign-in offers checked: every one, except a
+/// parent's account whose child has an account of its own in the list too.
+/// Those two are one child, and the student's own account is the one the
+/// app has always opened.
+Set<String> defaultStudentChoice(List<LinkedSynergiaAccount> students) {
+  String key(String name) => name.trim().toLowerCase();
+  final ownAccounts = {
+    for (final student in students)
+      if (!student.parent && key(student.name).isNotEmpty) key(student.name),
+  };
+  return {
+    for (final student in students)
+      if (!student.parent || !ownAccounts.contains(key(student.name)))
+        student.login,
+  };
 }

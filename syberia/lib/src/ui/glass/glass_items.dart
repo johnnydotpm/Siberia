@@ -76,6 +76,33 @@ class GlassSymbol {
     'person.crop.circle',
     CupertinoIcons.person_crop_circle,
   );
+
+  /// A profile's sign where UIKit draws the bar: the first letter of [name]
+  /// in a circle. SF Symbols has the letters A to Z, so a Polish letter
+  /// stands as its plain form, and any other one as a person.
+  static GlassSymbol profile(String name) {
+    final trimmed = name.trim();
+    final first = trimmed.isEmpty ? '' : trimmed.characters.first.toLowerCase();
+    final letter = _plainLetters[first] ?? first;
+    return GlassSymbol(
+      RegExp(r'^[a-z]$').hasMatch(letter)
+          ? '$letter.circle.fill'
+          : 'person.crop.circle.fill',
+      CupertinoIcons.person_crop_circle_fill,
+    );
+  }
+
+  static const _plainLetters = {
+    'ą': 'a',
+    'ć': 'c',
+    'ę': 'e',
+    'ł': 'l',
+    'ń': 'n',
+    'ó': 'o',
+    'ś': 's',
+    'ź': 'z',
+    'ż': 'z',
+  };
 }
 
 /// One destination of the glass tab bar.
@@ -107,6 +134,9 @@ class GlassBarButton {
     this.loading = false,
     this.prominent = false,
     this.separated = false,
+    this.avatar,
+    this.tint,
+    this.badge = false,
   });
 
   /// Identifies the button in messages from UIKit, and in tests.
@@ -126,6 +156,16 @@ class GlassBarButton {
 
   /// Gives the button its own capsule instead of sharing its neighbours'.
   final bool separated;
+
+  /// Drawn instead of the symbol where Flutter draws the bar, as a
+  /// profile's initials.
+  final Widget? avatar;
+
+  /// The symbol's colour where UIKit draws the bar, instead of the label's.
+  final Color? tint;
+
+  /// A dot on the button, for news.
+  final bool badge;
 
   /// Splits [buttons] the way the bar shows them: neighbours share one
   /// capsule, a [separated] button gets its own.

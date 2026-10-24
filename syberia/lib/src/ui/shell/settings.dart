@@ -337,24 +337,34 @@ class _SettingsProfile extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final muted = theme.colorScheme.onSurfaceVariant;
-    final profile = controller.snapshot.profile;
+    final profile = controller.profileLook;
+    final several = controller.profiles.length > 1;
     return Card(
       key: const ValueKey('settings-profile'),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
-        onTap: () => _showAccount(context, controller),
+        onTap: () => _showProfiles(context, controller),
         child: Padding(
           padding: const EdgeInsets.fromLTRB(16, 16, 8, 16),
           child: Row(
             children: [
-              _SenderAvatar(profile.name, radius: 28),
+              ProfileAvatar(
+                name: profile.name,
+                color: profile.color,
+                radius: 28,
+                news: controller.otherProfilesHaveNews,
+              ),
               const SizedBox(width: 14),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      context.tr('account'),
+                      several
+                          ? context.trArgs('profilesCount', {
+                              'count': '${controller.profiles.length}',
+                            })
+                          : context.tr('profile'),
                       style: theme.textTheme.labelMedium?.copyWith(
                         color: muted,
                       ),

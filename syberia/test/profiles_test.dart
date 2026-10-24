@@ -6,136 +6,13 @@ import 'package:flutter_secure_storage_platform_interface/flutter_secure_storage
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syberia/src/data/app_repository.dart';
-import 'package:syberia/src/data/librus/librus_client.dart';
 import 'package:syberia/src/data/librus/librus_logins.dart';
 import 'package:syberia/src/data/snapshot_cache.dart';
 import 'package:syberia/src/domain/models.dart';
 import 'package:syberia/src/domain/profiles.dart';
 import 'package:syberia/src/homework_done.dart';
 
-const _email = 'family@example.com';
-final _account = LibrusLogin.keyOf(_email);
-
-StudentProfile _student(String id, {String school = 'Szkoła Testowa'}) =>
-    StudentProfile(
-      id: id,
-      name: 'Uczeń Testowy',
-      school: school,
-      provider: 'Librus Synergia',
-    );
-
-AppSnapshot _snapshot(
-  String studentId,
-  String tag, {
-  String school = 'Szkoła Testowa',
-  DateTime? lastSync,
-}) => AppSnapshot(
-  profile: _student(studentId, school: school),
-  lessons: const [],
-  grades: [
-    Grade(
-      id: 'g-$tag',
-      subject: 'Matematyka',
-      value: '5',
-      description: '',
-      date: DateTime(2026, 10, 1),
-      weight: 1,
-      semester: 1,
-    ),
-  ],
-  events: const [],
-  messages: const [],
-  attendance: const [],
-  announcements: const [],
-  notices: const [],
-  lastSync: lastSync ?? DateTime(2026, 10, 20, 12),
-);
-
-LinkedSynergiaAccount _linked(
-  String login, {
-  String account = '',
-  bool parent = false,
-}) => LinkedSynergiaAccount(
-  login: login,
-  name: 'Uczeń Testowy',
-  selected: false,
-  account: account.isEmpty ? _account : account,
-  parent: parent,
-);
-
-/// Answers for one profile, or for a sign-in when it has none.
-class _Client extends LibrusClient {
-  _Client(this.profile, this.world);
-  final SchoolProfile? profile;
-  final _World world;
-
-  @override
-  String? get synergiaLogin => profile?.synergiaLogin;
-
-  @override
-  Future<AppSnapshot?> restoreAndFetch({Set<LibrusPart>? parts}) async {
-    world.fetches.add(profile!.synergiaLogin ?? '');
-    if (world.offline) throw StateError('offline');
-    final student = world.students[profile!.synergiaLogin];
-    return student == null
-        ? null
-        : _snapshot(
-            student.$1,
-            '${student.$1}-${world.fetches.length}',
-            school: student.$2,
-          );
-  }
-
-  @override
-  Future<LibrusSignIn> signIn({
-    required String username,
-    required String password,
-  }) async => LibrusSignIn(
-    account: LibrusLogin.keyOf(username),
-    students: world.logins[LibrusLogin.keyOf(username)] ?? const [],
-  );
-
-  @override
-  Future<List<LinkedSynergiaAccount>> fetchSynergiaAccounts() async =>
-      world.logins[profile!.account] ?? const [];
-
-  @override
-  Future<void> forget() async => world.forgotten.add(profile!.id);
-
-  @override
-  Future<String> sendMessage({
-    required List<int> recipientIds,
-    required String subject,
-    required String body,
-  }) async {
-    await world.sending;
-    return 'sent-${profile!.synergiaLogin}';
-  }
-}
-
-class _World {
-  /// Synergia login → the student's id and school.
-  final students = <String, (String, String)>{
-    'kid-regular': ('s-regular', 'Szkoła Podstawowa'),
-    'kid-music': ('s-music', 'Szkoła Muzyczna'),
-    'other-kid': ('s-other', 'Liceum Testowe'),
-  };
-
-  /// Librus login → its students.
-  final logins = <String, List<LinkedSynergiaAccount>>{
-    _account: [_linked('kid-regular'), _linked('kid-music')],
-    LibrusLogin.keyOf('other@example.com'): [
-      _linked('other-kid', account: LibrusLogin.keyOf('other@example.com')),
-    ],
-  };
-  final fetches = <String>[];
-  final forgotten = <String>[];
-  bool offline = false;
-  Future<void> sending = Future.value();
-
-  AppRepository repository() =>
-      AppRepository(librusClients: (profile) => _Client(profile, this));
-}
+import 'support/profile_fakes.dart';
 
 /// A secure storage that fails to read while [failing].
 class _FlakyStorage extends TestFlutterSecureStoragePlatform {
@@ -168,7 +45,7 @@ void main() {
   void seedLegacy({bool session = true}) {
     if (session) {
       secure[LibrusLogins.legacyKey] = jsonEncode({
-        'email': _email,
+        'email': familyEmail,
         'password': 'secret',
         'accessToken': 'access',
         'refreshToken': 'refresh',
@@ -176,9 +53,9 @@ void main() {
       });
     }
     SharedPreferences.setMockInitialValues({
-      'active_profile_v1': jsonEncode(_student('s-regular').toJson()),
+      'active_profile_v1': jsonEncode(testStudent('s-regular').toJson()),
       'last_librus_snapshot_v1': SnapshotCache.encode(
-        _snapshot('s-regular', 'legacy'),
+        studentSnapshot('s-regular', 'legacy'),
       ),
       HomeworkDoneStore.key: ['2026-10-21|hw-1'],
       'subject_short_names_v1': jsonEncode({'Matematyka': 'Mat'}),
@@ -192,13 +69,13 @@ void main() {
     test('the login becomes the first profile with its data and settings, '
         'and opening again changes nothing', () async {
       seedLegacy();
-      final world = _World();
+      final world = FakeLibrusWorld();
       final repository = world.repository();
       final opened = await repository.load();
 
       final profile = repository.profiles.single;
       expect(profile.slot, 0);
-      expect(profile.account, _account);
+      expect(profile.account, familyAccount);
       expect(profile.synergiaLogin, 'kid-regular');
       expect(profile.name, 'Uczeń Testowy');
       expect(profile.school, 'Szkoła Testowa');
@@ -215,8 +92,8 @@ void main() {
       expect(average.weighted, isFalse);
       expect(await repository.loadDesign(), AppDesign.classic);
 
-      final saved = (await LibrusLogins().all())[_account]!;
-      expect(saved.email, _email);
+      final saved = (await LibrusLogins().all())[familyAccount]!;
+      expect(saved.email, familyEmail);
       expect(saved.refreshToken, 'refresh');
       expect(secure.containsKey(LibrusLogins.legacyKey), isFalse);
       final preferences = await SharedPreferences.getInstance();
@@ -247,7 +124,7 @@ void main() {
       seedLegacy();
       final storage = _FlakyStorage(secure)..failing = true;
       FlutterSecureStoragePlatform.instance = storage;
-      final world = _World();
+      final world = FakeLibrusWorld();
       final first = world.repository();
       expect((await first.load()).grades.single.id, 'g-legacy');
       final profile = first.profiles.single;
@@ -258,7 +135,7 @@ void main() {
       expect((await later.load()).grades.single.id, 'g-legacy');
       final joined = later.profiles.single;
       expect(joined.id, profile.id, reason: 'its data stays where it is');
-      expect(joined.account, _account);
+      expect(joined.account, familyAccount);
       expect(joined.synergiaLogin, 'kid-regular');
       expect(await later.loadSubjectShortNames(), {'Matematyka': 'Mat'});
       expect(secure.containsKey(LibrusLogins.legacyKey), isFalse);
@@ -269,14 +146,17 @@ void main() {
     test('a profile without its login gives way to the student added '
         'again, with its settings', () async {
       seedLegacy(session: false);
-      final world = _World()
+      final world = FakeLibrusWorld()
         ..students['kid-regular'] = ('s-regular', 'Szkoła Testowa');
       final repository = world.repository();
       await repository.load();
       final stale = repository.profiles.single;
       expect(stale.account, isEmpty);
 
-      final found = await repository.signIn(username: _email, password: 'x');
+      final found = await repository.signIn(
+        username: familyEmail,
+        password: 'x',
+      );
       final added = await repository.addProfiles([found.students.first]);
       await repository.switchProfile(added.single.id);
       await repository.syncProfile(added.single.id);
@@ -293,7 +173,7 @@ void main() {
         'secure storage', () async {
       FlutterSecureStoragePlatform.instance = _FlakyStorage(secure)
         ..failing = true;
-      final repository = _World().repository();
+      final repository = FakeLibrusWorld().repository();
       final opened = await repository.load();
       expect(repository.profiles, isEmpty);
       expect(opened.profile.provider, 'Signed out');
@@ -306,18 +186,21 @@ void main() {
         LibrusLogin.keyOf('old@example.com'),
         const LibrusLogin(email: 'old@example.com', password: 'old'),
       );
-      final repository = _World().repository();
-      await repository.signIn(username: _email, password: 'x');
+      final repository = FakeLibrusWorld().repository();
+      await repository.signIn(username: familyEmail, password: 'x');
       expect(secure, isEmpty, reason: 'the fake sign-in saves nothing');
     });
   });
 
   group('two profiles', () {
-    Future<(AppRepository, _World, SchoolProfile, SchoolProfile)>
+    Future<(AppRepository, FakeLibrusWorld, SchoolProfile, SchoolProfile)>
     signedIn() async {
-      final world = _World();
+      final world = FakeLibrusWorld();
       final repository = world.repository();
-      final found = await repository.signIn(username: _email, password: 'x');
+      final found = await repository.signIn(
+        username: familyEmail,
+        password: 'x',
+      );
       final added = await repository.addProfiles(found.students);
       for (final profile in added) {
         await repository.syncProfile(profile.id);
@@ -360,7 +243,8 @@ void main() {
       expect((await repository.loadGradeAverageSettings()).plus, 0.25);
 
       final reopened = AppRepository(
-        librusClients: (profile) => _Client(profile, _World()),
+        librusClients: (profile) =>
+            FakeProfileClient(profile, FakeLibrusWorld()),
       );
       expect((await reopened.load()).profile.id, 's-regular');
       expect(reopened.profiles.map((profile) => profile.id), [
@@ -443,8 +327,8 @@ void main() {
         'profile', () async {
       final (repository, world, regular, music) = await signedIn();
       await LibrusLogins().write(
-        _account,
-        const LibrusLogin(email: _email, password: 'x'),
+        familyAccount,
+        const LibrusLogin(email: familyEmail, password: 'x'),
       );
       await repository.saveSubjectShortNames({'Matematyka': 'Mat'});
       final preferences = await SharedPreferences.getInstance();
@@ -457,19 +341,19 @@ void main() {
         preferences.getKeys().where((key) => key.contains(regular.id)),
         isEmpty,
       );
-      expect(await LibrusLogins().read(_account), isNotNull);
+      expect(await LibrusLogins().read(familyAccount), isNotNull);
 
       final none = await repository.removeProfile(music.id);
       expect(none.profile.provider, 'Signed out');
       expect(repository.profiles, isEmpty);
-      expect(await LibrusLogins().read(_account), isNull);
+      expect(await LibrusLogins().read(familyAccount), isNull);
     });
 
     test('logging out forgets every profile and login', () async {
       final (repository, world, regular, music) = await signedIn();
       await LibrusLogins().write(
-        _account,
-        const LibrusLogin(email: _email, password: 'x'),
+        familyAccount,
+        const LibrusLogin(email: familyEmail, password: 'x'),
       );
       await repository.saveDoneHomework({'hw-1': DateTime(2026, 10, 21)});
       final signedOut = await repository.logout();
@@ -491,11 +375,7 @@ void main() {
       // The saved data is from days ago, so the check fetches again.
       final (repository, world, regular, music) = await signedIn();
       world.fetches.clear();
-      await repository.updateProfile(
-        repository.profiles
-            .firstWhere((saved) => saved.id == music.id)
-            .copyWith(notify: false),
-      );
+      await repository.setProfileNotify(music.id, false);
       final checked = await repository.fetchBackgroundSnapshots();
       expect([for (final (profile, _) in checked) profile.id], [regular.id]);
       expect(world.fetches, ['kid-regular']);

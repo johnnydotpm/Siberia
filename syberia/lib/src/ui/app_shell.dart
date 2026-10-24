@@ -18,6 +18,7 @@ import '../app_build_info.dart';
 import '../domain/grade_calculator.dart';
 import '../domain/librus_error.dart';
 import '../domain/models.dart';
+import '../domain/profiles.dart';
 import '../domain/sync_news.dart';
 import '../home_widget.dart';
 import '../l10n/app_localizations.dart';
@@ -30,6 +31,7 @@ import 'glass/glass_modals.dart';
 import 'glass/glass_platform.dart';
 import 'glass/glass_shell.dart';
 import 'home_widget_settings.dart';
+import 'profile_avatar.dart';
 import 'subject_colors.dart';
 
 part 'shell/common.dart';
@@ -291,12 +293,7 @@ class _AppShellState extends State<AppShell> {
                 loading: controller.syncing,
                 onPressed: controller.syncing ? null : controller.sync,
               ),
-              GlassBarButton(
-                id: 'account',
-                symbol: GlassSymbol.account,
-                label: context.tr('account'),
-                onPressed: () => _showAccount(context, controller),
-              ),
+              _profileBarButton(context, controller),
             ],
             drawer: _SideNavigation(controller: controller, glass: true),
             body: body,
@@ -323,10 +320,14 @@ class _AppShellState extends State<AppShell> {
                 tooltip: context.tr('sync'),
               ),
               IconButton(
-                onPressed: () => _showAccount(context, controller),
-                icon: const CircleAvatar(
+                key: const ValueKey('profile-button'),
+                tooltip: context.tr('profiles'),
+                onPressed: () => _showProfiles(context, controller),
+                icon: ProfileAvatar(
+                  name: controller.profileLook.name,
+                  color: controller.profileLook.color,
                   radius: 15,
-                  child: Icon(Icons.person_rounded, size: 18),
+                  news: controller.otherProfilesHaveNews,
                 ),
               ),
             ],
@@ -526,18 +527,29 @@ class _SideNavigation extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(14),
               child: ListTile(
-                leading: const CircleAvatar(child: Icon(Icons.person_rounded)),
+                key: const ValueKey('drawer-profile'),
+                leading: ProfileAvatar(
+                  name: controller.profileLook.name,
+                  color: controller.profileLook.color,
+                  news: controller.otherProfilesHaveNews,
+                ),
                 title: Text(
-                  controller.snapshot.profile.name,
+                  controller.profileLook.name,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
                 subtitle: Text(
-                  controller.snapshot.profile.school,
+                  controller.profileLook.school,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                onTap: () => _showAccount(context, controller),
+                onTap: () {
+                  // The sheet outlives the menu, so it opens from the
+                  // navigator's context.
+                  final navigator = Navigator.of(context);
+                  if (!permanent) navigator.pop();
+                  _showProfiles(navigator.context, controller);
+                },
               ),
             ),
           ],

@@ -468,13 +468,49 @@ class AppRepository {
     return added;
   }
 
-  /// Saves [profile]'s name, colour and notifications.
-  Future<void> updateProfile(SchoolProfile profile) async {
+  /// Gives the profile [profileId] the user's own name; empty brings back
+  /// the student's.
+  Future<void> renameProfile(String profileId, String? label) {
+    final own = label?.trim() ?? '';
+    return _changeProfile(
+      profileId,
+      (saved) => saved.copyWith(label: () => own.isEmpty ? null : own),
+    );
+  }
+
+  Future<void> setProfileColor(String profileId, int color) => _changeProfile(
+    profileId,
+    (saved) => saved.copyWith(color: color % profileColorCount),
+  );
+
+  /// Whether the profile's news and reminders come as notifications.
+  Future<void> setProfileNotify(String profileId, bool notify) =>
+      _changeProfile(profileId, (saved) => saved.copyWith(notify: notify));
+
+  /// Changes one profile as it is saved now. The background check may have
+  /// changed the profiles meanwhile, and none of that is lost.
+  Future<void> _changeProfile(
+    String profileId,
+    SchoolProfile Function(SchoolProfile saved) change,
+  ) async {
     await _ensureReady();
-    _profiles = List.unmodifiable([
-      for (final saved in _profiles) saved.id == profile.id ? profile : saved,
-    ]);
-    await _profileStore.write(_profiles);
+    final saved = [...await _profileStore.read(reload: true)];
+    final index = saved.indexWhere((profile) => profile.id == profileId);
+    if (index < 0) return;
+    final changed = change(saved[index]);
+    if (changed != saved[index]) {
+      saved[index] = changed;
+      await _profileStore.write(saved);
+    }
+    _profiles = List.unmodifiable(saved);
+  }
+
+  /// Forgets the login [account] when no profile came from it, as when the
+  /// user signed in and then added none of its students.
+  Future<void> discardLogin(String account) async {
+    await _ensureReady();
+    if (_profiles.any((profile) => profile.account == account)) return;
+    await _logins.remove(account);
   }
 
   /// Removes the profile [profileId] with its data and settings; its login
@@ -538,59 +574,6 @@ class AppRepository {
     }
     await switchProfile(id);
     return syncProfile(id);
-  }
-
-  /// The students of the open profile's login, the open one selected.
-  Future<List<LinkedSynergiaAccount>> fetchSynergiaAccounts() async {
-    if (_demo != null) return const [];
-    await _ensureReady();
-    final profile = activeProfile;
-    if (profile == null) return const [];
-    final students = await _clientFor(profile).fetchSynergiaAccounts();
-    return [
-      for (final student in students)
-        student.copyWith(selected: student.login == profile.synergiaLogin),
-    ];
-  }
-
-  /// Opens the student [login] of the open profile's login, making a
-  /// profile for it if the phone has none, and syncs it.
-  Future<AppSnapshot> selectSynergiaAccount(String login) async {
-    if (_demo != null) {
-      throw StateError('Exit demo mode before switching accounts.');
-    }
-    final profile = _requireActive();
-    final students = await _clientFor(profile).fetchSynergiaAccounts();
-    final student = students.firstWhere(
-      (student) => student.login == login,
-      orElse: () =>
-          throw const LibrusException(LibrusErrorCode.noSynergiaAccount),
-    );
-    if (!_hasProfile(profile.account, login)) {
-      await addProfiles([
-        LinkedSynergiaAccount(
-          login: student.login,
-          name: student.name,
-          selected: false,
-          account: profile.account,
-          parent: student.parent,
-        ),
-      ]);
-    }
-    final id = _profiles
-        .firstWhere(
-          (other) =>
-              other.account == profile.account && other.synergiaLogin == login,
-        )
-        .id;
-    final previous = _activeId;
-    await switchProfile(id);
-    try {
-      return await syncProfile(id);
-    } on Object {
-      if (previous != null) await switchProfile(previous);
-      rethrow;
-    }
   }
 
   Future<AppSnapshot> sync(AppSnapshot current) async {
@@ -689,16 +672,18 @@ class AppRepository {
   ) async {
     final fetched = snapshot.profile;
     if (fetched.provider != 'Librus Synergia') return;
-    final current = _profiles.where((saved) => saved.id == profile.id);
-    if (current.isEmpty) return;
-    final saved = current.single;
-    final updated = saved.copyWith(
+    SchoolProfile learn(SchoolProfile saved) => saved.copyWith(
       name: saved.name.isEmpty ? fetched.name : null,
       school: fetched.school.isEmpty ? null : fetched.school,
       studentId: fetched.id,
       synergiaLogin: saved.synergiaLogin ?? client.synergiaLogin,
     );
-    if (updated != saved) await updateProfile(updated);
+    final known = _profiles
+        .where((saved) => saved.id == profile.id)
+        .firstOrNull;
+    // Saving reads the profiles again, which only a change is worth.
+    if (known == null || learn(known) == known) return;
+    await _changeProfile(profile.id, learn);
   }
 
   /// A sync does not fetch the Sent folder, so the one loaded earlier stays.
@@ -794,6 +779,9 @@ class AppRepository {
             previous.profile.id == merged.profile.id
         ? merged.copyWith(messages: previous.messages)
         : merged;
+    // The app may have removed the profile while it was fetched.
+    final stillThere = await _profileStore.read(reload: true);
+    if (!stillThere.any((saved) => saved.id == profile.id)) return null;
     // Kept lessons already include the later weeks.
     final live = _keepSent(
       wanted == null || wanted.contains(LibrusPart.timetable)
