@@ -9,6 +9,17 @@
 
 SiberiaGB представляет собой полнофункциональный кроссплатформенный клиент Librus, написанный с использованием фреймворка [Flutter](https://flutter.dev/).
 
+<!-- download-badges:start -->
+<p align="center">
+  <a href="https://github.com/johnnydotpm/Siberia/releases/download/v1.4.0/SiberiaGB-1.4.0-Android.apk">
+    <img src=".github/badges/download-apk.svg" alt="Download APK for Android" width="240" height="72">
+  </a>
+  <a href="https://github.com/johnnydotpm/Siberia/releases/download/v1.4.0/SiberiaGB-1.4.0-iOS.ipa">
+    <img src=".github/badges/download-ipa.svg" alt="Download IPA for iOS" width="240" height="72">
+  </a>
+</p>
+<!-- download-badges:end -->
+
 ## Возможности
 
 - Вход с неистекающими сессиями

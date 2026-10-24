@@ -1,0 +1,87 @@
+name: Update download badges
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/download-badges.yml
+  release:
+    types: [published, edited, deleted, unpublished]
+  # Releases published with GITHUB_TOKEN do not trigger release workflows.
+  workflow_run:
+    workflows: [SiberiaGB Release]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: readme-download-badges
+  cancel-in-progress: false
+
+jobs:
+  update:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+      - name: Select the newest stable downloads
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const releases = (await github.paginate(github.rest.repos.listReleases, {
+              ...context.repo,
+              per_page: 100,
+            }))
+              .filter(release => !release.draft && !release.prerelease)
+              .sort((a, b) => Date.parse(b.published_at) - Date.parse(a.published_at) || b.id - a.id);
+            const assets = releases.flatMap(release => release.assets);
+            const apk = assets.find(asset => asset.state === 'uploaded' && /^SiberiaGB-.*-Android\.apk$/.test(asset.name));
+            const ipa = assets.find(asset => asset.state === 'uploaded' && /^SiberiaGB-.*-iOS\.ipa$/.test(asset.name));
+            if (!apk || !ipa) {
+              throw new Error('A published stable APK and IPA are required; download links were not changed.');
+            }
+            const prefix = `https://github.com/${context.repo.owner}/${context.repo.repo}/releases/download/`;
+            for (const asset of [apk, ipa]) {
+              if (!asset.browser_download_url.startsWith(prefix) || /["<>\s]/.test(asset.browser_download_url)) {
+                throw new Error('Unexpected release download URL.');
+              }
+            }
+            const block = [
+              '<!-- download-badges:start -->',
+              '<p align="center">',
+              `  <a href="${apk.browser_download_url}">`,
+              '    <img src=".github/badges/download-apk.svg" alt="Download APK for Android" width="240" height="72">',
+              '  </a>',
+              `  <a href="${ipa.browser_download_url}">`,
+              '    <img src=".github/badges/download-ipa.svg" alt="Download IPA for iOS" width="240" height="72">',
+              '  </a>',
+              '</p>',
+              '<!-- download-badges:end -->',
+            ].join('\n');
+            const updates = ['README.md', 'README.en.md', 'README.ru.md'].map(file => {
+              const original = fs.readFileSync(file, 'utf8');
+              const pattern = /<!-- download-badges:start -->[\s\S]*?<!-- download-badges:end -->/g;
+              if ([...original.matchAll(pattern)].length !== 1) {
+                throw new Error(`Expected one download badge block in ${file}.`);
+              }
+              return [file, original.replace(pattern, () => block)];
+            });
+            for (const [file, content] of updates) {
+              fs.writeFileSync(file, content);
+            }
+      - name: Save updated links
+        env:
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          git add README.md README.en.md README.ru.md
+          if git diff --cached --quiet; then
+            echo "Download badges already point to the newest stable files."
+            exit 0
+          fi
+          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m "docs: update latest platform downloads"
+          git push origin "HEAD:$DEFAULT_BRANCH"
