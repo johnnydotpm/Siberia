@@ -109,8 +109,44 @@ class AppRepository {
 
   DemoData? _demo;
 
+  /// The demo's profiles and their data, only in memory: one student at a
+  /// regular school and at a music school.
+  List<SchoolProfile> _demoProfiles = const [];
+  final _demoData = <String, DemoData>{};
+  String? _demoActive;
+
   /// Starts an in-memory session without writing accounts or credentials.
-  AppSnapshot enterDemo() => (_demo = DemoData()).snapshot;
+  AppSnapshot enterDemo() {
+    final regular = DemoData();
+    final music = DemoData.music();
+    _demoData
+      ..clear()
+      ..addAll({'demo-regular': regular, 'demo-music': music});
+    final first = SchoolProfile(
+      id: 'demo-regular',
+      account: '',
+      synergiaLogin: null,
+      name: regular.snapshot.profile.name,
+      school: regular.snapshot.profile.school,
+      color: freeProfileColor(const [], regular.snapshot.profile.name),
+      studentId: regular.snapshot.profile.id,
+    );
+    _demoProfiles = List.unmodifiable([
+      first,
+      SchoolProfile(
+        id: 'demo-music',
+        account: '',
+        synergiaLogin: null,
+        name: music.snapshot.profile.name,
+        school: music.snapshot.profile.school,
+        color: freeProfileColor([first], music.snapshot.profile.name),
+        slot: 1,
+        studentId: music.snapshot.profile.id,
+      ),
+    ]);
+    _demoActive = first.id;
+    return (_demo = regular).snapshot;
+  }
 
   final Future<SharedPreferences> _preferences;
   final SnapshotStore _legacySnapshots;
@@ -130,13 +166,14 @@ class AppRepository {
   String? _activeId;
   Future<void>? _ready;
 
-  /// The profiles on the phone, once loaded.
-  List<SchoolProfile> get profiles => _profiles;
+  /// The profiles on the phone, once loaded; in demo mode the demo's.
+  List<SchoolProfile> get profiles => _demo != null ? _demoProfiles : _profiles;
 
   /// The open profile; null when signed out.
   SchoolProfile? get activeProfile {
-    for (final profile in _profiles) {
-      if (profile.id == _activeId) return profile;
+    final open = _demo != null ? _demoActive : _activeId;
+    for (final profile in profiles) {
+      if (profile.id == open) return profile;
     }
     return null;
   }
@@ -158,17 +195,20 @@ class AppRepository {
 
   /// The profiles, read again: the background check may have changed them.
   Future<List<SchoolProfile>> loadProfiles({bool reload = false}) async {
+    if (_demo != null) return _demoProfiles;
     await _ensureReady();
     if (reload) await _readProfiles(reload: true);
     return _profiles;
   }
 
   /// The profiles with news the user has not seen yet.
-  Future<Set<String>> loadProfileNews({bool reload = false}) =>
-      _profileStore.readNews(reload: reload);
+  Future<Set<String>> loadProfileNews({bool reload = false}) async =>
+      _demo != null ? const {} : _profileStore.readNews(reload: reload);
 
-  Future<void> setProfileNews(String profileId, bool news) =>
-      _profileStore.setNews(profileId, news);
+  Future<void> setProfileNews(String profileId, bool news) async {
+    if (_demo != null) return;
+    await _profileStore.setNews(profileId, news);
+  }
 
   LibrusClient _clientFor(SchoolProfile profile) {
     final shared = _sharedClient;
@@ -346,6 +386,8 @@ class AppRepository {
 
   /// The last snapshot of the profile [profileId], without the network.
   Future<AppSnapshot> loadProfileSnapshot(String profileId) async {
+    final demo = _demoData[profileId];
+    if (_demo != null && demo != null) return demo.snapshot;
     await _ensureReady();
     final profile = _profile(profileId);
     return await _storeFor(profile.id).read() ??
@@ -361,6 +403,12 @@ class AppRepository {
 
   /// Opens the profile [profileId] with its saved data.
   Future<AppSnapshot> switchProfile(String profileId) async {
+    if (_demo != null) {
+      final demo = _demoData[profileId];
+      if (demo == null) throw StateError('No demo profile $profileId.');
+      _demoActive = profileId;
+      return (_demo = demo).snapshot;
+    }
     await _ensureReady();
     final profile = _profile(profileId);
     _activeId = profile.id;
@@ -496,6 +544,13 @@ class AppRepository {
     String profileId,
     SchoolProfile Function(SchoolProfile saved) change,
   ) async {
+    if (_demo != null) {
+      _demoProfiles = List.unmodifiable([
+        for (final profile in _demoProfiles)
+          profile.id == profileId ? change(profile) : profile,
+      ]);
+      return;
+    }
     await _ensureReady();
     final saved = [...await _profileStore.read(reload: true)];
     final index = saved.indexWhere((profile) => profile.id == profileId);
@@ -520,6 +575,9 @@ class AppRepository {
   /// goes when no profile is left in it. Returns the open profile's data,
   /// or none when no profile is left.
   Future<AppSnapshot> removeProfile(String profileId) async {
+    if (_demo != null) {
+      throw StateError('Demo profiles cannot be removed.');
+    }
     await _ensureReady();
     final profile = _profile(profileId);
     await _forget(profile);
@@ -854,6 +912,9 @@ class AppRepository {
   Future<AppSnapshot> logout() async {
     if (_demo != null) {
       _demo = null;
+      _demoProfiles = const [];
+      _demoData.clear();
+      _demoActive = null;
       return _emptySnapshot(_signedOutProfile);
     }
     await _ensureReady();
@@ -1059,8 +1120,10 @@ class AppRepository {
     return _profiles.isEmpty ? null : _profiles.first.id;
   }
 
-  Future<void> saveWidgetProfile(String profileId) async =>
-      (await _preferences).setString(_widgetProfileKey, profileId);
+  Future<void> saveWidgetProfile(String profileId) async {
+    if (_demo != null) return;
+    await (await _preferences).setString(_widgetProfileKey, profileId);
+  }
 
   Future<AppDesign> loadDesign() async {
     final saved = (await _preferences).getString(_designKey);

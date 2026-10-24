@@ -351,26 +351,27 @@ Future<void> _showProfileActions(
             _showProfileColors(context, controller, profile);
           },
         ),
-        ListTile(
-          key: const ValueKey('profile-remove'),
-          iconColor: error,
-          textColor: error,
-          leading: const Icon(Icons.person_remove_rounded),
-          title: Text(sheetContext.tr('removeProfile')),
-          onTap: () async {
-            Navigator.pop(sheetContext);
-            final confirmed = await _confirm(
-              context,
-              title: context.tr('removeProfile'),
-              message: context.trArgs('removeProfileConfirm', {
-                'name': profile.displayName,
-              }),
-              action: context.tr('remove'),
-              actionKey: const ValueKey('profile-remove-confirm'),
-            );
-            if (confirmed) await controller.removeProfile(profile.id);
-          },
-        ),
+        if (!controller.isDemo)
+          ListTile(
+            key: const ValueKey('profile-remove'),
+            iconColor: error,
+            textColor: error,
+            leading: const Icon(Icons.person_remove_rounded),
+            title: Text(sheetContext.tr('removeProfile')),
+            onTap: () async {
+              Navigator.pop(sheetContext);
+              final confirmed = await _confirm(
+                context,
+                title: context.tr('removeProfile'),
+                message: context.trArgs('removeProfileConfirm', {
+                  'name': profile.displayName,
+                }),
+                action: context.tr('remove'),
+                actionKey: const ValueKey('profile-remove-confirm'),
+              );
+              if (confirmed) await controller.removeProfile(profile.id);
+            },
+          ),
       ],
     );
   },
@@ -437,7 +438,10 @@ class _RenameProfileState extends State<_RenameProfile> {
                   labelText: context.tr('profileName'),
                   hintText: widget.profile.name,
                   helperText: context.tr('profileNameHelp'),
-                  helperMaxLines: 3,
+                  helperMaxLines: 6,
+                  // The limit only stops runaway names; a counter would
+                  // squeeze the help beside it.
+                  counterText: '',
                 ),
               ),
             ),

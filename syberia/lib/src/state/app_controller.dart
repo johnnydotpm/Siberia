@@ -77,6 +77,7 @@ class AppController extends ChangeNotifier {
       return;
     }
     _snapshot = _repository.enterDemo();
+    _profiles = _repository.profiles;
     _doneHomework = const {};
     _forgetSentMessages();
     _error = null;
@@ -806,7 +807,7 @@ class AppController extends ChangeNotifier {
   /// Opens the profile [profileId] at once with its saved data and its own
   /// settings. A sync of the profile left behind goes on and saves its data.
   Future<void> switchProfile(String profileId) async {
-    if (isDemo || activeProfile?.id == profileId) return;
+    if (activeProfile?.id == profileId) return;
     _snapshot = await _repository.switchProfile(profileId);
     await _loadProfileSettings();
     _profiles = _repository.profiles;

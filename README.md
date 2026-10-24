@@ -7,18 +7,19 @@ SiberiaGB to w pełni funkcjonalny, wieloplatformowy klient Librus napisany w fr
 ## Funkcje
 
 - Logowanie z niewygasającymi sesjami
+- Kilka profili w jednej aplikacji: rodzic z dwójką dzieci albo uczeń w dwóch szkołach. Każdy profil ma własne dane, oceny, zadania i ustawienia średniej, a przełącza się jednym dotknięciem
 - Plan lekcji jako oś czasu lub lista, z łączonymi lekcjami podwójnymi i sprawdzianami przy lekcjach, na które są zapowiedziane
 - Oceny w kolorach według wartości i obliczanie średniej, także ważonej, z własną wartością plusów i minusów
 - Kalkulator ocen: jak zmieni się średnia po nowych ocenach i ile ocen potrzeba do wybranej średniej
 - Terminarz, kalendarz oraz nadchodzące wydarzenia
 - Lista zadań domowych pogrupowana według terminu, z wyszukiwaniem
 - Ekran „Dzisiaj” z bieżącą i następną lekcją oraz blokami, które można ukrywać i przestawiać
-- Widżet „Następna lekcja” na ekranie głównym (Android i iOS), z osobnymi ustawieniami dla każdego widżetu na Androidzie
+- Widżet „Następna lekcja” na ekranie głównym (Android i iOS), z osobnymi ustawieniami dla każdego widżetu na Androidzie, także z wyborem profilu
 - Pełna obsługa wiadomości
 - Ogłoszenia
 - Frekwencja z wykresem obecności
 - Uwagi
-- Powiadomienia o nowościach w ośmiu kategoriach: oceny, wiadomości, ogłoszenia, uwagi, frekwencja, wydarzenia, zadania domowe i plan lekcji
+- Powiadomienia o nowościach w ośmiu kategoriach: oceny, wiadomości, ogłoszenia, uwagi, frekwencja, wydarzenia, zadania domowe i plan lekcji; przy kilku profilach z imieniem profilu i osobnym włącznikiem dla każdego
 - Przypomnienia o sprawdzianach wieczorem dzień wcześniej lub rano tego dnia, o wybranej godzinie (Android i iOS)
 - Synchronizacja danych w tle (Android)
 - Wsparcie dla pięciu języków: polskiego, angielskiego, rosyjskiego, niemieckiego i ukraińskiego
