@@ -52,6 +52,20 @@ AppSnapshot studentSnapshot(
   lastSync: lastSync ?? DateTime(2026, 10, 20, 12),
 );
 
+/// A lesson an hour from now named after the student, so each profile's
+/// widget lessons can be told apart.
+Lesson upcomingLesson(String studentId) {
+  final start = DateTime.now().add(const Duration(hours: 1));
+  return Lesson(
+    id: 'l-$studentId',
+    subject: 'Lekcja $studentId',
+    teacher: '',
+    room: '',
+    start: start,
+    end: start.add(const Duration(minutes: 45)),
+  );
+}
+
 LinkedSynergiaAccount linkedStudent(
   String login, {
   String? account,
@@ -90,7 +104,7 @@ class FakeProfileClient extends LibrusClient {
             '${student.$1}-$number',
             school: student.$2,
             lastSync: world.syncedAt?.call(),
-          );
+          ).copyWith(lessons: [upcomingLesson(student.$1)]);
   }
 
   @override

@@ -22,10 +22,12 @@ object HomeWidgetChannel {
             when (call.method) {
                 "update" -> {
                     val payload = call.argument<String>("payload")
+                    // Each profile's lessons, for widgets set to show it.
+                    val profiles = call.argument<Map<String, String>>("profiles").orEmpty()
                     if (payload == null) {
                         result.error("invalid_arguments", null, null)
                     } else {
-                        NextLessonWidgetProvider.savePayload(app, payload)
+                        NextLessonWidgetProvider.savePayload(app, payload, profiles)
                         result.success(null)
                     }
                 }

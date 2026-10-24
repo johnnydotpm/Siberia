@@ -93,6 +93,9 @@ class AppRepository {
   static const _gradesViewKey = 'grades_view_v1';
   static const _todayLayoutKey = 'today_layout_v1';
   static const _dismissedUpdateKey = 'dismissed_update_version_v1';
+
+  /// The profile the widgets show, unless an Android widget has its own.
+  static const _widgetProfileKey = 'widget_profile_id_v1';
   static const _latestReleaseUrl =
       'https://api.github.com/repos/johnnydotpm/Siberia/releases/latest';
 
@@ -867,6 +870,7 @@ class AppRepository {
     final preferences = await _preferences;
     await preferences.remove(_legacyProfileKey);
     await preferences.remove(HomeworkDoneStore.key);
+    await preferences.remove(_widgetProfileKey);
     await _legacySnapshots.clear();
     return _emptySnapshot(_signedOutProfile);
   }
@@ -1005,7 +1009,17 @@ class AppRepository {
 
   Future<Map<String, String>> loadSubjectShortNames() async {
     await _ensureReady();
-    final raw = (await _preferences).getString(_ownKey(_subjectShortNamesKey));
+    return _shortNames(_ownKey(_subjectShortNamesKey));
+  }
+
+  /// The subject short names of the profile [profileId], open or not.
+  Future<Map<String, String>> loadSubjectShortNamesOf(String profileId) async {
+    await _ensureReady();
+    return _shortNames(ProfileStore.key(_subjectShortNamesKey, profileId));
+  }
+
+  Future<Map<String, String>> _shortNames(String key) async {
+    final raw = (await _preferences).getString(key);
     if (raw == null) return const {};
     try {
       final decoded = jsonDecode(raw);
@@ -1035,6 +1049,18 @@ class AppRepository {
     await preferences.setDouble(_ownKey(_gradeMinusKey), settings.minus);
     await preferences.setBool(_ownKey(_gradeWeightedKey), settings.weighted);
   }
+
+  /// The profile the widgets show: the one the user chose, while the phone
+  /// has it, or else the first. Null without profiles.
+  Future<String?> loadWidgetProfile() async {
+    await _ensureReady();
+    final saved = (await _preferences).getString(_widgetProfileKey);
+    if (_profiles.any((profile) => profile.id == saved)) return saved;
+    return _profiles.isEmpty ? null : _profiles.first.id;
+  }
+
+  Future<void> saveWidgetProfile(String profileId) async =>
+      (await _preferences).setString(_widgetProfileKey, profileId);
 
   Future<AppDesign> loadDesign() async {
     final saved = (await _preferences).getString(_designKey);

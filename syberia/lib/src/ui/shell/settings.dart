@@ -227,7 +227,11 @@ class _Settings extends StatelessWidget {
         if (bridge.configurableInApp || ios)
           _SettingsSection(
             title: context.tr('homeWidgets'),
-            children: [_HomeWidgetsRow(bridge)],
+            children: [
+              _HomeWidgetsRow(bridge, controller),
+              if (ios && controller.profiles.length > 1)
+                _WidgetProfileRow(controller),
+            ],
           ),
         _SettingsSection(
           title: context.tr('settingsAbout'),
@@ -505,8 +509,9 @@ Future<void> _showLanguageSheet(
 );
 
 class _HomeWidgetsRow extends StatefulWidget {
-  const _HomeWidgetsRow(this.bridge);
+  const _HomeWidgetsRow(this.bridge, this.controller);
   final HomeWidgetBridge bridge;
+  final AppController controller;
 
   @override
   State<_HomeWidgetsRow> createState() => _HomeWidgetsRowState();
@@ -548,9 +553,84 @@ class _HomeWidgetsRowState extends State<_HomeWidgetsRow> {
               isScrollControlled: true,
               useSafeArea: true,
               showDragHandle: true,
-              builder: (_) => HomeWidgetsSheet(bridge: widget.bridge),
+              builder: (_) => HomeWidgetsSheet(
+                bridge: widget.bridge,
+                profiles: widget.controller.profiles,
+                defaultProfileId: widget.controller.widgetProfileId,
+              ),
             )
           : null,
+    );
+  }
+}
+
+/// The profile the iPhone widget shows. Its widgets have no settings of
+/// their own, so the app picks for them.
+class _WidgetProfileRow extends StatelessWidget {
+  const _WidgetProfileRow(this.controller);
+  final AppController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    final shown = controller.profiles.firstWhere(
+      (profile) => profile.id == controller.widgetProfileId,
+      orElse: () => controller.profiles.first,
+    );
+    return ListTile(
+      key: const ValueKey('settings-widget-profile'),
+      leading: ProfileAvatar(
+        name: shown.displayName,
+        color: shown.color,
+        radius: 18,
+      ),
+      title: Text(context.tr('widgetProfile')),
+      subtitle: Text(shown.displayName),
+      trailing: const _Chevron(),
+      onTap: () => showAppSheet<void>(
+        context: context,
+        compact: true,
+        isScrollControlled: true,
+        useSafeArea: true,
+        showDragHandle: true,
+        builder: (sheetContext) => ListView(
+          shrinkWrap: true,
+          primary: false,
+          padding: EdgeInsets.fromLTRB(
+            _Space.sheet,
+            0,
+            _Space.sheet,
+            24 + MediaQuery.viewPaddingOf(sheetContext).bottom,
+          ),
+          children: [
+            Text(
+              sheetContext.tr('widgetProfile'),
+              style: _sheetTitleStyle(sheetContext),
+            ),
+            const SizedBox(height: 12),
+            for (final profile in controller.profiles)
+              ListTile(
+                key: ValueKey('widget-profile-${profile.id}'),
+                contentPadding: EdgeInsets.zero,
+                leading: ProfileAvatar(
+                  name: profile.displayName,
+                  color: profile.color,
+                ),
+                title: Text(profile.displayName),
+                subtitle: profile.school.isEmpty ? null : Text(profile.school),
+                trailing: profile.id == shown.id
+                    ? Icon(
+                        Icons.check_rounded,
+                        color: Theme.of(sheetContext).colorScheme.primary,
+                      )
+                    : null,
+                onTap: () {
+                  Navigator.pop(sheetContext);
+                  controller.setWidgetProfile(profile.id);
+                },
+              ),
+          ],
+        ),
+      ),
     );
   }
 }

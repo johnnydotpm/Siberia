@@ -59,6 +59,9 @@ class AppController extends ChangeNotifier {
   Map<String, DateTime> _doneHomework = const {};
   SyncNews? _syncNews;
   Timer? _homeWidgetDebounce;
+  bool _homeWidgetWriting = false;
+  bool _homeWidgetAgain = false;
+  String? _widgetProfileId;
   SchoolNotificationSettings _notificationSettings =
       const SchoolNotificationSettings();
   bool _autoSyncOnOpen = true;
@@ -167,6 +170,7 @@ class AppController extends ChangeNotifier {
     _snapshot = await _repository.load();
     _profiles = _repository.profiles;
     _profileNews = await _repository.loadProfileNews();
+    _widgetProfileId = await _repository.loadWidgetProfile();
     await _recordNotifications();
     _updateHomeWidget();
     if (updatesEnabled) unawaited(checkForUpdate());
@@ -232,25 +236,97 @@ class AppController extends ChangeNotifier {
     }
   }
 
+  /// The profile the widgets show, unless an Android widget has its own:
+  /// the one chosen in the settings, or the first.
+  String? get widgetProfileId {
+    final chosen = _widgetProfileId;
+    if (_profiles.any((profile) => profile.id == chosen)) return chosen;
+    return _profiles.isEmpty ? null : _profiles.first.id;
+  }
+
+  Future<void> setWidgetProfile(String profileId) async {
+    _widgetProfileId = profileId;
+    notifyListeners();
+    _updateHomeWidget();
+    await _repository.saveWidgetProfile(profileId);
+  }
+
+  /// Writes the widgets' lessons. A change while a write is running is
+  /// written right after it, from the state of then, so the last state
+  /// always lands last and a burst of changes writes once more, not each.
   void _updateHomeWidget() {
-    final widget = homeWidget;
-    if (widget == null) return;
+    if (homeWidget == null) return;
+    if (_homeWidgetWriting) {
+      _homeWidgetAgain = true;
+      return;
+    }
+    unawaited(_writeHomeWidgets());
+  }
+
+  Future<void> _writeHomeWidgets() async {
+    _homeWidgetWriting = true;
+    try {
+      do {
+        _homeWidgetAgain = false;
+        try {
+          await _writeHomeWidget();
+        } on Object {
+          // A widget that cannot be refreshed must not disturb the app.
+        }
+      } while (_homeWidgetAgain);
+    } finally {
+      _homeWidgetWriting = false;
+    }
+  }
+
+  Future<void> _writeHomeWidget() async {
+    final widget = homeWidget!;
     if (!isDemo && snapshot.profile.provider != 'Librus Synergia') {
-      unawaited(widget.clear());
+      await widget.clear();
       return;
     }
     final l10n = AppLocalizations(
       _locale ?? PlatformDispatcher.instance.locale,
     );
-    unawaited(
-      widget.update(
+    final now = DateTime.now();
+    final open = activeProfile;
+    if (open == null || _profiles.length < 2) {
+      await widget.update(
         buildHomeWidgetPayload(
           snapshot,
-          DateTime.now(),
+          now,
           l10n,
           shortNames: _subjectShortNames,
         ),
-      ),
+      );
+      return;
+    }
+    Future<String> lessonsOf(SchoolProfile profile) async =>
+        profile.id == open.id
+        ? buildHomeWidgetPayload(
+            snapshot,
+            now,
+            l10n,
+            shortNames: _subjectShortNames,
+          )
+        : buildHomeWidgetPayload(
+            await _repository.loadProfileSnapshot(profile.id),
+            now,
+            l10n,
+            shortNames: await _repository.loadSubjectShortNamesOf(profile.id),
+          );
+    final shown = _profiles.firstWhere(
+      (profile) => profile.id == widgetProfileId,
+      orElse: () => open,
+    );
+    await widget.update(
+      await lessonsOf(shown),
+      profiles: widget.configurableInApp
+          ? {
+              for (final profile in _profiles)
+                profile.id: await lessonsOf(profile),
+            }
+          : const {},
     );
   }
 

@@ -134,6 +134,7 @@ class AppLocalizations {
       'notification_notices': 'Nowe uwagi',
       'notification_attendance': 'Nowe wpisy frekwencji',
       'notification_events': 'Nowe wydarzenia',
+      'widgetProfile': 'Profil na widżecie',
       'profileNotificationsOn': 'Powiadomienia dla profilu {name} są włączone. Zmienisz to w: Ustawienia → Powiadomienia.',
       'notificationProfilesHelp':
           'Z których profili przychodzą powiadomienia i przypomnienia.',
@@ -514,6 +515,7 @@ class AppLocalizations {
       'notification_notices': 'New remarks',
       'notification_attendance': 'New attendance entries',
       'notification_events': 'New events',
+      'widgetProfile': 'Profile on the widget',
       'profileNotificationsOn': 'Notifications for {name} are on. Change it in Settings → Notifications.',
       'notificationProfilesHelp':
           'Which profiles send notifications and reminders.',
@@ -897,6 +899,7 @@ class AppLocalizations {
       'notification_notices': 'Новые замечания',
       'notification_attendance': 'Новые записи посещаемости',
       'notification_events': 'Новые события',
+      'widgetProfile': 'Профиль на виджете',
       'profileNotificationsOn': 'Уведомления для профиля {name} включены. Изменить — в Настройки → Уведомления.',
       'notificationProfilesHelp':
           'От каких профилей приходят уведомления и напоминания.',
@@ -1278,6 +1281,7 @@ class AppLocalizations {
       'notification_notices': 'Neue Bemerkungen',
       'notification_attendance': 'Neue Anwesenheitseinträge',
       'notification_events': 'Neue Termine',
+      'widgetProfile': 'Profil im Widget',
       'profileNotificationsOn': 'Benachrichtigungen für {name} sind an. Ändern unter Einstellungen → Benachrichtigungen.',
       'notificationProfilesHelp':
           'Von welchen Profilen Benachrichtigungen und Erinnerungen kommen.',
@@ -1669,6 +1673,7 @@ class AppLocalizations {
       'notification_notices': 'Нові зауваження',
       'notification_attendance': 'Нові записи відвідуваності',
       'notification_events': 'Нові події',
+      'widgetProfile': 'Профіль на віджеті',
       'profileNotificationsOn': 'Сповіщення для профілю {name} увімкнено. Змінити — у Налаштування → Сповіщення.',
       'notificationProfilesHelp':
           'Від яких профілів надходять сповіщення й нагадування.',

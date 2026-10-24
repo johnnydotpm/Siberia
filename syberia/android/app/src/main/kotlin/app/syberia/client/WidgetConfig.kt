@@ -13,6 +13,8 @@ data class WidgetConfig(
     val showProgress: Boolean = true,
     val highlightSubstitutions: Boolean = true,
     val mergeDoubleLessons: Boolean = true,
+    /** The profile whose lessons it shows; null for the one chosen in the app. */
+    val profileId: String? = null,
 ) {
     companion object {
         const val PREFERENCES = "siberia_home_widget"
@@ -51,6 +53,7 @@ data class WidgetConfig(
                     highlightSubstitutions =
                         json.optBoolean("highlightSubstitutions", defaults.highlightSubstitutions),
                     mergeDoubleLessons = json.optBoolean("mergeDoubleLessons", defaults.mergeDoubleLessons),
+                    profileId = json.optString("profileId").takeIf { it.isNotEmpty() },
                 )
             } catch (error: Exception) {
                 defaults

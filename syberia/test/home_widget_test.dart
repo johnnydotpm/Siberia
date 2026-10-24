@@ -305,7 +305,10 @@ class _RecordingBridge extends HomeWidgetBridge {
   var clears = 0;
 
   @override
-  Future<void> update(String payload) async => payloads.add(payload);
+  Future<void> update(
+    String payload, {
+    Map<String, String> profiles = const {},
+  }) async => payloads.add(payload);
 
   @override
   Future<void> clear() async => clears++;

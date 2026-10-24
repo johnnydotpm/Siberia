@@ -91,6 +91,7 @@ class HomeWidgetConfig {
     this.showProgress = true,
     this.highlightSubstitutions = true,
     this.mergeDoubleLessons = true,
+    this.profileId,
   });
 
   factory HomeWidgetConfig.fromJson(Map<String, Object?> json) {
@@ -115,6 +116,9 @@ class HomeWidgetConfig {
         'mergeDoubleLessons',
         defaults.mergeDoubleLessons,
       ),
+      profileId: json['profileId'] is String && json['profileId'] != ''
+          ? json['profileId']! as String
+          : null,
     );
   }
 
@@ -127,6 +131,10 @@ class HomeWidgetConfig {
   final bool highlightSubstitutions;
   final bool mergeDoubleLessons;
 
+  /// The profile whose lessons the widget shows; null for the one chosen
+  /// for widgets in the app.
+  final String? profileId;
+
   Map<String, Object> toJson() => {
     'theme': theme.name,
     'showRoom': showRoom,
@@ -136,6 +144,7 @@ class HomeWidgetConfig {
     'showProgress': showProgress,
     'highlightSubstitutions': highlightSubstitutions,
     'mergeDoubleLessons': mergeDoubleLessons,
+    'profileId': ?profileId,
   };
 
   HomeWidgetConfig copyWith({
@@ -147,6 +156,7 @@ class HomeWidgetConfig {
     bool? showProgress,
     bool? highlightSubstitutions,
     bool? mergeDoubleLessons,
+    String? profileId,
   }) => HomeWidgetConfig(
     theme: theme ?? this.theme,
     showRoom: showRoom ?? this.showRoom,
@@ -157,6 +167,7 @@ class HomeWidgetConfig {
     highlightSubstitutions:
         highlightSubstitutions ?? this.highlightSubstitutions,
     mergeDoubleLessons: mergeDoubleLessons ?? this.mergeDoubleLessons,
+    profileId: profileId ?? this.profileId,
   );
 
   @override
@@ -169,7 +180,8 @@ class HomeWidgetConfig {
       other.showCountdown == showCountdown &&
       other.showProgress == showProgress &&
       other.highlightSubstitutions == highlightSubstitutions &&
-      other.mergeDoubleLessons == mergeDoubleLessons;
+      other.mergeDoubleLessons == mergeDoubleLessons &&
+      other.profileId == profileId;
 
   @override
   String toString() => 'HomeWidgetConfig(${toJson()})';
@@ -184,6 +196,7 @@ class HomeWidgetConfig {
     showProgress,
     highlightSubstitutions,
     mergeDoubleLessons,
+    profileId,
   );
 }
 
@@ -226,8 +239,16 @@ class HomeWidgetBridge {
   bool get configurableInApp =>
       !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
 
-  Future<void> update(String payload) =>
-      _invoke<void>('update', {'payload': payload});
+  /// Gives the widgets [payload], the lessons of the profile chosen for
+  /// widgets. On Android each widget can show another profile, so
+  /// [profiles] holds every profile's lessons by its id.
+  Future<void> update(
+    String payload, {
+    Map<String, String> profiles = const {},
+  }) => _invoke<void>('update', {
+    'payload': payload,
+    if (configurableInApp) 'profiles': profiles,
+  });
 
   Future<void> clear() => _invoke<void>('clear');
 

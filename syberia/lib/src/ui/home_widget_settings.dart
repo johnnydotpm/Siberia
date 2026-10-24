@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import '../domain/models.dart';
+import '../domain/profiles.dart';
 import '../home_widget.dart';
 import '../l10n/app_localizations.dart';
 import '../state/app_controller.dart';
 import '../theme/app_theme.dart';
+import 'profile_avatar.dart';
 
 /// The look and content of one home screen widget.
 class HomeWidgetSettingsForm extends StatefulWidget {
@@ -13,12 +15,20 @@ class HomeWidgetSettingsForm extends StatefulWidget {
     required this.bridge,
     required this.widgetId,
     required this.onSaved,
+    this.profiles = const [],
+    this.defaultProfileId,
     super.key,
   });
 
   final HomeWidgetBridge bridge;
   final int widgetId;
   final VoidCallback onSaved;
+
+  /// The profiles a widget can show, when there is more than one.
+  final List<SchoolProfile> profiles;
+
+  /// The profile a widget shows when it has none of its own.
+  final String? defaultProfileId;
 
   @override
   State<HomeWidgetSettingsForm> createState() => _HomeWidgetSettingsFormState();
@@ -87,6 +97,34 @@ class _HomeWidgetSettingsFormState extends State<HomeWidgetSettingsForm> {
             primary: false,
             padding: const EdgeInsets.symmetric(vertical: 8),
             children: [
+              if (widget.profiles.length > 1) ...[
+                _SectionTitle(context.tr('widgetProfile')),
+                for (final profile in widget.profiles)
+                  ListTile(
+                    key: ValueKey('widget-profile-${profile.id}'),
+                    leading: ProfileAvatar(
+                      name: profile.displayName,
+                      color: profile.color,
+                      radius: 18,
+                    ),
+                    title: Text(profile.displayName),
+                    subtitle: profile.school.isEmpty
+                        ? null
+                        : Text(profile.school),
+                    trailing:
+                        (config.profileId ?? widget.defaultProfileId) ==
+                            profile.id
+                        ? Icon(
+                            Icons.check_rounded,
+                            color: Theme.of(context).colorScheme.primary,
+                          )
+                        : null,
+                    onTap: () => _change(
+                      (current) => current.copyWith(profileId: profile.id),
+                    ),
+                  ),
+                const SizedBox(height: 8),
+              ],
               _SectionTitle(context.tr('widgetStyle')),
               SizedBox(
                 height: 92,
@@ -274,9 +312,16 @@ class _ThemeOption extends StatelessWidget {
 
 /// The widgets on the Android home screen, each with its settings.
 class HomeWidgetsSheet extends StatefulWidget {
-  const HomeWidgetsSheet({required this.bridge, super.key});
+  const HomeWidgetsSheet({
+    required this.bridge,
+    this.profiles = const [],
+    this.defaultProfileId,
+    super.key,
+  });
 
   final HomeWidgetBridge bridge;
+  final List<SchoolProfile> profiles;
+  final String? defaultProfileId;
 
   @override
   State<HomeWidgetsSheet> createState() => _HomeWidgetsSheetState();
@@ -323,6 +368,8 @@ class _HomeWidgetsSheetState extends State<HomeWidgetsSheet> {
               (_, final int id) => HomeWidgetSettingsForm(
                 bridge: widget.bridge,
                 widgetId: id,
+                profiles: widget.profiles,
+                defaultProfileId: widget.defaultProfileId,
                 onSaved: () => Navigator.pop(context),
               ),
               (final List<PlacedHomeWidget> list, _) when list.isEmpty =>
@@ -435,6 +482,8 @@ class HomeWidgetConfigApp extends StatelessWidget {
     required this.widgetId,
     this.locale,
     this.colorMode = AppColorMode.system,
+    this.profiles = const [],
+    this.defaultProfileId,
     super.key,
   });
 
@@ -442,6 +491,8 @@ class HomeWidgetConfigApp extends StatelessWidget {
   final int widgetId;
   final Locale? locale;
   final AppColorMode colorMode;
+  final List<SchoolProfile> profiles;
+  final String? defaultProfileId;
 
   @override
   Widget build(BuildContext context) => MaterialApp(
@@ -474,6 +525,8 @@ class HomeWidgetConfigApp extends StatelessWidget {
         body: HomeWidgetSettingsForm(
           bridge: bridge,
           widgetId: widgetId,
+          profiles: profiles,
+          defaultProfileId: defaultProfileId,
           onSaved: bridge.finishConfiguring,
         ),
       ),

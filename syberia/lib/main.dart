@@ -83,6 +83,8 @@ Future<void> widgetConfigMain() async {
   final repository = AppRepository();
   final languageCode = await repository.loadLocale();
   final colorMode = await repository.loadColorMode();
+  final profiles = await repository.loadProfiles();
+  final defaultProfile = await repository.loadWidgetProfile();
   final widgetId = await bridge.configuringWidgetId();
   if (widgetId == null) {
     await bridge.finishConfiguring();
@@ -94,6 +96,8 @@ Future<void> widgetConfigMain() async {
       widgetId: widgetId,
       locale: languageCode == null ? null : Locale(languageCode),
       colorMode: colorMode,
+      profiles: profiles,
+      defaultProfileId: defaultProfile,
     ),
   );
 }
