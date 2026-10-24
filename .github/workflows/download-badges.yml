@@ -54,12 +54,8 @@ jobs:
             const block = [
               '<!-- download-badges:start -->',
               '<p align="center">',
-              `  <a href="${apk.browser_download_url}">`,
-              '    <img src=".github/badges/download-apk.svg" alt="Download APK for Android" width="240" height="72">',
-              '  </a>',
-              `  <a href="${ipa.browser_download_url}">`,
-              '    <img src=".github/badges/download-ipa.svg" alt="Download IPA for iOS" width="240" height="72">',
-              '  </a>',
+              `  <a href="${apk.browser_download_url}"><img src=".github/badges/download-apk.svg" alt="Download APK for Android" width="240" height="72"></a>`,
+              `  <a href="${ipa.browser_download_url}"><img src=".github/badges/download-ipa.svg" alt="Download IPA for iOS" width="240" height="72"></a>`,
               '</p>',
               '<!-- download-badges:end -->',
             ].join('\n');
