@@ -77,6 +77,10 @@ Future<void> _showNotificationSettings(
                           )
                         : const SizedBox.shrink(),
                   ),
+                  if (controller.profiles.length > 1) ...[
+                    const Divider(height: 1, indent: 16, endIndent: 16),
+                    _NotificationProfiles(controller),
+                  ],
                   const Divider(height: 1, indent: 16, endIndent: 16),
                   for (final category in SchoolNotificationCategory.values)
                     switch (category) {
@@ -144,6 +148,69 @@ Future<void> _showNotificationSettings(
     open = false;
     permissionDenied.dispose();
   });
+}
+
+/// A switch for each profile: whether its news and reminders come. What
+/// comes and when is the same for all of them.
+class _NotificationProfiles extends StatelessWidget {
+  const _NotificationProfiles(this.controller);
+  final AppController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    final enabled = controller.notificationSettings.enabled;
+    return Column(
+      key: const ValueKey('notification-profiles'),
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                context.tr('profiles'),
+                style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                  color: Theme.of(context).colorScheme.primary,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                context.tr('notificationProfilesHelp'),
+                style: _metaStyle(context),
+              ),
+            ],
+          ),
+        ),
+        for (final profile in controller.profiles)
+          SwitchListTile.adaptive(
+            key: ValueKey('notification-profile-${profile.id}'),
+            secondary: ProfileAvatar(
+              name: profile.displayName,
+              color: profile.color,
+              radius: 18,
+            ),
+            title: Text(
+              profile.displayName,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            subtitle: profile.school.isEmpty
+                ? null
+                : Text(
+                    profile.school,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+            value: profile.notify,
+            onChanged: enabled
+                ? (value) => controller.setProfileNotify(profile.id, value)
+                : null,
+          ),
+      ],
+    );
+  }
 }
 
 /// A category with a switch that also opens, to pick which kinds of new

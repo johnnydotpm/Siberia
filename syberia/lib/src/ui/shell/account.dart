@@ -573,6 +573,9 @@ class _AddProfileState extends State<_AddProfile> {
     if (!mounted) return;
     if (added != null) {
       Navigator.pop(context);
+      if (widget.outer.mounted) {
+        _announceNotifications(widget.outer, widget.controller);
+      }
     } else {
       setState(() {
         adding = null;
@@ -660,6 +663,26 @@ class _AddProfileState extends State<_AddProfile> {
           label: Text(context.tr('otherLibrusAccount')),
         ),
       ],
+    ),
+  );
+}
+
+/// Tells the user, once a profile is added next to others, that its
+/// notifications are on and where to change that.
+void _announceNotifications(BuildContext context, AppController controller) {
+  final profile = controller.activeProfile;
+  if (profile == null ||
+      controller.profiles.length < 2 ||
+      !profile.notify ||
+      !controller.notificationSettings.enabled) {
+    return;
+  }
+  ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+    SnackBar(
+      key: const ValueKey('profile-notifications-notice'),
+      content: Text(
+        context.trArgs('profileNotificationsOn', {'name': profile.displayName}),
+      ),
     ),
   );
 }
@@ -764,7 +787,12 @@ class _LoginState extends State<_Login> {
       choose: (students) => _chooseStudents(context, students),
     );
     if (mounted && ok) {
-      Navigator.pop(context);
+      final navigator = Navigator.of(context);
+      navigator.pop();
+      // The sheet is gone; the screen under it tells about notifications.
+      if (navigator.context.mounted) {
+        _announceNotifications(navigator.context, widget.controller);
+      }
     } else if (mounted) {
       setState(() {});
     }

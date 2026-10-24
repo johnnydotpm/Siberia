@@ -223,7 +223,9 @@ class AppController extends ChangeNotifier {
       await backgroundScheduling?.call(
         _autoSyncOnOpen &&
             _notificationSettings.needsBackgroundCheck &&
-            snapshot.profile.provider == 'Librus Synergia',
+            snapshot.profile.provider == 'Librus Synergia' &&
+            // Nothing to check when every profile has notifications off.
+            (_profiles.isEmpty || _profiles.any((profile) => profile.notify)),
       );
     } on Object {
       // The manual sync button remains usable if scheduling is unavailable.
@@ -279,14 +281,40 @@ class AppController extends ChangeNotifier {
   }
 
   Future<void> _recordNotifications() async {
-    try {
-      await notifications?.processSnapshot(snapshot);
-    } on Object {
-      // Notifications cannot turn a successful Librus sync into an error.
-    }
+    await _notify(snapshot, activeProfile);
     // Scheduling takes a round trip per reminder, so it never holds the app
     // opening or a sync.
     unawaited(_updateReminders());
+  }
+
+  /// Notifies of what is new in [data] of [profile]; a profile with
+  /// notifications off only marks it as seen.
+  Future<void> _notify(AppSnapshot data, SchoolProfile? profile) async {
+    try {
+      await notifications?.processSnapshot(
+        data,
+        profile: profile,
+        name: _notificationName(profile),
+        quiet: profile != null && !profile.notify,
+      );
+    } on Object {
+      // Notifications cannot turn a successful Librus sync into an error.
+    }
+  }
+
+  /// With more than one profile, notifications start with its name.
+  String? _notificationName(SchoolProfile? profile) =>
+      profile != null && _profiles.length > 1 ? profile.displayName : null;
+
+  /// Opens what a tapped notification is about: its profile, then its page.
+  Future<void> openNotification(NotificationTarget target) async {
+    final profileId = target.profileId;
+    if (profileId != null &&
+        profileId != activeProfile?.id &&
+        _profiles.any((profile) => profile.id == profileId)) {
+      await switchProfile(profileId);
+    }
+    selectTab(target.category.tabIndex);
   }
 
   Future<bool> requestNotificationPermissionIfEnabled() async {
@@ -359,9 +387,31 @@ class AppController extends ChangeNotifier {
     return reminders.any ? requestNotificationPermissionIfEnabled() : null;
   }
 
+  /// Schedules the test reminders of every profile with notifications on,
+  /// as one list.
   Future<void> _updateReminders() async {
+    final service = notifications;
+    if (service == null) return;
     try {
-      await notifications?.updateReminders(snapshot);
+      final open = activeProfile;
+      final sources = <ReminderSource>[];
+      if (open == null) {
+        sources.add(ReminderSource(snapshot));
+      } else {
+        for (final profile in _profiles) {
+          if (!profile.notify) continue;
+          sources.add(
+            ReminderSource(
+              profile.id == open.id
+                  ? snapshot
+                  : await _repository.loadProfileSnapshot(profile.id),
+              profile: profile,
+              name: _notificationName(profile),
+            ),
+          );
+        }
+      }
+      await service.updateAllReminders(sources);
     } on Object {
       // Reminders are best effort.
     }
@@ -852,7 +902,7 @@ class AppController extends ChangeNotifier {
     for (final profile in added) {
       try {
         final result = await _repository.syncProfile(profile.id);
-        await notifications?.processSnapshot(result);
+        await _notify(result, profile);
       } on Object {
         // Synced again when the user opens it.
       }
@@ -912,15 +962,12 @@ class AppController extends ChangeNotifier {
     _syncingProfiles.add(key);
     _error = null;
     notifyListeners();
+    final profile = activeProfile;
     try {
       final before = snapshot;
       final result = await _repository.sync(snapshot);
       if (_syncKey != key) {
-        try {
-          await notifications?.processSnapshot(result);
-        } on Object {
-          // Notifications are best effort.
-        }
+        await _notify(result, profile);
         return;
       }
       final sameProfile = result.profile.id == snapshot.profile.id;

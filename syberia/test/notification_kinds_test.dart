@@ -306,13 +306,16 @@ class _Presenter implements SchoolNotificationPresenter {
     required SchoolNotificationCategory category,
     required String title,
     required String body,
+    int? id,
+    NotificationTarget? target,
+    String? channelName,
   }) async => shown.add((category, body));
 
   @override
-  Future<SchoolNotificationCategory?> launchCategory() async => null;
+  Future<NotificationTarget?> launchTarget() async => null;
 
   @override
-  void onTap(void Function(SchoolNotificationCategory) callback) {}
+  void onTap(void Function(NotificationTarget) callback) {}
 
   @override
   Future<void> scheduleReminders(

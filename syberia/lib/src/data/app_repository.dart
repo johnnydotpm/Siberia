@@ -752,6 +752,16 @@ class AppRepository {
     return results;
   }
 
+  /// The saved data of every profile with notifications on, for the test
+  /// reminders.
+  Future<List<(SchoolProfile, AppSnapshot)>> notifyingSnapshots() async {
+    await _ensureReady();
+    return [
+      for (final profile in _profiles)
+        if (profile.notify) (profile, await loadProfileSnapshot(profile.id)),
+    ];
+  }
+
   Future<AppSnapshot?> _backgroundSnapshot(
     SchoolProfile profile,
     Set<LibrusPart>? parts,

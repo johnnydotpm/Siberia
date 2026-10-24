@@ -134,6 +134,9 @@ class AppLocalizations {
       'notification_notices': 'Nowe uwagi',
       'notification_attendance': 'Nowe wpisy frekwencji',
       'notification_events': 'Nowe wydarzenia',
+      'profileNotificationsOn': 'Powiadomienia dla profilu {name} są włączone. Zmienisz to w: Ustawienia → Powiadomienia.',
+      'notificationProfilesHelp':
+          'Z których profili przychodzą powiadomienia i przypomnienia.',
       'profiles': 'Profile',
       'profile': 'Profil',
       'profilesCount': 'Profile: {count}',
@@ -511,6 +514,9 @@ class AppLocalizations {
       'notification_notices': 'New remarks',
       'notification_attendance': 'New attendance entries',
       'notification_events': 'New events',
+      'profileNotificationsOn': 'Notifications for {name} are on. Change it in Settings → Notifications.',
+      'notificationProfilesHelp':
+          'Which profiles send notifications and reminders.',
       'profiles': 'Profiles',
       'profile': 'Profile',
       'profilesCount': 'Profiles: {count}',
@@ -891,6 +897,9 @@ class AppLocalizations {
       'notification_notices': 'Новые замечания',
       'notification_attendance': 'Новые записи посещаемости',
       'notification_events': 'Новые события',
+      'profileNotificationsOn': 'Уведомления для профиля {name} включены. Изменить — в Настройки → Уведомления.',
+      'notificationProfilesHelp':
+          'От каких профилей приходят уведомления и напоминания.',
       'profiles': 'Профили',
       'profile': 'Профиль',
       'profilesCount': 'Профили: {count}',
@@ -1269,6 +1278,9 @@ class AppLocalizations {
       'notification_notices': 'Neue Bemerkungen',
       'notification_attendance': 'Neue Anwesenheitseinträge',
       'notification_events': 'Neue Termine',
+      'profileNotificationsOn': 'Benachrichtigungen für {name} sind an. Ändern unter Einstellungen → Benachrichtigungen.',
+      'notificationProfilesHelp':
+          'Von welchen Profilen Benachrichtigungen und Erinnerungen kommen.',
       'profiles': 'Profile',
       'profile': 'Profil',
       'profilesCount': 'Profile: {count}',
@@ -1657,6 +1669,9 @@ class AppLocalizations {
       'notification_notices': 'Нові зауваження',
       'notification_attendance': 'Нові записи відвідуваності',
       'notification_events': 'Нові події',
+      'profileNotificationsOn': 'Сповіщення для профілю {name} увімкнено. Змінити — у Налаштування → Сповіщення.',
+      'notificationProfilesHelp':
+          'Від яких профілів надходять сповіщення й нагадування.',
       'profiles': 'Профілі',
       'profile': 'Профіль',
       'profilesCount': 'Профілі: {count}',

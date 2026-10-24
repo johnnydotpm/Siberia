@@ -40,7 +40,9 @@ Future<AppController> _initializeApplication(AppRepository repository) async {
     backgroundScheduling: configureBackgroundNotifications,
     homeWidget: const HomeWidgetBridge(),
   );
-  notifications.onTap((category) => controller.selectTab(category.tabIndex));
+  notifications.onTap(
+    (target) => unawaited(controller.openNotification(target)),
+  );
   try {
     await Future.wait([
       if (defaultTargetPlatform == TargetPlatform.android)
@@ -50,8 +52,8 @@ Future<AppController> _initializeApplication(AppRepository repository) async {
       // The snapshot may raise notifications, so the plugin comes first.
       notifications.initialize().then((_) => controller.bootstrap()),
     ]);
-    final launchCategory = await notifications.launchCategory();
-    if (launchCategory != null) controller.selectTab(launchCategory.tabIndex);
+    final launchTarget = await notifications.launchTarget();
+    if (launchTarget != null) await controller.openNotification(launchTarget);
   } on Object {
     controller.dispose();
     rethrow;

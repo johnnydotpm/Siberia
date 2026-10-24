@@ -56,11 +56,15 @@ class TestReminder {
     required this.at,
     required this.title,
     required this.body,
+    this.profileId,
   });
 
   final DateTime at;
   final String title;
   final String body;
+
+  /// The profile a tap opens, when the phone keeps profiles.
+  final String? profileId;
 
   @override
   String toString() => 'TestReminder($at, $title, $body)';
