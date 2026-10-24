@@ -1,4 +1,9 @@
-# SiberiaGB
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/banner-dark.svg">
+    <img src=".github/banner-light.svg" alt="SiberiaGB" width="100%">
+  </picture>
+</p>
 
 [Polski](README.md) | **English** | [Русский](README.ru.md)
 
