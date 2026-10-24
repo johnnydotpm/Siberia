@@ -15,6 +15,7 @@ import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../app_build_info.dart';
+import '../domain/calendar_days.dart';
 import '../domain/grade_calculator.dart';
 import '../domain/librus_error.dart';
 import '../domain/models.dart';

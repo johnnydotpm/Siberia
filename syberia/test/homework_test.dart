@@ -52,26 +52,26 @@ void main() {
             _homework(
               'old',
               'Old task',
-              today.subtract(const Duration(days: 3)),
+              DateTime(today.year, today.month, today.day - 3),
             ),
             _homework(
               'later',
               'Project',
-              today.add(const Duration(days: 20)),
+              DateTime(today.year, today.month, today.day + 20),
               subject: 'Historia',
             ),
             _homework('today', 'Str. 12', today, description: 'Ćwiczenia 1-4'),
             _homework(
               'tomorrow',
               'Essay',
-              today.add(const Duration(days: 1)),
+              DateTime(today.year, today.month, today.day + 1),
               subject: 'Polski',
             ),
             // Without a topic or text Librus only gives the type.
             _homework(
               'generic',
               'Zadanie domowe',
-              today.add(const Duration(days: 1)),
+              DateTime(today.year, today.month, today.day + 1),
               subject: 'Fizyka',
             ),
           ],

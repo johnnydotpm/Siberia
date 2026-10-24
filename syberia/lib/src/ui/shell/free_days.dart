@@ -39,14 +39,14 @@ FreeDay? _freeDayOn(List<FreeDay> days, DateTime day) =>
 String _freeDaysCountdown(BuildContext context, FreeDay day, DateTime now) {
   final today = DateTime(now.year, now.month, now.day);
   if (day.covers(today)) {
-    final left = _daysBetween(today, day.to) + 1;
+    final left = calendarDaysBetween(today, day.to) + 1;
     return left <= 1
         ? context.tr('freeDaysLastDay')
         : context.trArgs('freeDaysLeft', {
             'days': _plural(context, left, 'days'),
           });
   }
-  final until = _daysBetween(today, day.from);
+  final until = calendarDaysBetween(today, day.from);
   return until == 1
       ? context.tr('widgetTomorrow')
       : context.trArgs('freeDaysIn', {'days': _plural(context, until, 'days')});

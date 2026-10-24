@@ -363,7 +363,7 @@ class _NowCard extends StatelessWidget {
         lesson.start.month,
         lesson.start.day,
       );
-      final dayName = _daysBetween(now, day) == 1
+      final dayName = calendarDaysBetween(now, day) == 1
           ? context.tr('widgetTomorrow')
           : _shortWeekday(context, day);
       // The big subject below is that day's first lesson, not today's.
@@ -642,7 +642,7 @@ class _RecentGrades extends StatelessWidget {
 
 /// "Today", "Yesterday", the weekday within a week, then the date.
 String _gradeWhen(BuildContext context, DateTime date, DateTime now) {
-  final days = _daysBetween(date, now);
+  final days = calendarDaysBetween(date, now);
   if (days <= 0) return context.tr('messagesToday');
   if (days == 1) return context.tr('messagesYesterday');
   if (days < 7) return _shortWeekday(context, date);

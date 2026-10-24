@@ -997,8 +997,14 @@ void main() {
         expect(holiday.kind, FreeDayKind.school);
         expect(holiday.name, 'Ferie zimowe');
         expect(holiday.wholeDays, isTrue);
-        expect(holiday.covers(today.add(const Duration(days: 30))), isTrue);
-        expect(holiday.covers(today.add(const Duration(days: 44))), isFalse);
+        expect(
+          holiday.covers(DateTime(today.year, today.month, today.day + 30)),
+          isTrue,
+        );
+        expect(
+          holiday.covers(DateTime(today.year, today.month, today.day + 44)),
+          isFalse,
+        );
 
         final retreat = days['class-2']!;
         expect(retreat.kind, FreeDayKind.classDay);

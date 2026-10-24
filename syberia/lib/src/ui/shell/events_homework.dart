@@ -86,7 +86,7 @@ class _HomeworkState extends State<_Homework> {
   /// Upcoming work by when it is due: "Today", "Tomorrow", "This week",
   /// "Next week", "Later". Past work by month.
   String _section(DateTime due, DateTime today) {
-    final days = _daysBetween(today, due);
+    final days = calendarDaysBetween(today, due);
     if (days < 0) {
       return _capitalize(
         DateFormat.yMMMM(Localizations.localeOf(context).toLanguageTag())
@@ -299,18 +299,11 @@ class _HomeworkState extends State<_Homework> {
 
 /// When an entry is due: "Today", "Tomorrow", or the weekday and date.
 String _dueLabel(BuildContext context, DateTime date, DateTime now) =>
-    switch (_daysBetween(now, date)) {
+    switch (calendarDaysBetween(now, date)) {
       0 => context.tr('messagesToday'),
       1 => context.tr('widgetTomorrow'),
       _ => '${_shortWeekday(context, date)}, ${_shortDate(context, date)}',
     };
-
-/// Whole days from [from] to [to], unaffected by daylight saving.
-int _daysBetween(DateTime from, DateTime to) => DateTime.utc(
-  to.year,
-  to.month,
-  to.day,
-).difference(DateTime.utc(from.year, from.month, from.day)).inDays;
 
 /// The assignment itself. Librus falls back to the type ("Zadanie domowe")
 /// when an assignment has neither topic nor text.
@@ -429,7 +422,7 @@ class _EventTile extends StatelessWidget {
     if (item.kind == EventKind.homework) return _HomeworkCard(item, now: now);
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-    final days = _daysBetween(now, item.date);
+    final days = calendarDaysBetween(now, item.date);
     final soon = days == 0 || days == 1;
     final when = _dueLabel(context, item.date, now);
     final (:type, :label, :text) = _eventType(item);
@@ -562,7 +555,7 @@ class _HomeworkCard extends StatelessWidget {
       theme.brightness,
     );
     final details = _homeworkDetails(item);
-    final days = _daysBetween(now, item.date);
+    final days = calendarDaysBetween(now, item.date);
     // Due today or tomorrow: the one to do first.
     final soon = days == 0 || days == 1;
     final due = _dueLabel(context, item.date, now);

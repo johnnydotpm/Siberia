@@ -45,20 +45,16 @@ class _MessagesState extends State<_Messages> {
   }
 
   /// "Today", "Yesterday", "This week", then the month.
-  String _section(DateTime value, DateTime now) {
-    final day = DateTime(value.year, value.month, value.day);
-    final today = DateTime(now.year, now.month, now.day);
-    final days = today.difference(day).inDays;
-    if (days <= 0) return context.tr('messagesToday');
-    if (days == 1) return context.tr('messagesYesterday');
-    if (days < 7 && day.weekday < today.weekday) {
-      return context.tr('messagesThisWeek');
-    }
-    return _capitalize(
-      DateFormat.yMMMM(Localizations.localeOf(context).toLanguageTag())
-          .format(value),
-    );
-  }
+  String _section(DateTime value, DateTime now) =>
+      switch (messageSection(value, now)) {
+        MessageSection.today => context.tr('messagesToday'),
+        MessageSection.yesterday => context.tr('messagesYesterday'),
+        MessageSection.thisWeek => context.tr('messagesThisWeek'),
+        MessageSection.earlier => _capitalize(
+          DateFormat.yMMMM(Localizations.localeOf(context).toLanguageTag())
+              .format(value),
+        ),
+      };
 
   @override
   Widget build(BuildContext context) {
@@ -341,12 +337,25 @@ class _MessagesState extends State<_Messages> {
   }
 }
 
+/// Where a message goes in the list: the part of it its day falls in.
+enum MessageSection { today, yesterday, thisWeek, earlier }
+
+/// The section of a message received at [value], seen at [now]. Days are
+/// counted on the calendar, so the day after the clocks change still has
+/// its yesterday.
+@visibleForTesting
+MessageSection messageSection(DateTime value, DateTime now) {
+  final days = calendarDaysBetween(value, now);
+  if (days <= 0) return MessageSection.today;
+  if (days == 1) return MessageSection.yesterday;
+  if (days < 7 && value.weekday < now.weekday) return MessageSection.thisWeek;
+  return MessageSection.earlier;
+}
+
 /// "12:30" today, the weekday this week, the date before that.
 String _messageTime(BuildContext context, DateTime value, DateTime now) {
   final locale = Localizations.localeOf(context).toLanguageTag();
-  final day = DateTime(value.year, value.month, value.day);
-  final today = DateTime(now.year, now.month, now.day);
-  final days = today.difference(day).inDays;
+  final days = calendarDaysBetween(value, now);
   // Today and yesterday have their own sections, so the time says more.
   if (days <= 1) return DateFormat('HH:mm').format(value);
   if (days < 7) return _shortWeekday(context, value);

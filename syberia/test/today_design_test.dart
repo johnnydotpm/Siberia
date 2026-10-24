@@ -18,7 +18,8 @@ int _semester() {
 AppSnapshot _snapshot({List<SchoolEvent> events = const []}) {
   final now = DateTime.now();
   final today = DateTime(now.year, now.month, now.day);
-  final tomorrow = today.add(const Duration(days: 1));
+  // Calendar days: the day the clocks change is not 24 hours long.
+  final tomorrow = DateTime(today.year, today.month, today.day + 1);
   Lesson lesson(String id, String subject, int hour, int minute) => Lesson(
     id: id,
     subject: subject,
@@ -38,7 +39,7 @@ AppSnapshot _snapshot({List<SchoolEvent> events = const []}) {
     subject: 'język niemiecki',
     value: value,
     description: '',
-    date: now.subtract(Duration(days: daysAgo)),
+    date: DateTime(now.year, now.month, now.day - daysAgo),
     weight: 1,
     semester: _semester(),
   );
@@ -126,7 +127,8 @@ void main() {
     tester,
   ) async {
     await _pump(tester);
-    final tomorrow = DateTime.now().add(const Duration(days: 1));
+    final now = DateTime.now();
+    final tomorrow = DateTime(now.year, now.month, now.day + 1);
     expect(find.text('Lessons are over for today'), findsOneWidget);
     expect(
       find.text(

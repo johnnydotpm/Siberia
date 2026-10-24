@@ -431,11 +431,7 @@ void main() {
     tester,
   ) async {
     final now = DateTime.now();
-    final tomorrow = DateTime(
-      now.year,
-      now.month,
-      now.day,
-    ).add(const Duration(days: 1, hours: 8));
+    final tomorrow = DateTime(now.year, now.month, now.day + 1, 8);
     final snapshot = AppSnapshot(
       profile: const StudentProfile(
         id: '1',
@@ -449,8 +445,9 @@ void main() {
           subject: 'Finished lesson',
           teacher: 'Nauczyciel A',
           room: '1',
-          start: now.subtract(const Duration(hours: 2)),
-          end: now.subtract(const Duration(hours: 1)),
+          // Over at any time of the day, even just after midnight.
+          start: DateTime(now.year, now.month, now.day),
+          end: DateTime(now.year, now.month, now.day, 0, 0, 1),
         ),
         Lesson(
           id: 'tomorrow',
@@ -504,8 +501,9 @@ void main() {
           subject: 'Finished lesson',
           teacher: 'Nauczyciel A',
           room: '1',
-          start: now.subtract(const Duration(hours: 2)),
-          end: now.subtract(const Duration(hours: 1)),
+          // Over at any time of the day, even just after midnight.
+          start: DateTime(now.year, now.month, now.day),
+          end: DateTime(now.year, now.month, now.day, 0, 0, 1),
         ),
       ],
       grades: const [],
