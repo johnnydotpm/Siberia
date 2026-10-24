@@ -81,7 +81,7 @@ List<TestReminder> buildTestReminders(
 }) {
   if (!settings.any) return const [];
   final today = DateTime(now.year, now.month, now.day);
-  final last = today.add(Duration(days: days));
+  final last = DateTime(today.year, today.month, today.day + days);
   final byDay = <DateTime, List<SchoolEvent>>{};
   for (final event in events) {
     final wanted =
@@ -97,7 +97,9 @@ List<TestReminder> buildTestReminders(
     final items = byDay[day]!..sort(_bySchoolOrder);
     final body = [for (final event in items) _line(event, l10n)].join('\n');
     if (settings.evening) {
-      final before = day.subtract(const Duration(days: 1));
+      // The calendar day before: the night the clocks go forward, 24 hours
+      // back from a Monday land on the Saturday.
+      final before = DateTime(day.year, day.month, day.day - 1);
       final at = DateTime(
         before.year,
         before.month,

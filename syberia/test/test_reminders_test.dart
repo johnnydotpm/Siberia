@@ -52,6 +52,19 @@ void main() {
     expect(reminders.last.body, 'History: Test');
   });
 
+  test('the evening before is the day before, across a clock change', () {
+    // The clocks go forward in Poland on Sunday, 28 March 2027: 24 hours
+    // back from Monday land on the Saturday. Seen where the zone has the
+    // change: TZ=Europe/Warsaw flutter test test/test_reminders_test.dart
+    final reminders = buildTestReminders(
+      [_event('a', DateTime(2027, 3, 29))],
+      const TestReminderSettings(),
+      DateTime(2027, 3, 26, 12),
+      _l10n,
+    );
+    expect(reminders.single.at, DateTime(2027, 3, 28, 19));
+  });
+
   test('the morning reminder, chosen times, and times already past', () {
     final reminders = buildTestReminders(
       [

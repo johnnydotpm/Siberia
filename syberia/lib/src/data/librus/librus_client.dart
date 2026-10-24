@@ -2232,15 +2232,17 @@ DateTime? _withTime(DateTime date, Object? value) {
 /// one at the weekend.
 DateTime librusSyncWeekStart(DateTime now) {
   final weekStart = _startOfWeek(now);
+  // The next Monday by the calendar. The week the clocks go back is an hour
+  // longer, and seven times 24 hours from its Monday end on its Sunday: the
+  // week asked of Librus then started on a Sunday.
   return now.weekday > DateTime.friday
-      ? weekStart.add(const Duration(days: 7))
+      ? DateTime(weekStart.year, weekStart.month, weekStart.day + 7)
       : weekStart;
 }
 
-DateTime _startOfWeek(DateTime date) {
-  final day = DateTime(date.year, date.month, date.day);
-  return day.subtract(Duration(days: day.weekday - 1));
-}
+/// The Monday of [date]'s week, counted in calendar days.
+DateTime _startOfWeek(DateTime date) =>
+    DateTime(date.year, date.month, date.day - (date.weekday - 1));
 
 String _dateOnly(DateTime date) =>
     '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';

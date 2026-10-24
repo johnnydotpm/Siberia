@@ -676,11 +676,7 @@ void main() {
     addTearDown(tester.view.resetDevicePixelRatio);
 
     final now = DateTime.now();
-    final lessonDay = DateTime(
-      now.year,
-      now.month,
-      now.day,
-    ).add(const Duration(days: 2));
+    final lessonDay = DateTime(now.year, now.month, now.day + 2);
     final start = DateTime(lessonDay.year, lessonDay.month, lessonDay.day, 8);
     final snapshot = AppSnapshot(
       profile: const StudentProfile(

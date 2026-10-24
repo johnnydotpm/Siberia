@@ -139,7 +139,7 @@ void main() {
   ) async {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
-    final tomorrow = today.add(const Duration(days: 1, hours: 8));
+    final tomorrow = DateTime(today.year, today.month, today.day + 1, 8);
     await _pump(
       tester,
       _snapshot(

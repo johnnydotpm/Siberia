@@ -493,11 +493,17 @@ class AppController extends ChangeNotifier {
     _error = null;
     try {
       final lessons = await _repository.fetchTimetableWeek(day);
-      final selectedDate = DateTime(day.year, day.month, day.day);
-      final weekStart = selectedDate.subtract(
-        Duration(days: selectedDate.weekday - 1),
+      // Calendar days: a week the clocks change in is not 7 × 24 hours.
+      final weekStart = DateTime(
+        day.year,
+        day.month,
+        day.day - (day.weekday - 1),
       );
-      final weekEnd = weekStart.add(const Duration(days: 7));
+      final weekEnd = DateTime(
+        weekStart.year,
+        weekStart.month,
+        weekStart.day + 7,
+      );
       final merged =
           snapshot.lessons
               .where(

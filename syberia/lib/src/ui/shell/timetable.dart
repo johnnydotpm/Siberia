@@ -307,7 +307,7 @@ class _TimetableState extends State<_Timetable> {
             .where((day) => !day.isBefore(_day(picked)))
             .toList();
         if (available.isNotEmpty) break;
-        probe = probe.add(const Duration(days: 7));
+        probe = DateTime(probe.year, probe.month, probe.day + 7);
       }
       if (mounted) {
         final availableDays = widget.controller.snapshot.lessons.map(
@@ -386,8 +386,11 @@ class _TimetableState extends State<_Timetable> {
       _anchorAt(selectedDay!);
     }
     final monday = _mondayOf(selectedDay!);
-    final days = List.generate(5, (index) => monday.add(Duration(days: index)));
-    final weekEnd = monday.add(const Duration(days: 7));
+    final days = List.generate(
+      5,
+      (index) => DateTime(monday.year, monday.month, monday.day + index),
+    );
+    final weekEnd = DateTime(monday.year, monday.month, monday.day + 7);
     for (final day in groups.keys.where(
       (day) =>
           day.weekday > 5 && !day.isBefore(monday) && day.isBefore(weekEnd),

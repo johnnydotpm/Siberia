@@ -188,7 +188,12 @@ class AppRepository {
     if (previous == null || previous.profile.id != fetched.profile.id) {
       return fetched;
     }
-    final weekEnd = librusSyncWeekStart(now).add(const Duration(days: 7));
+    final weekStart = librusSyncWeekStart(now);
+    final weekEnd = DateTime(
+      weekStart.year,
+      weekStart.month,
+      weekStart.day + 7,
+    );
     final later = previous.lessons.where(
       (lesson) => !lesson.start.isBefore(weekEnd),
     );

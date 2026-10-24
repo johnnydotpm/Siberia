@@ -67,6 +67,32 @@ void main() {
     );
   });
 
+  test('the weeks around a clock change start on their Mondays', () {
+    // The weekend before the clocks go back in Poland: the next Monday, not
+    // the Sunday that seven times 24 hours reach. The clocks change only
+    // where the zone has them change, as on the phones:
+    // TZ=Europe/Warsaw flutter test test/timetable_sync_test.dart
+    expect(
+      librusSyncWeekStart(DateTime(2026, 10, 24, 12)),
+      DateTime(2026, 10, 26),
+    );
+    expect(
+      librusSyncWeekStart(DateTime(2026, 10, 25, 23)),
+      DateTime(2026, 10, 26),
+    );
+    // And every day of five years.
+    for (
+      var day = DateTime(2026);
+      day.year < 2031;
+      day = DateTime(day.year, day.month, day.day + 1)
+    ) {
+      final noon = DateTime(day.year, day.month, day.day, 12);
+      final start = librusSyncWeekStart(noon);
+      expect(start.weekday, DateTime.monday, reason: '$noon');
+      expect((start.hour, start.minute), (0, 0), reason: '$noon');
+    }
+  });
+
   test('a sync replaces its own week and keeps later weeks', () async {
     final repository = AppRepository(
       librusClient: _FakeLibrusClient(_snapshot([synced])),
