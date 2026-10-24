@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/services.dart';
+import 'package:flutter_secure_storage/test/test_flutter_secure_storage_platform.dart';
+import 'package:flutter_secure_storage_platform_interface/flutter_secure_storage_platform_interface.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// Runs before every test file in this directory.
@@ -8,6 +10,7 @@ import 'package:flutter_test/flutter_test.dart';
 /// Tests have no app directory. Answering path_provider at once makes the
 /// snapshot store keep the snapshot in SharedPreferences, as on the web;
 /// without an answer a widget test would wait for the platform forever.
+/// For the same reason every test gets an empty secure storage in memory.
 Future<void> testExecutable(FutureOr<void> Function() testMain) async {
   TestWidgetsFlutterBinding.ensureInitialized();
   TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
@@ -15,5 +18,9 @@ Future<void> testExecutable(FutureOr<void> Function() testMain) async {
         const MethodChannel('plugins.flutter.io/path_provider'),
         (_) async => null,
       );
+  setUp(
+    () => FlutterSecureStoragePlatform.instance =
+        TestFlutterSecureStoragePlatform({}),
+  );
   await testMain();
 }

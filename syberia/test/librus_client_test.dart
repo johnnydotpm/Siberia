@@ -8,6 +8,7 @@ import 'package:flutter_secure_storage/test/test_flutter_secure_storage_platform
 import 'package:flutter_secure_storage_platform_interface/flutter_secure_storage_platform_interface.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:syberia/src/data/librus/librus_client.dart';
+import 'package:syberia/src/data/librus/librus_logins.dart';
 import 'package:syberia/src/data/librus/reference_cache.dart';
 import 'package:syberia/src/data/snapshot_cache.dart';
 import 'package:syberia/src/domain/librus_error.dart';
@@ -372,67 +373,142 @@ void main() {
     },
   );
 
-  test('uses the linked student login and preserves an explicit choice after Portal reauthentication', () async {
+  (int, Object)? twoStudents(RequestOptions options, List<String> fresh) {
+    if (options.uri.path.endsWith('/api/v3/SynergiaAccounts')) {
+      return (
+        200,
+        {
+          'accounts': [
+            {
+              'login': 'fixture-parent',
+              'group': 'parent',
+              'studentName': 'Uczeń',
+            },
+            {
+              'login': 'fixture-student-u',
+              'group': 'student',
+              'studentName': 'Uczeń',
+            },
+          ],
+        },
+      );
+    }
+    if (options.uri.path.contains('/SynergiaAccounts/fresh/')) {
+      fresh.add(options.uri.pathSegments.last);
+      return (200, {'accessToken': 'token-${options.uri.pathSegments.last}'});
+    }
+    return null;
+  }
+
+  bool isRefresh(RequestOptions options) =>
+      options.uri.path.endsWith('/oauth2/access_token') &&
+      options.data is FormData &&
+      (options.data as FormData).fields.any(
+        (entry) => entry.key == 'grant_type' && entry.value == 'refresh_token',
+      );
+
+  test('signing in lists the students, and each profile client keeps its own '
+      'student after Portal reauthentication', () async {
     var fixtureTime = DateTime(2026, 10, 16);
     var rejectRefresh = false;
     final freshLogins = <String>[];
-    final client = LibrusClient(
+    final dio = Dio()
+      ..httpClientAdapter = _FixtureAdapter((options) {
+        if (rejectRefresh && isRefresh(options)) {
+          return (400, {'error': 'invalid_grant'});
+        }
+        return twoStudents(options, freshLogins) ??
+            _successfulResponse(options);
+      });
+    final logins = LibrusLogins(clock: () => fixtureTime);
+    final found = await LibrusClient(
       clock: () => fixtureTime,
-      dio: Dio()
-        ..httpClientAdapter = _FixtureAdapter((options) {
-          if (rejectRefresh &&
-              options.uri.path.endsWith('/oauth2/access_token') &&
-              options.data is FormData &&
-              (options.data as FormData).fields.any(
-                (entry) =>
-                    entry.key == 'grant_type' && entry.value == 'refresh_token',
-              )) {
-            return (400, {'error': 'invalid_grant'});
-          }
-          if (options.uri.path.endsWith('/api/v3/SynergiaAccounts')) {
-            return (
-              200,
-              {
-                'accounts': [
-                  {
-                    'login': 'fixture-parent',
-                    'group': 'parent',
-                    'studentName': 'Uczeń',
-                  },
-                  {
-                    'login': 'fixture-student-u',
-                    'group': 'student',
-                    'studentName': 'Uczeń',
-                  },
-                ],
-              },
-            );
-          }
-          if (options.uri.path.contains('/SynergiaAccounts/fresh/')) {
-            freshLogins.add(options.uri.pathSegments.last);
-            return (200, {'accessToken': 'student-token'});
-          }
-          return _successfulResponse(options);
-        }),
-    );
-    await client.loginAndFetch(
-      username: 'parent@example.com',
-      password: 'secret',
-    );
-    expect(freshLogins.last, 'fixture-student-u');
-    final accounts = await client.fetchSynergiaAccounts();
+      dio: dio,
+      logins: logins,
+    ).signIn(username: 'parent@example.com', password: 'secret');
+    expect(found.account, LibrusLogin.keyOf('Parent@Example.com '));
     expect(
-      accounts.singleWhere((account) => account.selected).login,
-      'fixture-student-u',
+      [for (final student in found.students) student.login],
+      ['fixture-parent', 'fixture-student-u'],
     );
-    await client.selectSynergiaAccount('fixture-parent');
-    expect(freshLogins.last, 'fixture-parent');
+    expect(
+      [for (final student in found.students) student.parent],
+      [true, false],
+    );
+    expect(freshLogins, isEmpty, reason: 'no student is fetched yet');
+
+    LibrusClient profile(String login) => LibrusClient(
+      clock: () => fixtureTime,
+      dio: dio,
+      logins: logins,
+      account: found.account,
+      synergiaLogin: login,
+    );
+    final parent = profile('fixture-parent');
+    final student = profile('fixture-student-u');
+    await parent.restoreAndFetch();
+    await student.restoreAndFetch();
+    expect(freshLogins, ['fixture-parent', 'fixture-student-u']);
+    expect(
+      (await parent.fetchSynergiaAccounts())
+          .singleWhere((account) => account.selected)
+          .login,
+      'fixture-parent',
+    );
+
     freshLogins.clear();
     rejectRefresh = true;
     fixtureTime = fixtureTime.add(const Duration(hours: 7));
-    await client.fetchSnapshot();
-    expect(freshLogins, isNotEmpty);
-    expect(freshLogins.every((login) => login == 'fixture-parent'), isTrue);
+    await parent.fetchSnapshot();
+    await student.fetchSnapshot();
+    expect(freshLogins, ['fixture-parent', 'fixture-student-u']);
+  });
+
+  test('two profiles of one login renew its tokens once', () async {
+    var fixtureTime = DateTime(2026, 10, 16);
+    final freshLogins = <String>[];
+    var refreshes = 0;
+    var logins = 0;
+    final dio = Dio()
+      ..httpClientAdapter = _FixtureAdapter((options) {
+        if (isRefresh(options)) refreshes++;
+        if (options.method == 'POST' &&
+            options.uri.path.endsWith('/oauth2/access_token') &&
+            !isRefresh(options)) {
+          logins++;
+        }
+        return twoStudents(options, freshLogins) ??
+            _successfulResponse(options);
+      });
+    final shared = LibrusLogins(clock: () => fixtureTime);
+    final found = await LibrusClient(
+      clock: () => fixtureTime,
+      dio: dio,
+      logins: shared,
+    ).signIn(username: 'parent@example.com', password: 'secret');
+    expect(logins, 1);
+    LibrusClient profile(String login) => LibrusClient(
+      clock: () => fixtureTime,
+      dio: dio,
+      logins: shared,
+      account: found.account,
+      synergiaLogin: login,
+    );
+    final parent = profile('fixture-parent');
+    final student = profile('fixture-student-u');
+    await Future.wait([parent.restoreAndFetch(), student.restoreAndFetch()]);
+    expect(refreshes, 0, reason: 'the tokens of the sign-in are fresh');
+
+    fixtureTime = fixtureTime.add(const Duration(hours: 7));
+    await Future.wait([parent.fetchSnapshot(), student.fetchSnapshot()]);
+    expect(refreshes, 1);
+    expect(logins, 1);
+    expect(freshLogins.sublist(2).toSet(), {
+      'fixture-parent',
+      'fixture-student-u',
+    });
+    final saved = await shared.read(found.account);
+    expect(saved!.email, 'parent@example.com');
   });
 
   test(

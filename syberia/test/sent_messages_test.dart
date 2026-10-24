@@ -123,6 +123,7 @@ void main() {
     });
 
     test('another account starts without one', () async {
+      _saved(_snapshot());
       final client = _Client(_snapshot());
       final result = await AppRepository(librusClient: client).sync(
         _snapshot(

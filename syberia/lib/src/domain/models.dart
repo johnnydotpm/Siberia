@@ -2,15 +2,43 @@ import 'librus_error.dart';
 
 enum EventKind { exam, homework, event }
 
+/// A student in a Librus login: one Synergia account, which can become a
+/// profile.
 class LinkedSynergiaAccount {
   const LinkedSynergiaAccount({
     required this.login,
     required this.name,
     required this.selected,
+    this.account = '',
+    this.parent = false,
   });
   final String login;
   final String name;
+
+  /// Whether the phone has a profile for it.
   final bool selected;
+
+  /// The Librus login it is in, as the phone names it.
+  final String account;
+
+  /// Whether it is a parent's account rather than the student's own.
+  final bool parent;
+
+  LinkedSynergiaAccount copyWith({bool? selected}) => LinkedSynergiaAccount(
+    login: login,
+    name: name,
+    selected: selected ?? this.selected,
+    account: account,
+    parent: parent,
+  );
+}
+
+/// What logging in to a Librus account found: the login, as the phone
+/// names it, and the students in it.
+class LibrusSignIn {
+  const LibrusSignIn({required this.account, required this.students});
+  final String account;
+  final List<LinkedSynergiaAccount> students;
 }
 
 class StudentProfile {

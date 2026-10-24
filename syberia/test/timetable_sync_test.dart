@@ -93,20 +93,24 @@ void main() {
     }
   });
 
+  /// Signed in as the student of [_snapshot], with nothing saved yet.
+  void signedIn() => SharedPreferences.setMockInitialValues({
+    'active_profile_v1': jsonEncode(_snapshot(const []).profile.toJson()),
+  });
+
   test('a sync replaces its own week and keeps later weeks', () async {
+    signedIn();
     final repository = AppRepository(
       librusClient: _FakeLibrusClient(_snapshot([synced])),
     );
     final result = await repository.sync(_snapshot([earlier, stale, nextWeek]));
     expect(result.lessons.map((lesson) => lesson.id), ['synced', 'nextWeek']);
-    final preferences = await SharedPreferences.getInstance();
-    final cached = SnapshotCache.decode(
-      preferences.getString('last_librus_snapshot_v1'),
-    );
-    expect(cached!.lessons.map((lesson) => lesson.id), ['synced', 'nextWeek']);
+    final cached = await AppRepository().load();
+    expect(cached.lessons.map((lesson) => lesson.id), ['synced', 'nextWeek']);
   });
 
   test('another account keeps nothing from the previous one', () async {
+    signedIn();
     final repository = AppRepository(
       librusClient: _FakeLibrusClient(_snapshot([synced])),
     );

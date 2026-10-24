@@ -37,14 +37,19 @@ class LibrusReferences {
       responses[endpoint] ?? const {};
 }
 
-/// Stores [LibrusReferences] for one account in a file of the app, so the
-/// app and its background check share them. Where there is no app directory
-/// (the web, unit tests) they are kept in memory only.
+/// Stores [LibrusReferences] in files of the app, one for each account, so
+/// the app and its background check share them and profiles do not push
+/// out each other's. Where there is no app directory (the web, unit tests)
+/// they are kept in memory only.
 class LibrusReferenceCache {
   LibrusReferenceCache({Future<Directory> Function()? directory})
     : _directory = directory ?? getApplicationSupportDirectory;
 
+  /// Where versions before profiles kept the lists of their one account.
   static const fileName = 'librus_references_v1.json';
+
+  static String fileNameFor(String account) =>
+      'librus_references_v1_$account.json';
 
   /// How long the lists are used before they are fetched again. A sync that
   /// meets a subject, teacher or category the lists do not know fetches them
@@ -52,24 +57,46 @@ class LibrusReferenceCache {
   static const maxAge = Duration(hours: 24);
 
   final Future<Directory> Function() _directory;
-  Future<File?>? _file;
-  LibrusReferences? _memory;
+  Future<Directory?>? _folder;
+  final _memory = <String, LibrusReferences>{};
 
-  Future<File?> _resolveFile() => _file ??= () async {
+  Future<Directory?> _resolveFolder() => _folder ??= () async {
     if (kIsWeb) return null;
     try {
-      final directory = await _directory();
-      return File('${directory.path}${Platform.pathSeparator}$fileName');
+      return await _directory();
     } on Object {
       return null;
     }
   }();
 
+  Future<File?> _file(String name) async {
+    final folder = await _resolveFolder();
+    return folder == null
+        ? null
+        : File('${folder.path}${Platform.pathSeparator}$name');
+  }
+
   Future<LibrusReferences?> read(String account) async {
-    final memory = _memory;
-    if (memory != null && memory.account == account) return memory;
-    final file = await _resolveFile();
+    final memory = _memory[account];
+    if (memory != null) return memory;
+    final file = await _file(fileNameFor(account));
     if (file == null) return null;
+    final saved = await _readFile(file, account);
+    if (saved != null) return _memory[account] = saved;
+    // The lists an older version kept for the account move to its own file.
+    final legacy = await _file(fileName);
+    final old = legacy == null ? null : await _readFile(legacy, account);
+    if (old == null) return null;
+    await write(old);
+    try {
+      await legacy!.delete();
+    } on Object {
+      // Read once more next time, which is harmless.
+    }
+    return old;
+  }
+
+  Future<LibrusReferences?> _readFile(File file, String account) async {
     try {
       if (!await file.exists()) return null;
       final value = jsonDecode(await file.readAsString());
@@ -78,7 +105,7 @@ class LibrusReferenceCache {
       final responses = value['responses'];
       final missing = value['knownMissing'];
       if (fetchedAt == null || responses is! Map) return null;
-      return _memory = LibrusReferences(
+      return LibrusReferences(
         account: account,
         fetchedAt: fetchedAt,
         responses: {
@@ -97,8 +124,8 @@ class LibrusReferenceCache {
   }
 
   Future<void> write(LibrusReferences references) async {
-    _memory = references;
-    final file = await _resolveFile();
+    _memory[references.account] = references;
+    final file = await _file(fileNameFor(references.account));
     if (file == null) return;
     try {
       await file.parent.create(recursive: true);
@@ -123,12 +150,31 @@ class LibrusReferenceCache {
     }
   }
 
-  Future<void> clear() async {
-    _memory = null;
-    final file = await _resolveFile();
+  /// Forgets the lists of [account].
+  Future<void> remove(String account) async {
+    _memory.remove(account);
+    final file = await _file(fileNameFor(account));
     if (file == null) return;
     try {
       if (await file.exists()) await file.delete();
+    } on Object {
+      // Nothing to remove.
+    }
+  }
+
+  /// Forgets the lists of every account.
+  Future<void> clear() async {
+    _memory.clear();
+    final folder = await _resolveFolder();
+    if (folder == null) return;
+    try {
+      if (!await folder.exists()) return;
+      await for (final entry in folder.list()) {
+        final name = entry.uri.pathSegments.last;
+        if (entry is File && name.startsWith('librus_references_v1')) {
+          await entry.delete();
+        }
+      }
     } on Object {
       // Nothing to remove.
     }
