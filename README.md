@@ -125,7 +125,6 @@ Gotowa aplikacja znajduje się w `build/linux/x64/release/bundle`.
 - Rozszerzenie testów jednostkowych i integracyjnych na urządzeniach
 - Dalsze usprawnienia dostępności interfejsu
 - Podział `lib/src/ui/app_shell.dart` na osobne pliki ekranów
-- Dodatkowe style aplikacji, w tym frutiger aero, minimal, skeuomorphism
 - Więcej języków
 
 ## Licencja i podziękowania
