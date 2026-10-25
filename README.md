@@ -126,6 +126,7 @@ Gotowa aplikacja znajduje się w `build/linux/x64/release/bundle`.
 - Dalsze usprawnienia dostępności interfejsu
 - Podział `lib/src/ui/app_shell.dart` na osobne pliki ekranów
 - Więcej języków
+- Wsparcie dla innych dzienników elektronicznych m.in. MobiReg, Fryderyk, Vulcan, MobiDziennik i Prymus
 
 ## Licencja i podziękowania
 
