@@ -110,7 +110,12 @@ Future<AppController> _pump(
   return controller;
 }
 
-String _title(DateTime day) => DateFormat.MMMMEEEEd('en').format(day);
+/// The timetable's heading for [day], with the year once it is another.
+String _title(DateTime day) =>
+    (day.year == DateTime.now().year
+            ? DateFormat.MMMMEEEEd('en')
+            : DateFormat.yMMMMEEEEd('en'))
+        .format(day);
 
 Finder _tab(String label) =>
     find.descendant(of: find.byType(NavigationBar), matching: find.text(label));

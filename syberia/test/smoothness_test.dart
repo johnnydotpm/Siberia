@@ -116,7 +116,12 @@ double _shownHeight(WidgetTester tester, Finder finder) => tester
     )
     .height;
 
-String _title(DateTime day) => DateFormat.MMMMEEEEd('en').format(day);
+/// The timetable's heading for [day], with the year once it is another.
+String _title(DateTime day) =>
+    (day.year == DateTime.now().year
+            ? DateFormat.MMMMEEEEd('en')
+            : DateFormat.yMMMMEEEEd('en'))
+        .format(day);
 
 /// How far [day]'s chip in the strip is coloured as the selected one.
 double _picked(WidgetTester tester, DateTime day) {

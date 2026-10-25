@@ -132,7 +132,8 @@ void main() {
     expect(find.text('Lessons are over for today'), findsOneWidget);
     expect(
       find.text(
-        'Tomorrow, ${DateFormat('dd.MM').format(tomorrow)} · first lesson',
+        // With the year on 31 December.
+        'Tomorrow, ${DateFormat(tomorrow.year == now.year ? 'dd.MM' : 'dd.MM.yyyy').format(tomorrow)} · first lesson',
       ),
       findsOneWidget,
     );
