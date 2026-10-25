@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math' as math;
+import 'dart:ui' as ui;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -53,6 +54,7 @@ part 'shell/notification_settings.dart';
 part 'shell/account.dart';
 part 'shell/onboarding.dart';
 part 'shell/onboarding_intro.dart';
+part 'shell/onboarding_motion.dart';
 part 'shell/free_days.dart';
 part 'shell/motion.dart';
 part 'shell/sync_news.dart';

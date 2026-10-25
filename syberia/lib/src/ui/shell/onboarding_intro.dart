@@ -56,7 +56,8 @@ class _SetupIntroState extends State<_SetupIntro>
           duration: const Duration(milliseconds: 900),
         )
         ..addListener(() {
-          if (!_pageCalled && _flight.value >= 0.35) {
+          // The page comes in as the mark arrives, not under it.
+          if (!_pageCalled && _flight.value >= 0.6) {
             _pageCalled = true;
             widget.onFlight();
           }

@@ -620,7 +620,13 @@ Future<void> _showItemActions(
 /// font shrinks until that word fits, but not below 70%: past that a break
 /// inside the word reads better than tiny text.
 class _WholeWords extends StatelessWidget {
-  const _WholeWords(this.text, {this.style, this.textAlign, this.maxLines});
+  const _WholeWords(
+    this.text, {
+    this.style,
+    this.textAlign,
+    this.maxLines,
+    super.key,
+  });
 
   final String text;
   final TextStyle? style;

@@ -14,9 +14,31 @@ class _Onboarding extends StatefulWidget {
   State<_Onboarding> createState() => _OnboardingState();
 }
 
-class _OnboardingState extends State<_Onboarding> {
+/// How a step moves: its parts come in with [entrance], and its badge plays
+/// while it is [active], and again each time [replay] changes.
+typedef _StepMotion = ({Animation<double> entrance, bool active, int replay});
+
+class _OnboardingState extends State<_Onboarding>
+    with TickerProviderStateMixin {
   final _pages = PageController();
   var _step = _SetupStep.welcome;
+
+  /// The parts of the open step coming in one after another.
+  late final AnimationController _entrance = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 750),
+  );
+  bool _entered = false;
+
+  /// A moment for the bell to ring once notifications are allowed.
+  late final AnimationController _ring = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 700),
+  );
+
+  /// Counts the times the system allowed notifications, for the bell to
+  /// ring again.
+  int _allowed = 0;
 
   /// Whether the system refused notifications at their step; the last step
   /// says where to turn them on.
@@ -28,26 +50,64 @@ class _OnboardingState extends State<_Onboarding> {
 
   /// The startup animation to open on, until its mark has landed on the
   /// first step's logo.
-  late Duration? _intro = _controller.takeIntro();
+  Duration? _intro;
+
+  /// Whether the logo of the first step came with the animation, rather
+  /// than rising with the rest.
+  bool _logoFlew = false;
   final _logoKey = GlobalKey();
 
   AppController get _controller => widget.controller;
 
   @override
+  void initState() {
+    super.initState();
+    _intro = _controller.takeIntro();
+    _logoFlew = _intro != null;
+  }
+
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // With less motion the first step shows at once.
-    if (MediaQuery.disableAnimationsOf(context)) _intro = null;
+    if (MediaQuery.disableAnimationsOf(context)) {
+      // With less motion the first step shows at once.
+      _intro = null;
+      _logoFlew = false;
+      _entrance.value = 1;
+    } else if (!_entered && _intro == null) {
+      _comeIn();
+    }
   }
 
   @override
   void dispose() {
     _pages.dispose();
+    _entrance.dispose();
+    _ring.dispose();
     super.dispose();
   }
 
+  /// The open step's parts come in.
+  void _comeIn() {
+    _entered = true;
+    if (_reduceMotion(context)) {
+      _entrance.value = 1;
+    } else {
+      unawaited(_entrance.forward(from: 0));
+    }
+  }
+
+  _StepMotion _motion(_SetupStep step) => (
+    entrance: step == _step ? _entrance : kAlwaysCompleteAnimation,
+    active: step == _step,
+    replay: step == _SetupStep.notifications ? _allowed : 0,
+  );
+
   void _go(_SetupStep step) {
     setState(() => _step = step);
+    _comeIn();
+    // The end is felt.
+    if (step == _SetupStep.done) HapticFeedback.mediumImpact();
     if (MediaQuery.disableAnimationsOf(context)) {
       _pages.jumpToPage(step.index);
     } else {
@@ -60,6 +120,7 @@ class _OnboardingState extends State<_Onboarding> {
   }
 
   void _back() {
+    HapticFeedback.lightImpact();
     if (_step.index > 0) {
       _go(_SetupStep.values[_step.index - 1]);
     } else if (_again) {
@@ -68,7 +129,10 @@ class _OnboardingState extends State<_Onboarding> {
     }
   }
 
-  void _next() => _go(_SetupStep.values[_step.index + 1]);
+  void _next() {
+    HapticFeedback.lightImpact();
+    _go(_SetupStep.values[_step.index + 1]);
+  }
 
   /// Out of the setup: it moves back and the app comes forward.
   void _finish() => ScreenTransitions.run(
@@ -85,9 +149,19 @@ class _OnboardingState extends State<_Onboarding> {
       final granted = await _controller.askNotificationPermission();
       if (!mounted) return;
       setState(() {
-        _asking = false;
         _permissionRefused = !granted;
+        // The bell rings for it, and the step waits for it to.
+        if (granted) _allowed++;
       });
+      if (granted && !_reduceMotion(context)) {
+        try {
+          await _ring.forward(from: 0).orCancel;
+        } on TickerCanceled {
+          return;
+        }
+        if (!mounted) return;
+      }
+      setState(() => _asking = false);
     }
     _next();
   }
@@ -111,7 +185,7 @@ class _OnboardingState extends State<_Onboarding> {
               Theme.of(context).brightness,
               amoled: _controller.colorMode == AppColorMode.amoled,
             ),
-            onFlight: () {},
+            onFlight: _comeIn,
             onDone: () => setState(() => _intro = null),
           ),
       ],
@@ -147,24 +221,33 @@ class _OnboardingState extends State<_Onboarding> {
                 children: [
                   _WelcomeStep(
                     controller: _controller,
+                    motion: _motion(_SetupStep.welcome),
                     onNext: _next,
                     logoKey: _logoKey,
                     // Until the mark of the animation lands on it.
                     hideLogo: _intro != null,
+                    logoFlew: _logoFlew,
                   ),
-                  _AppearanceStep(controller: _controller, onNext: _next),
+                  _AppearanceStep(
+                    controller: _controller,
+                    motion: _motion(_SetupStep.appearance),
+                    onNext: _next,
+                  ),
                   _AccountStep(
                     controller: _controller,
+                    motion: _motion(_SetupStep.account),
                     onNext: _signedIn ? _next : null,
-                    onSignedIn: _next,
+                    onSignedIn: () => _go(_SetupStep.notifications),
                   ),
                   _NotificationsStep(
                     controller: _controller,
+                    motion: _motion(_SetupStep.notifications),
                     asking: _asking,
                     onSkip: _next,
                     onNext: _allowNotifications,
                   ),
                   _DoneStep(
+                    motion: _motion(_SetupStep.done),
                     permissionRefused: _permissionRefused,
                     onStart: _finish,
                   ),
@@ -242,24 +325,51 @@ class _SetupPage extends StatelessWidget {
     required this.title,
     required this.children,
     required this.actions,
+    required this.motion,
     this.icon,
+    this.badge = _BadgeMotion.palette,
     this.top,
+    this.titleWidget,
+    this.riseTop = true,
     this.text,
     super.key,
   });
 
   final IconData? icon;
 
+  /// How the badge of [icon] comes alive.
+  final _BadgeMotion badge;
+
   /// Shown instead of [icon], as the logo on the first step.
   final Widget? top;
   final String title;
+
+  /// Shown instead of [title], as the greetings on the first step.
+  final Widget? titleWidget;
+
+  /// Whether [top] comes in with the rest; the logo that the startup
+  /// animation brings stays where it landed.
+  final bool riseTop;
   final String? text;
   final List<Widget> children;
   final List<Widget> actions;
+  final _StepMotion motion;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    var order = 0;
+    Widget rise(Widget child) =>
+        _Rise(animation: motion.entrance, index: order++, child: child);
+    final heading =
+        titleWidget ??
+        _WholeWords(
+          title,
+          textAlign: TextAlign.center,
+          style: theme.textTheme.headlineMedium?.copyWith(
+            fontWeight: FontWeight.w800,
+          ),
+        );
     return Column(
       children: [
         Expanded(
@@ -271,44 +381,35 @@ class _SetupPage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    if (top != null)
-                      Center(child: top)
-                    else if (icon != null)
-                      Center(
-                        child: Container(
-                          width: 72,
-                          height: 72,
-                          decoration: BoxDecoration(
-                            color: theme.colorScheme.primaryContainer,
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            icon,
-                            size: 36,
-                            color: theme.colorScheme.onPrimaryContainer,
+                    if (top case final top?)
+                      riseTop ? rise(Center(child: top)) : Center(child: top)
+                    else if (icon case final icon?)
+                      rise(
+                        Center(
+                          child: _StepBadge(
+                            icon: icon,
+                            motion: badge,
+                            active: motion.active,
+                            replay: motion.replay,
                           ),
                         ),
                       ),
                     const SizedBox(height: 20),
-                    _WholeWords(
-                      title,
-                      textAlign: TextAlign.center,
-                      style: theme.textTheme.headlineMedium?.copyWith(
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
+                    rise(heading),
                     if (text != null) ...[
                       const SizedBox(height: 10),
-                      Text(
-                        text!,
-                        textAlign: TextAlign.center,
-                        style: theme.textTheme.bodyLarge?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant,
+                      rise(
+                        Text(
+                          text!,
+                          textAlign: TextAlign.center,
+                          style: theme.textTheme.bodyLarge?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
                         ),
                       ),
                     ],
                     const SizedBox(height: 24),
-                    ...children,
+                    for (final child in children) rise(child),
                   ],
                 ),
               ),
@@ -319,10 +420,12 @@ class _SetupPage extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(24, 8, 24, 16),
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 520),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: _spaced(actions),
+            child: rise(
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: _spaced(actions),
+              ),
             ),
           ),
         ),
@@ -354,16 +457,20 @@ Widget _setupNext(
 class _WelcomeStep extends StatefulWidget {
   const _WelcomeStep({
     required this.controller,
+    required this.motion,
     required this.onNext,
     required this.logoKey,
     required this.hideLogo,
+    required this.logoFlew,
   });
   final AppController controller;
+  final _StepMotion motion;
   final VoidCallback onNext;
 
   /// On the logo, where the startup animation's mark lands.
   final GlobalKey logoKey;
   final bool hideLogo;
+  final bool logoFlew;
 
   @override
   State<_WelcomeStep> createState() => _WelcomeStepState();
@@ -387,12 +494,23 @@ class _WelcomeStepState extends State<_WelcomeStep> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // With animations off the greeting stays still.
-    if (MediaQuery.disableAnimationsOf(context)) {
+    _greet();
+  }
+
+  @override
+  void didUpdateWidget(_WelcomeStep old) {
+    super.didUpdateWidget(old);
+    if (old.hideLogo != widget.hideLogo) _greet();
+  }
+
+  /// The greetings go round once the page is in view, and stay still with
+  /// less motion.
+  void _greet() {
+    if (MediaQuery.disableAnimationsOf(context) || widget.hideLogo) {
       _timer?.cancel();
       _timer = null;
     } else {
-      _timer ??= Timer.periodic(const Duration(milliseconds: 1800), (_) {
+      _timer ??= Timer.periodic(const Duration(milliseconds: 2400), (_) {
         if (mounted) {
           setState(() => _greeting = (_greeting + 1) % _greetings.length);
         }
@@ -413,6 +531,8 @@ class _WelcomeStepState extends State<_WelcomeStep> {
     final chosen = controller.locale?.languageCode;
     return _SetupPage(
       key: const ValueKey('onboarding-welcome'),
+      motion: widget.motion,
+      riseTop: !widget.logoFlew,
       top: RawGestureDetector(
         key: const ValueKey('login-demo-logo'),
         gestures: {
@@ -430,6 +550,11 @@ class _WelcomeStepState extends State<_WelcomeStep> {
         ),
       ),
       title: _greetings[_greeting],
+      titleWidget: _GreetingSwitcher(
+        text: _greetings[_greeting],
+        style: Theme.of(context).textTheme.headlineMedium
+            ?.copyWith(fontWeight: FontWeight.w800),
+      ),
       text: context.tr('onboardingLanguage'),
       actions: [_setupNext(context, widget.onNext)],
       children: [
@@ -472,13 +597,19 @@ class _WelcomeStepState extends State<_WelcomeStep> {
 
 /// The theme and, where glass can be drawn, the design, each shown at once.
 class _AppearanceStep extends StatelessWidget {
-  const _AppearanceStep({required this.controller, required this.onNext});
+  const _AppearanceStep({
+    required this.controller,
+    required this.motion,
+    required this.onNext,
+  });
   final AppController controller;
+  final _StepMotion motion;
   final VoidCallback onNext;
 
   @override
   Widget build(BuildContext context) => _SetupPage(
     key: const ValueKey('onboarding-appearance'),
+    motion: motion,
     icon: Icons.palette_outlined,
     title: context.tr('settingsAppearance'),
     text: context.tr('onboardingAppearanceText'),
@@ -531,10 +662,12 @@ class _AppearanceStep extends StatelessWidget {
 class _AccountStep extends StatelessWidget {
   const _AccountStep({
     required this.controller,
+    required this.motion,
     required this.onNext,
     required this.onSignedIn,
   });
   final AppController controller;
+  final _StepMotion motion;
 
   /// Null until signed in.
   final VoidCallback? onNext;
@@ -546,7 +679,9 @@ class _AccountStep extends StatelessWidget {
     final listed = profiles.isNotEmpty;
     return _SetupPage(
       key: const ValueKey('onboarding-account'),
+      motion: motion,
       icon: Icons.school_rounded,
+      badge: _BadgeMotion.cap,
       title: context.tr(listed ? 'profiles' : 'onboardingAccount'),
       text: listed ? context.tr('onboardingProfilesText') : null,
       actions: [if (listed || onNext != null) _setupNext(context, onNext)],
@@ -577,11 +712,13 @@ class _AccountStep extends StatelessWidget {
 class _NotificationsStep extends StatelessWidget {
   const _NotificationsStep({
     required this.controller,
+    required this.motion,
     required this.asking,
     required this.onSkip,
     required this.onNext,
   });
   final AppController controller;
+  final _StepMotion motion;
   final bool asking;
   final VoidCallback onSkip;
   final VoidCallback onNext;
@@ -589,7 +726,9 @@ class _NotificationsStep extends StatelessWidget {
   @override
   Widget build(BuildContext context) => _SetupPage(
     key: const ValueKey('onboarding-notifications'),
+    motion: motion,
     icon: Icons.notifications_active_rounded,
+    badge: _BadgeMotion.bell,
     title: context.tr('notifications'),
     text: context.tr('onboardingNotificationsText'),
     actions: [
@@ -611,7 +750,12 @@ class _NotificationsStep extends StatelessWidget {
 
 /// The end: a few things worth knowing, and into the app.
 class _DoneStep extends StatelessWidget {
-  const _DoneStep({required this.permissionRefused, required this.onStart});
+  const _DoneStep({
+    required this.motion,
+    required this.permissionRefused,
+    required this.onStart,
+  });
+  final _StepMotion motion;
   final bool permissionRefused;
   final VoidCallback onStart;
 
@@ -652,7 +796,9 @@ class _DoneStep extends StatelessWidget {
 
     return _SetupPage(
       key: const ValueKey('onboarding-done'),
+      motion: motion,
       icon: Icons.check_rounded,
+      badge: _BadgeMotion.check,
       title: context.tr('onboardingDoneTitle'),
       actions: [
         _setupNext(context, onStart, label: context.tr('onboardingStart')),
