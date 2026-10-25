@@ -1,0 +1,238 @@
+{
+  "schema_version": 1,
+  "scope": "Supplied MobiReg music Android2.1.79, Android3.1.7 and iOS3.1.7; static analysis only",
+  "legacy": {
+    "evidence_refs": [
+      "MR-A02",
+      "MR-A03",
+      "MR-A04",
+      "MR-A08"
+    ],
+    "base": "User's school diary URL with one trailing slash removed",
+    "transport": {
+      "method": "POST",
+      "encoding": "application/x-www-form-urlencoded; UTF-8",
+      "accepted_status": 200,
+      "accept_encoding": "gzip,deflate",
+      "gzip_response": true,
+      "user_agent_pattern": "Andreg <device_id>",
+      "client_timeout_ms": 120000
+    },
+    "common_fields": {
+      "login": "app-level compatibility credential; inspect local SyncParameters constructor",
+      "pass": "app-level compatibility credential; inspect local SyncParameters constructor",
+      "device_id": "client device identifier",
+      "app_version": "source client version code79",
+      "parent_login": "user's diary login",
+      "parent_pass": "user's diary password"
+    },
+    "endpoints": [
+      {
+        "path": "/modules/api/njson.php",
+        "operation": "discover pupils",
+        "fields": {
+          "view": "ParentStudents"
+        },
+        "response": {
+          "ParentStudents": "array; id,name,surname,sex,phone from StudentModel"
+        },
+        "status": "recovered-static"
+      },
+      {
+        "path": "/modules/api/njson.php",
+        "operation": "server settings",
+        "fields": {
+          "view": "Settings"
+        },
+        "response": {
+          "Settings": [
+            {
+              "id": "database identity",
+              "protocol": "1.6.0",
+              "time": "server cursor timestamp",
+              "version": "server version",
+              "permissions": "optional integer1 enables permission checks"
+            }
+          ]
+        },
+        "status": "recovered-static"
+      },
+      {
+        "path": "/modules/api/njson.php",
+        "operation": "full sync",
+        "fields": {
+          "start_date": "YYYY-MM-DD",
+          "end_date": "YYYY-MM-DD",
+          "get_all_mark_groups": "1",
+          "student_id": "optional diary pupil ID"
+        },
+        "response": "named table arrays; see android-field-mapping.json",
+        "status": "recovered-static"
+      },
+      {
+        "path": "/modules/api/njson.php",
+        "operation": "delta sync",
+        "fields": {
+          "start_date": "YYYY-MM-DD",
+          "end_date": "YYYY-MM-DD",
+          "last_end_date": "previous range end YYYY-MM-DD",
+          "lmt": "server lastSyncTime YYYY-MM-DD hh:mm:ss",
+          "get_all_mark_groups": "1",
+          "student_id": "optional diary pupil ID"
+        },
+        "response": "named table arrays with action I/U/D",
+        "status": "recovered-static"
+      },
+      {
+        "path": "/modules/api/messages.php",
+        "operation": "mark message read",
+        "fields": {
+          "action": "read",
+          "message_id": "integer ID"
+        },
+        "response": "Retrofit Unit; status/body semantics beyond transport unverified",
+        "status": "recovered-static"
+      },
+      {
+        "path": "/modules/api/njson.php",
+        "operation": "register FCM token",
+        "fields": {
+          "view": "ParentStudents",
+          "token": "FCM token"
+        },
+        "status": "recovered-static"
+      },
+      {
+        "path": "/modules/api/schedules.php",
+        "operation": "subject DB version",
+        "fields": {
+          "get_version": ""
+        },
+        "status": "shared-library declaration; user reachability not established"
+      }
+    ],
+    "error_envelope": {
+      "object": "{errno: integer, message: string}",
+      "also_seen_static": "CommunicationManager accepts single-element array wrapping an error object",
+      "login_codes": [
+        101,
+        102,
+        105,
+        106,
+        107
+      ],
+      "license_expired": 200,
+      "sync_limit": 201
+    },
+    "sync_rules": [
+      "Require settings protocol exactly1.6.0 for this legacy decoder",
+      "Delta allowed only when local cache valid and server settings id equals lastSyncID",
+      "Full-sync source window is now minus100 through plus100 days",
+      "Atomic transaction applies tables then updates cursor from server Settings.time",
+      "Default action I; I replaces existing ID, U updates or inserts missing ID, D removes if present",
+      "Server id maps to local _id in import mappings",
+      "Keep source payload; unknown tables must be consumed/skipped safely",
+      "Do not upload shared-library export tables through parent read-only feature adapters"
+    ]
+  },
+  "modern": {
+    "evidence_refs": [
+      "MR-I01",
+      "MR-M01"
+    ],
+    "status": "literal/model/screen evidence; HTTP verbs, headers, body shapes and call graph not yet recovered",
+    "auth_paths": [
+      "/modules/api/auth.php",
+      "/modules/api/refresh.php",
+      "/modules/api/qrlogin.php"
+    ],
+    "operation_gateway": "/modules/api/app.php",
+    "gateway_operation_candidates": [
+      "register-fcm",
+      "unregister-fcm",
+      "notif-settings",
+      "announcements-pending",
+      "announcement-answer",
+      "attendance-stats",
+      "justification-events",
+      "homework-status",
+      "timetable-events",
+      "homework-module",
+      "homeworks-module"
+    ],
+    "mail_path_literals": [
+      "/api/messages",
+      "/api/messages/inbox",
+      "/api/messages/sent",
+      "/api/messages/important",
+      "/api/messages/trash",
+      "/api/messages/",
+      "/api/messages/read/",
+      "/api/messages/receivers",
+      "/api/messages/receivers/search",
+      "/api/unreadMessages"
+    ],
+    "suffix_literals_unbound": [
+      "/stared",
+      "/restore",
+      "/archive",
+      "/files"
+    ],
+    "homework_path_literals": [
+      "/api/homeworks/datatable",
+      "/api/homeworks/"
+    ],
+    "sso_path_literals": [
+      "/account/ssov2/",
+      "/sso"
+    ],
+    "routing_literals_not_api_proof": [
+      "/justifications",
+      "/justifications/",
+      "/justifications?pupil_id=",
+      "/homeworks",
+      "/homeworks/",
+      "/timetable",
+      "/timetable/details",
+      "/announcements",
+      "/exams",
+      "/reprimands"
+    ],
+    "candidate_transport_keys": [
+      "Authorization",
+      "authorization",
+      "JWTToken",
+      "token",
+      "messages_token",
+      "pupil_id",
+      "event_ids",
+      "schoolCode",
+      "api_page_address",
+      "messaging_url",
+      "protocol_v"
+    ],
+    "session_design_observations": [
+      "JWT credential store",
+      "password and QR authentication types",
+      "access+refresh described in shipped log",
+      "MailSession cookie and separate ModuleSession/homeworkSession cookies",
+      "account-specific FCM registration"
+    ],
+    "unknowns": [
+      "Exact login/refresh/QR form or JSON bodies",
+      "JWT scheme/expiry/refresh rotation",
+      "Gateway operation selector field and envelopes",
+      "Supported protocol_v values",
+      "Mail/module SSO host selection/cookie names/redirect lifecycle",
+      "All mutation HTTP methods and payloads",
+      "Pagination/filtering/sorting",
+      "Attachment upload constraints and partial-success semantics",
+      "Per-school roles and permissions"
+    ],
+    "platforms": [
+      "Android3.1.7 build116 revision6f4e7b8",
+      "iOS3.1.7 build116 revisiond20dd8d"
+    ],
+    "comparison": "modern-platform-comparison.json; shared candidate literals, not call-flow equivalence"
+  }
+}

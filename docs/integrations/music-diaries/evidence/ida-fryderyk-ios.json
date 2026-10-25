@@ -1,0 +1,83 @@
+{
+  "tool": "IDA Pro idalib",
+  "version": [
+    9,
+    3,
+    260421
+  ],
+  "artifact": "fryderyk-ios/Payload/Runner.app/Frameworks/App.framework/App",
+  "sha256": "2c11d5a1be3f1f21d85c2b9c4deb8c59d2c3c33dfd9eebf0235657bcc6f7cca1",
+  "auto_analysis_completed": true,
+  "elapsed_seconds": 37.640999999974156,
+  "function_count": 32006,
+  "segments": [
+    {
+      "name": "HEADER",
+      "start": "0x0",
+      "end": "0x4000"
+    },
+    {
+      "name": "__text",
+      "start": "0x4000",
+      "end": "0x5bc440"
+    },
+    {
+      "name": "__const",
+      "start": "0x5bc440",
+      "end": "0xae66d0"
+    },
+    {
+      "name": "__unwind_info",
+      "start": "0xae66d0",
+      "end": "0xae8000"
+    },
+    {
+      "name": "__bss",
+      "start": "0xae8000",
+      "end": "0xae8020"
+    }
+  ],
+  "probes": [
+    {
+      "literal": "/identify",
+      "first_file_offset": "0x9b1a10",
+      "mapped_ea": "0x9b1a10",
+      "incoming_refs": []
+    },
+    {
+      "literal": "/reIdentify",
+      "first_file_offset": "0x8fcd10",
+      "mapped_ea": "0x8fcd10",
+      "incoming_refs": []
+    },
+    {
+      "literal": "/login",
+      "first_file_offset": "0x8d6832",
+      "mapped_ea": "0x8d6832",
+      "incoming_refs": []
+    },
+    {
+      "literal": "/validate",
+      "first_file_offset": "0x9d1980",
+      "mapped_ea": "0x9d1980",
+      "incoming_refs": []
+    },
+    {
+      "literal": "messages/",
+      "first_file_offset": "0x869b80",
+      "mapped_ea": "0x869b80",
+      "incoming_refs": []
+    },
+    {
+      "literal": "homeworks",
+      "first_file_offset": "0x86add0",
+      "mapped_ea": "0x86add0",
+      "incoming_refs": []
+    }
+  ],
+  "limitations": [
+    "Static auto-analysis does not recover Dart source or wire contracts.",
+    "Only first literal occurrence is probed.",
+    "Absent native xrefs do not prove that a Dart feature is unused."
+  ]
+}

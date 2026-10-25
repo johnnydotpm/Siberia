@@ -1,0 +1,83 @@
+{
+  "tool": "IDA Pro idalib",
+  "version": [
+    9,
+    3,
+    260421
+  ],
+  "artifact": "mobireg-ios/Payload/Runner.app/Frameworks/App.framework/App",
+  "sha256": "c8f4b5e7d356d130bc89f2683db222822b4be06d273f4bb3a7413f46f4773ad0",
+  "auto_analysis_completed": true,
+  "elapsed_seconds": 42.75,
+  "function_count": 27972,
+  "segments": [
+    {
+      "name": "HEADER",
+      "start": "0x0",
+      "end": "0x4000"
+    },
+    {
+      "name": "__text",
+      "start": "0x4000",
+      "end": "0x5b8000"
+    },
+    {
+      "name": "__const",
+      "start": "0x5b8000",
+      "end": "0xacaa70"
+    },
+    {
+      "name": "__unwind_info",
+      "start": "0xacaa70",
+      "end": "0xacc000"
+    },
+    {
+      "name": "__bss",
+      "start": "0xacc000",
+      "end": "0xacc008"
+    }
+  ],
+  "probes": [
+    {
+      "literal": "/modules/api/auth.php",
+      "first_file_offset": "0x97ecc0",
+      "mapped_ea": "0x97ecc0",
+      "incoming_refs": []
+    },
+    {
+      "literal": "/modules/api/refresh.php",
+      "first_file_offset": "0x86ae50",
+      "mapped_ea": "0x86ae50",
+      "incoming_refs": []
+    },
+    {
+      "literal": "/modules/api/qrlogin.php",
+      "first_file_offset": "0x9a06d0",
+      "mapped_ea": "0x9a06d0",
+      "incoming_refs": []
+    },
+    {
+      "literal": "/modules/api/app.php",
+      "first_file_offset": "0x976f40",
+      "mapped_ea": "0x976f40",
+      "incoming_refs": []
+    },
+    {
+      "literal": "messages/",
+      "first_file_offset": "0x83ab45",
+      "mapped_ea": "0x83ab45",
+      "incoming_refs": []
+    },
+    {
+      "literal": "homeworks",
+      "first_file_offset": "0x83825c",
+      "mapped_ea": "0x83825c",
+      "incoming_refs": []
+    }
+  ],
+  "limitations": [
+    "Static auto-analysis does not recover Dart source or wire contracts.",
+    "Only first literal occurrence is probed.",
+    "Absent native xrefs do not prove that a Dart feature is unused."
+  ]
+}

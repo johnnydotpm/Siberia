@@ -1,0 +1,48 @@
+[
+  {
+    "label": "ios-app",
+    "path": "analysis\\extracted\\mobireg-ios\\Payload\\Runner.app\\Frameworks\\App.framework\\App",
+    "sha256": "c8f4b5e7d356d130bc89f2683db222822b4be06d273f4bb3a7413f46f4773ad0",
+    "size": 11627552,
+    "strings": 42249,
+    "application_id": "pl.mobireg.eparent.music",
+    "client_version": "3.1.7",
+    "build": 116,
+    "source_revision_stamp": "d20dd8d",
+    "identity_evidence": "Info.plist and App payload string0x879de0"
+  },
+  {
+    "label": "classes",
+    "path": "analysis\\extracted\\mobireg-android\\classes.dex",
+    "sha256": "07eec3a863aed7e74c3e850947e72ea7fdd89a12ad5d934f09de71c09d1d4f58",
+    "size": 9403936,
+    "strings": 65070,
+    "application_id": "pl.mobireg.eparent.music",
+    "client_version": "2.1.79",
+    "build": 79,
+    "identity_evidence": "Decoded AndroidManifest.xml and BuildConfig"
+  },
+  {
+    "label": "classes2",
+    "path": "analysis\\extracted\\mobireg-android\\classes2.dex",
+    "sha256": "49282fa333f2fb15ef26a908e2074906461ddcac5697ad78fba8501ba8df4016",
+    "size": 1789916,
+    "strings": 16116,
+    "application_id": "pl.mobireg.eparent.music",
+    "client_version": "2.1.79",
+    "build": 79,
+    "identity_evidence": "Decoded AndroidManifest.xml and BuildConfig"
+  },
+  {
+    "label": "android-modern-aot",
+    "path": "analysis\\extracted\\mobireg-android-modern\\config.arm64_v8a\\lib\\arm64-v8a\\libapp.so",
+    "sha256": "22dd67993cd25ccb0a56fca7eef87ffc1d40cc1bffd9057b671c7268afc4d97a",
+    "size": 10421128,
+    "application_id": "pl.mobireg.eparent.music",
+    "client_version": "3.1.7",
+    "build": 116,
+    "source_revision_stamp": "6f4e7b8",
+    "identity_evidence": "XAPK manifest and Android AOT literal0x47c9d",
+    "evidence_id": "MR-M01"
+  }
+]

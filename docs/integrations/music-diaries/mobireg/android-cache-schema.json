@@ -1,0 +1,2423 @@
+{
+  "evidence_id": "MR-A05",
+  "tables": [
+    {
+      "table": "Settings",
+      "columns": [
+        {
+          "name": "last_sync_time",
+          "type": "DATETIME",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "last_sync_from",
+          "type": "DATETIME",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "last_sync_to",
+          "type": "DATETIME",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "last_sync_id",
+          "type": "VARCHAR(50)",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "is_valid",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "support_permissions",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": "0",
+          "primary_key": 0
+        }
+      ],
+      "foreign_keys": []
+    },
+    {
+      "table": "SyncResult",
+      "columns": [
+        {
+          "name": "finish_time",
+          "type": "DATETIME",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "records_downloaded",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "records_uploaded",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "error_code",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "error_message",
+          "type": "VARCHAR(100)",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        }
+      ],
+      "foreign_keys": []
+    },
+    {
+      "table": "Teachers",
+      "columns": [
+        {
+          "name": "_id",
+          "type": "INTEGER",
+          "not_null": true,
+          "default": null,
+          "primary_key": 1
+        },
+        {
+          "name": "users_edu_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "login",
+          "type": "VARCHAR(150)",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "name",
+          "type": "VARCHAR(150)",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "surname",
+          "type": "VARCHAR(150)",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "phone",
+          "type": "VARCHAR(150)",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "pin",
+          "type": "VARCHAR(150)",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "user_type",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "last_device_login",
+          "type": "DATETIME",
+          "not_null": false,
+          "default": "NULL",
+          "primary_key": 0
+        }
+      ],
+      "foreign_keys": []
+    },
+    {
+      "table": "Students",
+      "columns": [
+        {
+          "name": "_id",
+          "type": "INTEGER",
+          "not_null": true,
+          "default": null,
+          "primary_key": 1
+        },
+        {
+          "name": "users_edu_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "name",
+          "type": "VARCHAR(150)",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "surname",
+          "type": "VARCHAR(150)",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "sex",
+          "type": "VARCHAR(150)",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        }
+      ],
+      "foreign_keys": []
+    },
+    {
+      "table": "Rooms",
+      "columns": [
+        {
+          "name": "_id",
+          "type": "INTEGER",
+          "not_null": true,
+          "default": null,
+          "primary_key": 1
+        },
+        {
+          "name": "patrons_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "name",
+          "type": "VARCHAR(150)",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "description",
+          "type": "VARCHAR(150)",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        }
+      ],
+      "foreign_keys": [
+        {
+          "table": "Teachers",
+          "from": "patrons_id",
+          "to": "_id"
+        }
+      ]
+    },
+    {
+      "table": "Terms",
+      "columns": [
+        {
+          "name": "_id",
+          "type": "INTEGER",
+          "not_null": true,
+          "default": null,
+          "primary_key": 1
+        },
+        {
+          "name": "parent_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "name",
+          "type": "VARCHAR(150)",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "type",
+          "type": "VARCHAR(150)",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "start_date",
+          "type": "DATETIME",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "end_date",
+          "type": "DATETIME",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        }
+      ],
+      "foreign_keys": [
+        {
+          "table": "Terms",
+          "from": "parent_id",
+          "to": "_id"
+        }
+      ]
+    },
+    {
+      "table": "Subjects",
+      "columns": [
+        {
+          "name": "_id",
+          "type": "INTEGER",
+          "not_null": true,
+          "default": null,
+          "primary_key": 1
+        },
+        {
+          "name": "subjects_edu_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "name",
+          "type": "VARCHAR(150)",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "abbr",
+          "type": "VARCHAR(150)",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        }
+      ],
+      "foreign_keys": []
+    },
+    {
+      "table": "Groups",
+      "columns": [
+        {
+          "name": "_id",
+          "type": "INTEGER",
+          "not_null": true,
+          "default": null,
+          "primary_key": 1
+        },
+        {
+          "name": "parent_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "groups_edu_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "name",
+          "type": "VARCHAR(150)",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "type",
+          "type": "VARCHAR(150)",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "attr",
+          "type": "VARCHAR(150)",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        }
+      ],
+      "foreign_keys": [
+        {
+          "table": "Groups",
+          "from": "parent_id",
+          "to": "_id"
+        }
+      ]
+    },
+    {
+      "table": "MarkScaleGroups",
+      "columns": [
+        {
+          "name": "_id",
+          "type": "INTEGER",
+          "not_null": true,
+          "default": null,
+          "primary_key": 1
+        },
+        {
+          "name": "name",
+          "type": "VARCHAR(64)",
+          "not_null": false,
+          "default": "NULL",
+          "primary_key": 0
+        },
+        {
+          "name": "public",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": "NULL",
+          "primary_key": 0
+        },
+        {
+          "name": "add_by_users_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": "NULL",
+          "primary_key": 0
+        },
+        {
+          "name": "mark_types",
+          "type": "VARCHAR(1)",
+          "not_null": true,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "mark_scale_group_edu_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": "NULL",
+          "primary_key": 0
+        },
+        {
+          "name": "is_system",
+          "type": "INTEGER",
+          "not_null": true,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "is_default",
+          "type": "INTEGER",
+          "not_null": true,
+          "default": null,
+          "primary_key": 0
+        }
+      ],
+      "foreign_keys": [
+        {
+          "table": "Teachers",
+          "from": "add_by_users_id",
+          "to": "_id"
+        }
+      ]
+    },
+    {
+      "table": "MarkScales",
+      "columns": [
+        {
+          "name": "_id",
+          "type": "INTEGER",
+          "not_null": true,
+          "default": null,
+          "primary_key": 1
+        },
+        {
+          "name": "mark_scale_groups_id",
+          "type": "INTEGER",
+          "not_null": true,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "abbreviation",
+          "type": "VARCHAR(3)",
+          "not_null": false,
+          "default": "NULL",
+          "primary_key": 0
+        },
+        {
+          "name": "name",
+          "type": "VARCHAR(64)",
+          "not_null": false,
+          "default": "NULL",
+          "primary_key": 0
+        },
+        {
+          "name": "mark_value",
+          "type": "double",
+          "not_null": false,
+          "default": "NULL",
+          "primary_key": 0
+        },
+        {
+          "name": "image",
+          "type": "VARCHAR(64)",
+          "not_null": false,
+          "default": "NULL",
+          "primary_key": 0
+        },
+        {
+          "name": "classified",
+          "type": "INTEGER",
+          "not_null": true,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "css_style",
+          "type": "VARCHAR(128)",
+          "not_null": false,
+          "default": "NULL",
+          "primary_key": 0
+        },
+        {
+          "name": "mark_scale_edu_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": "NULL",
+          "primary_key": 0
+        },
+        {
+          "name": "no_count_to_average",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": "1",
+          "primary_key": 0
+        }
+      ],
+      "foreign_keys": [
+        {
+          "table": "MarkScaleGroups",
+          "from": "mark_scale_groups_id",
+          "to": "_id"
+        }
+      ]
+    },
+    {
+      "table": "MarkDivisionGroups",
+      "columns": [
+        {
+          "name": "_id",
+          "type": "INTEGER",
+          "not_null": true,
+          "default": null,
+          "primary_key": 1
+        },
+        {
+          "name": "mark_scale_groups_id",
+          "type": "INTEGER",
+          "not_null": true,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "name",
+          "type": "VARCHAR(64)",
+          "not_null": false,
+          "default": "NULL",
+          "primary_key": 0
+        },
+        {
+          "name": "type",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": "NULL",
+          "primary_key": 0
+        },
+        {
+          "name": "public",
+          "type": "INTEGER",
+          "not_null": true,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "range_min",
+          "type": "double",
+          "not_null": false,
+          "default": "NULL",
+          "primary_key": 0
+        },
+        {
+          "name": "range_max",
+          "type": "double",
+          "not_null": false,
+          "default": "NULL",
+          "primary_key": 0
+        },
+        {
+          "name": "precision",
+          "type": "double",
+          "not_null": true,
+          "default": "1",
+          "primary_key": 0
+        },
+        {
+          "name": "add_by_users_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": "NULL",
+          "primary_key": 0
+        },
+        {
+          "name": "mark_division_group_edu_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": "NULL",
+          "primary_key": 0
+        },
+        {
+          "name": "range_max_to_display",
+          "type": "double",
+          "not_null": false,
+          "default": "NULL",
+          "primary_key": 0
+        }
+      ],
+      "foreign_keys": [
+        {
+          "table": "Teachers",
+          "from": "add_by_users_id",
+          "to": "_id"
+        },
+        {
+          "table": "MarkScaleGroups",
+          "from": "mark_scale_groups_id",
+          "to": "_id"
+        }
+      ]
+    },
+    {
+      "table": "MarkKinds",
+      "columns": [
+        {
+          "name": "_id",
+          "type": "INTEGER",
+          "not_null": true,
+          "default": null,
+          "primary_key": 1
+        },
+        {
+          "name": "name",
+          "type": "VARCHAR(64)",
+          "not_null": false,
+          "default": "NULL",
+          "primary_key": 0
+        },
+        {
+          "name": "abbreviation",
+          "type": "VARCHAR(3)",
+          "not_null": false,
+          "default": "NULL",
+          "primary_key": 0
+        },
+        {
+          "name": "subjects_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": "NULL",
+          "primary_key": 0
+        },
+        {
+          "name": "public",
+          "type": "INTEGER",
+          "not_null": true,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "add_by_users_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": "NULL",
+          "primary_key": 0
+        },
+        {
+          "name": "default_mark_type",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": "NULL",
+          "primary_key": 0
+        },
+        {
+          "name": "default_mark_division_groups_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": "NULL",
+          "primary_key": 0
+        },
+        {
+          "name": "default_weigth",
+          "type": "INTEGER",
+          "not_null": true,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "position",
+          "type": "INTEGER",
+          "not_null": true,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "css_style",
+          "type": "VARCHAR(255)",
+          "not_null": false,
+          "default": "NULL",
+          "primary_key": 0
+        },
+        {
+          "name": "parent_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": "NULL",
+          "primary_key": 0
+        },
+        {
+          "name": "default_mark_scale_groups_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": "NULL",
+          "primary_key": 0
+        }
+      ],
+      "foreign_keys": [
+        {
+          "table": "MarkScaleGroups",
+          "from": "default_mark_scale_groups_id",
+          "to": "_id"
+        },
+        {
+          "table": "MarkKinds",
+          "from": "parent_id",
+          "to": "_id"
+        },
+        {
+          "table": "MarkDivisionGroups",
+          "from": "default_mark_division_groups_id",
+          "to": "_id"
+        },
+        {
+          "table": "Teachers",
+          "from": "add_by_users_id",
+          "to": "_id"
+        },
+        {
+          "table": "Subjects",
+          "from": "subjects_id",
+          "to": "_id"
+        }
+      ]
+    },
+    {
+      "table": "MarkGroupGroups",
+      "columns": [
+        {
+          "name": "_id",
+          "type": "INTEGER",
+          "not_null": true,
+          "default": null,
+          "primary_key": 1
+        },
+        {
+          "name": "mark_division_groups_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": "NULL",
+          "primary_key": 0
+        },
+        {
+          "name": "name",
+          "type": "VARCHAR(64)",
+          "not_null": false,
+          "default": "NULL",
+          "primary_key": 0
+        },
+        {
+          "name": "parent_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": "NULL",
+          "primary_key": 0
+        },
+        {
+          "name": "is_pattern",
+          "type": "INTEGER",
+          "not_null": true,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "position",
+          "type": "INTEGER",
+          "not_null": true,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "weight",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": "NULL",
+          "primary_key": 0
+        }
+      ],
+      "foreign_keys": [
+        {
+          "table": "MarkGroupGroups",
+          "from": "parent_id",
+          "to": "_id"
+        },
+        {
+          "table": "MarkDivisionGroups",
+          "from": "mark_division_groups_id",
+          "to": "_id"
+        }
+      ]
+    },
+    {
+      "table": "MarkGroups",
+      "columns": [
+        {
+          "name": "_id",
+          "type": "INTEGER",
+          "not_null": true,
+          "default": null,
+          "primary_key": 1
+        },
+        {
+          "name": "parent_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": "NULL",
+          "primary_key": 0
+        },
+        {
+          "name": "parent_type",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": "NULL",
+          "primary_key": 0
+        },
+        {
+          "name": "mark_group_groups_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": "NULL",
+          "primary_key": 0
+        },
+        {
+          "name": "is_pattern",
+          "type": "INTEGER",
+          "not_null": true,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "event_type_terms_id",
+          "type": "INTEGER",
+          "not_null": true,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "mark_kinds_id",
+          "type": "INTEGER",
+          "not_null": true,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "abbreviation",
+          "type": "VARCHAR(3)",
+          "not_null": false,
+          "default": "NULL",
+          "primary_key": 0
+        },
+        {
+          "name": "description",
+          "type": "VARCHAR(128)",
+          "not_null": false,
+          "default": "NULL",
+          "primary_key": 0
+        },
+        {
+          "name": "mark_type",
+          "type": "INTEGER",
+          "not_null": true,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "mark_format",
+          "type": "VARCHAR(32)",
+          "not_null": false,
+          "default": "NULL",
+          "primary_key": 0
+        },
+        {
+          "name": "mark_division_groups_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": "NULL",
+          "primary_key": 0
+        },
+        {
+          "name": "mark_scale_groups_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": "NULL",
+          "primary_key": 0
+        },
+        {
+          "name": "visibility",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": "NULL",
+          "primary_key": 0
+        },
+        {
+          "name": "css_style",
+          "type": "VARCHAR(255)",
+          "not_null": false,
+          "default": "NULL",
+          "primary_key": 0
+        },
+        {
+          "name": "position",
+          "type": "INTEGER",
+          "not_null": true,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "weight",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": "NULL",
+          "primary_key": 0
+        },
+        {
+          "name": "mark_value_range_min",
+          "type": "double",
+          "not_null": false,
+          "default": "NULL",
+          "primary_key": 0
+        },
+        {
+          "name": "mark_value_range_max",
+          "type": "double",
+          "not_null": false,
+          "default": "NULL",
+          "primary_key": 0
+        },
+        {
+          "name": "precision",
+          "type": "double",
+          "not_null": false,
+          "default": "NULL",
+          "primary_key": 0
+        },
+        {
+          "name": "add_by_users_id",
+          "type": "INTEGER",
+          "not_null": true,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "record_status",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "added",
+          "type": "DATETIME",
+          "not_null": false,
+          "default": "STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW', 'LOCALTIME')",
+          "primary_key": 0
+        }
+      ],
+      "foreign_keys": [
+        {
+          "table": "Teachers",
+          "from": "add_by_users_id",
+          "to": "_id"
+        },
+        {
+          "table": "MarkScaleGroups",
+          "from": "mark_scale_groups_id",
+          "to": "_id"
+        },
+        {
+          "table": "MarkDivisionGroups",
+          "from": "mark_division_groups_id",
+          "to": "_id"
+        },
+        {
+          "table": "MarkKinds",
+          "from": "mark_kinds_id",
+          "to": "_id"
+        },
+        {
+          "table": "EventTypeTerms",
+          "from": "event_type_terms_id",
+          "to": "_id"
+        },
+        {
+          "table": "MarkGroupGroups",
+          "from": "mark_group_groups_id",
+          "to": "_id"
+        },
+        {
+          "table": "MarkGroups",
+          "from": "parent_id",
+          "to": "_id"
+        }
+      ]
+    },
+    {
+      "table": "MarkGroupIssues",
+      "columns": [
+        {
+          "name": "_id",
+          "type": "INTEGER",
+          "not_null": true,
+          "default": null,
+          "primary_key": 1
+        },
+        {
+          "name": "mark_groups_id",
+          "type": "INTEGER",
+          "not_null": true,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "issues_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": "NULL",
+          "primary_key": 0
+        }
+      ],
+      "foreign_keys": [
+        {
+          "table": "MarkGroups",
+          "from": "mark_groups_id",
+          "to": "_id"
+        }
+      ]
+    },
+    {
+      "table": "Marks",
+      "columns": [
+        {
+          "name": "_id",
+          "type": "INTEGER",
+          "not_null": true,
+          "default": null,
+          "primary_key": 1
+        },
+        {
+          "name": "pupil_users_id",
+          "type": "INTEGER",
+          "not_null": true,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "teacher_users_id",
+          "type": "INTEGER",
+          "not_null": true,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "mark_groups_id",
+          "type": "INTEGER",
+          "not_null": true,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "events_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": "NULL",
+          "primary_key": 0
+        },
+        {
+          "name": "mark_scales_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": "NULL",
+          "primary_key": 0
+        },
+        {
+          "name": "mark_value",
+          "type": "double",
+          "not_null": false,
+          "default": "NULL",
+          "primary_key": 0
+        },
+        {
+          "name": "comments",
+          "type": "VARCHAR(500)",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "weight",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": "NULL",
+          "primary_key": 0
+        },
+        {
+          "name": "get_date",
+          "type": "date",
+          "not_null": false,
+          "default": "NULL",
+          "primary_key": 0
+        },
+        {
+          "name": "add_time",
+          "type": "DATETIME",
+          "not_null": false,
+          "default": "NULL",
+          "primary_key": 0
+        },
+        {
+          "name": "modified",
+          "type": "INTEGER",
+          "not_null": true,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "record_status",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "new",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": "1",
+          "primary_key": 0
+        },
+        {
+          "name": "added",
+          "type": "DATETIME",
+          "not_null": false,
+          "default": "STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW', 'LOCALTIME')",
+          "primary_key": 0
+        }
+      ],
+      "foreign_keys": [
+        {
+          "table": "MarkScales",
+          "from": "mark_scales_id",
+          "to": "_id"
+        },
+        {
+          "table": "Events",
+          "from": "events_id",
+          "to": "_id"
+        },
+        {
+          "table": "MarkGroups",
+          "from": "mark_groups_id",
+          "to": "_id"
+        },
+        {
+          "table": "Teachers",
+          "from": "teacher_users_id",
+          "to": "_id"
+        },
+        {
+          "table": "Students",
+          "from": "pupil_users_id",
+          "to": "_id"
+        }
+      ]
+    },
+    {
+      "table": "EventTypes",
+      "columns": [
+        {
+          "name": "_id",
+          "type": "INTEGER",
+          "not_null": true,
+          "default": null,
+          "primary_key": 1
+        },
+        {
+          "name": "subjects_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "teaching_level",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "substitution",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "record_status",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "added",
+          "type": "DATETIME",
+          "not_null": false,
+          "default": "STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW', 'LOCALTIME')",
+          "primary_key": 0
+        }
+      ],
+      "foreign_keys": [
+        {
+          "table": "Subjects",
+          "from": "subjects_id",
+          "to": "_id"
+        }
+      ]
+    },
+    {
+      "table": "EventTypeTeachers",
+      "columns": [
+        {
+          "name": "_id",
+          "type": "INTEGER",
+          "not_null": true,
+          "default": null,
+          "primary_key": 1
+        },
+        {
+          "name": "teachers_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "event_types_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "record_status",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "added",
+          "type": "DATETIME",
+          "not_null": false,
+          "default": "STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW', 'LOCALTIME')",
+          "primary_key": 0
+        }
+      ],
+      "foreign_keys": [
+        {
+          "table": "EventTypes",
+          "from": "event_types_id",
+          "to": "_id"
+        },
+        {
+          "table": "Teachers",
+          "from": "teachers_id",
+          "to": "_id"
+        }
+      ]
+    },
+    {
+      "table": "EventTypeGroups",
+      "columns": [
+        {
+          "name": "_id",
+          "type": "INTEGER",
+          "not_null": true,
+          "default": null,
+          "primary_key": 1
+        },
+        {
+          "name": "groups_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "event_types_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "record_status",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "added",
+          "type": "DATETIME",
+          "not_null": false,
+          "default": "STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW', 'LOCALTIME')",
+          "primary_key": 0
+        }
+      ],
+      "foreign_keys": [
+        {
+          "table": "EventTypes",
+          "from": "event_types_id",
+          "to": "_id"
+        },
+        {
+          "table": "Groups",
+          "from": "groups_id",
+          "to": "_id"
+        }
+      ]
+    },
+    {
+      "table": "EventTypeTerms",
+      "columns": [
+        {
+          "name": "_id",
+          "type": "INTEGER",
+          "not_null": true,
+          "default": null,
+          "primary_key": 1
+        },
+        {
+          "name": "terms_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "event_types_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "record_status",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "added",
+          "type": "DATETIME",
+          "not_null": false,
+          "default": "STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW', 'LOCALTIME')",
+          "primary_key": 0
+        }
+      ],
+      "foreign_keys": [
+        {
+          "table": "EventTypes",
+          "from": "event_types_id",
+          "to": "_id"
+        },
+        {
+          "table": "Terms",
+          "from": "terms_id",
+          "to": "_id"
+        }
+      ]
+    },
+    {
+      "table": "Events",
+      "columns": [
+        {
+          "name": "_id",
+          "type": "INTEGER",
+          "not_null": true,
+          "default": null,
+          "primary_key": 1
+        },
+        {
+          "name": "name",
+          "type": "VARCHAR(150)",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "date",
+          "type": "DATE",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "number",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "start_time",
+          "type": "TIME",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "end_time",
+          "type": "TIME",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "rooms_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "event_types_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "status",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "substitution",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "type",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "attr",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "terms_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "lesson_groups_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "locked",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "record_status",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "new",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": "1",
+          "primary_key": 0
+        },
+        {
+          "name": "added",
+          "type": "DATETIME",
+          "not_null": false,
+          "default": "STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW', 'LOCALTIME')",
+          "primary_key": 0
+        }
+      ],
+      "foreign_keys": [
+        {
+          "table": "EventTypes",
+          "from": "event_types_id",
+          "to": "_id"
+        },
+        {
+          "table": "Rooms",
+          "from": "rooms_id",
+          "to": "_id"
+        }
+      ]
+    },
+    {
+      "table": "EventSubjects",
+      "columns": [
+        {
+          "name": "_id",
+          "type": "INTEGER",
+          "not_null": true,
+          "default": null,
+          "primary_key": 1
+        },
+        {
+          "name": "events_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "content",
+          "type": "VARCHAR(4000)",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "add_time",
+          "type": "DATETIME",
+          "not_null": false,
+          "default": "CURRENT_TIMESTAMP",
+          "primary_key": 0
+        },
+        {
+          "name": "record_status",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "added",
+          "type": "DATETIME",
+          "not_null": false,
+          "default": "STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW', 'LOCALTIME')",
+          "primary_key": 0
+        }
+      ],
+      "foreign_keys": [
+        {
+          "table": "Events",
+          "from": "events_id",
+          "to": "_id"
+        }
+      ]
+    },
+    {
+      "table": "EventIssues",
+      "columns": [
+        {
+          "name": "_id",
+          "type": "INTEGER",
+          "not_null": true,
+          "default": null,
+          "primary_key": 1
+        },
+        {
+          "name": "events_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "event_types_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "issues_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "record_status",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "added",
+          "type": "DATETIME",
+          "not_null": false,
+          "default": "STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW', 'LOCALTIME')",
+          "primary_key": 0
+        }
+      ],
+      "foreign_keys": [
+        {
+          "table": "Events",
+          "from": "events_id",
+          "to": "_id"
+        }
+      ]
+    },
+    {
+      "table": "EventEvents",
+      "columns": [
+        {
+          "name": "_id",
+          "type": "INTEGER",
+          "not_null": true,
+          "default": null,
+          "primary_key": 1
+        },
+        {
+          "name": "events1_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "events2_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "record_status",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "added",
+          "type": "DATETIME",
+          "not_null": false,
+          "default": "STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW', 'LOCALTIME')",
+          "primary_key": 0
+        }
+      ],
+      "foreign_keys": [
+        {
+          "table": "Events",
+          "from": "events2_id",
+          "to": "_id"
+        },
+        {
+          "table": "Events",
+          "from": "events1_id",
+          "to": "_id"
+        }
+      ]
+    },
+    {
+      "table": "UserReprimands",
+      "columns": [
+        {
+          "name": "_id",
+          "type": "INTEGER",
+          "not_null": true,
+          "default": null,
+          "primary_key": 1
+        },
+        {
+          "name": "students_id",
+          "type": "INTEGER",
+          "not_null": true,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "teachers_id",
+          "type": "INTEGER",
+          "not_null": true,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "kinds_id",
+          "type": "INTEGER",
+          "not_null": true,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "get_date",
+          "type": "DATETIME",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "add_time",
+          "type": "DATETIME",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "content",
+          "type": "VARCHAR(2048)",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "status",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "record_status",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "new",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": "1",
+          "primary_key": 0
+        },
+        {
+          "name": "added",
+          "type": "DATETIME",
+          "not_null": false,
+          "default": "STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW', 'LOCALTIME')",
+          "primary_key": 0
+        }
+      ],
+      "foreign_keys": [
+        {
+          "table": "Teachers",
+          "from": "teachers_id",
+          "to": "_id"
+        },
+        {
+          "table": "Students",
+          "from": "students_id",
+          "to": "_id"
+        }
+      ]
+    },
+    {
+      "table": "StudentGroups",
+      "columns": [
+        {
+          "name": "_id",
+          "type": "INTEGER",
+          "not_null": true,
+          "default": null,
+          "primary_key": 1
+        },
+        {
+          "name": "students_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "groups_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "number",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "strike_off_time",
+          "type": "DATETIME",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "strike_off_reason",
+          "type": "VARCHAR(150)",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        }
+      ],
+      "foreign_keys": [
+        {
+          "table": "Groups",
+          "from": "groups_id",
+          "to": "_id"
+        },
+        {
+          "table": "Students",
+          "from": "students_id",
+          "to": "_id"
+        }
+      ]
+    },
+    {
+      "table": "EventTypeSchedules",
+      "columns": [
+        {
+          "name": "_id",
+          "type": "INTEGER",
+          "not_null": true,
+          "default": null,
+          "primary_key": 1
+        },
+        {
+          "name": "event_types_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "schedules_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "name",
+          "type": "VARCHAR(150)",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "number",
+          "type": "VARCHAR(150)",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "record_status",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        }
+      ],
+      "foreign_keys": [
+        {
+          "table": "EventTypes",
+          "from": "event_types_id",
+          "to": "_id"
+        }
+      ]
+    },
+    {
+      "table": "AttendanceTypes",
+      "columns": [
+        {
+          "name": "_id",
+          "type": "INTEGER",
+          "not_null": true,
+          "default": null,
+          "primary_key": 1
+        },
+        {
+          "name": "name",
+          "type": "VARCHAR(150)",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "abbr",
+          "type": "VARCHAR(150)",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "style",
+          "type": "VARCHAR(150)",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "count_as",
+          "type": "VARCHAR(1)",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "type",
+          "type": "VARCHAR(1)",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        }
+      ],
+      "foreign_keys": []
+    },
+    {
+      "table": "Attendances",
+      "columns": [
+        {
+          "name": "_id",
+          "type": "INTEGER",
+          "not_null": true,
+          "default": null,
+          "primary_key": 1
+        },
+        {
+          "name": "events_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "students_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "teachers_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "attendance_types_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "record_status",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "new",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "added",
+          "type": "DATETIME",
+          "not_null": false,
+          "default": "STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW', 'LOCALTIME')",
+          "primary_key": 0
+        }
+      ],
+      "foreign_keys": [
+        {
+          "table": "AttendanceTypes",
+          "from": "attendance_types_id",
+          "to": "_id"
+        },
+        {
+          "table": "Teachers",
+          "from": "teachers_id",
+          "to": "_id"
+        },
+        {
+          "table": "Students",
+          "from": "students_id",
+          "to": "_id"
+        },
+        {
+          "table": "Events",
+          "from": "events_id",
+          "to": "_id"
+        }
+      ]
+    },
+    {
+      "table": "GroupEducators",
+      "columns": [
+        {
+          "name": "_id",
+          "type": "INTEGER",
+          "not_null": true,
+          "default": null,
+          "primary_key": 1
+        },
+        {
+          "name": "groups_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "teachers_educator_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        }
+      ],
+      "foreign_keys": [
+        {
+          "table": "Teachers",
+          "from": "teachers_educator_id",
+          "to": "_id"
+        },
+        {
+          "table": "Groups",
+          "from": "groups_id",
+          "to": "_id"
+        }
+      ]
+    },
+    {
+      "table": "GroupTerms",
+      "columns": [
+        {
+          "name": "_id",
+          "type": "INTEGER",
+          "not_null": true,
+          "default": null,
+          "primary_key": 1
+        },
+        {
+          "name": "groups_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "terms_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        }
+      ],
+      "foreign_keys": [
+        {
+          "table": "Terms",
+          "from": "terms_id",
+          "to": "_id"
+        },
+        {
+          "table": "Groups",
+          "from": "groups_id",
+          "to": "_id"
+        }
+      ]
+    },
+    {
+      "table": "LessonGroups",
+      "columns": [
+        {
+          "name": "_id",
+          "type": "INTEGER",
+          "not_null": true,
+          "default": null,
+          "primary_key": 1
+        },
+        {
+          "name": "name",
+          "type": "VARCHAR(150)",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "selected",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        }
+      ],
+      "foreign_keys": []
+    },
+    {
+      "table": "Lessons",
+      "columns": [
+        {
+          "name": "_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 1
+        },
+        {
+          "name": "lesson_groups_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "lesson_number",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "start_time",
+          "type": "TIME",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "end_time",
+          "type": "TIME",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        }
+      ],
+      "foreign_keys": [
+        {
+          "table": "LessonGroups",
+          "from": "lesson_groups_id",
+          "to": "_id"
+        }
+      ]
+    },
+    {
+      "table": "UserLogs",
+      "columns": [
+        {
+          "name": "_id",
+          "type": "INTEGER",
+          "not_null": true,
+          "default": null,
+          "primary_key": 1
+        },
+        {
+          "name": "teacher_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "login_time",
+          "type": "DATETIME",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "record_status",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "added",
+          "type": "DATETIME",
+          "not_null": false,
+          "default": "STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW', 'LOCALTIME')",
+          "primary_key": 0
+        }
+      ],
+      "foreign_keys": [
+        {
+          "table": "Teachers",
+          "from": "teacher_id",
+          "to": "_id"
+        }
+      ]
+    },
+    {
+      "table": "Messages",
+      "columns": [
+        {
+          "name": "_id",
+          "type": "INTEGER",
+          "not_null": true,
+          "default": null,
+          "primary_key": 1
+        },
+        {
+          "name": "sender_users_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "send_time",
+          "type": "DATETIME",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "title",
+          "type": "VARCHAR(100)",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "content",
+          "type": "VARCHAR(1000)",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "read_time",
+          "type": "DATETIME",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "record_status",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "added",
+          "type": "DATETIME",
+          "not_null": false,
+          "default": "STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW', 'LOCALTIME')",
+          "primary_key": 0
+        }
+      ],
+      "foreign_keys": []
+    },
+    {
+      "table": "PermissionGroups",
+      "columns": [
+        {
+          "name": "_id",
+          "type": "INTEGER",
+          "not_null": true,
+          "default": null,
+          "primary_key": 1
+        },
+        {
+          "name": "parent_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "permission_groups_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "name",
+          "type": "VARCHAR(100)",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "description",
+          "type": "VARCHAR(100)",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "additional_description",
+          "type": "VARCHAR(100)",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "image",
+          "type": "VARCHAR(100)",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        }
+      ],
+      "foreign_keys": []
+    },
+    {
+      "table": "Permissions",
+      "columns": [
+        {
+          "name": "_id",
+          "type": "INTEGER",
+          "not_null": true,
+          "default": null,
+          "primary_key": 1
+        },
+        {
+          "name": "permission_groups_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "users_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "edu_id",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "quantitative_limit",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "grant_time",
+          "type": "DATETIME",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "expire_time",
+          "type": "DATETIME",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        },
+        {
+          "name": "source",
+          "type": "INTEGER",
+          "not_null": false,
+          "default": null,
+          "primary_key": 0
+        }
+      ],
+      "foreign_keys": []
+    }
+  ],
+  "source": "APK assets/database.sql",
+  "limitations": [
+    "Local cache schema, not REST or njson response schema."
+  ]
+}

@@ -1,0 +1,5196 @@
+{
+  "evidence_id": "MR-M01",
+  "source": "config.arm64_v8a/lib/arm64-v8a/libapp.so",
+  "sha256": "22dd67993cd25ccb0a56fca7eef87ffc1d40cc1bffd9057b671c7268afc4d97a",
+  "size": 10421128,
+  "xapk_sha256": "a8ab26b4101507ce7e80f067ee135dc7632571facb26358042da02487b5010e7",
+  "application_id": "pl.mobireg.eparent.music",
+  "version_name": "3.1.7",
+  "version_code": 116,
+  "build_stamp": {
+    "text": "Wersja 3.1.7 (build 116, 6f4e7b8)",
+    "offset": "0x47c9d"
+  },
+  "scope": "All 393 selected iOS Dart literals; exact length-marker matches",
+  "matches": [
+    {
+      "offset": "0x349a7",
+      "text": "package:rodzic/services/api/homeworks_api.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x838240",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x34af5",
+      "text": " userAnswer=",
+      "encoding": "latin1",
+      "ios_offset": "0x838540",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x3584c",
+      "text": "ttl_production",
+      "encoding": "latin1",
+      "ios_offset": "0x83a220",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x35bbb",
+      "text": "/api/messages/trash",
+      "encoding": "latin1",
+      "ios_offset": "0x83ab40",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x36115",
+      "text": "package:rodzic/models/justification_record.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x83b4f0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x3791c",
+      "text": "setJwt",
+      "encoding": "latin1",
+      "ios_offset": "0x83eb80",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x3863b",
+      "text": "registerFcmToken",
+      "encoding": "latin1",
+      "ios_offset": "0x8407a0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x38b84",
+      "text": "setArchive",
+      "encoding": "latin1",
+      "ios_offset": "0x8414e0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x390e7",
+      "text": "CACHE: świeży hit ",
+      "encoding": "utf-16le",
+      "ios_offset": "0x841f40",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x39521",
+      "text": "mail_session_cookie",
+      "encoding": "latin1",
+      "ios_offset": "0x842910",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x395ae",
+      "text": "package:rodzic/theme/style_provider.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x842a20",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x39b01",
+      "text": "package:rodzic/screens/update_required_screen.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x843630",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x3adf1",
+      "text": "Oceny",
+      "encoding": "latin1",
+      "ios_offset": "0x8461d0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x3ae86",
+      "text": "Exam.fromJson",
+      "encoding": "latin1",
+      "ios_offset": "0x846460",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x3b7b8",
+      "text": "Camera permission denied.",
+      "encoding": "latin1",
+      "ios_offset": "0x8477a0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x3c0b2",
+      "text": "package:rodzic/screens/reprimands_screen.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x848a50",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x3c18d",
+      "text": "ZAŁĄCZNIKI: aparat: ",
+      "encoding": "utf-16le",
+      "ios_offset": "0x848c40",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x3cae8",
+      "text": "package:rodzic/repositories/notifications_repository.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x84a020",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x3d0eb",
+      "text": "getSchoolYearRange",
+      "encoding": "latin1",
+      "ios_offset": "0x84ac60",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x3d19e",
+      "text": "Wylogowano: ",
+      "encoding": "latin1",
+      "ios_offset": "0x84ae30",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x3d212",
+      "text": "SIDE_MENU: Przełączam tryb WCAG.",
+      "encoding": "utf-16le",
+      "ios_offset": "0x84af30",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x3d684",
+      "text": "package:rodzic/models/subject_marks.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x84b7d0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x3d814",
+      "text": "/account/ssov2/",
+      "encoding": "latin1",
+      "ios_offset": "0x84bb40",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x3e25f",
+      "text": "FCM: zły payload tapu: ",
+      "encoding": "utf-16le",
+      "ios_offset": "0x84d080",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x3e85b",
+      "text": "/api/messages/",
+      "encoding": "latin1",
+      "ios_offset": "0x84de20",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x3e989",
+      "text": "CREATE INDEX idx_cache_retain ON cache_entries(retain_until)",
+      "encoding": "latin1",
+      "ios_offset": "0x84e170",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x3f8a5",
+      "text": "/account/ssov2/<token>",
+      "encoding": "latin1",
+      "ios_offset": "0x84ff90",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x3fb0b",
+      "text": "CameraDevice",
+      "encoding": "latin1",
+      "ios_offset": "0x8503e0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x3fdb4",
+      "text": "package:rodzic/widgets/subject_summary_card.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x850a70",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x4027c",
+      "text": "getModuleHomeworks",
+      "encoding": "latin1",
+      "ios_offset": "0x851410",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x4115d",
+      "text": "AUTH: Sukces. Token JWT zapisany (konto ",
+      "encoding": "latin1",
+      "ios_offset": "0x8536a0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x44532",
+      "text": "package:rodzic/repositories/announcements_repository.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x85a890",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x45072",
+      "text": "gallery",
+      "encoding": "latin1",
+      "ios_offset": "0x85c0d0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x45617",
+      "text": "Camera",
+      "encoding": "latin1",
+      "ios_offset": "0x85cda0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x45916",
+      "text": "setMailCookie",
+      "encoding": "latin1",
+      "ios_offset": "0x85d590",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x45b3c",
+      "text": "package:rodzic/theme/skin_amethyst.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x85daa0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x46bf7",
+      "text": "/justifications/compose",
+      "encoding": "latin1",
+      "ios_offset": "0x85fb20",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x46e1e",
+      "text": "unregister-fcm",
+      "encoding": "latin1",
+      "ios_offset": "0x860200",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x46f12",
+      "text": "package:rodzic/models/announcement.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x860380",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x4737c",
+      "text": "CACHE: usunięto ",
+      "encoding": "utf-16le",
+      "ios_offset": "0x860e00",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x47a7a",
+      "text": "SESSION: Sztab wyczyszczony.",
+      "encoding": "latin1",
+      "ios_offset": "0x861dc0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x48ce0",
+      "text": "event_ids",
+      "encoding": "latin1",
+      "ios_offset": "0x864750",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x497e6",
+      "text": "package:rodzic/models/term_mark.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x8660c0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x4a0dc",
+      "text": "FCM: register-fcm ",
+      "encoding": "latin1",
+      "ios_offset": "0x867520",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x4a641",
+      "text": "homeworkSession",
+      "encoding": "latin1",
+      "ios_offset": "0x868170",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x4ba74",
+      "text": "/modules/api/refresh.php",
+      "encoding": "latin1",
+      "ios_offset": "0x86ae50",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x4bd70",
+      "text": "package:rodzic/services/accounts_store.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x86b5e0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x4c1c7",
+      "text": "dashboard_weeks",
+      "encoding": "latin1",
+      "ios_offset": "0x86bf80",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x4c7bf",
+      "text": "oldHomeworkModule",
+      "encoding": "latin1",
+      "ios_offset": "0x86cd80",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x4d585",
+      "text": "package:rodzic/models/term.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x86eaf0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x4e1e6",
+      "text": "package:rodzic/screens/settings_screen.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x870570",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x4e222",
+      "text": "updateRecord",
+      "encoding": "latin1",
+      "ios_offset": "0x8705d0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x4f184",
+      "text": "NOTIF REPO: sync ustawień na serwer nieudany (konto ",
+      "encoding": "utf-16le",
+      "ios_offset": "0x872670",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x4f77a",
+      "text": "package:rodzic/helpers/css_helper.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x873480",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x4fd98",
+      "text": "package:rodzic/main.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x874080",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x51186",
+      "text": "Ta wersja aplikacji nie jest już zgodna z serwerem dziennika.\nZaktualizuj aplikację w sklepie, aby kontynuować.",
+      "encoding": "utf-16le",
+      "ios_offset": "0x876990",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x51836",
+      "text": "package:rodzic/screens/mail_screen.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x877850",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x5205d",
+      "text": "AUTH: Próba logowania...",
+      "encoding": "latin1",
+      "ios_offset": "0x878d10",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x53a9b",
+      "text": "pendingCount",
+      "encoding": "latin1",
+      "ios_offset": "0x87c630",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x53d57",
+      "text": "AppHtmlFactory",
+      "encoding": "latin1",
+      "ios_offset": "0x87cc80",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x54006",
+      "text": "package:rodzic/repositories/attendance_repository.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x87d240",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x552fa",
+      "text": "auth_token_jwt",
+      "encoding": "latin1",
+      "ios_offset": "0x87ff00",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x557c6",
+      "text": "FCM: brak tokenu (getToken zwrócił null)",
+      "encoding": "utf-16le",
+      "ios_offset": "0x880ac0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x55b35",
+      "text": "auth_password_secure",
+      "encoding": "latin1",
+      "ios_offset": "0x8811e0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x563c3",
+      "text": "package:rodzic/screens/mail_compose_screen.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x882440",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x56943",
+      "text": "clearModuleCookie",
+      "encoding": "latin1",
+      "ios_offset": "0x883070",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x57006",
+      "text": "AUTH: Łączenie z: ",
+      "encoding": "utf-16le",
+      "ios_offset": "0x883f10",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x57ae0",
+      "text": "MAIL SSO: Brak danych do SSO (server=",
+      "encoding": "latin1",
+      "ios_offset": "0x885840",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x57e55",
+      "text": "homework-module",
+      "encoding": "latin1",
+      "ios_offset": "0x886090",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x58430",
+      "text": "package:rodzic/repositories/homeworks_repository.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x886e40",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x58656",
+      "text": "package:rodzic/utils/school_code.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x887270",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x59675",
+      "text": "uploadSolutionFile",
+      "encoding": "latin1",
+      "ios_offset": "0x8894e0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x59c50",
+      "text": "package:rodzic/providers/mail_provider.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x889ca0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x59f95",
+      "text": "SESSION: Zmiana preferowanego okresu na ID: ",
+      "encoding": "latin1",
+      "ios_offset": "0x88a380",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x5a08c",
+      "text": "package:rodzic/services/cache/fcm_invalidation.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x88a5b0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x5a146",
+      "text": "MAIL REPO BŁĄD (deleteMessage): ",
+      "encoding": "utf-16le",
+      "ios_offset": "0x88a740",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x5b66a",
+      "text": "Szczegóły oceny",
+      "encoding": "utf-16le",
+      "ios_offset": "0x88d0d0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x5b6ff",
+      "text": "package:rodzic/models/account.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x88d240",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x5b9a9",
+      "text": "package:rodzic/services/module_session.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x88d750",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x5c6e5",
+      "text": "package:rodzic/screens/justifications_screen.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x88f400",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x5d0ee",
+      "text": "/justifications?pupil_id=",
+      "encoding": "latin1",
+      "ios_offset": "0x890b70",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x5dbb5",
+      "text": "Niezgodna wersja protokołu API (serwer: v",
+      "encoding": "utf-16le",
+      "ios_offset": "0x8921d0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x5e78b",
+      "text": "package:rodzic/widgets/upload_retry.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x893e40",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x5eeb7",
+      "text": "AUTH BŁĄD: Brak hasła i brak refresh tokenu.",
+      "encoding": "utf-16le",
+      "ios_offset": "0x894d70",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x60291",
+      "text": "SkinPastel",
+      "encoding": "latin1",
+      "ios_offset": "0x897720",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x61352",
+      "text": "package:rodzic/services/api/mail_api.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x899940",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x614ca",
+      "text": "CameraFocus",
+      "encoding": "latin1",
+      "ios_offset": "0x899ca0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x618d8",
+      "text": "package:rodzic/screens/reprimand_detail_screen.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x89a6f0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x61939",
+      "text": "setArchived",
+      "encoding": "latin1",
+      "ios_offset": "0x89a7f0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x6197e",
+      "text": "MailSend",
+      "encoding": "latin1",
+      "ios_offset": "0x89a8f0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x62054",
+      "text": "package:rodzic/widgets/homework_solution_section.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x89b980",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x623a9",
+      "text": "is_final",
+      "encoding": "latin1",
+      "ios_offset": "0x89c1b0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x624d4",
+      "text": "package:rodzic/models/reprimand.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x89c4d0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x65db5",
+      "text": "/api/messages/important",
+      "encoding": "latin1",
+      "ios_offset": "0x8a0fe0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x65de8",
+      "text": "CameraPreview",
+      "encoding": "latin1",
+      "ios_offset": "0x8a1060",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x65feb",
+      "text": "package:rodzic/theme/skin_high_contrast.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x8a1490",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x66105",
+      "text": "CameraFacing.",
+      "encoding": "latin1",
+      "ios_offset": "0x8a16d0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x6631f",
+      "text": "FCM: unregister-fcm konto ",
+      "encoding": "latin1",
+      "ios_offset": "0x8a1b00",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x66fd7",
+      "text": "package:rodzic/services/api/app_api.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x8a3a40",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x683ba",
+      "text": "package:rodzic/widgets/mark_tile.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x8a6b30",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x68b32",
+      "text": "MAIL REPO BŁĄD (searchReceivers): ",
+      "encoding": "utf-16le",
+      "ios_offset": "0x8a7bd0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x6d65c",
+      "text": "PENDING: po odpowiedzi na ",
+      "encoding": "latin1",
+      "ios_offset": "0x8ae6d0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x6e031",
+      "text": "TimetableExam.fromJson",
+      "encoding": "latin1",
+      "ios_offset": "0x8afbc0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x6e790",
+      "text": "package:rodzic/models/mail_message.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x8b0930",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x6ea4e",
+      "text": "sendAnswer",
+      "encoding": "latin1",
+      "ios_offset": "0x8b1030",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x6ed9c",
+      "text": "deleteRecord",
+      "encoding": "latin1",
+      "ios_offset": "0x8b1760",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x6ee6e",
+      "text": "getDiaryHomeworks",
+      "encoding": "latin1",
+      "ios_offset": "0x8b18e0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x6fe80",
+      "text": "get:pendingCount",
+      "encoding": "latin1",
+      "ios_offset": "0x8b3ba0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x6fe0a",
+      "text": "package:rodzic/screens/subject_details_screen.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x8b3bc0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x7097d",
+      "text": "package:rodzic/models/dashboard_attendance.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x8b5300",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x70d1b",
+      "text": "FCM: inwalidacja cache po tapie systemowym nieudana (ignoruję): ",
+      "encoding": "utf-16le",
+      "ios_offset": "0x8b5c50",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x72302",
+      "text": "CACHE: GC usunął ",
+      "encoding": "utf-16le",
+      "ios_offset": "0x8b8d20",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x72d2e",
+      "text": "package:rodzic/models/justify_event.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x8ba330",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x72df4",
+      "text": "announcements-pending",
+      "encoding": "latin1",
+      "ios_offset": "0x8ba460",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x756b3",
+      "text": "package:rodzic/widgets/announcement_tile.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x8bffa0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x756ef",
+      "text": "Usunąć konto?",
+      "encoding": "utf-16le",
+      "ios_offset": "0x8c0000",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x75a4d",
+      "text": "SkinAmethyst",
+      "encoding": "latin1",
+      "ios_offset": "0x8c0790",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x75c84",
+      "text": "VotingSection",
+      "encoding": "latin1",
+      "ios_offset": "0x8c0d40",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x76517",
+      "text": "package:rodzic/services/mail_session.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x8c1eb0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x766e5",
+      "text": "package:rodzic/widgets/app_html_factory.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x8c21d0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x76a0d",
+      "text": "package:rodzic/helpers/day_columns.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x8c29b0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x76fcc",
+      "text": "dyn:get:fontSizeOffset",
+      "encoding": "latin1",
+      "ios_offset": "0x8c3680",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x77917",
+      "text": "Jak daleko wstecz pokazywać oceny, uwagi, ogłoszenia i sprawdziany",
+      "encoding": "utf-16le",
+      "ios_offset": "0x8c4bb0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x78ab9",
+      "text": "CameraLensType.",
+      "encoding": "latin1",
+      "ios_offset": "0x8c7400",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x79101",
+      "text": "/api/messages/inbox",
+      "encoding": "latin1",
+      "ios_offset": "0x8c8150",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x7a03b",
+      "text": "/justifications",
+      "encoding": "latin1",
+      "ios_offset": "0x8ca630",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x7adb1",
+      "text": "justification-events",
+      "encoding": "latin1",
+      "ios_offset": "0x8cc480",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x7bd84",
+      "text": "SESSION: Zmiana ucznia na: ",
+      "encoding": "latin1",
+      "ios_offset": "0x8ce610",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x7bda3",
+      "text": "MailRecipient.fromJson",
+      "encoding": "latin1",
+      "ios_offset": "0x8ce660",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x7c186",
+      "text": "package:rodzic/models/picked_file.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x8cf100",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x7c322",
+      "text": "package:rodzic/services/cache/app_cache.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x8cf4d0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x7c490",
+      "text": "FCM: inwalidacja cache nieudana (ignoruję): ",
+      "encoding": "utf-16le",
+      "ios_offset": "0x8cf8b0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x7d192",
+      "text": "attendance-stats",
+      "encoding": "latin1",
+      "ios_offset": "0x8d1570",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x7e130",
+      "text": "package:rodzic/providers/homeworks_provider.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x8d38d0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x7e5af",
+      "text": "package:rodzic/repositories/reprimands_repository.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x8d41c0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x7e88b",
+      "text": "is_proposal",
+      "encoding": "latin1",
+      "ios_offset": "0x8d4730",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x7e89c",
+      "text": "AUTH: Refresh OK (konto ",
+      "encoding": "latin1",
+      "ios_offset": "0x8d4770",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x7e984",
+      "text": "JWTToken",
+      "encoding": "latin1",
+      "ios_offset": "0x8d48f0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x7f585",
+      "text": "register-fcm",
+      "encoding": "latin1",
+      "ios_offset": "0x8d6550",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x7f86b",
+      "text": "package:rodzic/providers/announcements_provider.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x8d6b70",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x812bf",
+      "text": "package:rodzic/widgets/exam_tile.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x8da9c0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x81a56",
+      "text": "sendMessage",
+      "encoding": "latin1",
+      "ios_offset": "0x8dbbf0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x81ca0",
+      "text": "Motyw kolorystyczny",
+      "encoding": "latin1",
+      "ios_offset": "0x8dc1e0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x83643",
+      "text": "MAIL SESSION: Cookie wyczyszczone.",
+      "encoding": "latin1",
+      "ios_offset": "0x8df6b0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x83a25",
+      "text": "deadline_at",
+      "encoding": "latin1",
+      "ios_offset": "0x8dfe20",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x83ac7",
+      "text": "api_page_address",
+      "encoding": "latin1",
+      "ios_offset": "0x8dff90",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x83ba6",
+      "text": "package:rodzic/widgets/side_menu.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x8e0180",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x8423f",
+      "text": "MAIL REPO BŁĄD (getReceivers): ",
+      "encoding": "utf-16le",
+      "ios_offset": "0x8e0ef0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x84802",
+      "text": "AUTH REFRESH WYJĄTEK: ",
+      "encoding": "utf-16le",
+      "ios_offset": "0x8e19c0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x848b4",
+      "text": "_MixinApplication271&WidgetFactory&CachedNetworkImageFactory&ChewieFactory&JustAudioFactory&SvgFactory&UrlLauncherFactory&WebViewFactory@18353248",
+      "encoding": "latin1",
+      "ios_offset": "0x8e1b70",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x84fed",
+      "text": "pickImage",
+      "encoding": "latin1",
+      "ios_offset": "0x8e2aa0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x8560c",
+      "text": "starMessage",
+      "encoding": "latin1",
+      "ios_offset": "0x8e3a90",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x861a9",
+      "text": "/justifications/",
+      "encoding": "latin1",
+      "ios_offset": "0x8e56d0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x86a9a",
+      "text": ") zniknie z aplikacji razem ze swoimi dziećmi. Konto w dzienniku pozostaje.",
+      "encoding": "utf-16le",
+      "ios_offset": "0x8e6ac0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x87087",
+      "text": "Przenieś do archiwum",
+      "encoding": "utf-16le",
+      "ios_offset": "0x8e7550",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x88596",
+      "text": "canAnswer",
+      "encoding": "latin1",
+      "ios_offset": "0x8ea3e0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x8a467",
+      "text": "ZADANIA: plik ",
+      "encoding": "latin1",
+      "ios_offset": "0x8ee6f0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x8aa4e",
+      "text": "JUSTIFY_PROVIDER_ERROR(createRecord): ",
+      "encoding": "latin1",
+      "ios_offset": "0x8ef200",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x8b205",
+      "text": "PENDING: pomijam przejście (",
+      "encoding": "utf-16le",
+      "ios_offset": "0x8f05c0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x8bc13",
+      "text": "package:rodzic/widgets/mark_detail_card.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x8f1cf0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x8c02c",
+      "text": "Błąd pobierania ocen.",
+      "encoding": "utf-16le",
+      "ios_offset": "0x8f2770",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x8c9fa",
+      "text": "Brak ocen w tym okresie.",
+      "encoding": "latin1",
+      "ios_offset": "0x8f3bf0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x8ce44",
+      "text": "Developer_log",
+      "encoding": "latin1",
+      "ios_offset": "0x8f4780",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x8d340",
+      "text": "SourceCamera",
+      "encoding": "latin1",
+      "ios_offset": "0x8f5210",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x8d42d",
+      "text": "CACHE: ",
+      "encoding": "latin1",
+      "ios_offset": "0x8f53d0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x8d910",
+      "text": "package:rodzic/services/pending_poll_gate.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x8f5f30",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x8dd5c",
+      "text": "count_to_avg",
+      "encoding": "latin1",
+      "ios_offset": "0x8f68d0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x8f0ab",
+      "text": "CACHE: dedup żądania w locie dla ",
+      "encoding": "utf-16le",
+      "ios_offset": "0x8f9600",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x8f133",
+      "text": "package:rodzic/widgets/sub_bar.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x8f9740",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x8f2a1",
+      "text": "package:rodzic/helpers/text_html.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x8f9a70",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x8f370",
+      "text": "REPO: Arkusz ocen gotowy (",
+      "encoding": "latin1",
+      "ios_offset": "0x8f9bf0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x8fe04",
+      "text": "package:rodzic/shell/app_shell.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x8fb0f0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x9006b",
+      "text": "package:rodzic/widgets/event_tile.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x8fb670",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x91522",
+      "text": "/api/homeworks/",
+      "encoding": "latin1",
+      "ios_offset": "0x8fe600",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x917e9",
+      "text": "ZADANIA: adres załącznika wygasł — odświeżam szczegóły.",
+      "encoding": "utf-16le",
+      "ios_offset": "0x8fecf0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x91fa5",
+      "text": "MAIL SSO: Status ",
+      "encoding": "latin1",
+      "ios_offset": "0x8ffc70",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x92ffc",
+      "text": "package:rodzic/providers/notifications_provider.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x901f70",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x931f8",
+      "text": "MAIL REPO BŁĄD (getReceiversForType): ",
+      "encoding": "utf-16le",
+      "ios_offset": "0x902410",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x9387d",
+      "text": "package:rodzic/widgets/announcement_detail_card.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x903110",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x94117",
+      "text": "package:rodzic/models/pupil.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x9043e0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x9426c",
+      "text": "package:rodzic/screens/homework_detail_screen.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x904600",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x9466a",
+      "text": "package:rodzic/screens/dashboard_screen.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x905010",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x9471a",
+      "text": "package:rodzic/repositories/justifications_repository.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x9051a0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x94d9f",
+      "text": "MAIL REPO BŁĄD (getMessage): ",
+      "encoding": "utf-16le",
+      "ios_offset": "0x905ec0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x94ebf",
+      "text": "PROVIDER: archiwizacja zadania ",
+      "encoding": "latin1",
+      "ios_offset": "0x9060e0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x95111",
+      "text": "package:rodzic/services/fcm_service.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x9065c0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x95d49",
+      "text": "FCM: odświeżenie otwartego widoku nieudane (ignoruję): ",
+      "encoding": "utf-16le",
+      "ios_offset": "0x908300",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x96c3d",
+      "text": "timetable-events",
+      "encoding": "latin1",
+      "ios_offset": "0x90a5b0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x98a6d",
+      "text": "package:rodzic/widgets/day_view.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x90e890",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x99128",
+      "text": "package:rodzic/services/cache/cached_result.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x90f6c0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x996cd",
+      "text": "authType",
+      "encoding": "latin1",
+      "ios_offset": "0x9104d0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x99977",
+      "text": "package:rodzic/models/attendance_data.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x910950",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x99eaa",
+      "text": "package:rodzic/screens/announcement_detail_screen.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x911490",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x9a3ad",
+      "text": "FCM: błąd init: ",
+      "encoding": "utf-16le",
+      "ios_offset": "0x912180",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x9ba6d",
+      "text": "CREATE INDEX idx_cache_kind_pupil ON cache_entries(kind, pupil_id)",
+      "encoding": "latin1",
+      "ios_offset": "0x9153b0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x9c152",
+      "text": "MailReply",
+      "encoding": "latin1",
+      "ios_offset": "0x9165e0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x9c1f7",
+      "text": "package:rodzic/helpers/date_helper.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x916740",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x9c465",
+      "text": "package:rodzic/services/cache/cache_invalidation.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x916cd0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x9d151",
+      "text": "package:rodzic/widgets/homework_detail_card.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x918aa0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x9d610",
+      "text": "package:rodzic/widgets/top_bar.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x919450",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x9dc9f",
+      "text": "package:rodzic/screens/mail_detail_screen.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x91a250",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x9e8e0",
+      "text": "package:rodzic/screens/mark_detail_screen.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x91bbf0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x9ed15",
+      "text": "Oceny, sprawdziany, zadania domowe, uwagi, komunikaty i nieobecności pojawią się tutaj, gdy szkoła je wprowadzi. Plan lekcji jest w zakładce „Plan\".",
+      "encoding": "utf-16le",
+      "ios_offset": "0x91c4e0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0x9efe8",
+      "text": "pickFiles",
+      "encoding": "latin1",
+      "ios_offset": "0x91c960",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xa0681",
+      "text": "package:rodzic/widgets/bottom_nav.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x920010",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xa0974",
+      "text": "/api/messages/read/",
+      "encoding": "latin1",
+      "ios_offset": "0x920420",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xa0d8d",
+      "text": "package:rodzic/models/mark.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x920c60",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xa14dc",
+      "text": "AUTH BŁĄD: Niekompletne poświadczenia.",
+      "encoding": "utf-16le",
+      "ios_offset": "0x921ad0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xa2039",
+      "text": "package:rodzic/screens/justification_compose_screen.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x9233f0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xa2cee",
+      "text": "package:rodzic/build_stamp.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x924e90",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xa34a3",
+      "text": "AUTH REFRESH SERVER BŁĄD: Status ",
+      "encoding": "utf-16le",
+      "ios_offset": "0x9260f0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xa3905",
+      "text": "/api/messages/sent",
+      "encoding": "latin1",
+      "ios_offset": "0x926bd0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xa5b44",
+      "text": "pupil_id",
+      "encoding": "latin1",
+      "ios_offset": "0x92b650",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xa5d9d",
+      "text": "          CREATE TABLE cache_entries (\n            cache_key    TEXT PRIMARY KEY,\n            kind         TEXT NOT NULL,\n            pupil_id     INTEGER NOT NULL DEFAULT 0,\n            params       TEXT NOT NULL DEFAULT '',\n            range_from   TEXT,\n            range_to     TEXT,\n            payload      TEXT NOT NULL,\n            fetched_at   INTEGER NOT NULL,\n            fresh_until  INTEGER NOT NULL,\n            retain_until INTEGER NOT NULL,\n            protocol_v   INTEGER NOT NULL DEFAULT 0\n          )\n        ",
+      "encoding": "latin1",
+      "ios_offset": "0x92bbf0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xa6818",
+      "text": "Nie wysłano plików",
+      "encoding": "utf-16le",
+      "ios_offset": "0x92cef0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xa69cf",
+      "text": "package:rodzic/repositories/dashboard_repository.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x92d350",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xa81b9",
+      "text": "FCM: błąd pobrania wiadomości ",
+      "encoding": "utf-16le",
+      "ios_offset": "0x930520",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xa929d",
+      "text": "MAIL REPO BŁĄD (getUnreadCount): ",
+      "encoding": "utf-16le",
+      "ios_offset": "0x932960",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xa9394",
+      "text": "FCM: onTokenRefresh — ponowna rejestracja (wszystkie konta)",
+      "encoding": "utf-16le",
+      "ios_offset": "0x932b40",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xa9c11",
+      "text": "package:rodzic/services/api/api_envelope.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x933da0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xaa1a7",
+      "text": "Nie udało się załadować ocen.",
+      "encoding": "utf-16le",
+      "ios_offset": "0x934900",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xaa716",
+      "text": "CACHE: wymagana aktualizacja aplikacji (serwer v",
+      "encoding": "latin1",
+      "ios_offset": "0x935460",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xaaad2",
+      "text": "WYŁĄCZ TRYB DEWELOPERSKI",
+      "encoding": "utf-16le",
+      "ios_offset": "0x935c20",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xaab70",
+      "text": "buildCameraView",
+      "encoding": "latin1",
+      "ios_offset": "0x935d80",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xaacdd",
+      "text": "AUTH REFRESH API BŁĄD: ",
+      "encoding": "utf-16le",
+      "ios_offset": "0x936130",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xabcf5",
+      "text": "AUTH: Wylogowanie konta ",
+      "encoding": "latin1",
+      "ios_offset": "0x938640",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xac229",
+      "text": "package:rodzic/screens/homeworks_screen.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x939190",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xac63b",
+      "text": "ZADANIA: nie udało się wczytać obrazka z treści: ",
+      "encoding": "utf-16le",
+      "ios_offset": "0x939b60",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xad17f",
+      "text": "STATE: Serwer wymaga aktualizacji aplikacji (protokół v",
+      "encoding": "utf-16le",
+      "ios_offset": "0x93b5f0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xaeb21",
+      "text": "package:rodzic/models/homework.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x93eef0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xaef7d",
+      "text": "package:rodzic/screens/qr_scan_screen.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x93f9a0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xaf7d5",
+      "text": "dashboard_att_mode",
+      "encoding": "latin1",
+      "ios_offset": "0x940c00",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xafc10",
+      "text": "package:rodzic/screens/timetable_screen.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x9416e0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xb05c4",
+      "text": "createRecord",
+      "encoding": "latin1",
+      "ios_offset": "0x942cb0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xb07f1",
+      "text": "homeworks-module",
+      "encoding": "latin1",
+      "ios_offset": "0x9431c0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xb1450",
+      "text": "unregisterFcmToken",
+      "encoding": "latin1",
+      "ios_offset": "0x944c50",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xb1b86",
+      "text": "CACHE: inwalidacja ",
+      "encoding": "latin1",
+      "ios_offset": "0x945cb0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xb2125",
+      "text": "PROVIDER: Odrzucam spóźnioną odpowiedź zadań domowych (",
+      "encoding": "utf-16le",
+      "ios_offset": "0x946770",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xb22fc",
+      "text": "package:rodzic/theme/app_features.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x946b90",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xb2d1f",
+      "text": "MAIL REPO BŁĄD (restoreMessage): ",
+      "encoding": "utf-16le",
+      "ios_offset": "0x948200",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xb30a8",
+      "text": "REPO: Pobieram arkusz ocen (Pupil: ",
+      "encoding": "latin1",
+      "ios_offset": "0x948910",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xb357b",
+      "text": "package:rodzic/screens/announcements_screen.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x949550",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xb37b6",
+      "text": "package:rodzic/widgets/day_picker.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x949a00",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xb3868",
+      "text": "postAnswer",
+      "encoding": "latin1",
+      "ios_offset": "0x949b20",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xb3b56",
+      "text": "auth_login",
+      "encoding": "latin1",
+      "ios_offset": "0x94a2c0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xb45ba",
+      "text": "YoutubeEmbed",
+      "encoding": "latin1",
+      "ios_offset": "0x94baa0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xb4a15",
+      "text": "package:rodzic/screens/exam_detail_screen.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x94c340",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xb4cc9",
+      "text": "REPO: announcements-pending nieudane (offline?): ",
+      "encoding": "latin1",
+      "ios_offset": "0x94c8d0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xb57d5",
+      "text": "package:rodzic/models/mail_recipient.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x94dd80",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xb5f10",
+      "text": "REPO BŁĄD: Brak danych ocen.",
+      "encoding": "utf-16le",
+      "ios_offset": "0x94ef00",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xb6218",
+      "text": "ttl_devel",
+      "encoding": "latin1",
+      "ios_offset": "0x94f690",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xb7fb2",
+      "text": "protocol_v",
+      "encoding": "latin1",
+      "ios_offset": "0x953c20",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xb8a7e",
+      "text": "/api/homeworks/datatable",
+      "encoding": "latin1",
+      "ios_offset": "0x955340",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xb8b57",
+      "text": "package:rodzic/models/notification_settings.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x955520",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xb8c47",
+      "text": "fontSizeOffset",
+      "encoding": "latin1",
+      "ios_offset": "0x9556c0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xb98b9",
+      "text": "teacher_comments",
+      "encoding": "latin1",
+      "ios_offset": "0x957150",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xb9a87",
+      "text": "package:rodzic/providers/marks_provider.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x957700",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xb9c21",
+      "text": "CameraDevice.",
+      "encoding": "latin1",
+      "ios_offset": "0x957a70",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xbb6f3",
+      "text": "/api/messages/receivers/search",
+      "encoding": "latin1",
+      "ios_offset": "0x95b720",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xbb78a",
+      "text": "package:rodzic/theme/skin_pastel.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x95b8a0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xbc206",
+      "text": "CameraLensType",
+      "encoding": "latin1",
+      "ios_offset": "0x95d030",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xbd37e",
+      "text": "JUSTIFY_PROVIDER_ERROR(deleteRecord): ",
+      "encoding": "latin1",
+      "ios_offset": "0x95eec0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xbf9dc",
+      "text": "NOTIF REPO: odczyt z serwera nieudany (",
+      "encoding": "latin1",
+      "ios_offset": "0x963f30",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xbfb51",
+      "text": "ZAŁĄCZNIKI: galeria: ",
+      "encoding": "utf-16le",
+      "ios_offset": "0x9642e0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xbfe26",
+      "text": "package:rodzic/providers/exams_provider.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x964900",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xc0498",
+      "text": "pickFiles() has not been implemented.",
+      "encoding": "latin1",
+      "ios_offset": "0x965760",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xc1491",
+      "text": "clearMailCookie",
+      "encoding": "latin1",
+      "ios_offset": "0x967e30",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xc17fc",
+      "text": " AND pupil_id = ?",
+      "encoding": "latin1",
+      "ios_offset": "0x9685f0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xc1b51",
+      "text": "REPO KRYTYCZNY: Wyjątek w mapowaniu ocen: ",
+      "encoding": "utf-16le",
+      "ios_offset": "0x968cf0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xc2905",
+      "text": "JUSTIFY_PROVIDER_ERROR(updateRecord): ",
+      "encoding": "latin1",
+      "ios_offset": "0x96a8e0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xc2a03",
+      "text": "selectPupil",
+      "encoding": "latin1",
+      "ios_offset": "0x96aa90",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xc3083",
+      "text": "package:rodzic/widgets/homework_tile.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x96bab0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xc3776",
+      "text": "FCM: pomijam powiadomienie dla konta spoza telefonu (",
+      "encoding": "latin1",
+      "ios_offset": "0x96cad0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xc42d7",
+      "text": "package:rodzic/widgets/subject_marks_card.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x96e3c0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xc4810",
+      "text": "package:rodzic/screens/timetable_event_detail_screen.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x96ee80",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xc4a1a",
+      "text": "package:rodzic/widgets/exam_detail_card.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x96f380",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xc4cb6",
+      "text": "availableCameras",
+      "encoding": "latin1",
+      "ios_offset": "0x96f8f0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xc542c",
+      "text": "Oceny bieżące",
+      "encoding": "utf-16le",
+      "ios_offset": "0x970970",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xc5589",
+      "text": "userAnswer",
+      "encoding": "latin1",
+      "ios_offset": "0x970c70",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xc55c9",
+      "text": "messages_token",
+      "encoding": "latin1",
+      "ios_offset": "0x970d70",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xc597e",
+      "text": "package:rodzic/services/api/api_exceptions.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x9717d0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xc7d5d",
+      "text": "FCM: błąd unregisterToken: ",
+      "encoding": "utf-16le",
+      "ios_offset": "0x976650",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xc811a",
+      "text": "/modules/api/app.php",
+      "encoding": "latin1",
+      "ios_offset": "0x976f40",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xc83d3",
+      "text": "selectPupilById",
+      "encoding": "latin1",
+      "ios_offset": "0x977620",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xc848f",
+      "text": "package:rodzic/repositories/marks_repository.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x977760",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xc8895",
+      "text": "package:rodzic/widgets/attendance_dashboard_tile.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x977fa0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xc9e79",
+      "text": "package:rodzic/screens/homework_answer_screen.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x97b460",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xca0e3",
+      "text": "MAIL SSO: Brak cookie w odpowiedzi (status ",
+      "encoding": "latin1",
+      "ios_offset": "0x97b880",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xcaab0",
+      "text": "SESSION: Zainicjalizowano Sztab. Pupil: ",
+      "encoding": "latin1",
+      "ios_offset": "0x97cdc0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xcabf9",
+      "text": "REPO ERROR: Błąd mapowania oceny: ",
+      "encoding": "utf-16le",
+      "ios_offset": "0x97d0e0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xcb467",
+      "text": "package:rodzic/services/session.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x97e3a0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xcb86a",
+      "text": "/modules/api/auth.php",
+      "encoding": "latin1",
+      "ios_offset": "0x97ecc0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xcba0e",
+      "text": "Wiadomość wysłana BEZ ",
+      "encoding": "utf-16le",
+      "ios_offset": "0x97f070",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xcbb5d",
+      "text": "SourceCamera.",
+      "encoding": "latin1",
+      "ios_offset": "0x97f320",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xcbc07",
+      "text": "FCM: routing kind=",
+      "encoding": "latin1",
+      "ios_offset": "0x97f430",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xcc68d",
+      "text": "package:rodzic/repositories/timetable_repository.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x980cf0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xcc87b",
+      "text": "setModuleCookie",
+      "encoding": "latin1",
+      "ios_offset": "0x981230",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xccbef",
+      "text": "AUTH: Odświeżanie refreshem w: ",
+      "encoding": "utf-16le",
+      "ios_offset": "0x981b50",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xccef4",
+      "text": "SchoolYearRange",
+      "encoding": "latin1",
+      "ios_offset": "0x982100",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xcde94",
+      "text": "package:rodzic/repositories/mail_repository.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x984520",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xcecce",
+      "text": "AppHtmlFactory.",
+      "encoding": "latin1",
+      "ios_offset": "0x9863d0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xcf4f2",
+      "text": "package:rodzic/screens/notifications_screen.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x987410",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xd0001",
+      "text": "MAIL REPO BŁĄD (starMessage): ",
+      "encoding": "utf-16le",
+      "ios_offset": "0x988c50",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xd0136",
+      "text": "TRYB WCAG AKTYWNY",
+      "encoding": "latin1",
+      "ios_offset": "0x988ec0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xd02ea",
+      "text": "Wyczyść cache",
+      "encoding": "utf-16le",
+      "ios_offset": "0x989270",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xd0594",
+      "text": "package:rodzic/services/log.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x989910",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xd0883",
+      "text": "SkinStandard",
+      "encoding": "latin1",
+      "ios_offset": "0x989ec0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xd0a35",
+      "text": "get:fontSizeOffset",
+      "encoding": "latin1",
+      "ios_offset": "0x98acd0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xd13ef",
+      "text": "Brak ocen cząstkowych.",
+      "encoding": "utf-16le",
+      "ios_offset": "0x98adf0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xd149a",
+      "text": "Przywróć z archiwum",
+      "encoding": "utf-16le",
+      "ios_offset": "0x98af90",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xd20c9",
+      "text": "package:rodzic/widgets/youtube_embed.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x98c970",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xd27d6",
+      "text": "toggleArchive",
+      "encoding": "latin1",
+      "ios_offset": "0x98d820",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xd2d55",
+      "text": "package:rodzic/services/cache/cache_db.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x98e420",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xd3e80",
+      "text": "package:rodzic/providers/dashboard_provider.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x990aa0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xd48c8",
+      "text": "CACHE: zapis ",
+      "encoding": "latin1",
+      "ios_offset": "0x992100",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xd492d",
+      "text": "Cache danych (sqlite)",
+      "encoding": "latin1",
+      "ios_offset": "0x9921e0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xd4e06",
+      "text": "PENDING: błąd sprawdzania zaległości: ",
+      "encoding": "utf-16le",
+      "ios_offset": "0x992bc0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xd53b9",
+      "text": "package:rodzic/screens/exams_screen.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x993990",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xd5869",
+      "text": "package:rodzic/models/timetable_event.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x9943a0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xd5de2",
+      "text": "package:rodzic/state/app_state.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x9950b0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xd630d",
+      "text": "uploadWithRetry",
+      "encoding": "latin1",
+      "ios_offset": "0x995bc0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xd74b2",
+      "text": "package:rodzic/repositories/exams_repository.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x998150",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xd8078",
+      "text": "FCM: błąd registerToken: ",
+      "encoding": "utf-16le",
+      "ios_offset": "0x999930",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xd851f",
+      "text": "FCM: odświeżanie widoku kind=",
+      "encoding": "utf-16le",
+      "ios_offset": "0x99a170",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xd99e0",
+      "text": "/api/messages",
+      "encoding": "latin1",
+      "ios_offset": "0x99d040",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xd9f65",
+      "text": "package:rodzic/widgets/timetable_event_detail_card.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x99dc60",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xda402",
+      "text": "announcement-answer",
+      "encoding": "latin1",
+      "ios_offset": "0x99e670",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xda751",
+      "text": "package:rodzic/providers/attendance_provider.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x99ed40",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xdaf2f",
+      "text": "package:rodzic/screens/marks_screen.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x99ff50",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xdb084",
+      "text": "PENDING: zaległa ankieta ",
+      "encoding": "utf-16le",
+      "ios_offset": "0x9a01e0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xdb166",
+      "text": "TimetableEvent.fromJson",
+      "encoding": "latin1",
+      "ios_offset": "0x9a03d0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xdb2b4",
+      "text": "/modules/api/qrlogin.php",
+      "encoding": "latin1",
+      "ios_offset": "0x9a06d0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xdb362",
+      "text": "MAIL SSO: Sukces. Cookie: ",
+      "encoding": "latin1",
+      "ios_offset": "0x9a08e0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xdcb66",
+      "text": "package:rodzic/widgets/offline_banner.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x9a3dd0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xdd01b",
+      "text": "PROVIDER: Wyczyszczono same oceny (semestry zostają).",
+      "encoding": "utf-16le",
+      "ios_offset": "0x9a4700",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xdd490",
+      "text": "CameraFacing",
+      "encoding": "latin1",
+      "ios_offset": "0x9a5190",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xdea18",
+      "text": "restoreMessage",
+      "encoding": "latin1",
+      "ios_offset": "0x9a8300",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xdeccc",
+      "text": "package:rodzic/providers/data_status.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x9a8920",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xded30",
+      "text": "package:rodzic/widgets/font_size_scaler.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x9a8a10",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xdf527",
+      "text": "SESSION: Zmiana trybu widoku na: ",
+      "encoding": "latin1",
+      "ios_offset": "0x9a9b20",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xe0455",
+      "text": "PendingPollGate",
+      "encoding": "latin1",
+      "ios_offset": "0x9abc90",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xe0c9b",
+      "text": "STATE: Aktywne konto: ",
+      "encoding": "latin1",
+      "ios_offset": "0x9acdb0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xe2f9a",
+      "text": "AUTH: Konto usunięte, sejf i cache konta wyczyszczone.",
+      "encoding": "utf-16le",
+      "ios_offset": "0x9b1990",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xe344a",
+      "text": "numberOfCameras",
+      "encoding": "latin1",
+      "ios_offset": "0x9b23e0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xe3b20",
+      "text": "homework-status",
+      "encoding": "latin1",
+      "ios_offset": "0x9b3350",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xe49cb",
+      "text": "Błąd: Nie przekazano danych oceny.",
+      "encoding": "utf-16le",
+      "ios_offset": "0x9b5090",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xe4a12",
+      "text": "/api/unreadMessages",
+      "encoding": "latin1",
+      "ios_offset": "0x9b5160",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xe4b88",
+      "text": "package:rodzic/widgets/reprimand_detail_card.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x9b54d0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xe4efc",
+      "text": "/api/messages/receivers",
+      "encoding": "latin1",
+      "ios_offset": "0x9b5a70",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xe56f9",
+      "text": "RotatedPreview.fromCameraDirection",
+      "encoding": "latin1",
+      "ios_offset": "0x9b6a90",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xe5aef",
+      "text": "MAIL SSO: Wywołuję: ",
+      "encoding": "utf-16le",
+      "ios_offset": "0x9b7340",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xe67d3",
+      "text": "CACHE: wyczyszczono cache konta ",
+      "encoding": "latin1",
+      "ios_offset": "0x9b9270",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xe70ce",
+      "text": "package:rodzic/screens/attendance_screen.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x9ba620",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xe7101",
+      "text": "Zakres (tygodnie wstecz)",
+      "encoding": "latin1",
+      "ios_offset": "0x9ba680",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xe88f9",
+      "text": "package:rodzic/widgets/attachment_picker.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x9bdd20",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xe8ab2",
+      "text": "messaging_url",
+      "encoding": "latin1",
+      "ios_offset": "0x9bdff0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xe8b6a",
+      "text": "package:rodzic/widgets/marks_switcher.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x9be1f0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xe9250",
+      "text": "package:rodzic/models/dashboard_element.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x9bf280",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xe9599",
+      "text": "package:rodzic/services/app_config.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x9bf980",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xea127",
+      "text": "package:rodzic/theme/style_contract.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x9c1440",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xea18c",
+      "text": "Announcement.fromJson",
+      "encoding": "latin1",
+      "ios_offset": "0x9c14b0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xea7ca",
+      "text": "MAIL REPO BŁĄD (sendMessage): ",
+      "encoding": "utf-16le",
+      "ios_offset": "0x9c2320",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xea9c1",
+      "text": "package:rodzic/providers/reprimands_provider.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x9c2730",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xeab5d",
+      "text": "package:rodzic/app_router.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x9c2a60",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xead8b",
+      "text": "CACHE: wyczyszczono cały cache (",
+      "encoding": "utf-16le",
+      "ios_offset": "0x9c2fb0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xeb226",
+      "text": "Tryb wysokiego kontrastu (WCAG)",
+      "encoding": "latin1",
+      "ios_offset": "0x9c3a00",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xebdb3",
+      "text": "package:rodzic/providers/justifications_provider.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x9c57f0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xebf0a",
+      "text": "package:rodzic/theme/skin_standard.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x9c5b30",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xec17f",
+      "text": "auth_school_code",
+      "encoding": "latin1",
+      "ios_offset": "0x9c60a0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xed14d",
+      "text": "package:rodzic/widgets/reprimand_tile.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x9c8300",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xee83d",
+      "text": "package:rodzic/widgets/voting_section.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x9cb3e0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xeedcc",
+      "text": "package:rodzic/widgets/mark_box.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x9cc090",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xeee8d",
+      "text": "Oceny okresowe",
+      "encoding": "latin1",
+      "ios_offset": "0x9cc210",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xef5a3",
+      "text": "init:homeworkSession",
+      "encoding": "latin1",
+      "ios_offset": "0x9cd380",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xeff38",
+      "text": "captureTextFromCamera",
+      "encoding": "latin1",
+      "ios_offset": "0x9ceaa0",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xf06c6",
+      "text": "package:rodzic/services/auth_service.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x9cf940",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xf0c0c",
+      "text": "package:rodzic/models/exam.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x9d0510",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xf115f",
+      "text": "package:rodzic/widgets/dashboard_tile_factory.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x9d1170",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xf18e1",
+      "text": "state_last_pupil_id",
+      "encoding": "latin1",
+      "ios_offset": "0x9d2230",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xf18f9",
+      "text": "package:rodzic/providers/timetable_provider.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x9d2280",
+      "match": "exact literal with compact length/encoding marker"
+    },
+    {
+      "offset": "0xf1ea3",
+      "text": "package:rodzic/models/subject.dart",
+      "encoding": "latin1",
+      "ios_offset": "0x9d2fd0",
+      "match": "exact literal with compact length/encoding marker"
+    }
+  ],
+  "not_exactly_found_in_android": [
+    {
+      "text": "_submitVote@1329457408",
+      "ios_offset": "0x837740"
+    },
+    {
+      "text": "_requestCameraPermission@1099276255",
+      "ios_offset": "0x8586e0"
+    },
+    {
+      "text": "Wersja 3.1.7 (build 116, d20dd8d)",
+      "ios_offset": "0x879de0"
+    },
+    {
+      "text": "sendAnnouncement",
+      "ios_offset": "0x90c0c0"
+    },
+    {
+      "text": "_toggleArchive@1216425715",
+      "ios_offset": "0x911170"
+    },
+    {
+      "text": "_VotingSectionState@1329457408",
+      "ios_offset": "0x919e60"
+    },
+    {
+      "text": "_YoutubeEmbedState@1330381673",
+      "ios_offset": "0x93d5f0"
+    },
+    {
+      "text": "_gallery@1299258618",
+      "ios_offset": "0x951000"
+    },
+    {
+      "text": "dev.flutter.pigeon.image_picker_ios.ImagePickerApi.pickImage",
+      "ios_offset": "0x965ee0"
+    },
+    {
+      "text": "_pickImageAsPath@701271794",
+      "ios_offset": "0x9c2da0"
+    },
+    {
+      "text": "_pickFilesInternal@784458620",
+      "ios_offset": "0x9c4130"
+    },
+    {
+      "text": "_toggleArchive@1215499325",
+      "ios_offset": "0x9c97d0"
+    }
+  ],
+  "private_symbol_variants": [
+    {
+      "ios_text": "_submitVote@1329457408",
+      "android_text": "_submitVote@1339457408",
+      "offset": "0x3f16b",
+      "basis": "private symbol numeric suffix differs; behavior not compared"
+    },
+    {
+      "ios_text": "_requestCameraPermission@1099276255",
+      "android_text": "_requestCameraPermission@1117276255",
+      "offset": "0x622b8",
+      "basis": "private symbol numeric suffix differs; behavior not compared"
+    },
+    {
+      "ios_text": "_toggleArchive@1216425715",
+      "android_text": "_toggleArchive@1226425715",
+      "offset": "0x3e561",
+      "basis": "private symbol numeric suffix differs; behavior not compared"
+    },
+    {
+      "ios_text": "_VotingSectionState@1329457408",
+      "android_text": "_VotingSectionState@1339457408",
+      "offset": "0x50d90",
+      "basis": "private symbol numeric suffix differs; behavior not compared"
+    },
+    {
+      "ios_text": "_YoutubeEmbedState@1330381673",
+      "android_text": "_YoutubeEmbedState@1340381673",
+      "offset": "0xd804b",
+      "basis": "private symbol numeric suffix differs; behavior not compared"
+    },
+    {
+      "ios_text": "_gallery@1299258618",
+      "android_text": "_gallery@1309258618",
+      "offset": "0x5c5b2",
+      "basis": "private symbol numeric suffix differs; behavior not compared"
+    },
+    {
+      "ios_text": "_pickFilesInternal@784458620",
+      "android_text": "_pickFilesInternal@712413841",
+      "offset": "0x564dc",
+      "basis": "private symbol numeric suffix differs; behavior not compared"
+    },
+    {
+      "ios_text": "_toggleArchive@1215499325",
+      "android_text": "_toggleArchive@1226425715",
+      "offset": "0x3e561",
+      "basis": "private symbol numeric suffix differs; behavior not compared"
+    }
+  ],
+  "limitations": [
+    "Partial serialized-snapshot scan, not a complete snapshot decoder",
+    "String/model identity does not prove execution, matching call graph, wire contracts or runtime parity",
+    "Missing literals may result from source revision, platform conditional compilation, symbols or encoding differences",
+    "Android source revision6f4e7b8 differs from iOSd20dd8d despite same marketed version/build"
+  ],
+  "full_app_owned_source_path_inventory": {
+    "android": [
+      {
+        "offset": "0x349a7",
+        "text": "package:rodzic/services/api/homeworks_api.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x36115",
+        "text": "package:rodzic/models/justification_record.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x395ae",
+        "text": "package:rodzic/theme/style_provider.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x39b01",
+        "text": "package:rodzic/screens/update_required_screen.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x3c0b2",
+        "text": "package:rodzic/screens/reprimands_screen.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x3cae8",
+        "text": "package:rodzic/repositories/notifications_repository.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x3d684",
+        "text": "package:rodzic/models/subject_marks.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x3fdb4",
+        "text": "package:rodzic/widgets/subject_summary_card.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x44532",
+        "text": "package:rodzic/repositories/announcements_repository.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x45b3c",
+        "text": "package:rodzic/theme/skin_amethyst.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x46f12",
+        "text": "package:rodzic/models/announcement.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x497e6",
+        "text": "package:rodzic/models/term_mark.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x4bd70",
+        "text": "package:rodzic/services/accounts_store.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x4d585",
+        "text": "package:rodzic/models/term.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x4e1e6",
+        "text": "package:rodzic/screens/settings_screen.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x4f77a",
+        "text": "package:rodzic/helpers/css_helper.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x4fd98",
+        "text": "package:rodzic/main.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x51836",
+        "text": "package:rodzic/screens/mail_screen.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x54006",
+        "text": "package:rodzic/repositories/attendance_repository.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x563c3",
+        "text": "package:rodzic/screens/mail_compose_screen.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x58430",
+        "text": "package:rodzic/repositories/homeworks_repository.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x58656",
+        "text": "package:rodzic/utils/school_code.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x59c50",
+        "text": "package:rodzic/providers/mail_provider.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x5a08c",
+        "text": "package:rodzic/services/cache/fcm_invalidation.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x5b6ff",
+        "text": "package:rodzic/models/account.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x5b9a9",
+        "text": "package:rodzic/services/module_session.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x5c6e5",
+        "text": "package:rodzic/screens/justifications_screen.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x5e78b",
+        "text": "package:rodzic/widgets/upload_retry.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x61352",
+        "text": "package:rodzic/services/api/mail_api.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x618d8",
+        "text": "package:rodzic/screens/reprimand_detail_screen.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x62054",
+        "text": "package:rodzic/widgets/homework_solution_section.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x624d4",
+        "text": "package:rodzic/models/reprimand.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x65feb",
+        "text": "package:rodzic/theme/skin_high_contrast.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x66fd7",
+        "text": "package:rodzic/services/api/app_api.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x683ba",
+        "text": "package:rodzic/widgets/mark_tile.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x6e790",
+        "text": "package:rodzic/models/mail_message.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x6fe0a",
+        "text": "package:rodzic/screens/subject_details_screen.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x7097d",
+        "text": "package:rodzic/models/dashboard_attendance.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x72d2e",
+        "text": "package:rodzic/models/justify_event.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x756b3",
+        "text": "package:rodzic/widgets/announcement_tile.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x76517",
+        "text": "package:rodzic/services/mail_session.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x766e5",
+        "text": "package:rodzic/widgets/app_html_factory.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x76a0d",
+        "text": "package:rodzic/helpers/day_columns.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x7c186",
+        "text": "package:rodzic/models/picked_file.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x7c322",
+        "text": "package:rodzic/services/cache/app_cache.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x7e130",
+        "text": "package:rodzic/providers/homeworks_provider.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x7e5af",
+        "text": "package:rodzic/repositories/reprimands_repository.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x7f86b",
+        "text": "package:rodzic/providers/announcements_provider.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x812bf",
+        "text": "package:rodzic/widgets/exam_tile.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x83ba6",
+        "text": "package:rodzic/widgets/side_menu.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x8bc13",
+        "text": "package:rodzic/widgets/mark_detail_card.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x8d910",
+        "text": "package:rodzic/services/pending_poll_gate.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x8f133",
+        "text": "package:rodzic/widgets/sub_bar.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x8f2a1",
+        "text": "package:rodzic/helpers/text_html.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x8fe04",
+        "text": "package:rodzic/shell/app_shell.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x9006b",
+        "text": "package:rodzic/widgets/event_tile.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x92ffc",
+        "text": "package:rodzic/providers/notifications_provider.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x9387d",
+        "text": "package:rodzic/widgets/announcement_detail_card.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x94117",
+        "text": "package:rodzic/models/pupil.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x9426c",
+        "text": "package:rodzic/screens/homework_detail_screen.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x9466a",
+        "text": "package:rodzic/screens/dashboard_screen.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x9471a",
+        "text": "package:rodzic/repositories/justifications_repository.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x95111",
+        "text": "package:rodzic/services/fcm_service.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x98a6d",
+        "text": "package:rodzic/widgets/day_view.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x99128",
+        "text": "package:rodzic/services/cache/cached_result.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x99977",
+        "text": "package:rodzic/models/attendance_data.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x99eaa",
+        "text": "package:rodzic/screens/announcement_detail_screen.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x9c1f7",
+        "text": "package:rodzic/helpers/date_helper.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x9c465",
+        "text": "package:rodzic/services/cache/cache_invalidation.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x9d151",
+        "text": "package:rodzic/widgets/homework_detail_card.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x9d610",
+        "text": "package:rodzic/widgets/top_bar.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x9dc9f",
+        "text": "package:rodzic/screens/mail_detail_screen.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x9e8e0",
+        "text": "package:rodzic/screens/mark_detail_screen.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xa0681",
+        "text": "package:rodzic/widgets/bottom_nav.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xa0d8d",
+        "text": "package:rodzic/models/mark.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xa2039",
+        "text": "package:rodzic/screens/justification_compose_screen.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xa2cee",
+        "text": "package:rodzic/build_stamp.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xa69cf",
+        "text": "package:rodzic/repositories/dashboard_repository.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xa9c11",
+        "text": "package:rodzic/services/api/api_envelope.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xac229",
+        "text": "package:rodzic/screens/homeworks_screen.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xaeb21",
+        "text": "package:rodzic/models/homework.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xaef7d",
+        "text": "package:rodzic/screens/qr_scan_screen.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xafc10",
+        "text": "package:rodzic/screens/timetable_screen.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xb22fc",
+        "text": "package:rodzic/theme/app_features.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xb357b",
+        "text": "package:rodzic/screens/announcements_screen.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xb37b6",
+        "text": "package:rodzic/widgets/day_picker.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xb4a15",
+        "text": "package:rodzic/screens/exam_detail_screen.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xb57d5",
+        "text": "package:rodzic/models/mail_recipient.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xb8b57",
+        "text": "package:rodzic/models/notification_settings.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xb9a87",
+        "text": "package:rodzic/providers/marks_provider.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xbb78a",
+        "text": "package:rodzic/theme/skin_pastel.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xbfe26",
+        "text": "package:rodzic/providers/exams_provider.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xc3083",
+        "text": "package:rodzic/widgets/homework_tile.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xc42d7",
+        "text": "package:rodzic/widgets/subject_marks_card.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xc4810",
+        "text": "package:rodzic/screens/timetable_event_detail_screen.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xc4a1a",
+        "text": "package:rodzic/widgets/exam_detail_card.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xc597e",
+        "text": "package:rodzic/services/api/api_exceptions.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xc848f",
+        "text": "package:rodzic/repositories/marks_repository.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xc8895",
+        "text": "package:rodzic/widgets/attendance_dashboard_tile.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xc9e79",
+        "text": "package:rodzic/screens/homework_answer_screen.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xcb467",
+        "text": "package:rodzic/services/session.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xcc68d",
+        "text": "package:rodzic/repositories/timetable_repository.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xcde94",
+        "text": "package:rodzic/repositories/mail_repository.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xcf4f2",
+        "text": "package:rodzic/screens/notifications_screen.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xd0594",
+        "text": "package:rodzic/services/log.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xd20c9",
+        "text": "package:rodzic/widgets/youtube_embed.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xd2d55",
+        "text": "package:rodzic/services/cache/cache_db.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xd3e80",
+        "text": "package:rodzic/providers/dashboard_provider.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xd53b9",
+        "text": "package:rodzic/screens/exams_screen.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xd5869",
+        "text": "package:rodzic/models/timetable_event.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xd5de2",
+        "text": "package:rodzic/state/app_state.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xd74b2",
+        "text": "package:rodzic/repositories/exams_repository.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xd9f65",
+        "text": "package:rodzic/widgets/timetable_event_detail_card.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xda751",
+        "text": "package:rodzic/providers/attendance_provider.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xdaf2f",
+        "text": "package:rodzic/screens/marks_screen.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xdcb66",
+        "text": "package:rodzic/widgets/offline_banner.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xdeccc",
+        "text": "package:rodzic/providers/data_status.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xded30",
+        "text": "package:rodzic/widgets/font_size_scaler.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xe4b88",
+        "text": "package:rodzic/widgets/reprimand_detail_card.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xe70ce",
+        "text": "package:rodzic/screens/attendance_screen.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xe88f9",
+        "text": "package:rodzic/widgets/attachment_picker.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xe8b6a",
+        "text": "package:rodzic/widgets/marks_switcher.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xe9250",
+        "text": "package:rodzic/models/dashboard_element.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xe9599",
+        "text": "package:rodzic/services/app_config.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xea127",
+        "text": "package:rodzic/theme/style_contract.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xea9c1",
+        "text": "package:rodzic/providers/reprimands_provider.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xeab5d",
+        "text": "package:rodzic/app_router.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xebdb3",
+        "text": "package:rodzic/providers/justifications_provider.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xebf0a",
+        "text": "package:rodzic/theme/skin_standard.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xed14d",
+        "text": "package:rodzic/widgets/reprimand_tile.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xee83d",
+        "text": "package:rodzic/widgets/voting_section.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xeedcc",
+        "text": "package:rodzic/widgets/mark_box.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xf06c6",
+        "text": "package:rodzic/services/auth_service.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xf0c0c",
+        "text": "package:rodzic/models/exam.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xf115f",
+        "text": "package:rodzic/widgets/dashboard_tile_factory.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xf18f9",
+        "text": "package:rodzic/providers/timetable_provider.dart",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xf1ea3",
+        "text": "package:rodzic/models/subject.dart",
+        "match": "exact compact length marker; candidate scan"
+      }
+    ],
+    "ios": [
+      {
+        "offset": "0x838240",
+        "object_offset": "0x838230",
+        "cid": 94,
+        "length": 46,
+        "text": "package:rodzic/services/api/homeworks_api.dart"
+      },
+      {
+        "offset": "0x83b4f0",
+        "object_offset": "0x83b4e0",
+        "cid": 94,
+        "length": 47,
+        "text": "package:rodzic/models/justification_record.dart"
+      },
+      {
+        "offset": "0x842a20",
+        "object_offset": "0x842a10",
+        "cid": 94,
+        "length": 40,
+        "text": "package:rodzic/theme/style_provider.dart"
+      },
+      {
+        "offset": "0x843630",
+        "object_offset": "0x843620",
+        "cid": 94,
+        "length": 50,
+        "text": "package:rodzic/screens/update_required_screen.dart"
+      },
+      {
+        "offset": "0x848a50",
+        "object_offset": "0x848a40",
+        "cid": 94,
+        "length": 45,
+        "text": "package:rodzic/screens/reprimands_screen.dart"
+      },
+      {
+        "offset": "0x84a020",
+        "object_offset": "0x84a010",
+        "cid": 94,
+        "length": 57,
+        "text": "package:rodzic/repositories/notifications_repository.dart"
+      },
+      {
+        "offset": "0x84b7d0",
+        "object_offset": "0x84b7c0",
+        "cid": 94,
+        "length": 40,
+        "text": "package:rodzic/models/subject_marks.dart"
+      },
+      {
+        "offset": "0x850a70",
+        "object_offset": "0x850a60",
+        "cid": 94,
+        "length": 48,
+        "text": "package:rodzic/widgets/subject_summary_card.dart"
+      },
+      {
+        "offset": "0x85a890",
+        "object_offset": "0x85a880",
+        "cid": 94,
+        "length": 57,
+        "text": "package:rodzic/repositories/announcements_repository.dart"
+      },
+      {
+        "offset": "0x85daa0",
+        "object_offset": "0x85da90",
+        "cid": 94,
+        "length": 39,
+        "text": "package:rodzic/theme/skin_amethyst.dart"
+      },
+      {
+        "offset": "0x860380",
+        "object_offset": "0x860370",
+        "cid": 94,
+        "length": 39,
+        "text": "package:rodzic/models/announcement.dart"
+      },
+      {
+        "offset": "0x8660c0",
+        "object_offset": "0x8660b0",
+        "cid": 94,
+        "length": 36,
+        "text": "package:rodzic/models/term_mark.dart"
+      },
+      {
+        "offset": "0x86b5e0",
+        "object_offset": "0x86b5d0",
+        "cid": 94,
+        "length": 43,
+        "text": "package:rodzic/services/accounts_store.dart"
+      },
+      {
+        "offset": "0x86eaf0",
+        "object_offset": "0x86eae0",
+        "cid": 94,
+        "length": 31,
+        "text": "package:rodzic/models/term.dart"
+      },
+      {
+        "offset": "0x870570",
+        "object_offset": "0x870560",
+        "cid": 94,
+        "length": 43,
+        "text": "package:rodzic/screens/settings_screen.dart"
+      },
+      {
+        "offset": "0x873480",
+        "object_offset": "0x873470",
+        "cid": 94,
+        "length": 38,
+        "text": "package:rodzic/helpers/css_helper.dart"
+      },
+      {
+        "offset": "0x874080",
+        "object_offset": "0x874070",
+        "cid": 94,
+        "length": 24,
+        "text": "package:rodzic/main.dart"
+      },
+      {
+        "offset": "0x877850",
+        "object_offset": "0x877840",
+        "cid": 94,
+        "length": 39,
+        "text": "package:rodzic/screens/mail_screen.dart"
+      },
+      {
+        "offset": "0x87d240",
+        "object_offset": "0x87d230",
+        "cid": 94,
+        "length": 54,
+        "text": "package:rodzic/repositories/attendance_repository.dart"
+      },
+      {
+        "offset": "0x882440",
+        "object_offset": "0x882430",
+        "cid": 94,
+        "length": 47,
+        "text": "package:rodzic/screens/mail_compose_screen.dart"
+      },
+      {
+        "offset": "0x886e40",
+        "object_offset": "0x886e30",
+        "cid": 94,
+        "length": 53,
+        "text": "package:rodzic/repositories/homeworks_repository.dart"
+      },
+      {
+        "offset": "0x887270",
+        "object_offset": "0x887260",
+        "cid": 94,
+        "length": 37,
+        "text": "package:rodzic/utils/school_code.dart"
+      },
+      {
+        "offset": "0x889ca0",
+        "object_offset": "0x889c90",
+        "cid": 94,
+        "length": 43,
+        "text": "package:rodzic/providers/mail_provider.dart"
+      },
+      {
+        "offset": "0x88a5b0",
+        "object_offset": "0x88a5a0",
+        "cid": 94,
+        "length": 51,
+        "text": "package:rodzic/services/cache/fcm_invalidation.dart"
+      },
+      {
+        "offset": "0x88d240",
+        "object_offset": "0x88d230",
+        "cid": 94,
+        "length": 34,
+        "text": "package:rodzic/models/account.dart"
+      },
+      {
+        "offset": "0x88d750",
+        "object_offset": "0x88d740",
+        "cid": 94,
+        "length": 43,
+        "text": "package:rodzic/services/module_session.dart"
+      },
+      {
+        "offset": "0x88f400",
+        "object_offset": "0x88f3f0",
+        "cid": 94,
+        "length": 49,
+        "text": "package:rodzic/screens/justifications_screen.dart"
+      },
+      {
+        "offset": "0x893e40",
+        "object_offset": "0x893e30",
+        "cid": 94,
+        "length": 40,
+        "text": "package:rodzic/widgets/upload_retry.dart"
+      },
+      {
+        "offset": "0x899940",
+        "object_offset": "0x899930",
+        "cid": 94,
+        "length": 41,
+        "text": "package:rodzic/services/api/mail_api.dart"
+      },
+      {
+        "offset": "0x89a6f0",
+        "object_offset": "0x89a6e0",
+        "cid": 94,
+        "length": 51,
+        "text": "package:rodzic/screens/reprimand_detail_screen.dart"
+      },
+      {
+        "offset": "0x89b980",
+        "object_offset": "0x89b970",
+        "cid": 94,
+        "length": 53,
+        "text": "package:rodzic/widgets/homework_solution_section.dart"
+      },
+      {
+        "offset": "0x89c4d0",
+        "object_offset": "0x89c4c0",
+        "cid": 94,
+        "length": 36,
+        "text": "package:rodzic/models/reprimand.dart"
+      },
+      {
+        "offset": "0x8a1490",
+        "object_offset": "0x8a1480",
+        "cid": 94,
+        "length": 44,
+        "text": "package:rodzic/theme/skin_high_contrast.dart"
+      },
+      {
+        "offset": "0x8a3a40",
+        "object_offset": "0x8a3a30",
+        "cid": 94,
+        "length": 40,
+        "text": "package:rodzic/services/api/app_api.dart"
+      },
+      {
+        "offset": "0x8a6b30",
+        "object_offset": "0x8a6b20",
+        "cid": 94,
+        "length": 37,
+        "text": "package:rodzic/widgets/mark_tile.dart"
+      },
+      {
+        "offset": "0x8b0930",
+        "object_offset": "0x8b0920",
+        "cid": 94,
+        "length": 39,
+        "text": "package:rodzic/models/mail_message.dart"
+      },
+      {
+        "offset": "0x8b3bc0",
+        "object_offset": "0x8b3bb0",
+        "cid": 94,
+        "length": 50,
+        "text": "package:rodzic/screens/subject_details_screen.dart"
+      },
+      {
+        "offset": "0x8b5300",
+        "object_offset": "0x8b52f0",
+        "cid": 94,
+        "length": 47,
+        "text": "package:rodzic/models/dashboard_attendance.dart"
+      },
+      {
+        "offset": "0x8ba330",
+        "object_offset": "0x8ba320",
+        "cid": 94,
+        "length": 40,
+        "text": "package:rodzic/models/justify_event.dart"
+      },
+      {
+        "offset": "0x8bffa0",
+        "object_offset": "0x8bff90",
+        "cid": 94,
+        "length": 45,
+        "text": "package:rodzic/widgets/announcement_tile.dart"
+      },
+      {
+        "offset": "0x8c1eb0",
+        "object_offset": "0x8c1ea0",
+        "cid": 94,
+        "length": 41,
+        "text": "package:rodzic/services/mail_session.dart"
+      },
+      {
+        "offset": "0x8c21d0",
+        "object_offset": "0x8c21c0",
+        "cid": 94,
+        "length": 44,
+        "text": "package:rodzic/widgets/app_html_factory.dart"
+      },
+      {
+        "offset": "0x8c29b0",
+        "object_offset": "0x8c29a0",
+        "cid": 94,
+        "length": 39,
+        "text": "package:rodzic/helpers/day_columns.dart"
+      },
+      {
+        "offset": "0x8cf100",
+        "object_offset": "0x8cf0f0",
+        "cid": 94,
+        "length": 38,
+        "text": "package:rodzic/models/picked_file.dart"
+      },
+      {
+        "offset": "0x8cf4d0",
+        "object_offset": "0x8cf4c0",
+        "cid": 94,
+        "length": 44,
+        "text": "package:rodzic/services/cache/app_cache.dart"
+      },
+      {
+        "offset": "0x8d38d0",
+        "object_offset": "0x8d38c0",
+        "cid": 94,
+        "length": 48,
+        "text": "package:rodzic/providers/homeworks_provider.dart"
+      },
+      {
+        "offset": "0x8d41c0",
+        "object_offset": "0x8d41b0",
+        "cid": 94,
+        "length": 54,
+        "text": "package:rodzic/repositories/reprimands_repository.dart"
+      },
+      {
+        "offset": "0x8d6b70",
+        "object_offset": "0x8d6b60",
+        "cid": 94,
+        "length": 52,
+        "text": "package:rodzic/providers/announcements_provider.dart"
+      },
+      {
+        "offset": "0x8da9c0",
+        "object_offset": "0x8da9b0",
+        "cid": 94,
+        "length": 37,
+        "text": "package:rodzic/widgets/exam_tile.dart"
+      },
+      {
+        "offset": "0x8e0180",
+        "object_offset": "0x8e0170",
+        "cid": 94,
+        "length": 37,
+        "text": "package:rodzic/widgets/side_menu.dart"
+      },
+      {
+        "offset": "0x8f1cf0",
+        "object_offset": "0x8f1ce0",
+        "cid": 94,
+        "length": 44,
+        "text": "package:rodzic/widgets/mark_detail_card.dart"
+      },
+      {
+        "offset": "0x8f5f30",
+        "object_offset": "0x8f5f20",
+        "cid": 94,
+        "length": 46,
+        "text": "package:rodzic/services/pending_poll_gate.dart"
+      },
+      {
+        "offset": "0x8f9740",
+        "object_offset": "0x8f9730",
+        "cid": 94,
+        "length": 35,
+        "text": "package:rodzic/widgets/sub_bar.dart"
+      },
+      {
+        "offset": "0x8f9a70",
+        "object_offset": "0x8f9a60",
+        "cid": 94,
+        "length": 37,
+        "text": "package:rodzic/helpers/text_html.dart"
+      },
+      {
+        "offset": "0x8fb0f0",
+        "object_offset": "0x8fb0e0",
+        "cid": 94,
+        "length": 35,
+        "text": "package:rodzic/shell/app_shell.dart"
+      },
+      {
+        "offset": "0x8fb670",
+        "object_offset": "0x8fb660",
+        "cid": 94,
+        "length": 38,
+        "text": "package:rodzic/widgets/event_tile.dart"
+      },
+      {
+        "offset": "0x901f70",
+        "object_offset": "0x901f60",
+        "cid": 94,
+        "length": 52,
+        "text": "package:rodzic/providers/notifications_provider.dart"
+      },
+      {
+        "offset": "0x903110",
+        "object_offset": "0x903100",
+        "cid": 94,
+        "length": 52,
+        "text": "package:rodzic/widgets/announcement_detail_card.dart"
+      },
+      {
+        "offset": "0x9043e0",
+        "object_offset": "0x9043d0",
+        "cid": 94,
+        "length": 32,
+        "text": "package:rodzic/models/pupil.dart"
+      },
+      {
+        "offset": "0x904600",
+        "object_offset": "0x9045f0",
+        "cid": 94,
+        "length": 50,
+        "text": "package:rodzic/screens/homework_detail_screen.dart"
+      },
+      {
+        "offset": "0x905010",
+        "object_offset": "0x905000",
+        "cid": 94,
+        "length": 44,
+        "text": "package:rodzic/screens/dashboard_screen.dart"
+      },
+      {
+        "offset": "0x9051a0",
+        "object_offset": "0x905190",
+        "cid": 94,
+        "length": 58,
+        "text": "package:rodzic/repositories/justifications_repository.dart"
+      },
+      {
+        "offset": "0x9065c0",
+        "object_offset": "0x9065b0",
+        "cid": 94,
+        "length": 40,
+        "text": "package:rodzic/services/fcm_service.dart"
+      },
+      {
+        "offset": "0x90e890",
+        "object_offset": "0x90e880",
+        "cid": 94,
+        "length": 36,
+        "text": "package:rodzic/widgets/day_view.dart"
+      },
+      {
+        "offset": "0x90f6c0",
+        "object_offset": "0x90f6b0",
+        "cid": 94,
+        "length": 48,
+        "text": "package:rodzic/services/cache/cached_result.dart"
+      },
+      {
+        "offset": "0x910950",
+        "object_offset": "0x910940",
+        "cid": 94,
+        "length": 42,
+        "text": "package:rodzic/models/attendance_data.dart"
+      },
+      {
+        "offset": "0x911490",
+        "object_offset": "0x911480",
+        "cid": 94,
+        "length": 54,
+        "text": "package:rodzic/screens/announcement_detail_screen.dart"
+      },
+      {
+        "offset": "0x916740",
+        "object_offset": "0x916730",
+        "cid": 94,
+        "length": 39,
+        "text": "package:rodzic/helpers/date_helper.dart"
+      },
+      {
+        "offset": "0x916cd0",
+        "object_offset": "0x916cc0",
+        "cid": 94,
+        "length": 53,
+        "text": "package:rodzic/services/cache/cache_invalidation.dart"
+      },
+      {
+        "offset": "0x918aa0",
+        "object_offset": "0x918a90",
+        "cid": 94,
+        "length": 48,
+        "text": "package:rodzic/widgets/homework_detail_card.dart"
+      },
+      {
+        "offset": "0x919450",
+        "object_offset": "0x919440",
+        "cid": 94,
+        "length": 35,
+        "text": "package:rodzic/widgets/top_bar.dart"
+      },
+      {
+        "offset": "0x91a250",
+        "object_offset": "0x91a240",
+        "cid": 94,
+        "length": 46,
+        "text": "package:rodzic/screens/mail_detail_screen.dart"
+      },
+      {
+        "offset": "0x91bbf0",
+        "object_offset": "0x91bbe0",
+        "cid": 94,
+        "length": 46,
+        "text": "package:rodzic/screens/mark_detail_screen.dart"
+      },
+      {
+        "offset": "0x920010",
+        "object_offset": "0x920000",
+        "cid": 94,
+        "length": 38,
+        "text": "package:rodzic/widgets/bottom_nav.dart"
+      },
+      {
+        "offset": "0x920c60",
+        "object_offset": "0x920c50",
+        "cid": 94,
+        "length": 31,
+        "text": "package:rodzic/models/mark.dart"
+      },
+      {
+        "offset": "0x9233f0",
+        "object_offset": "0x9233e0",
+        "cid": 94,
+        "length": 56,
+        "text": "package:rodzic/screens/justification_compose_screen.dart"
+      },
+      {
+        "offset": "0x924e90",
+        "object_offset": "0x924e80",
+        "cid": 94,
+        "length": 31,
+        "text": "package:rodzic/build_stamp.dart"
+      },
+      {
+        "offset": "0x92d350",
+        "object_offset": "0x92d340",
+        "cid": 94,
+        "length": 53,
+        "text": "package:rodzic/repositories/dashboard_repository.dart"
+      },
+      {
+        "offset": "0x933da0",
+        "object_offset": "0x933d90",
+        "cid": 94,
+        "length": 45,
+        "text": "package:rodzic/services/api/api_envelope.dart"
+      },
+      {
+        "offset": "0x939190",
+        "object_offset": "0x939180",
+        "cid": 94,
+        "length": 44,
+        "text": "package:rodzic/screens/homeworks_screen.dart"
+      },
+      {
+        "offset": "0x93eef0",
+        "object_offset": "0x93eee0",
+        "cid": 94,
+        "length": 35,
+        "text": "package:rodzic/models/homework.dart"
+      },
+      {
+        "offset": "0x93f9a0",
+        "object_offset": "0x93f990",
+        "cid": 94,
+        "length": 42,
+        "text": "package:rodzic/screens/qr_scan_screen.dart"
+      },
+      {
+        "offset": "0x9416e0",
+        "object_offset": "0x9416d0",
+        "cid": 94,
+        "length": 44,
+        "text": "package:rodzic/screens/timetable_screen.dart"
+      },
+      {
+        "offset": "0x946b90",
+        "object_offset": "0x946b80",
+        "cid": 94,
+        "length": 38,
+        "text": "package:rodzic/theme/app_features.dart"
+      },
+      {
+        "offset": "0x949550",
+        "object_offset": "0x949540",
+        "cid": 94,
+        "length": 48,
+        "text": "package:rodzic/screens/announcements_screen.dart"
+      },
+      {
+        "offset": "0x949a00",
+        "object_offset": "0x9499f0",
+        "cid": 94,
+        "length": 38,
+        "text": "package:rodzic/widgets/day_picker.dart"
+      },
+      {
+        "offset": "0x94c340",
+        "object_offset": "0x94c330",
+        "cid": 94,
+        "length": 46,
+        "text": "package:rodzic/screens/exam_detail_screen.dart"
+      },
+      {
+        "offset": "0x94dd80",
+        "object_offset": "0x94dd70",
+        "cid": 94,
+        "length": 41,
+        "text": "package:rodzic/models/mail_recipient.dart"
+      },
+      {
+        "offset": "0x955520",
+        "object_offset": "0x955510",
+        "cid": 94,
+        "length": 48,
+        "text": "package:rodzic/models/notification_settings.dart"
+      },
+      {
+        "offset": "0x957700",
+        "object_offset": "0x9576f0",
+        "cid": 94,
+        "length": 44,
+        "text": "package:rodzic/providers/marks_provider.dart"
+      },
+      {
+        "offset": "0x95b8a0",
+        "object_offset": "0x95b890",
+        "cid": 94,
+        "length": 37,
+        "text": "package:rodzic/theme/skin_pastel.dart"
+      },
+      {
+        "offset": "0x964900",
+        "object_offset": "0x9648f0",
+        "cid": 94,
+        "length": 44,
+        "text": "package:rodzic/providers/exams_provider.dart"
+      },
+      {
+        "offset": "0x96bab0",
+        "object_offset": "0x96baa0",
+        "cid": 94,
+        "length": 41,
+        "text": "package:rodzic/widgets/homework_tile.dart"
+      },
+      {
+        "offset": "0x96e3c0",
+        "object_offset": "0x96e3b0",
+        "cid": 94,
+        "length": 46,
+        "text": "package:rodzic/widgets/subject_marks_card.dart"
+      },
+      {
+        "offset": "0x96ee80",
+        "object_offset": "0x96ee70",
+        "cid": 94,
+        "length": 57,
+        "text": "package:rodzic/screens/timetable_event_detail_screen.dart"
+      },
+      {
+        "offset": "0x96f380",
+        "object_offset": "0x96f370",
+        "cid": 94,
+        "length": 44,
+        "text": "package:rodzic/widgets/exam_detail_card.dart"
+      },
+      {
+        "offset": "0x9717d0",
+        "object_offset": "0x9717c0",
+        "cid": 94,
+        "length": 47,
+        "text": "package:rodzic/services/api/api_exceptions.dart"
+      },
+      {
+        "offset": "0x977760",
+        "object_offset": "0x977750",
+        "cid": 94,
+        "length": 49,
+        "text": "package:rodzic/repositories/marks_repository.dart"
+      },
+      {
+        "offset": "0x977fa0",
+        "object_offset": "0x977f90",
+        "cid": 94,
+        "length": 53,
+        "text": "package:rodzic/widgets/attendance_dashboard_tile.dart"
+      },
+      {
+        "offset": "0x97b460",
+        "object_offset": "0x97b450",
+        "cid": 94,
+        "length": 50,
+        "text": "package:rodzic/screens/homework_answer_screen.dart"
+      },
+      {
+        "offset": "0x97e3a0",
+        "object_offset": "0x97e390",
+        "cid": 94,
+        "length": 36,
+        "text": "package:rodzic/services/session.dart"
+      },
+      {
+        "offset": "0x980cf0",
+        "object_offset": "0x980ce0",
+        "cid": 94,
+        "length": 53,
+        "text": "package:rodzic/repositories/timetable_repository.dart"
+      },
+      {
+        "offset": "0x984520",
+        "object_offset": "0x984510",
+        "cid": 94,
+        "length": 48,
+        "text": "package:rodzic/repositories/mail_repository.dart"
+      },
+      {
+        "offset": "0x987410",
+        "object_offset": "0x987400",
+        "cid": 94,
+        "length": 48,
+        "text": "package:rodzic/screens/notifications_screen.dart"
+      },
+      {
+        "offset": "0x989910",
+        "object_offset": "0x989900",
+        "cid": 94,
+        "length": 32,
+        "text": "package:rodzic/services/log.dart"
+      },
+      {
+        "offset": "0x98c970",
+        "object_offset": "0x98c960",
+        "cid": 94,
+        "length": 41,
+        "text": "package:rodzic/widgets/youtube_embed.dart"
+      },
+      {
+        "offset": "0x98e420",
+        "object_offset": "0x98e410",
+        "cid": 94,
+        "length": 43,
+        "text": "package:rodzic/services/cache/cache_db.dart"
+      },
+      {
+        "offset": "0x990aa0",
+        "object_offset": "0x990a90",
+        "cid": 94,
+        "length": 48,
+        "text": "package:rodzic/providers/dashboard_provider.dart"
+      },
+      {
+        "offset": "0x993990",
+        "object_offset": "0x993980",
+        "cid": 94,
+        "length": 40,
+        "text": "package:rodzic/screens/exams_screen.dart"
+      },
+      {
+        "offset": "0x9943a0",
+        "object_offset": "0x994390",
+        "cid": 94,
+        "length": 42,
+        "text": "package:rodzic/models/timetable_event.dart"
+      },
+      {
+        "offset": "0x9950b0",
+        "object_offset": "0x9950a0",
+        "cid": 94,
+        "length": 35,
+        "text": "package:rodzic/state/app_state.dart"
+      },
+      {
+        "offset": "0x998150",
+        "object_offset": "0x998140",
+        "cid": 94,
+        "length": 49,
+        "text": "package:rodzic/repositories/exams_repository.dart"
+      },
+      {
+        "offset": "0x99dc60",
+        "object_offset": "0x99dc50",
+        "cid": 94,
+        "length": 55,
+        "text": "package:rodzic/widgets/timetable_event_detail_card.dart"
+      },
+      {
+        "offset": "0x99ed40",
+        "object_offset": "0x99ed30",
+        "cid": 94,
+        "length": 49,
+        "text": "package:rodzic/providers/attendance_provider.dart"
+      },
+      {
+        "offset": "0x99ff50",
+        "object_offset": "0x99ff40",
+        "cid": 94,
+        "length": 40,
+        "text": "package:rodzic/screens/marks_screen.dart"
+      },
+      {
+        "offset": "0x9a3dd0",
+        "object_offset": "0x9a3dc0",
+        "cid": 94,
+        "length": 42,
+        "text": "package:rodzic/widgets/offline_banner.dart"
+      },
+      {
+        "offset": "0x9a8920",
+        "object_offset": "0x9a8910",
+        "cid": 94,
+        "length": 41,
+        "text": "package:rodzic/providers/data_status.dart"
+      },
+      {
+        "offset": "0x9a8a10",
+        "object_offset": "0x9a8a00",
+        "cid": 94,
+        "length": 44,
+        "text": "package:rodzic/widgets/font_size_scaler.dart"
+      },
+      {
+        "offset": "0x9b54d0",
+        "object_offset": "0x9b54c0",
+        "cid": 94,
+        "length": 49,
+        "text": "package:rodzic/widgets/reprimand_detail_card.dart"
+      },
+      {
+        "offset": "0x9ba620",
+        "object_offset": "0x9ba610",
+        "cid": 94,
+        "length": 45,
+        "text": "package:rodzic/screens/attendance_screen.dart"
+      },
+      {
+        "offset": "0x9bdd20",
+        "object_offset": "0x9bdd10",
+        "cid": 94,
+        "length": 45,
+        "text": "package:rodzic/widgets/attachment_picker.dart"
+      },
+      {
+        "offset": "0x9be1f0",
+        "object_offset": "0x9be1e0",
+        "cid": 94,
+        "length": 42,
+        "text": "package:rodzic/widgets/marks_switcher.dart"
+      },
+      {
+        "offset": "0x9bf280",
+        "object_offset": "0x9bf270",
+        "cid": 94,
+        "length": 44,
+        "text": "package:rodzic/models/dashboard_element.dart"
+      },
+      {
+        "offset": "0x9bf980",
+        "object_offset": "0x9bf970",
+        "cid": 94,
+        "length": 39,
+        "text": "package:rodzic/services/app_config.dart"
+      },
+      {
+        "offset": "0x9c1440",
+        "object_offset": "0x9c1430",
+        "cid": 94,
+        "length": 40,
+        "text": "package:rodzic/theme/style_contract.dart"
+      },
+      {
+        "offset": "0x9c2730",
+        "object_offset": "0x9c2720",
+        "cid": 94,
+        "length": 49,
+        "text": "package:rodzic/providers/reprimands_provider.dart"
+      },
+      {
+        "offset": "0x9c2a60",
+        "object_offset": "0x9c2a50",
+        "cid": 94,
+        "length": 30,
+        "text": "package:rodzic/app_router.dart"
+      },
+      {
+        "offset": "0x9c57f0",
+        "object_offset": "0x9c57e0",
+        "cid": 94,
+        "length": 53,
+        "text": "package:rodzic/providers/justifications_provider.dart"
+      },
+      {
+        "offset": "0x9c5b30",
+        "object_offset": "0x9c5b20",
+        "cid": 94,
+        "length": 39,
+        "text": "package:rodzic/theme/skin_standard.dart"
+      },
+      {
+        "offset": "0x9c8300",
+        "object_offset": "0x9c82f0",
+        "cid": 94,
+        "length": 42,
+        "text": "package:rodzic/widgets/reprimand_tile.dart"
+      },
+      {
+        "offset": "0x9cb3e0",
+        "object_offset": "0x9cb3d0",
+        "cid": 94,
+        "length": 42,
+        "text": "package:rodzic/widgets/voting_section.dart"
+      },
+      {
+        "offset": "0x9cc090",
+        "object_offset": "0x9cc080",
+        "cid": 94,
+        "length": 36,
+        "text": "package:rodzic/widgets/mark_box.dart"
+      },
+      {
+        "offset": "0x9cf940",
+        "object_offset": "0x9cf930",
+        "cid": 94,
+        "length": 41,
+        "text": "package:rodzic/services/auth_service.dart"
+      },
+      {
+        "offset": "0x9d0510",
+        "object_offset": "0x9d0500",
+        "cid": 94,
+        "length": 31,
+        "text": "package:rodzic/models/exam.dart"
+      },
+      {
+        "offset": "0x9d1170",
+        "object_offset": "0x9d1160",
+        "cid": 94,
+        "length": 50,
+        "text": "package:rodzic/widgets/dashboard_tile_factory.dart"
+      },
+      {
+        "offset": "0x9d2280",
+        "object_offset": "0x9d2270",
+        "cid": 94,
+        "length": 48,
+        "text": "package:rodzic/providers/timetable_provider.dart"
+      },
+      {
+        "offset": "0x9d2fd0",
+        "object_offset": "0x9d2fc0",
+        "cid": 94,
+        "length": 34,
+        "text": "package:rodzic/models/subject.dart"
+      }
+    ],
+    "android_only": [],
+    "ios_only": [],
+    "shared": 137,
+    "scope": "All exact package:rodzic/...dart candidate literals independently scanned in Android AOT versus full iOS structured-string set"
+  },
+  "full_path_literal_inventory": {
+    "android": [
+      {
+        "offset": "0x35bbb",
+        "text": "/api/messages/trash",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x3d814",
+        "text": "/account/ssov2/",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x3e85b",
+        "text": "/api/messages/",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x3f8a5",
+        "text": "/account/ssov2/<token>",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x4462e",
+        "text": "/mail",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x46bf7",
+        "text": "/justifications/compose",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x4795f",
+        "text": "/announcements/",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x4ba74",
+        "text": "/modules/api/refresh.php",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x4f17c",
+        "text": "/stared",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x4f64d",
+        "text": "/ID:",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x56d1c",
+        "text": "/timetable?",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x5893b",
+        "text": "/homeworks",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x5b753",
+        "text": "/..",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x5d0ee",
+        "text": "/justifications?pupil_id=",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x615c7",
+        "text": "/sso",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x62241",
+        "text": "/timetable",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x65db5",
+        "text": "/api/messages/important",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x79101",
+        "text": "/api/messages/inbox",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x7a03b",
+        "text": "/justifications",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x861a9",
+        "text": "/justifications/",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x91522",
+        "text": "/api/homeworks/",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x95566",
+        "text": "/announcements",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x978ba",
+        "text": "/dashboard",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x99b2c",
+        "text": "/mark/",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xa0974",
+        "text": "/api/messages/read/",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xa3905",
+        "text": "/api/messages/sent",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xadd57",
+        "text": "/attendance",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xaf09a",
+        "text": "/exams/",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xb0760",
+        "text": "/mail/detail",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xb5cea",
+        "text": "/timetable/details",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xb7f63",
+        "text": "/subject/",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xb8217",
+        "text": "/$",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xb8a7e",
+        "text": "/api/homeworks/datatable",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xbb542",
+        "text": "/?",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xbb6f3",
+        "text": "/api/messages/receivers/search",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xc100f",
+        "text": "/restore",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xc2706",
+        "text": "/<token>",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xc811a",
+        "text": "/modules/api/app.php",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xca51c",
+        "text": "/mail/compose",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xcb86a",
+        "text": "/modules/api/auth.php",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xcd637",
+        "text": "/marks",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xd2464",
+        "text": "/.",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xd2f2c",
+        "text": "/>",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xd5359",
+        "text": "/files",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xd8eda",
+        "text": "/api",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xd9673",
+        "text": "/reprimands",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xd99e0",
+        "text": "/api/messages",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xdb2b4",
+        "text": "/modules/api/qrlogin.php",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xdbb74",
+        "text": "/archive",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xe3051",
+        "text": "/homeworks/",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xe4a12",
+        "text": "/api/unreadMessages",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xe4efc",
+        "text": "/api/messages/receivers",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xe5288",
+        "text": "/reprimands/",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xe7f1a",
+        "text": "/notifications",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xe947e",
+        "text": "/app_cache.db",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xede57",
+        "text": "/settings",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xee007",
+        "text": "/marks/mark/",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xef08e",
+        "text": "/timetable?reset=1",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xf10d4",
+        "text": "//",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0xf1463",
+        "text": "/exams",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x352a01",
+        "text": "/Q",
+        "match": "exact compact length marker; candidate scan"
+      },
+      {
+        "offset": "0x3a5e7d",
+        "text": "/J",
+        "match": "exact compact length marker; candidate scan"
+      }
+    ],
+    "ios": [
+      {
+        "offset": "0x83ab40",
+        "object_offset": "0x83ab30",
+        "cid": 94,
+        "length": 19,
+        "text": "/api/messages/trash"
+      },
+      {
+        "offset": "0x84bb40",
+        "object_offset": "0x84bb30",
+        "cid": 94,
+        "length": 15,
+        "text": "/account/ssov2/"
+      },
+      {
+        "offset": "0x84de20",
+        "object_offset": "0x84de10",
+        "cid": 94,
+        "length": 14,
+        "text": "/api/messages/"
+      },
+      {
+        "offset": "0x84ff90",
+        "object_offset": "0x84ff80",
+        "cid": 94,
+        "length": 22,
+        "text": "/account/ssov2/<token>"
+      },
+      {
+        "offset": "0x85aaf0",
+        "object_offset": "0x85aae0",
+        "cid": 94,
+        "length": 5,
+        "text": "/mail"
+      },
+      {
+        "offset": "0x85fb20",
+        "object_offset": "0x85fb10",
+        "cid": 94,
+        "length": 23,
+        "text": "/justifications/compose"
+      },
+      {
+        "offset": "0x861b10",
+        "object_offset": "0x861b00",
+        "cid": 94,
+        "length": 15,
+        "text": "/announcements/"
+      },
+      {
+        "offset": "0x86ae50",
+        "object_offset": "0x86ae40",
+        "cid": 94,
+        "length": 24,
+        "text": "/modules/api/refresh.php"
+      },
+      {
+        "offset": "0x872650",
+        "object_offset": "0x872640",
+        "cid": 94,
+        "length": 7,
+        "text": "/stared"
+      },
+      {
+        "offset": "0x873230",
+        "object_offset": "0x873220",
+        "cid": 94,
+        "length": 4,
+        "text": "/ID:"
+      },
+      {
+        "offset": "0x8838d0",
+        "object_offset": "0x8838c0",
+        "cid": 94,
+        "length": 11,
+        "text": "/timetable?"
+      },
+      {
+        "offset": "0x887810",
+        "object_offset": "0x887800",
+        "cid": 94,
+        "length": 10,
+        "text": "/homeworks"
+      },
+      {
+        "offset": "0x88d2e0",
+        "object_offset": "0x88d2d0",
+        "cid": 94,
+        "length": 3,
+        "text": "/.."
+      },
+      {
+        "offset": "0x890b70",
+        "object_offset": "0x890b60",
+        "cid": 94,
+        "length": 25,
+        "text": "/justifications?pupil_id="
+      },
+      {
+        "offset": "0x899f20",
+        "object_offset": "0x899f10",
+        "cid": 94,
+        "length": 4,
+        "text": "/sso"
+      },
+      {
+        "offset": "0x89bf70",
+        "object_offset": "0x89bf60",
+        "cid": 94,
+        "length": 10,
+        "text": "/timetable"
+      },
+      {
+        "offset": "0x8a0fe0",
+        "object_offset": "0x8a0fd0",
+        "cid": 94,
+        "length": 23,
+        "text": "/api/messages/important"
+      },
+      {
+        "offset": "0x8c8150",
+        "object_offset": "0x8c8140",
+        "cid": 94,
+        "length": 19,
+        "text": "/api/messages/inbox"
+      },
+      {
+        "offset": "0x8ca630",
+        "object_offset": "0x8ca620",
+        "cid": 94,
+        "length": 15,
+        "text": "/justifications"
+      },
+      {
+        "offset": "0x8e56d0",
+        "object_offset": "0x8e56c0",
+        "cid": 94,
+        "length": 16,
+        "text": "/justifications/"
+      },
+      {
+        "offset": "0x8fe600",
+        "object_offset": "0x8fe5f0",
+        "cid": 94,
+        "length": 15,
+        "text": "/api/homeworks/"
+      },
+      {
+        "offset": "0x907220",
+        "object_offset": "0x907210",
+        "cid": 94,
+        "length": 14,
+        "text": "/announcements"
+      },
+      {
+        "offset": "0x90c2f0",
+        "object_offset": "0x90c2e0",
+        "cid": 94,
+        "length": 10,
+        "text": "/dashboard"
+      },
+      {
+        "offset": "0x910cc0",
+        "object_offset": "0x910cb0",
+        "cid": 94,
+        "length": 6,
+        "text": "/mark/"
+      },
+      {
+        "offset": "0x920420",
+        "object_offset": "0x920410",
+        "cid": 94,
+        "length": 19,
+        "text": "/api/messages/read/"
+      },
+      {
+        "offset": "0x926bd0",
+        "object_offset": "0x926bc0",
+        "cid": 94,
+        "length": 18,
+        "text": "/api/messages/sent"
+      },
+      {
+        "offset": "0x93d0b0",
+        "object_offset": "0x93d0a0",
+        "cid": 94,
+        "length": 11,
+        "text": "/attendance"
+      },
+      {
+        "offset": "0x93fc50",
+        "object_offset": "0x93fc40",
+        "cid": 94,
+        "length": 7,
+        "text": "/exams/"
+      },
+      {
+        "offset": "0x942860",
+        "object_offset": "0x942850",
+        "cid": 94,
+        "length": 58,
+        "text": "/System/Library/Frameworks/Foundation.framework/Foundation"
+      },
+      {
+        "offset": "0x943030",
+        "object_offset": "0x943020",
+        "cid": 94,
+        "length": 12,
+        "text": "/mail/detail"
+      },
+      {
+        "offset": "0x94e9d0",
+        "object_offset": "0x94e9c0",
+        "cid": 94,
+        "length": 18,
+        "text": "/timetable/details"
+      },
+      {
+        "offset": "0x953b10",
+        "object_offset": "0x953b00",
+        "cid": 94,
+        "length": 9,
+        "text": "/subject/"
+      },
+      {
+        "offset": "0x954250",
+        "object_offset": "0x954240",
+        "cid": 94,
+        "length": 2,
+        "text": "/$"
+      },
+      {
+        "offset": "0x955340",
+        "object_offset": "0x955330",
+        "cid": 94,
+        "length": 24,
+        "text": "/api/homeworks/datatable"
+      },
+      {
+        "offset": "0x95b240",
+        "object_offset": "0x95b230",
+        "cid": 94,
+        "length": 2,
+        "text": "/?"
+      },
+      {
+        "offset": "0x95b720",
+        "object_offset": "0x95b710",
+        "cid": 94,
+        "length": 30,
+        "text": "/api/messages/receivers/search"
+      },
+      {
+        "offset": "0x9671f0",
+        "object_offset": "0x9671e0",
+        "cid": 94,
+        "length": 8,
+        "text": "/restore"
+      },
+      {
+        "offset": "0x96a480",
+        "object_offset": "0x96a470",
+        "cid": 94,
+        "length": 8,
+        "text": "/<token>"
+      },
+      {
+        "offset": "0x976f40",
+        "object_offset": "0x976f30",
+        "cid": 94,
+        "length": 20,
+        "text": "/modules/api/app.php"
+      },
+      {
+        "offset": "0x97c0a0",
+        "object_offset": "0x97c090",
+        "cid": 94,
+        "length": 13,
+        "text": "/mail/compose"
+      },
+      {
+        "offset": "0x97ecc0",
+        "object_offset": "0x97ecb0",
+        "cid": 94,
+        "length": 21,
+        "text": "/modules/api/auth.php"
+      },
+      {
+        "offset": "0x983150",
+        "object_offset": "0x983140",
+        "cid": 94,
+        "length": 6,
+        "text": "/marks"
+      },
+      {
+        "offset": "0x98d080",
+        "object_offset": "0x98d070",
+        "cid": 94,
+        "length": 2,
+        "text": "/."
+      },
+      {
+        "offset": "0x98e8a0",
+        "object_offset": "0x98e890",
+        "cid": 94,
+        "length": 2,
+        "text": "/>"
+      },
+      {
+        "offset": "0x9937e0",
+        "object_offset": "0x9937d0",
+        "cid": 94,
+        "length": 6,
+        "text": "/files"
+      },
+      {
+        "offset": "0x99b810",
+        "object_offset": "0x99b800",
+        "cid": 94,
+        "length": 4,
+        "text": "/api"
+      },
+      {
+        "offset": "0x99c830",
+        "object_offset": "0x99c820",
+        "cid": 94,
+        "length": 11,
+        "text": "/reprimands"
+      },
+      {
+        "offset": "0x99d040",
+        "object_offset": "0x99d030",
+        "cid": 94,
+        "length": 13,
+        "text": "/api/messages"
+      },
+      {
+        "offset": "0x9a06d0",
+        "object_offset": "0x9a06c0",
+        "cid": 94,
+        "length": 24,
+        "text": "/modules/api/qrlogin.php"
+      },
+      {
+        "offset": "0x9a18d0",
+        "object_offset": "0x9a18c0",
+        "cid": 94,
+        "length": 8,
+        "text": "/archive"
+      },
+      {
+        "offset": "0x9b1ac0",
+        "object_offset": "0x9b1ab0",
+        "cid": 94,
+        "length": 11,
+        "text": "/homeworks/"
+      },
+      {
+        "offset": "0x9b5160",
+        "object_offset": "0x9b5150",
+        "cid": 94,
+        "length": 19,
+        "text": "/api/unreadMessages"
+      },
+      {
+        "offset": "0x9b5a70",
+        "object_offset": "0x9b5a60",
+        "cid": 94,
+        "length": 23,
+        "text": "/api/messages/receivers"
+      },
+      {
+        "offset": "0x9b61c0",
+        "object_offset": "0x9b61b0",
+        "cid": 94,
+        "length": 12,
+        "text": "/reprimands/"
+      },
+      {
+        "offset": "0x9bc5d0",
+        "object_offset": "0x9bc5c0",
+        "cid": 94,
+        "length": 14,
+        "text": "/notifications"
+      },
+      {
+        "offset": "0x9bf650",
+        "object_offset": "0x9bf640",
+        "cid": 94,
+        "length": 13,
+        "text": "/app_cache.db"
+      },
+      {
+        "offset": "0x9c9e30",
+        "object_offset": "0x9c9e20",
+        "cid": 94,
+        "length": 9,
+        "text": "/settings"
+      },
+      {
+        "offset": "0x9ca370",
+        "object_offset": "0x9ca360",
+        "cid": 94,
+        "length": 12,
+        "text": "/marks/mark/"
+      },
+      {
+        "offset": "0x9cc740",
+        "object_offset": "0x9cc730",
+        "cid": 94,
+        "length": 18,
+        "text": "/timetable?reset=1"
+      },
+      {
+        "offset": "0x9d1050",
+        "object_offset": "0x9d1040",
+        "cid": 94,
+        "length": 2,
+        "text": "//"
+      },
+      {
+        "offset": "0x9d1900",
+        "object_offset": "0x9d18f0",
+        "cid": 94,
+        "length": 6,
+        "text": "/exams"
+      }
+    ],
+    "android_only": [
+      "/J",
+      "/Q"
+    ],
+    "ios_only": [
+      "/System/Library/Frameworks/Foundation.framework/Foundation"
+    ],
+    "shared": 60,
+    "scope": "All length-prefixed ASCII path-like candidate literals matching /[A-Za-z0-9_./?=&<>:$#%+-]{1,299}; includes UI, local, dependency paths and possible short false positives"
+  }
+}

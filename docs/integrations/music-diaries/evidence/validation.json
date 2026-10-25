@@ -1,0 +1,18 @@
+{
+  "status": "passed",
+  "checks": 1536,
+  "feature_count": 94,
+  "original_archive_count": 5,
+  "limits": "Evidence integrity and documentation packaging only; no application implementation or live runtime tests.",
+  "prepared_on": "2026-10-25",
+  "reproduction_checks": {
+    "published_python_syntax": "passed",
+    "fryderyk_route_extraction": 34,
+    "mobireg_register_records": 61,
+    "modern_exact_literal_matches": 381,
+    "modern_private_symbol_variants": 8,
+    "modern_source_paths_each_platform": 137,
+    "curated_output_equality": "passed"
+  },
+  "application_tests": "Not run: no application code changed."
+}

@@ -1,0 +1,992 @@
+[
+  {
+    "id": "MR-F001",
+    "module": "accounts",
+    "feature": "Add/edit/remove multiple school accounts and choose child",
+    "version": "Android 2.1.79 / Android 3.1.7 / iOS 3.1.7",
+    "evidence_refs": [
+      "MR-A01",
+      "MR-A02",
+      "MR-I01",
+      "MR-M01"
+    ],
+    "effect": "local-write",
+    "contract_status": "partial",
+    "next_validation": "Capture an authorized account response and verify shape, role visibility, empty/error states.",
+    "evidence_type": "decompiled-static",
+    "runtime_observed": false,
+    "platform_comparison_status": "Shared candidate surface corroborated by selected Android snapshot strings; no runtime parity asserted"
+  },
+  {
+    "id": "MR-F002",
+    "module": "accounts",
+    "feature": "School diary URL / school-code normalization",
+    "version": "Android 2.1.79 / Android 3.1.7 / iOS 3.1.7",
+    "evidence_refs": [
+      "MR-A02",
+      "MR-I01",
+      "MR-M01"
+    ],
+    "effect": "local-write",
+    "contract_status": "partial",
+    "next_validation": "Verify accepted full school URL, bare code, trailing slash, subpath and validation errors; isolate host+school+login identities.",
+    "evidence_type": "decompiled-static",
+    "runtime_observed": false,
+    "platform_comparison_status": "Shared candidate surface corroborated by selected Android snapshot strings; no runtime parity asserted"
+  },
+  {
+    "id": "MR-F003",
+    "module": "accounts",
+    "feature": "Credential validation and ParentStudents discovery",
+    "version": "Android 2.1.79",
+    "evidence_refs": [
+      "MR-A02",
+      "MR-A03"
+    ],
+    "effect": "read",
+    "contract_status": "recovered-static",
+    "next_validation": "Capture an authorized account response and verify shape, role visibility, empty/error states.",
+    "evidence_type": "decompiled-static",
+    "runtime_observed": false,
+    "platform_comparison_status": "Legacy-only contract or library boundary; not ported to modern profile"
+  },
+  {
+    "id": "MR-F004",
+    "module": "accounts",
+    "feature": "Password login storing JWT in secure storage",
+    "version": "Android 3.1.7 / iOS 3.1.7",
+    "evidence_refs": [
+      "MR-I01",
+      "MR-M01"
+    ],
+    "effect": "session-write",
+    "contract_status": "candidate",
+    "next_validation": "Trace AuthService call flow or capture auth.php request, response envelope, token expiry and secure-storage behavior.",
+    "evidence_type": "shipped-string-and-resource-static",
+    "runtime_observed": false,
+    "platform_comparison_status": "Shared candidate surface corroborated by selected Android snapshot strings; no runtime parity asserted"
+  },
+  {
+    "id": "MR-F005",
+    "module": "accounts",
+    "feature": "QR-code login using code from web app",
+    "version": "Android 3.1.7 / iOS 3.1.7",
+    "evidence_refs": [
+      "MR-I01",
+      "MR-M01"
+    ],
+    "effect": "session-write",
+    "contract_status": "candidate",
+    "next_validation": "Determine exact QR format and qrlogin.php body; verify expiration and reject malformed/external URLs.",
+    "evidence_type": "shipped-string-and-resource-static",
+    "runtime_observed": false,
+    "platform_comparison_status": "Shared candidate surface corroborated by selected Android snapshot strings; no runtime parity asserted"
+  },
+  {
+    "id": "MR-F006",
+    "module": "accounts",
+    "feature": "QR access+refresh sessions without saved password",
+    "version": "Android 3.1.7 / iOS 3.1.7",
+    "evidence_refs": [
+      "MR-I01",
+      "MR-M01"
+    ],
+    "effect": "session-write",
+    "contract_status": "candidate",
+    "next_validation": "Verify account authType, access/refresh storage keys, refresh rotation, password-account QR update and revoked sessions.",
+    "evidence_type": "shipped-string-and-resource-static",
+    "runtime_observed": false,
+    "platform_comparison_status": "Shared candidate surface corroborated by selected Android snapshot strings; no runtime parity asserted"
+  },
+  {
+    "id": "MR-F007",
+    "module": "accounts",
+    "feature": "Silent refresh, unauthorized recovery and logout",
+    "version": "Android 3.1.7 / iOS 3.1.7",
+    "evidence_refs": [
+      "MR-I01",
+      "MR-M01"
+    ],
+    "effect": "session-write",
+    "contract_status": "candidate",
+    "next_validation": "Recover refresh.php body, retry limit and response; verify no infinite 401 loop or duplicate mutation on auth retry.",
+    "evidence_type": "shipped-string-and-resource-static",
+    "runtime_observed": false,
+    "platform_comparison_status": "Shared candidate surface corroborated by selected Android snapshot strings; no runtime parity asserted"
+  },
+  {
+    "id": "MR-F008",
+    "module": "accounts",
+    "feature": "Remove account locally with its children, credentials and cache",
+    "version": "Android 3.1.7 / iOS 3.1.7",
+    "evidence_refs": [
+      "MR-I01",
+      "MR-M01"
+    ],
+    "effect": "local-write",
+    "contract_status": "partial",
+    "next_validation": "Verify local removal versus logout; original diary account must remain. Verify cleanup for QR and password accounts.",
+    "evidence_type": "shipped-string-and-resource-static",
+    "runtime_observed": false,
+    "platform_comparison_status": "Shared candidate surface corroborated by selected Android snapshot strings; no runtime parity asserted"
+  },
+  {
+    "id": "MR-F009",
+    "module": "accounts",
+    "feature": "Student login includes self as pupil; rebuild pupil lists",
+    "version": "Android 3.1.7 / iOS 3.1.7",
+    "evidence_refs": [
+      "MR-I01",
+      "MR-M01"
+    ],
+    "effect": "local-write",
+    "contract_status": "candidate",
+    "next_validation": "Capture an authorized account response and verify shape, role visibility, empty/error states.",
+    "evidence_type": "shipped-string-and-resource-static",
+    "runtime_observed": false,
+    "platform_comparison_status": "Shared candidate surface corroborated by selected Android snapshot strings; no runtime parity asserted"
+  },
+  {
+    "id": "MR-F010",
+    "module": "dashboard",
+    "feature": "Mixed dated feed of grades/exams/homework/reprimands/announcements/absences",
+    "version": "Android 3.1.7 / iOS 3.1.7",
+    "evidence_refs": [
+      "MR-I01",
+      "MR-M01"
+    ],
+    "effect": "read",
+    "contract_status": "candidate",
+    "next_validation": "Capture an authorized account response and verify shape, role visibility, empty/error states.",
+    "evidence_type": "shipped-string-and-resource-static",
+    "runtime_observed": false,
+    "platform_comparison_status": "Shared candidate surface corroborated by selected Android snapshot strings; no runtime parity asserted"
+  },
+  {
+    "id": "MR-F011",
+    "module": "dashboard",
+    "feature": "New/unread counters for grades, absences, reprimands and messages",
+    "version": "Android 2.1.79",
+    "evidence_refs": [
+      "MR-A07"
+    ],
+    "effect": "read",
+    "contract_status": "recovered-static",
+    "next_validation": "Capture an authorized account response and verify shape, role visibility, empty/error states.",
+    "evidence_type": "decompiled-static",
+    "runtime_observed": false,
+    "platform_comparison_status": "Legacy-only contract or library boundary; not ported to modern profile"
+  },
+  {
+    "id": "MR-F012",
+    "module": "grades",
+    "feature": "Subjects, term selection and grade details",
+    "version": "Android 2.1.79 / Android 3.1.7 / iOS 3.1.7",
+    "evidence_refs": [
+      "MR-A06",
+      "MR-I01",
+      "MR-M01"
+    ],
+    "effect": "read",
+    "contract_status": "partial",
+    "next_validation": "Capture an authorized account response and verify shape, role visibility, empty/error states.",
+    "evidence_type": "decompiled-static",
+    "runtime_observed": false,
+    "platform_comparison_status": "Shared candidate surface corroborated by selected Android snapshot strings; no runtime parity asserted"
+  },
+  {
+    "id": "MR-F013",
+    "module": "grades",
+    "feature": "Current grades versus term/year/proposed/final grades",
+    "version": "Android 3.1.7 / iOS 3.1.7",
+    "evidence_refs": [
+      "MR-I01",
+      "MR-M01"
+    ],
+    "effect": "read",
+    "contract_status": "candidate",
+    "next_validation": "Capture marks/terms app.php operations; map term hierarchy and proposed/final flags without flattening to ordinary grades.",
+    "evidence_type": "shipped-string-and-resource-static",
+    "runtime_observed": false,
+    "platform_comparison_status": "Shared candidate surface corroborated by selected Android snapshot strings; no runtime parity asserted"
+  },
+  {
+    "id": "MR-F014",
+    "module": "grades",
+    "feature": "Scale, numeric points, percentages and descriptive grading",
+    "version": "Android 2.1.79",
+    "evidence_refs": [
+      "MR-A06"
+    ],
+    "effect": "read",
+    "contract_status": "recovered-static",
+    "next_validation": "Test server examples for types1/2/3/4, nonnumeric labels, min/max/precision and custom scales.",
+    "evidence_type": "decompiled-static",
+    "runtime_observed": false,
+    "platform_comparison_status": "Legacy-only contract or library boundary; not ported to modern profile"
+  },
+  {
+    "id": "MR-F015",
+    "module": "grades",
+    "feature": "Grade categories, weights, comments, teacher, dates and styles",
+    "version": "Android 2.1.79 / Android 3.1.7 / iOS 3.1.7",
+    "evidence_refs": [
+      "MR-A04",
+      "MR-A06",
+      "MR-I01",
+      "MR-M01"
+    ],
+    "effect": "read",
+    "contract_status": "partial",
+    "next_validation": "Capture an authorized account response and verify shape, role visibility, empty/error states.",
+    "evidence_type": "decompiled-static",
+    "runtime_observed": false,
+    "platform_comparison_status": "Shared candidate surface corroborated by selected Android snapshot strings; no runtime parity asserted"
+  },
+  {
+    "id": "MR-F016",
+    "module": "grades",
+    "feature": "Grade parent/child correction chains and role visibility",
+    "version": "Android 2.1.79",
+    "evidence_refs": [
+      "MR-A06"
+    ],
+    "effect": "read",
+    "contract_status": "recovered-static",
+    "next_validation": "Verify linked marks ordering, parent-only visibility2 and student-visible0; use only data authorized for current role.",
+    "evidence_type": "decompiled-static",
+    "runtime_observed": false,
+    "platform_comparison_status": "Legacy-only contract or library boundary; not ported to modern profile"
+  },
+  {
+    "id": "MR-F017",
+    "module": "grades",
+    "feature": "Average-count exclusions and configurable numeric scales",
+    "version": "Android 2.1.79",
+    "evidence_refs": [
+      "MR-A04",
+      "MR-A05"
+    ],
+    "effect": "read",
+    "contract_status": "partial",
+    "next_validation": "Verify MarkScales.no_count_to_average and grade/group/category weight precedence before calculating averages.",
+    "evidence_type": "decompiled-static",
+    "runtime_observed": false,
+    "platform_comparison_status": "Legacy-only contract or library boundary; not ported to modern profile"
+  },
+  {
+    "id": "MR-F018",
+    "module": "grades",
+    "feature": "Local new-grade indicator cleared by opening details",
+    "version": "Android 2.1.79",
+    "evidence_refs": [
+      "MR-A06",
+      "MR-A07"
+    ],
+    "effect": "local-write",
+    "contract_status": "recovered-static",
+    "next_validation": "Capture an authorized account response and verify shape, role visibility, empty/error states.",
+    "evidence_type": "decompiled-static",
+    "runtime_observed": false,
+    "platform_comparison_status": "Legacy-only contract or library boundary; not ported to modern profile"
+  },
+  {
+    "id": "MR-F019",
+    "module": "attendance",
+    "feature": "Calendar/day list and per-event attendance details",
+    "version": "Android 2.1.79 / Android 3.1.7 / iOS 3.1.7",
+    "evidence_refs": [
+      "MR-A07",
+      "MR-I01",
+      "MR-M01"
+    ],
+    "effect": "read",
+    "contract_status": "partial",
+    "next_validation": "Capture an authorized account response and verify shape, role visibility, empty/error states.",
+    "evidence_type": "decompiled-static",
+    "runtime_observed": false,
+    "platform_comparison_status": "Shared candidate surface corroborated by selected Android snapshot strings; no runtime parity asserted"
+  },
+  {
+    "id": "MR-F020",
+    "module": "attendance",
+    "feature": "Present/absent/late/custom classifications and statistics",
+    "version": "Android 2.1.79 / Android 3.1.7 / iOS 3.1.7",
+    "evidence_refs": [
+      "MR-A07",
+      "MR-I01",
+      "MR-M01"
+    ],
+    "effect": "read",
+    "contract_status": "partial",
+    "next_validation": "Legacy count_as P/A/L wins; fallback IDs1/5/2 only if count_as missing. Verify modern absence code and stats schema.",
+    "evidence_type": "decompiled-static",
+    "runtime_observed": false,
+    "platform_comparison_status": "Shared candidate surface corroborated by selected Android snapshot strings; no runtime parity asserted"
+  },
+  {
+    "id": "MR-F021",
+    "module": "attendance",
+    "feature": "Filter absence-only or absence+late feed",
+    "version": "Android 3.1.7 / iOS 3.1.7",
+    "evidence_refs": [
+      "MR-I01",
+      "MR-M01"
+    ],
+    "effect": "local-write",
+    "contract_status": "partial",
+    "next_validation": "Capture an authorized account response and verify shape, role visibility, empty/error states.",
+    "evidence_type": "shipped-string-and-resource-static",
+    "runtime_observed": false,
+    "platform_comparison_status": "Shared candidate surface corroborated by selected Android snapshot strings; no runtime parity asserted"
+  },
+  {
+    "id": "MR-F022",
+    "module": "justifications",
+    "feature": "Browse records and eligible events by week",
+    "version": "Android 3.1.7 / iOS 3.1.7",
+    "evidence_refs": [
+      "MR-I01",
+      "MR-M01"
+    ],
+    "effect": "read",
+    "contract_status": "candidate",
+    "next_validation": "Capture an authorized account response and verify shape, role visibility, empty/error states.",
+    "evidence_type": "shipped-string-and-resource-static",
+    "runtime_observed": false,
+    "platform_comparison_status": "Shared candidate surface corroborated by selected Android snapshot strings; no runtime parity asserted"
+  },
+  {
+    "id": "MR-F023",
+    "module": "justifications",
+    "feature": "Create/update/delete justification with event selection and reason",
+    "version": "Android 3.1.7 / iOS 3.1.7",
+    "evidence_refs": [
+      "MR-I01",
+      "MR-M01"
+    ],
+    "effect": "server-write",
+    "contract_status": "candidate",
+    "next_validation": "Recover endpoint and HTTP method per action, event_ids/body/status schema, role permission and edit/delete windows before implementing writes.",
+    "evidence_type": "shipped-string-and-resource-static",
+    "runtime_observed": false,
+    "platform_comparison_status": "Shared candidate surface corroborated by selected Android snapshot strings; no runtime parity asserted"
+  },
+  {
+    "id": "MR-F024",
+    "module": "timetable",
+    "feature": "Day/calendar navigation across school-year range",
+    "version": "Android 2.1.79 / Android 3.1.7 / iOS 3.1.7",
+    "evidence_refs": [
+      "MR-A07",
+      "MR-I01",
+      "MR-M01"
+    ],
+    "effect": "read",
+    "contract_status": "partial",
+    "next_validation": "Capture an authorized account response and verify shape, role visibility, empty/error states.",
+    "evidence_type": "decompiled-static",
+    "runtime_observed": false,
+    "platform_comparison_status": "Shared candidate surface corroborated by selected Android snapshot strings; no runtime parity asserted"
+  },
+  {
+    "id": "MR-F025",
+    "module": "timetable",
+    "feature": "Lesson time, number, subject, teachers, groups, rooms and topic details",
+    "version": "Android 2.1.79 / Android 3.1.7 / iOS 3.1.7",
+    "evidence_refs": [
+      "MR-A04",
+      "MR-A07",
+      "MR-I01",
+      "MR-M01"
+    ],
+    "effect": "read",
+    "contract_status": "partial",
+    "next_validation": "Capture an authorized account response and verify shape, role visibility, empty/error states.",
+    "evidence_type": "decompiled-static",
+    "runtime_observed": false,
+    "platform_comparison_status": "Shared candidate surface corroborated by selected Android snapshot strings; no runtime parity asserted"
+  },
+  {
+    "id": "MR-F026",
+    "module": "timetable",
+    "feature": "Substitution/original lesson relationship and changed plan",
+    "version": "Android 2.1.79 / Android 3.1.7 / iOS 3.1.7",
+    "evidence_refs": [
+      "MR-A07",
+      "MR-I01",
+      "MR-M01"
+    ],
+    "effect": "read",
+    "contract_status": "partial",
+    "next_validation": "Legacy EventEvents relates original/replacement; verify Events.status/type/attr meaning with examples, school-wide plan changes and multi-teacher lessons.",
+    "evidence_type": "decompiled-static",
+    "runtime_observed": false,
+    "platform_comparison_status": "Shared candidate surface corroborated by selected Android snapshot strings; no runtime parity asserted"
+  },
+  {
+    "id": "MR-F027",
+    "module": "timetable",
+    "feature": "Timetable event and embedded exam details",
+    "version": "Android 3.1.7 / iOS 3.1.7",
+    "evidence_refs": [
+      "MR-I01",
+      "MR-M01"
+    ],
+    "effect": "read",
+    "contract_status": "candidate",
+    "next_validation": "Capture an authorized account response and verify shape, role visibility, empty/error states.",
+    "evidence_type": "shipped-string-and-resource-static",
+    "runtime_observed": false,
+    "platform_comparison_status": "Shared candidate surface corroborated by selected Android snapshot strings; no runtime parity asserted"
+  },
+  {
+    "id": "MR-F028",
+    "module": "exams",
+    "feature": "Exam list and detail with dates, subject and teacher",
+    "version": "Android 3.1.7 / iOS 3.1.7",
+    "evidence_refs": [
+      "MR-I01",
+      "MR-M01"
+    ],
+    "effect": "read",
+    "contract_status": "candidate",
+    "next_validation": "Capture an authorized account response and verify shape, role visibility, empty/error states.",
+    "evidence_type": "shipped-string-and-resource-static",
+    "runtime_observed": false,
+    "platform_comparison_status": "Shared candidate surface corroborated by selected Android snapshot strings; no runtime parity asserted"
+  },
+  {
+    "id": "MR-F029",
+    "module": "homework",
+    "feature": "Diary and module homework source compatibility",
+    "version": "Android 3.1.7 / iOS 3.1.7",
+    "evidence_refs": [
+      "MR-I01",
+      "MR-M01"
+    ],
+    "effect": "read",
+    "contract_status": "candidate",
+    "next_validation": "Resolve HomeworkSource, getDiaryHomeworks/getModuleHomeworks and oldHomeworkModule negotiation; preserve source-specific IDs and sessions.",
+    "evidence_type": "shipped-string-and-resource-static",
+    "runtime_observed": false,
+    "platform_comparison_status": "Shared candidate surface corroborated by selected Android snapshot strings; no runtime parity asserted"
+  },
+  {
+    "id": "MR-F030",
+    "module": "homework",
+    "feature": "Homework list/detail/status/deadline and teacher comments",
+    "version": "Android 3.1.7 / iOS 3.1.7",
+    "evidence_refs": [
+      "MR-I01",
+      "MR-M01"
+    ],
+    "effect": "read",
+    "contract_status": "candidate",
+    "next_validation": "Capture an authorized account response and verify shape, role visibility, empty/error states.",
+    "evidence_type": "shipped-string-and-resource-static",
+    "runtime_observed": false,
+    "platform_comparison_status": "Shared candidate surface corroborated by selected Android snapshot strings; no runtime parity asserted"
+  },
+  {
+    "id": "MR-F031",
+    "module": "homework",
+    "feature": "Homework solution text and file submission",
+    "version": "Android 3.1.7 / iOS 3.1.7",
+    "evidence_refs": [
+      "MR-I01",
+      "MR-M01"
+    ],
+    "effect": "server-write",
+    "contract_status": "candidate",
+    "next_validation": "Recover sendAnswer/uploadSolutionFile body, multipart field names, file limits, idempotency, answer readiness and partial success states.",
+    "evidence_type": "shipped-string-and-resource-static",
+    "runtime_observed": false,
+    "platform_comparison_status": "Shared candidate surface corroborated by selected Android snapshot strings; no runtime parity asserted"
+  },
+  {
+    "id": "MR-F032",
+    "module": "homework",
+    "feature": "Archive homework and restore archived homework",
+    "version": "Android 3.1.7 / iOS 3.1.7",
+    "evidence_refs": [
+      "MR-I01",
+      "MR-M01"
+    ],
+    "effect": "server-write",
+    "contract_status": "candidate",
+    "next_validation": "Trace setArchived/toggleArchive; capture archive/restore endpoints and visibility; do not assume local-only archive.",
+    "evidence_type": "shipped-string-and-resource-static",
+    "runtime_observed": false,
+    "platform_comparison_status": "Shared candidate surface corroborated by selected Android snapshot strings; no runtime parity asserted"
+  },
+  {
+    "id": "MR-F033",
+    "module": "announcements",
+    "feature": "List/detail and delayed full-body fetch",
+    "version": "Android 3.1.7 / iOS 3.1.7",
+    "evidence_refs": [
+      "MR-I01",
+      "MR-M01"
+    ],
+    "effect": "read",
+    "contract_status": "candidate",
+    "next_validation": "Capture an authorized account response and verify shape, role visibility, empty/error states.",
+    "evidence_type": "shipped-string-and-resource-static",
+    "runtime_observed": false,
+    "platform_comparison_status": "Shared candidate surface corroborated by selected Android snapshot strings; no runtime parity asserted"
+  },
+  {
+    "id": "MR-F034",
+    "module": "announcements",
+    "feature": "Voting/answer submission and existing-answer state",
+    "version": "Android 3.1.7 / iOS 3.1.7",
+    "evidence_refs": [
+      "MR-I01",
+      "MR-M01"
+    ],
+    "effect": "server-write",
+    "contract_status": "candidate",
+    "next_validation": "Recover announcement-answer operation, answer choices, userAnswer/canAnswer and server enforcement of closed poll.",
+    "evidence_type": "shipped-string-and-resource-static",
+    "runtime_observed": false,
+    "platform_comparison_status": "Shared candidate surface corroborated by selected Android snapshot strings; no runtime parity asserted"
+  },
+  {
+    "id": "MR-F035",
+    "module": "announcements",
+    "feature": "Pending poll gate and post-answer navigation",
+    "version": "Android 3.1.7 / iOS 3.1.7",
+    "evidence_refs": [
+      "MR-I01",
+      "MR-M01"
+    ],
+    "effect": "read",
+    "contract_status": "candidate",
+    "next_validation": "Trace PendingPollGate/announcements-pending, required response order and cancellation; do not bypass an unanswered required poll.",
+    "evidence_type": "shipped-string-and-resource-static",
+    "runtime_observed": false,
+    "platform_comparison_status": "Shared candidate surface corroborated by selected Android snapshot strings; no runtime parity asserted"
+  },
+  {
+    "id": "MR-F036",
+    "module": "reprimands",
+    "feature": "Reprimands/praise list and detail with teacher/date/content",
+    "version": "Android 2.1.79 / Android 3.1.7 / iOS 3.1.7",
+    "evidence_refs": [
+      "MR-A04",
+      "MR-A07",
+      "MR-I01",
+      "MR-M01"
+    ],
+    "effect": "read",
+    "contract_status": "partial",
+    "next_validation": "Capture an authorized account response and verify shape, role visibility, empty/error states.",
+    "evidence_type": "decompiled-static",
+    "runtime_observed": false,
+    "platform_comparison_status": "Shared candidate surface corroborated by selected Android snapshot strings; no runtime parity asserted"
+  },
+  {
+    "id": "MR-F037",
+    "module": "mail",
+    "feature": "Message inbox/detail and local/server read acknowledgement",
+    "version": "Android 2.1.79 / Android 3.1.7 / iOS 3.1.7",
+    "evidence_refs": [
+      "MR-A08",
+      "MR-I01",
+      "MR-M01"
+    ],
+    "effect": "server-write",
+    "contract_status": "partial",
+    "next_validation": "Legacy messages.php action=read,message_id recovered; modern /api/messages/read/ suffix HTTP verb/body unknown. Verify unread totals after acknowledgement.",
+    "evidence_type": "decompiled-static",
+    "runtime_observed": false,
+    "platform_comparison_status": "Shared candidate surface corroborated by selected Android snapshot strings; no runtime parity asserted"
+  },
+  {
+    "id": "MR-F038",
+    "module": "mail",
+    "feature": "Inbox/sent/important/trash folders and message search",
+    "version": "Android 3.1.7 / iOS 3.1.7",
+    "evidence_refs": [
+      "MR-I01",
+      "MR-M01"
+    ],
+    "effect": "read",
+    "contract_status": "candidate",
+    "next_validation": "Capture an authorized account response and verify shape, role visibility, empty/error states.",
+    "evidence_type": "shipped-string-and-resource-static",
+    "runtime_observed": false,
+    "platform_comparison_status": "Shared candidate surface corroborated by selected Android snapshot strings; no runtime parity asserted"
+  },
+  {
+    "id": "MR-F039",
+    "module": "mail",
+    "feature": "Compose/reply with recipient directory and search",
+    "version": "Android 3.1.7 / iOS 3.1.7",
+    "evidence_refs": [
+      "MR-I01",
+      "MR-M01"
+    ],
+    "effect": "server-write",
+    "contract_status": "candidate",
+    "next_validation": "Recover receiver ID format, pagination/search, send/reply body, thread IDs, authorization and failed-send state.",
+    "evidence_type": "shipped-string-and-resource-static",
+    "runtime_observed": false,
+    "platform_comparison_status": "Shared candidate surface corroborated by selected Android snapshot strings; no runtime parity asserted"
+  },
+  {
+    "id": "MR-F040",
+    "module": "mail",
+    "feature": "Star/important state, move to trash and restore",
+    "version": "Android 3.1.7 / iOS 3.1.7",
+    "evidence_refs": [
+      "MR-I01",
+      "MR-M01"
+    ],
+    "effect": "server-write",
+    "contract_status": "candidate",
+    "next_validation": "Literal spelling /stared is shipped; trace exact suffix/verb/body. Verify trash, restore and optimistic rollback.",
+    "evidence_type": "shipped-string-and-resource-static",
+    "runtime_observed": false,
+    "platform_comparison_status": "Shared candidate surface corroborated by selected Android snapshot strings; no runtime parity asserted"
+  },
+  {
+    "id": "MR-F041",
+    "module": "mail",
+    "feature": "Message attachments and upload partial-success reporting",
+    "version": "Android 3.1.7 / iOS 3.1.7",
+    "evidence_refs": [
+      "MR-I01",
+      "MR-M01"
+    ],
+    "effect": "server-write",
+    "contract_status": "candidate",
+    "next_validation": "Recover upload endpoints/fields and per-file result; message sent without files must not be presented as complete success.",
+    "evidence_type": "shipped-string-and-resource-static",
+    "runtime_observed": false,
+    "platform_comparison_status": "Shared candidate surface corroborated by selected Android snapshot strings; no runtime parity asserted"
+  },
+  {
+    "id": "MR-F042",
+    "module": "sessions",
+    "feature": "Mail SSO and separate module/homework cookie sessions",
+    "version": "Android 3.1.7 / iOS 3.1.7",
+    "evidence_refs": [
+      "MR-I01",
+      "MR-M01"
+    ],
+    "effect": "session-write",
+    "contract_status": "candidate",
+    "next_validation": "Trace /account/ssov2/, /sso, ModuleSession and MailSession. Scope cookies per account+host+module; handle missing-cookie responses.",
+    "evidence_type": "shipped-string-and-resource-static",
+    "runtime_observed": false,
+    "platform_comparison_status": "Shared candidate surface corroborated by selected Android snapshot strings; no runtime parity asserted"
+  },
+  {
+    "id": "MR-F043",
+    "module": "media",
+    "feature": "Pick attachments from files, camera and gallery",
+    "version": "Android 3.1.7 / iOS 3.1.7",
+    "evidence_refs": [
+      "MR-I01",
+      "MR-M01"
+    ],
+    "effect": "local-write",
+    "contract_status": "partial",
+    "next_validation": "Verify allowed extensions/count/size, camera/gallery permissions, cancel and retry; generic MIME strings alone do not prove supported formats.",
+    "evidence_type": "shipped-string-and-resource-static",
+    "runtime_observed": false,
+    "platform_comparison_status": "Shared candidate surface corroborated by selected Android snapshot strings; no runtime parity asserted"
+  },
+  {
+    "id": "MR-F044",
+    "module": "media",
+    "feature": "Open/download/share attachments; renew expired homework URLs",
+    "version": "Android 3.1.7 / iOS 3.1.7",
+    "evidence_refs": [
+      "MR-I01",
+      "MR-M01"
+    ],
+    "effect": "read",
+    "contract_status": "candidate",
+    "next_validation": "Verify signed-URL expiry, authorized URL refresh, redirects and sharing. Do not persist temporary URLs as durable IDs.",
+    "evidence_type": "shipped-string-and-resource-static",
+    "runtime_observed": false,
+    "platform_comparison_status": "Shared candidate surface corroborated by selected Android snapshot strings; no runtime parity asserted"
+  },
+  {
+    "id": "MR-F045",
+    "module": "media",
+    "feature": "Render HTML, links, images, video/audio and YouTube embeds",
+    "version": "Android 3.1.7 / iOS 3.1.7",
+    "evidence_refs": [
+      "MR-I01",
+      "MR-M01"
+    ],
+    "effect": "read",
+    "contract_status": "candidate",
+    "next_validation": "AppHtmlFactory/YoutubeEmbed and composed HTML factories support renderer inference; verify actual sample content, sanitization, allowed URL schemes and playback behavior.",
+    "evidence_type": "shipped-string-and-resource-static",
+    "runtime_observed": false,
+    "platform_comparison_status": "Shared candidate surface corroborated by selected Android snapshot strings; no runtime parity asserted"
+  },
+  {
+    "id": "MR-F046",
+    "module": "notifications",
+    "feature": "FCM register/token refresh and per-account token registration",
+    "version": "Android 2.1.79 / Android 3.1.7 / iOS 3.1.7",
+    "evidence_refs": [
+      "MR-A09",
+      "MR-I01",
+      "MR-M01"
+    ],
+    "effect": "server-write",
+    "contract_status": "partial",
+    "next_validation": "Legacy UploadTokenWork invokes njson.php with view=ParentStudents and token=<FCM token>. Modern register-fcm/unregister-fcm operation bodies unknown; use own Firebase project or polling until registration proven compatible.",
+    "evidence_type": "decompiled-static",
+    "runtime_observed": false,
+    "platform_comparison_status": "Shared candidate surface corroborated by selected Android snapshot strings; no runtime parity asserted"
+  },
+  {
+    "id": "MR-F047",
+    "module": "notifications",
+    "feature": "Message/grade/absence/reprimand/timetable notification kinds",
+    "version": "Android 2.1.79 / Android 3.1.7 / iOS 3.1.7",
+    "evidence_refs": [
+      "MR-A09",
+      "MR-I01",
+      "MR-M01"
+    ],
+    "effect": "read",
+    "contract_status": "partial",
+    "next_validation": "Capture an authorized account response and verify shape, role visibility, empty/error states.",
+    "evidence_type": "decompiled-static",
+    "runtime_observed": false,
+    "platform_comparison_status": "Shared candidate surface corroborated by selected Android snapshot strings; no runtime parity asserted"
+  },
+  {
+    "id": "MR-F048",
+    "module": "notifications",
+    "feature": "Deep-link into correct account/child and invalidate relevant cache",
+    "version": "Android 2.1.79 / Android 3.1.7 / iOS 3.1.7",
+    "evidence_refs": [
+      "MR-A09",
+      "MR-I01",
+      "MR-M01"
+    ],
+    "effect": "local-write",
+    "contract_status": "partial",
+    "next_validation": "Verify schoolCode,userId,accountName,noSync legacy fields; ignore notifications for absent accounts; don't route by unscoped numeric IDs.",
+    "evidence_type": "decompiled-static",
+    "runtime_observed": false,
+    "platform_comparison_status": "Shared candidate surface corroborated by selected Android snapshot strings; no runtime parity asserted"
+  },
+  {
+    "id": "MR-F049",
+    "module": "notifications",
+    "feature": "Notification center/preferences and server preference sync",
+    "version": "Android 3.1.7 / iOS 3.1.7",
+    "evidence_refs": [
+      "MR-I01",
+      "MR-M01"
+    ],
+    "effect": "server-write",
+    "contract_status": "candidate",
+    "next_validation": "Recover notif-settings operation and preference granularity; respect OS permission separately from per-kind server flags.",
+    "evidence_type": "shipped-string-and-resource-static",
+    "runtime_observed": false,
+    "platform_comparison_status": "Shared candidate surface corroborated by selected Android snapshot strings; no runtime parity asserted"
+  },
+  {
+    "id": "MR-F050",
+    "module": "sync",
+    "feature": "Full/delta njson synchronization with rollback and server cursor",
+    "version": "Android 2.1.79",
+    "evidence_refs": [
+      "MR-A03",
+      "MR-A04"
+    ],
+    "effect": "local-write",
+    "contract_status": "recovered-static",
+    "next_validation": "Replay full/delta I/U/D, database-ID reset, malformed records, transaction rollback and server-time cursor behavior.",
+    "evidence_type": "decompiled-static",
+    "runtime_observed": false,
+    "platform_comparison_status": "Legacy-only contract or library boundary; not ported to modern profile"
+  },
+  {
+    "id": "MR-F051",
+    "module": "cache",
+    "feature": "Per-child offline cache with freshness/retention/protocol metadata",
+    "version": "Android 3.1.7 / iOS 3.1.7",
+    "evidence_refs": [
+      "MR-I01",
+      "MR-M01"
+    ],
+    "effect": "local-write",
+    "contract_status": "partial",
+    "next_validation": "Observe fresh/stale/offline/empty distinctions; segregate account and pupil in keys; deduplicate requests and reject late responses after child switch.",
+    "evidence_type": "shipped-string-and-resource-static",
+    "runtime_observed": false,
+    "platform_comparison_status": "Shared candidate surface corroborated by selected Android snapshot strings; no runtime parity asserted"
+  },
+  {
+    "id": "MR-F052",
+    "module": "cache",
+    "feature": "Manual clear cache and account-removal cleanup",
+    "version": "Android 2.1.79 / Android 3.1.7 / iOS 3.1.7",
+    "evidence_refs": [
+      "MR-A10",
+      "MR-I01",
+      "MR-M01"
+    ],
+    "effect": "local-write",
+    "contract_status": "partial",
+    "next_validation": "Capture an authorized account response and verify shape, role visibility, empty/error states.",
+    "evidence_type": "decompiled-static",
+    "runtime_observed": false,
+    "platform_comparison_status": "Shared candidate surface corroborated by selected Android snapshot strings; no runtime parity asserted"
+  },
+  {
+    "id": "MR-F053",
+    "module": "entitlements",
+    "feature": "Server subscription/license expiry and sync-limit status",
+    "version": "Android 2.1.79",
+    "evidence_refs": [
+      "MR-A11"
+    ],
+    "effect": "read",
+    "contract_status": "recovered-static",
+    "next_validation": "Map errno200/201 and MOBILE_SYNC permissions with grant/expiry; report entitlement restrictions without bypassing them.",
+    "evidence_type": "decompiled-static",
+    "runtime_observed": false,
+    "platform_comparison_status": "Legacy-only contract or library boundary; not ported to modern profile"
+  },
+  {
+    "id": "MR-F054",
+    "module": "settings",
+    "feature": "App help/onboarding, support contact, version and store update",
+    "version": "Android 2.1.79 / Android 3.1.7 / iOS 3.1.7",
+    "evidence_refs": [
+      "MR-A10",
+      "MR-I01",
+      "MR-M01"
+    ],
+    "effect": "local-write",
+    "contract_status": "partial",
+    "next_validation": "Capture an authorized account response and verify shape, role visibility, empty/error states.",
+    "evidence_type": "decompiled-static",
+    "runtime_observed": false,
+    "platform_comparison_status": "Shared candidate surface corroborated by selected Android snapshot strings; no runtime parity asserted"
+  },
+  {
+    "id": "MR-F055",
+    "module": "settings",
+    "feature": "Rotation and OS Wi-Fi/notification settings links",
+    "version": "Android 2.1.79",
+    "evidence_refs": [
+      "MR-A10"
+    ],
+    "effect": "local-write",
+    "contract_status": "recovered-static",
+    "next_validation": "Capture an authorized account response and verify shape, role visibility, empty/error states.",
+    "evidence_type": "decompiled-static",
+    "runtime_observed": false,
+    "platform_comparison_status": "Legacy-only contract or library boundary; not ported to modern profile"
+  },
+  {
+    "id": "MR-F056",
+    "module": "settings",
+    "feature": "Color skins, font size and high-contrast/WCAG mode",
+    "version": "Android 3.1.7 / iOS 3.1.7",
+    "evidence_refs": [
+      "MR-I01",
+      "MR-M01"
+    ],
+    "effect": "local-write",
+    "contract_status": "partial",
+    "next_validation": "Capture an authorized account response and verify shape, role visibility, empty/error states.",
+    "evidence_type": "shipped-string-and-resource-static",
+    "runtime_observed": false,
+    "platform_comparison_status": "Shared candidate surface corroborated by selected Android snapshot strings; no runtime parity asserted"
+  },
+  {
+    "id": "MR-F057",
+    "module": "settings",
+    "feature": "Dashboard lookback weeks and attendance display preference",
+    "version": "Android 3.1.7 / iOS 3.1.7",
+    "evidence_refs": [
+      "MR-I01",
+      "MR-M01"
+    ],
+    "effect": "local-write",
+    "contract_status": "partial",
+    "next_validation": "Capture an authorized account response and verify shape, role visibility, empty/error states.",
+    "evidence_type": "shipped-string-and-resource-static",
+    "runtime_observed": false,
+    "platform_comparison_status": "Shared candidate surface corroborated by selected Android snapshot strings; no runtime parity asserted"
+  },
+  {
+    "id": "MR-F058",
+    "module": "compatibility",
+    "feature": "Required app update on unsupported API protocol",
+    "version": "Android 3.1.7 / iOS 3.1.7",
+    "evidence_refs": [
+      "MR-I01",
+      "MR-M01"
+    ],
+    "effect": "read",
+    "contract_status": "candidate",
+    "next_validation": "Recover supported protocol_v value/range and envelope handling; fail explicitly rather than parsing incompatible payloads.",
+    "evidence_type": "shipped-string-and-resource-static",
+    "runtime_observed": false,
+    "platform_comparison_status": "Shared candidate surface corroborated by selected Android snapshot strings; no runtime parity asserted"
+  },
+  {
+    "id": "MR-F059",
+    "module": "support",
+    "feature": "Legacy banner/help and subscription-limit explanation screens",
+    "version": "Android 2.1.79",
+    "evidence_refs": [
+      "MR-A10",
+      "MR-A11"
+    ],
+    "effect": "read",
+    "contract_status": "partial",
+    "next_validation": "Treat banner/update infrastructure as vendor support behavior, not diary data. Reuse Siberia support UX; preserve entitlement explanations.",
+    "evidence_type": "decompiled-static",
+    "runtime_observed": false,
+    "platform_comparison_status": "Legacy-only contract or library boundary; not ported to modern profile"
+  },
+  {
+    "id": "MR-F060",
+    "module": "development",
+    "feature": "Developer-mode cache TTL controls and diagnostic build stamp",
+    "version": "Android 3.1.7 / iOS 3.1.7",
+    "evidence_refs": [
+      "MR-I01",
+      "MR-M01"
+    ],
+    "effect": "local-write",
+    "contract_status": "candidate",
+    "next_validation": "Shipped developer strings establish candidate debug controls only; determine user reachability before recreating. Do not expose diagnostic data or raw tokens.",
+    "evidence_type": "shipped-string-and-resource-static",
+    "runtime_observed": false,
+    "platform_comparison_status": "Shared candidate surface corroborated by selected Android snapshot strings; no runtime parity asserted"
+  },
+  {
+    "id": "MR-F061",
+    "module": "library-only",
+    "feature": "Teacher-oriented grade/attendance/event export classes",
+    "version": "Android 2.1.79",
+    "evidence_refs": [
+      "MR-A04"
+    ],
+    "effect": "server-write",
+    "contract_status": "not-exposed",
+    "next_validation": "Shared library contains13 export table mappings; no parent UI permission/call path establishes teacher writes. Do not enable these based on library presence.",
+    "evidence_type": "decompiled-static",
+    "runtime_observed": false,
+    "platform_comparison_status": "Legacy-only contract or library boundary; not ported to modern profile"
+  }
+]

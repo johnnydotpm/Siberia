@@ -1,0 +1,2762 @@
+{
+  "evidence_id": "MR-I01",
+  "source": "Payload/Runner.app/Frameworks/App.framework/App",
+  "source_sha256": "c8f4b5e7d356d130bc89f2683db222822b4be06d273f4bb3a7413f46f4773ad0",
+  "method": "Dart candidate strings cid94/95, 8-byte aligned, Smi length; extract_dart_strings.py",
+  "limitations": [
+    "These are string/object observations only. No function reachability, HTTP method, call order, payload association or live behavior is proved."
+  ],
+  "strings": [
+    {
+      "offset": "0x837740",
+      "object_offset": "0x837730",
+      "cid": 94,
+      "length": 22,
+      "text": "_submitVote@1329457408"
+    },
+    {
+      "offset": "0x838240",
+      "object_offset": "0x838230",
+      "cid": 94,
+      "length": 46,
+      "text": "package:rodzic/services/api/homeworks_api.dart"
+    },
+    {
+      "offset": "0x838540",
+      "object_offset": "0x838530",
+      "cid": 94,
+      "length": 12,
+      "text": " userAnswer="
+    },
+    {
+      "offset": "0x83a220",
+      "object_offset": "0x83a210",
+      "cid": 94,
+      "length": 14,
+      "text": "ttl_production"
+    },
+    {
+      "offset": "0x83ab40",
+      "object_offset": "0x83ab30",
+      "cid": 94,
+      "length": 19,
+      "text": "/api/messages/trash"
+    },
+    {
+      "offset": "0x83b4f0",
+      "object_offset": "0x83b4e0",
+      "cid": 94,
+      "length": 47,
+      "text": "package:rodzic/models/justification_record.dart"
+    },
+    {
+      "offset": "0x83eb80",
+      "object_offset": "0x83eb70",
+      "cid": 94,
+      "length": 6,
+      "text": "setJwt"
+    },
+    {
+      "offset": "0x8407a0",
+      "object_offset": "0x840790",
+      "cid": 94,
+      "length": 16,
+      "text": "registerFcmToken"
+    },
+    {
+      "offset": "0x8414e0",
+      "object_offset": "0x8414d0",
+      "cid": 94,
+      "length": 10,
+      "text": "setArchive"
+    },
+    {
+      "offset": "0x841f40",
+      "object_offset": "0x841f30",
+      "cid": 95,
+      "length": 18,
+      "text": "CACHE: świeży hit "
+    },
+    {
+      "offset": "0x842910",
+      "object_offset": "0x842900",
+      "cid": 94,
+      "length": 19,
+      "text": "mail_session_cookie"
+    },
+    {
+      "offset": "0x842a20",
+      "object_offset": "0x842a10",
+      "cid": 94,
+      "length": 40,
+      "text": "package:rodzic/theme/style_provider.dart"
+    },
+    {
+      "offset": "0x843630",
+      "object_offset": "0x843620",
+      "cid": 94,
+      "length": 50,
+      "text": "package:rodzic/screens/update_required_screen.dart"
+    },
+    {
+      "offset": "0x8461d0",
+      "object_offset": "0x8461c0",
+      "cid": 94,
+      "length": 5,
+      "text": "Oceny"
+    },
+    {
+      "offset": "0x846460",
+      "object_offset": "0x846450",
+      "cid": 94,
+      "length": 13,
+      "text": "Exam.fromJson"
+    },
+    {
+      "offset": "0x8477a0",
+      "object_offset": "0x847790",
+      "cid": 94,
+      "length": 25,
+      "text": "Camera permission denied."
+    },
+    {
+      "offset": "0x848a50",
+      "object_offset": "0x848a40",
+      "cid": 94,
+      "length": 45,
+      "text": "package:rodzic/screens/reprimands_screen.dart"
+    },
+    {
+      "offset": "0x848c40",
+      "object_offset": "0x848c30",
+      "cid": 95,
+      "length": 20,
+      "text": "ZAŁĄCZNIKI: aparat: "
+    },
+    {
+      "offset": "0x84a020",
+      "object_offset": "0x84a010",
+      "cid": 94,
+      "length": 57,
+      "text": "package:rodzic/repositories/notifications_repository.dart"
+    },
+    {
+      "offset": "0x84ac60",
+      "object_offset": "0x84ac50",
+      "cid": 94,
+      "length": 18,
+      "text": "getSchoolYearRange"
+    },
+    {
+      "offset": "0x84ae30",
+      "object_offset": "0x84ae20",
+      "cid": 94,
+      "length": 12,
+      "text": "Wylogowano: "
+    },
+    {
+      "offset": "0x84af30",
+      "object_offset": "0x84af20",
+      "cid": 95,
+      "length": 32,
+      "text": "SIDE_MENU: Przełączam tryb WCAG."
+    },
+    {
+      "offset": "0x84b7d0",
+      "object_offset": "0x84b7c0",
+      "cid": 94,
+      "length": 40,
+      "text": "package:rodzic/models/subject_marks.dart"
+    },
+    {
+      "offset": "0x84bb40",
+      "object_offset": "0x84bb30",
+      "cid": 94,
+      "length": 15,
+      "text": "/account/ssov2/"
+    },
+    {
+      "offset": "0x84d080",
+      "object_offset": "0x84d070",
+      "cid": 95,
+      "length": 23,
+      "text": "FCM: zły payload tapu: "
+    },
+    {
+      "offset": "0x84de20",
+      "object_offset": "0x84de10",
+      "cid": 94,
+      "length": 14,
+      "text": "/api/messages/"
+    },
+    {
+      "offset": "0x84e170",
+      "object_offset": "0x84e160",
+      "cid": 94,
+      "length": 60,
+      "text": "CREATE INDEX idx_cache_retain ON cache_entries(retain_until)"
+    },
+    {
+      "offset": "0x84ff90",
+      "object_offset": "0x84ff80",
+      "cid": 94,
+      "length": 22,
+      "text": "/account/ssov2/<token>"
+    },
+    {
+      "offset": "0x8503e0",
+      "object_offset": "0x8503d0",
+      "cid": 94,
+      "length": 12,
+      "text": "CameraDevice"
+    },
+    {
+      "offset": "0x850a70",
+      "object_offset": "0x850a60",
+      "cid": 94,
+      "length": 48,
+      "text": "package:rodzic/widgets/subject_summary_card.dart"
+    },
+    {
+      "offset": "0x851410",
+      "object_offset": "0x851400",
+      "cid": 94,
+      "length": 18,
+      "text": "getModuleHomeworks"
+    },
+    {
+      "offset": "0x8536a0",
+      "object_offset": "0x853690",
+      "cid": 94,
+      "length": 40,
+      "text": "AUTH: Sukces. Token JWT zapisany (konto "
+    },
+    {
+      "offset": "0x8586e0",
+      "object_offset": "0x8586d0",
+      "cid": 94,
+      "length": 35,
+      "text": "_requestCameraPermission@1099276255"
+    },
+    {
+      "offset": "0x85a890",
+      "object_offset": "0x85a880",
+      "cid": 94,
+      "length": 57,
+      "text": "package:rodzic/repositories/announcements_repository.dart"
+    },
+    {
+      "offset": "0x85c0d0",
+      "object_offset": "0x85c0c0",
+      "cid": 94,
+      "length": 7,
+      "text": "gallery"
+    },
+    {
+      "offset": "0x85cda0",
+      "object_offset": "0x85cd90",
+      "cid": 94,
+      "length": 6,
+      "text": "Camera"
+    },
+    {
+      "offset": "0x85d590",
+      "object_offset": "0x85d580",
+      "cid": 94,
+      "length": 13,
+      "text": "setMailCookie"
+    },
+    {
+      "offset": "0x85daa0",
+      "object_offset": "0x85da90",
+      "cid": 94,
+      "length": 39,
+      "text": "package:rodzic/theme/skin_amethyst.dart"
+    },
+    {
+      "offset": "0x85fb20",
+      "object_offset": "0x85fb10",
+      "cid": 94,
+      "length": 23,
+      "text": "/justifications/compose"
+    },
+    {
+      "offset": "0x860200",
+      "object_offset": "0x8601f0",
+      "cid": 94,
+      "length": 14,
+      "text": "unregister-fcm"
+    },
+    {
+      "offset": "0x860380",
+      "object_offset": "0x860370",
+      "cid": 94,
+      "length": 39,
+      "text": "package:rodzic/models/announcement.dart"
+    },
+    {
+      "offset": "0x860e00",
+      "object_offset": "0x860df0",
+      "cid": 95,
+      "length": 16,
+      "text": "CACHE: usunięto "
+    },
+    {
+      "offset": "0x861dc0",
+      "object_offset": "0x861db0",
+      "cid": 94,
+      "length": 28,
+      "text": "SESSION: Sztab wyczyszczony."
+    },
+    {
+      "offset": "0x864750",
+      "object_offset": "0x864740",
+      "cid": 94,
+      "length": 9,
+      "text": "event_ids"
+    },
+    {
+      "offset": "0x8660c0",
+      "object_offset": "0x8660b0",
+      "cid": 94,
+      "length": 36,
+      "text": "package:rodzic/models/term_mark.dart"
+    },
+    {
+      "offset": "0x867520",
+      "object_offset": "0x867510",
+      "cid": 94,
+      "length": 18,
+      "text": "FCM: register-fcm "
+    },
+    {
+      "offset": "0x868170",
+      "object_offset": "0x868160",
+      "cid": 94,
+      "length": 15,
+      "text": "homeworkSession"
+    },
+    {
+      "offset": "0x86ae50",
+      "object_offset": "0x86ae40",
+      "cid": 94,
+      "length": 24,
+      "text": "/modules/api/refresh.php"
+    },
+    {
+      "offset": "0x86b5e0",
+      "object_offset": "0x86b5d0",
+      "cid": 94,
+      "length": 43,
+      "text": "package:rodzic/services/accounts_store.dart"
+    },
+    {
+      "offset": "0x86bf80",
+      "object_offset": "0x86bf70",
+      "cid": 94,
+      "length": 15,
+      "text": "dashboard_weeks"
+    },
+    {
+      "offset": "0x86cd80",
+      "object_offset": "0x86cd70",
+      "cid": 94,
+      "length": 17,
+      "text": "oldHomeworkModule"
+    },
+    {
+      "offset": "0x86eaf0",
+      "object_offset": "0x86eae0",
+      "cid": 94,
+      "length": 31,
+      "text": "package:rodzic/models/term.dart"
+    },
+    {
+      "offset": "0x870570",
+      "object_offset": "0x870560",
+      "cid": 94,
+      "length": 43,
+      "text": "package:rodzic/screens/settings_screen.dart"
+    },
+    {
+      "offset": "0x8705d0",
+      "object_offset": "0x8705c0",
+      "cid": 94,
+      "length": 12,
+      "text": "updateRecord"
+    },
+    {
+      "offset": "0x872670",
+      "object_offset": "0x872660",
+      "cid": 95,
+      "length": 52,
+      "text": "NOTIF REPO: sync ustawień na serwer nieudany (konto "
+    },
+    {
+      "offset": "0x873480",
+      "object_offset": "0x873470",
+      "cid": 94,
+      "length": 38,
+      "text": "package:rodzic/helpers/css_helper.dart"
+    },
+    {
+      "offset": "0x874080",
+      "object_offset": "0x874070",
+      "cid": 94,
+      "length": 24,
+      "text": "package:rodzic/main.dart"
+    },
+    {
+      "offset": "0x876990",
+      "object_offset": "0x876980",
+      "cid": 95,
+      "length": 111,
+      "text": "Ta wersja aplikacji nie jest już zgodna z serwerem dziennika.\nZaktualizuj aplikację w sklepie, aby kontynuować."
+    },
+    {
+      "offset": "0x877850",
+      "object_offset": "0x877840",
+      "cid": 94,
+      "length": 39,
+      "text": "package:rodzic/screens/mail_screen.dart"
+    },
+    {
+      "offset": "0x878d10",
+      "object_offset": "0x878d00",
+      "cid": 94,
+      "length": 24,
+      "text": "AUTH: Próba logowania..."
+    },
+    {
+      "offset": "0x879de0",
+      "object_offset": "0x879dd0",
+      "cid": 94,
+      "length": 33,
+      "text": "Wersja 3.1.7 (build 116, d20dd8d)"
+    },
+    {
+      "offset": "0x87c630",
+      "object_offset": "0x87c620",
+      "cid": 94,
+      "length": 12,
+      "text": "pendingCount"
+    },
+    {
+      "offset": "0x87cc80",
+      "object_offset": "0x87cc70",
+      "cid": 94,
+      "length": 14,
+      "text": "AppHtmlFactory"
+    },
+    {
+      "offset": "0x87d240",
+      "object_offset": "0x87d230",
+      "cid": 94,
+      "length": 54,
+      "text": "package:rodzic/repositories/attendance_repository.dart"
+    },
+    {
+      "offset": "0x87ff00",
+      "object_offset": "0x87fef0",
+      "cid": 94,
+      "length": 14,
+      "text": "auth_token_jwt"
+    },
+    {
+      "offset": "0x880ac0",
+      "object_offset": "0x880ab0",
+      "cid": 95,
+      "length": 40,
+      "text": "FCM: brak tokenu (getToken zwrócił null)"
+    },
+    {
+      "offset": "0x8811e0",
+      "object_offset": "0x8811d0",
+      "cid": 94,
+      "length": 20,
+      "text": "auth_password_secure"
+    },
+    {
+      "offset": "0x882440",
+      "object_offset": "0x882430",
+      "cid": 94,
+      "length": 47,
+      "text": "package:rodzic/screens/mail_compose_screen.dart"
+    },
+    {
+      "offset": "0x883070",
+      "object_offset": "0x883060",
+      "cid": 94,
+      "length": 17,
+      "text": "clearModuleCookie"
+    },
+    {
+      "offset": "0x883f10",
+      "object_offset": "0x883f00",
+      "cid": 95,
+      "length": 18,
+      "text": "AUTH: Łączenie z: "
+    },
+    {
+      "offset": "0x885840",
+      "object_offset": "0x885830",
+      "cid": 94,
+      "length": 37,
+      "text": "MAIL SSO: Brak danych do SSO (server="
+    },
+    {
+      "offset": "0x886090",
+      "object_offset": "0x886080",
+      "cid": 94,
+      "length": 15,
+      "text": "homework-module"
+    },
+    {
+      "offset": "0x886e40",
+      "object_offset": "0x886e30",
+      "cid": 94,
+      "length": 53,
+      "text": "package:rodzic/repositories/homeworks_repository.dart"
+    },
+    {
+      "offset": "0x887270",
+      "object_offset": "0x887260",
+      "cid": 94,
+      "length": 37,
+      "text": "package:rodzic/utils/school_code.dart"
+    },
+    {
+      "offset": "0x8894e0",
+      "object_offset": "0x8894d0",
+      "cid": 94,
+      "length": 18,
+      "text": "uploadSolutionFile"
+    },
+    {
+      "offset": "0x889ca0",
+      "object_offset": "0x889c90",
+      "cid": 94,
+      "length": 43,
+      "text": "package:rodzic/providers/mail_provider.dart"
+    },
+    {
+      "offset": "0x88a380",
+      "object_offset": "0x88a370",
+      "cid": 94,
+      "length": 44,
+      "text": "SESSION: Zmiana preferowanego okresu na ID: "
+    },
+    {
+      "offset": "0x88a5b0",
+      "object_offset": "0x88a5a0",
+      "cid": 94,
+      "length": 51,
+      "text": "package:rodzic/services/cache/fcm_invalidation.dart"
+    },
+    {
+      "offset": "0x88a740",
+      "object_offset": "0x88a730",
+      "cid": 95,
+      "length": 32,
+      "text": "MAIL REPO BŁĄD (deleteMessage): "
+    },
+    {
+      "offset": "0x88d0d0",
+      "object_offset": "0x88d0c0",
+      "cid": 95,
+      "length": 15,
+      "text": "Szczegóły oceny"
+    },
+    {
+      "offset": "0x88d240",
+      "object_offset": "0x88d230",
+      "cid": 94,
+      "length": 34,
+      "text": "package:rodzic/models/account.dart"
+    },
+    {
+      "offset": "0x88d750",
+      "object_offset": "0x88d740",
+      "cid": 94,
+      "length": 43,
+      "text": "package:rodzic/services/module_session.dart"
+    },
+    {
+      "offset": "0x88f400",
+      "object_offset": "0x88f3f0",
+      "cid": 94,
+      "length": 49,
+      "text": "package:rodzic/screens/justifications_screen.dart"
+    },
+    {
+      "offset": "0x890b70",
+      "object_offset": "0x890b60",
+      "cid": 94,
+      "length": 25,
+      "text": "/justifications?pupil_id="
+    },
+    {
+      "offset": "0x8921d0",
+      "object_offset": "0x8921c0",
+      "cid": 95,
+      "length": 41,
+      "text": "Niezgodna wersja protokołu API (serwer: v"
+    },
+    {
+      "offset": "0x893e40",
+      "object_offset": "0x893e30",
+      "cid": 94,
+      "length": 40,
+      "text": "package:rodzic/widgets/upload_retry.dart"
+    },
+    {
+      "offset": "0x894d70",
+      "object_offset": "0x894d60",
+      "cid": 95,
+      "length": 44,
+      "text": "AUTH BŁĄD: Brak hasła i brak refresh tokenu."
+    },
+    {
+      "offset": "0x897720",
+      "object_offset": "0x897710",
+      "cid": 94,
+      "length": 10,
+      "text": "SkinPastel"
+    },
+    {
+      "offset": "0x899940",
+      "object_offset": "0x899930",
+      "cid": 94,
+      "length": 41,
+      "text": "package:rodzic/services/api/mail_api.dart"
+    },
+    {
+      "offset": "0x899ca0",
+      "object_offset": "0x899c90",
+      "cid": 94,
+      "length": 11,
+      "text": "CameraFocus"
+    },
+    {
+      "offset": "0x89a6f0",
+      "object_offset": "0x89a6e0",
+      "cid": 94,
+      "length": 51,
+      "text": "package:rodzic/screens/reprimand_detail_screen.dart"
+    },
+    {
+      "offset": "0x89a7f0",
+      "object_offset": "0x89a7e0",
+      "cid": 94,
+      "length": 11,
+      "text": "setArchived"
+    },
+    {
+      "offset": "0x89a8f0",
+      "object_offset": "0x89a8e0",
+      "cid": 94,
+      "length": 8,
+      "text": "MailSend"
+    },
+    {
+      "offset": "0x89b980",
+      "object_offset": "0x89b970",
+      "cid": 94,
+      "length": 53,
+      "text": "package:rodzic/widgets/homework_solution_section.dart"
+    },
+    {
+      "offset": "0x89c1b0",
+      "object_offset": "0x89c1a0",
+      "cid": 94,
+      "length": 8,
+      "text": "is_final"
+    },
+    {
+      "offset": "0x89c4d0",
+      "object_offset": "0x89c4c0",
+      "cid": 94,
+      "length": 36,
+      "text": "package:rodzic/models/reprimand.dart"
+    },
+    {
+      "offset": "0x8a0fe0",
+      "object_offset": "0x8a0fd0",
+      "cid": 94,
+      "length": 23,
+      "text": "/api/messages/important"
+    },
+    {
+      "offset": "0x8a1060",
+      "object_offset": "0x8a1050",
+      "cid": 94,
+      "length": 13,
+      "text": "CameraPreview"
+    },
+    {
+      "offset": "0x8a1490",
+      "object_offset": "0x8a1480",
+      "cid": 94,
+      "length": 44,
+      "text": "package:rodzic/theme/skin_high_contrast.dart"
+    },
+    {
+      "offset": "0x8a16d0",
+      "object_offset": "0x8a16c0",
+      "cid": 94,
+      "length": 13,
+      "text": "CameraFacing."
+    },
+    {
+      "offset": "0x8a1b00",
+      "object_offset": "0x8a1af0",
+      "cid": 94,
+      "length": 26,
+      "text": "FCM: unregister-fcm konto "
+    },
+    {
+      "offset": "0x8a3a40",
+      "object_offset": "0x8a3a30",
+      "cid": 94,
+      "length": 40,
+      "text": "package:rodzic/services/api/app_api.dart"
+    },
+    {
+      "offset": "0x8a6b30",
+      "object_offset": "0x8a6b20",
+      "cid": 94,
+      "length": 37,
+      "text": "package:rodzic/widgets/mark_tile.dart"
+    },
+    {
+      "offset": "0x8a7bd0",
+      "object_offset": "0x8a7bc0",
+      "cid": 95,
+      "length": 34,
+      "text": "MAIL REPO BŁĄD (searchReceivers): "
+    },
+    {
+      "offset": "0x8ae6d0",
+      "object_offset": "0x8ae6c0",
+      "cid": 94,
+      "length": 26,
+      "text": "PENDING: po odpowiedzi na "
+    },
+    {
+      "offset": "0x8afbc0",
+      "object_offset": "0x8afbb0",
+      "cid": 94,
+      "length": 22,
+      "text": "TimetableExam.fromJson"
+    },
+    {
+      "offset": "0x8b0930",
+      "object_offset": "0x8b0920",
+      "cid": 94,
+      "length": 39,
+      "text": "package:rodzic/models/mail_message.dart"
+    },
+    {
+      "offset": "0x8b1030",
+      "object_offset": "0x8b1020",
+      "cid": 94,
+      "length": 10,
+      "text": "sendAnswer"
+    },
+    {
+      "offset": "0x8b1760",
+      "object_offset": "0x8b1750",
+      "cid": 94,
+      "length": 12,
+      "text": "deleteRecord"
+    },
+    {
+      "offset": "0x8b18e0",
+      "object_offset": "0x8b18d0",
+      "cid": 94,
+      "length": 17,
+      "text": "getDiaryHomeworks"
+    },
+    {
+      "offset": "0x8b3ba0",
+      "object_offset": "0x8b3b90",
+      "cid": 94,
+      "length": 16,
+      "text": "get:pendingCount"
+    },
+    {
+      "offset": "0x8b3bc0",
+      "object_offset": "0x8b3bb0",
+      "cid": 94,
+      "length": 50,
+      "text": "package:rodzic/screens/subject_details_screen.dart"
+    },
+    {
+      "offset": "0x8b5300",
+      "object_offset": "0x8b52f0",
+      "cid": 94,
+      "length": 47,
+      "text": "package:rodzic/models/dashboard_attendance.dart"
+    },
+    {
+      "offset": "0x8b5c50",
+      "object_offset": "0x8b5c40",
+      "cid": 95,
+      "length": 64,
+      "text": "FCM: inwalidacja cache po tapie systemowym nieudana (ignoruję): "
+    },
+    {
+      "offset": "0x8b8d20",
+      "object_offset": "0x8b8d10",
+      "cid": 95,
+      "length": 17,
+      "text": "CACHE: GC usunął "
+    },
+    {
+      "offset": "0x8ba330",
+      "object_offset": "0x8ba320",
+      "cid": 94,
+      "length": 40,
+      "text": "package:rodzic/models/justify_event.dart"
+    },
+    {
+      "offset": "0x8ba460",
+      "object_offset": "0x8ba450",
+      "cid": 94,
+      "length": 21,
+      "text": "announcements-pending"
+    },
+    {
+      "offset": "0x8bffa0",
+      "object_offset": "0x8bff90",
+      "cid": 94,
+      "length": 45,
+      "text": "package:rodzic/widgets/announcement_tile.dart"
+    },
+    {
+      "offset": "0x8c0000",
+      "object_offset": "0x8bfff0",
+      "cid": 95,
+      "length": 13,
+      "text": "Usunąć konto?"
+    },
+    {
+      "offset": "0x8c0790",
+      "object_offset": "0x8c0780",
+      "cid": 94,
+      "length": 12,
+      "text": "SkinAmethyst"
+    },
+    {
+      "offset": "0x8c0d40",
+      "object_offset": "0x8c0d30",
+      "cid": 94,
+      "length": 13,
+      "text": "VotingSection"
+    },
+    {
+      "offset": "0x8c1eb0",
+      "object_offset": "0x8c1ea0",
+      "cid": 94,
+      "length": 41,
+      "text": "package:rodzic/services/mail_session.dart"
+    },
+    {
+      "offset": "0x8c21d0",
+      "object_offset": "0x8c21c0",
+      "cid": 94,
+      "length": 44,
+      "text": "package:rodzic/widgets/app_html_factory.dart"
+    },
+    {
+      "offset": "0x8c29b0",
+      "object_offset": "0x8c29a0",
+      "cid": 94,
+      "length": 39,
+      "text": "package:rodzic/helpers/day_columns.dart"
+    },
+    {
+      "offset": "0x8c3680",
+      "object_offset": "0x8c3670",
+      "cid": 94,
+      "length": 22,
+      "text": "dyn:get:fontSizeOffset"
+    },
+    {
+      "offset": "0x8c4bb0",
+      "object_offset": "0x8c4ba0",
+      "cid": 95,
+      "length": 66,
+      "text": "Jak daleko wstecz pokazywać oceny, uwagi, ogłoszenia i sprawdziany"
+    },
+    {
+      "offset": "0x8c7400",
+      "object_offset": "0x8c73f0",
+      "cid": 94,
+      "length": 15,
+      "text": "CameraLensType."
+    },
+    {
+      "offset": "0x8c8150",
+      "object_offset": "0x8c8140",
+      "cid": 94,
+      "length": 19,
+      "text": "/api/messages/inbox"
+    },
+    {
+      "offset": "0x8ca630",
+      "object_offset": "0x8ca620",
+      "cid": 94,
+      "length": 15,
+      "text": "/justifications"
+    },
+    {
+      "offset": "0x8cc480",
+      "object_offset": "0x8cc470",
+      "cid": 94,
+      "length": 20,
+      "text": "justification-events"
+    },
+    {
+      "offset": "0x8ce610",
+      "object_offset": "0x8ce600",
+      "cid": 94,
+      "length": 27,
+      "text": "SESSION: Zmiana ucznia na: "
+    },
+    {
+      "offset": "0x8ce660",
+      "object_offset": "0x8ce650",
+      "cid": 94,
+      "length": 22,
+      "text": "MailRecipient.fromJson"
+    },
+    {
+      "offset": "0x8cf100",
+      "object_offset": "0x8cf0f0",
+      "cid": 94,
+      "length": 38,
+      "text": "package:rodzic/models/picked_file.dart"
+    },
+    {
+      "offset": "0x8cf4d0",
+      "object_offset": "0x8cf4c0",
+      "cid": 94,
+      "length": 44,
+      "text": "package:rodzic/services/cache/app_cache.dart"
+    },
+    {
+      "offset": "0x8cf8b0",
+      "object_offset": "0x8cf8a0",
+      "cid": 95,
+      "length": 44,
+      "text": "FCM: inwalidacja cache nieudana (ignoruję): "
+    },
+    {
+      "offset": "0x8d1570",
+      "object_offset": "0x8d1560",
+      "cid": 94,
+      "length": 16,
+      "text": "attendance-stats"
+    },
+    {
+      "offset": "0x8d38d0",
+      "object_offset": "0x8d38c0",
+      "cid": 94,
+      "length": 48,
+      "text": "package:rodzic/providers/homeworks_provider.dart"
+    },
+    {
+      "offset": "0x8d41c0",
+      "object_offset": "0x8d41b0",
+      "cid": 94,
+      "length": 54,
+      "text": "package:rodzic/repositories/reprimands_repository.dart"
+    },
+    {
+      "offset": "0x8d4730",
+      "object_offset": "0x8d4720",
+      "cid": 94,
+      "length": 11,
+      "text": "is_proposal"
+    },
+    {
+      "offset": "0x8d4770",
+      "object_offset": "0x8d4760",
+      "cid": 94,
+      "length": 24,
+      "text": "AUTH: Refresh OK (konto "
+    },
+    {
+      "offset": "0x8d48f0",
+      "object_offset": "0x8d48e0",
+      "cid": 94,
+      "length": 8,
+      "text": "JWTToken"
+    },
+    {
+      "offset": "0x8d6550",
+      "object_offset": "0x8d6540",
+      "cid": 94,
+      "length": 12,
+      "text": "register-fcm"
+    },
+    {
+      "offset": "0x8d6b70",
+      "object_offset": "0x8d6b60",
+      "cid": 94,
+      "length": 52,
+      "text": "package:rodzic/providers/announcements_provider.dart"
+    },
+    {
+      "offset": "0x8da9c0",
+      "object_offset": "0x8da9b0",
+      "cid": 94,
+      "length": 37,
+      "text": "package:rodzic/widgets/exam_tile.dart"
+    },
+    {
+      "offset": "0x8dbbf0",
+      "object_offset": "0x8dbbe0",
+      "cid": 94,
+      "length": 11,
+      "text": "sendMessage"
+    },
+    {
+      "offset": "0x8dc1e0",
+      "object_offset": "0x8dc1d0",
+      "cid": 94,
+      "length": 19,
+      "text": "Motyw kolorystyczny"
+    },
+    {
+      "offset": "0x8df6b0",
+      "object_offset": "0x8df6a0",
+      "cid": 94,
+      "length": 34,
+      "text": "MAIL SESSION: Cookie wyczyszczone."
+    },
+    {
+      "offset": "0x8dfe20",
+      "object_offset": "0x8dfe10",
+      "cid": 94,
+      "length": 11,
+      "text": "deadline_at"
+    },
+    {
+      "offset": "0x8dff90",
+      "object_offset": "0x8dff80",
+      "cid": 94,
+      "length": 16,
+      "text": "api_page_address"
+    },
+    {
+      "offset": "0x8e0180",
+      "object_offset": "0x8e0170",
+      "cid": 94,
+      "length": 37,
+      "text": "package:rodzic/widgets/side_menu.dart"
+    },
+    {
+      "offset": "0x8e0ef0",
+      "object_offset": "0x8e0ee0",
+      "cid": 95,
+      "length": 31,
+      "text": "MAIL REPO BŁĄD (getReceivers): "
+    },
+    {
+      "offset": "0x8e19c0",
+      "object_offset": "0x8e19b0",
+      "cid": 95,
+      "length": 22,
+      "text": "AUTH REFRESH WYJĄTEK: "
+    },
+    {
+      "offset": "0x8e1b70",
+      "object_offset": "0x8e1b60",
+      "cid": 94,
+      "length": 145,
+      "text": "_MixinApplication271&WidgetFactory&CachedNetworkImageFactory&ChewieFactory&JustAudioFactory&SvgFactory&UrlLauncherFactory&WebViewFactory@18353248"
+    },
+    {
+      "offset": "0x8e2aa0",
+      "object_offset": "0x8e2a90",
+      "cid": 94,
+      "length": 9,
+      "text": "pickImage"
+    },
+    {
+      "offset": "0x8e3a90",
+      "object_offset": "0x8e3a80",
+      "cid": 94,
+      "length": 11,
+      "text": "starMessage"
+    },
+    {
+      "offset": "0x8e56d0",
+      "object_offset": "0x8e56c0",
+      "cid": 94,
+      "length": 16,
+      "text": "/justifications/"
+    },
+    {
+      "offset": "0x8e6ac0",
+      "object_offset": "0x8e6ab0",
+      "cid": 95,
+      "length": 75,
+      "text": ") zniknie z aplikacji razem ze swoimi dziećmi. Konto w dzienniku pozostaje."
+    },
+    {
+      "offset": "0x8e7550",
+      "object_offset": "0x8e7540",
+      "cid": 95,
+      "length": 20,
+      "text": "Przenieś do archiwum"
+    },
+    {
+      "offset": "0x8ea3e0",
+      "object_offset": "0x8ea3d0",
+      "cid": 94,
+      "length": 9,
+      "text": "canAnswer"
+    },
+    {
+      "offset": "0x8ee6f0",
+      "object_offset": "0x8ee6e0",
+      "cid": 94,
+      "length": 14,
+      "text": "ZADANIA: plik "
+    },
+    {
+      "offset": "0x8ef200",
+      "object_offset": "0x8ef1f0",
+      "cid": 94,
+      "length": 38,
+      "text": "JUSTIFY_PROVIDER_ERROR(createRecord): "
+    },
+    {
+      "offset": "0x8f05c0",
+      "object_offset": "0x8f05b0",
+      "cid": 95,
+      "length": 28,
+      "text": "PENDING: pomijam przejście ("
+    },
+    {
+      "offset": "0x8f1cf0",
+      "object_offset": "0x8f1ce0",
+      "cid": 94,
+      "length": 44,
+      "text": "package:rodzic/widgets/mark_detail_card.dart"
+    },
+    {
+      "offset": "0x8f2770",
+      "object_offset": "0x8f2760",
+      "cid": 95,
+      "length": 21,
+      "text": "Błąd pobierania ocen."
+    },
+    {
+      "offset": "0x8f3bf0",
+      "object_offset": "0x8f3be0",
+      "cid": 94,
+      "length": 24,
+      "text": "Brak ocen w tym okresie."
+    },
+    {
+      "offset": "0x8f4780",
+      "object_offset": "0x8f4770",
+      "cid": 94,
+      "length": 13,
+      "text": "Developer_log"
+    },
+    {
+      "offset": "0x8f5210",
+      "object_offset": "0x8f5200",
+      "cid": 94,
+      "length": 12,
+      "text": "SourceCamera"
+    },
+    {
+      "offset": "0x8f53d0",
+      "object_offset": "0x8f53c0",
+      "cid": 94,
+      "length": 7,
+      "text": "CACHE: "
+    },
+    {
+      "offset": "0x8f5f30",
+      "object_offset": "0x8f5f20",
+      "cid": 94,
+      "length": 46,
+      "text": "package:rodzic/services/pending_poll_gate.dart"
+    },
+    {
+      "offset": "0x8f68d0",
+      "object_offset": "0x8f68c0",
+      "cid": 94,
+      "length": 12,
+      "text": "count_to_avg"
+    },
+    {
+      "offset": "0x8f9600",
+      "object_offset": "0x8f95f0",
+      "cid": 95,
+      "length": 33,
+      "text": "CACHE: dedup żądania w locie dla "
+    },
+    {
+      "offset": "0x8f9740",
+      "object_offset": "0x8f9730",
+      "cid": 94,
+      "length": 35,
+      "text": "package:rodzic/widgets/sub_bar.dart"
+    },
+    {
+      "offset": "0x8f9a70",
+      "object_offset": "0x8f9a60",
+      "cid": 94,
+      "length": 37,
+      "text": "package:rodzic/helpers/text_html.dart"
+    },
+    {
+      "offset": "0x8f9bf0",
+      "object_offset": "0x8f9be0",
+      "cid": 94,
+      "length": 26,
+      "text": "REPO: Arkusz ocen gotowy ("
+    },
+    {
+      "offset": "0x8fb0f0",
+      "object_offset": "0x8fb0e0",
+      "cid": 94,
+      "length": 35,
+      "text": "package:rodzic/shell/app_shell.dart"
+    },
+    {
+      "offset": "0x8fb670",
+      "object_offset": "0x8fb660",
+      "cid": 94,
+      "length": 38,
+      "text": "package:rodzic/widgets/event_tile.dart"
+    },
+    {
+      "offset": "0x8fe600",
+      "object_offset": "0x8fe5f0",
+      "cid": 94,
+      "length": 15,
+      "text": "/api/homeworks/"
+    },
+    {
+      "offset": "0x8fecf0",
+      "object_offset": "0x8fece0",
+      "cid": 95,
+      "length": 55,
+      "text": "ZADANIA: adres załącznika wygasł — odświeżam szczegóły."
+    },
+    {
+      "offset": "0x8ffc70",
+      "object_offset": "0x8ffc60",
+      "cid": 94,
+      "length": 17,
+      "text": "MAIL SSO: Status "
+    },
+    {
+      "offset": "0x901f70",
+      "object_offset": "0x901f60",
+      "cid": 94,
+      "length": 52,
+      "text": "package:rodzic/providers/notifications_provider.dart"
+    },
+    {
+      "offset": "0x902410",
+      "object_offset": "0x902400",
+      "cid": 95,
+      "length": 38,
+      "text": "MAIL REPO BŁĄD (getReceiversForType): "
+    },
+    {
+      "offset": "0x903110",
+      "object_offset": "0x903100",
+      "cid": 94,
+      "length": 52,
+      "text": "package:rodzic/widgets/announcement_detail_card.dart"
+    },
+    {
+      "offset": "0x9043e0",
+      "object_offset": "0x9043d0",
+      "cid": 94,
+      "length": 32,
+      "text": "package:rodzic/models/pupil.dart"
+    },
+    {
+      "offset": "0x904600",
+      "object_offset": "0x9045f0",
+      "cid": 94,
+      "length": 50,
+      "text": "package:rodzic/screens/homework_detail_screen.dart"
+    },
+    {
+      "offset": "0x905010",
+      "object_offset": "0x905000",
+      "cid": 94,
+      "length": 44,
+      "text": "package:rodzic/screens/dashboard_screen.dart"
+    },
+    {
+      "offset": "0x9051a0",
+      "object_offset": "0x905190",
+      "cid": 94,
+      "length": 58,
+      "text": "package:rodzic/repositories/justifications_repository.dart"
+    },
+    {
+      "offset": "0x905ec0",
+      "object_offset": "0x905eb0",
+      "cid": 95,
+      "length": 29,
+      "text": "MAIL REPO BŁĄD (getMessage): "
+    },
+    {
+      "offset": "0x9060e0",
+      "object_offset": "0x9060d0",
+      "cid": 94,
+      "length": 31,
+      "text": "PROVIDER: archiwizacja zadania "
+    },
+    {
+      "offset": "0x9065c0",
+      "object_offset": "0x9065b0",
+      "cid": 94,
+      "length": 40,
+      "text": "package:rodzic/services/fcm_service.dart"
+    },
+    {
+      "offset": "0x908300",
+      "object_offset": "0x9082f0",
+      "cid": 95,
+      "length": 55,
+      "text": "FCM: odświeżenie otwartego widoku nieudane (ignoruję): "
+    },
+    {
+      "offset": "0x90a5b0",
+      "object_offset": "0x90a5a0",
+      "cid": 94,
+      "length": 16,
+      "text": "timetable-events"
+    },
+    {
+      "offset": "0x90c0c0",
+      "object_offset": "0x90c0b0",
+      "cid": 94,
+      "length": 16,
+      "text": "sendAnnouncement"
+    },
+    {
+      "offset": "0x90e890",
+      "object_offset": "0x90e880",
+      "cid": 94,
+      "length": 36,
+      "text": "package:rodzic/widgets/day_view.dart"
+    },
+    {
+      "offset": "0x90f6c0",
+      "object_offset": "0x90f6b0",
+      "cid": 94,
+      "length": 48,
+      "text": "package:rodzic/services/cache/cached_result.dart"
+    },
+    {
+      "offset": "0x9104d0",
+      "object_offset": "0x9104c0",
+      "cid": 94,
+      "length": 8,
+      "text": "authType"
+    },
+    {
+      "offset": "0x910950",
+      "object_offset": "0x910940",
+      "cid": 94,
+      "length": 42,
+      "text": "package:rodzic/models/attendance_data.dart"
+    },
+    {
+      "offset": "0x911170",
+      "object_offset": "0x911160",
+      "cid": 94,
+      "length": 25,
+      "text": "_toggleArchive@1216425715"
+    },
+    {
+      "offset": "0x911490",
+      "object_offset": "0x911480",
+      "cid": 94,
+      "length": 54,
+      "text": "package:rodzic/screens/announcement_detail_screen.dart"
+    },
+    {
+      "offset": "0x912180",
+      "object_offset": "0x912170",
+      "cid": 95,
+      "length": 16,
+      "text": "FCM: błąd init: "
+    },
+    {
+      "offset": "0x9153b0",
+      "object_offset": "0x9153a0",
+      "cid": 94,
+      "length": 66,
+      "text": "CREATE INDEX idx_cache_kind_pupil ON cache_entries(kind, pupil_id)"
+    },
+    {
+      "offset": "0x9165e0",
+      "object_offset": "0x9165d0",
+      "cid": 94,
+      "length": 9,
+      "text": "MailReply"
+    },
+    {
+      "offset": "0x916740",
+      "object_offset": "0x916730",
+      "cid": 94,
+      "length": 39,
+      "text": "package:rodzic/helpers/date_helper.dart"
+    },
+    {
+      "offset": "0x916cd0",
+      "object_offset": "0x916cc0",
+      "cid": 94,
+      "length": 53,
+      "text": "package:rodzic/services/cache/cache_invalidation.dart"
+    },
+    {
+      "offset": "0x918aa0",
+      "object_offset": "0x918a90",
+      "cid": 94,
+      "length": 48,
+      "text": "package:rodzic/widgets/homework_detail_card.dart"
+    },
+    {
+      "offset": "0x919450",
+      "object_offset": "0x919440",
+      "cid": 94,
+      "length": 35,
+      "text": "package:rodzic/widgets/top_bar.dart"
+    },
+    {
+      "offset": "0x919e60",
+      "object_offset": "0x919e50",
+      "cid": 94,
+      "length": 30,
+      "text": "_VotingSectionState@1329457408"
+    },
+    {
+      "offset": "0x91a250",
+      "object_offset": "0x91a240",
+      "cid": 94,
+      "length": 46,
+      "text": "package:rodzic/screens/mail_detail_screen.dart"
+    },
+    {
+      "offset": "0x91bbf0",
+      "object_offset": "0x91bbe0",
+      "cid": 94,
+      "length": 46,
+      "text": "package:rodzic/screens/mark_detail_screen.dart"
+    },
+    {
+      "offset": "0x91c4e0",
+      "object_offset": "0x91c4d0",
+      "cid": 95,
+      "length": 148,
+      "text": "Oceny, sprawdziany, zadania domowe, uwagi, komunikaty i nieobecności pojawią się tutaj, gdy szkoła je wprowadzi. Plan lekcji jest w zakładce „Plan\"."
+    },
+    {
+      "offset": "0x91c960",
+      "object_offset": "0x91c950",
+      "cid": 94,
+      "length": 9,
+      "text": "pickFiles"
+    },
+    {
+      "offset": "0x920010",
+      "object_offset": "0x920000",
+      "cid": 94,
+      "length": 38,
+      "text": "package:rodzic/widgets/bottom_nav.dart"
+    },
+    {
+      "offset": "0x920420",
+      "object_offset": "0x920410",
+      "cid": 94,
+      "length": 19,
+      "text": "/api/messages/read/"
+    },
+    {
+      "offset": "0x920c60",
+      "object_offset": "0x920c50",
+      "cid": 94,
+      "length": 31,
+      "text": "package:rodzic/models/mark.dart"
+    },
+    {
+      "offset": "0x921ad0",
+      "object_offset": "0x921ac0",
+      "cid": 95,
+      "length": 38,
+      "text": "AUTH BŁĄD: Niekompletne poświadczenia."
+    },
+    {
+      "offset": "0x9233f0",
+      "object_offset": "0x9233e0",
+      "cid": 94,
+      "length": 56,
+      "text": "package:rodzic/screens/justification_compose_screen.dart"
+    },
+    {
+      "offset": "0x924e90",
+      "object_offset": "0x924e80",
+      "cid": 94,
+      "length": 31,
+      "text": "package:rodzic/build_stamp.dart"
+    },
+    {
+      "offset": "0x9260f0",
+      "object_offset": "0x9260e0",
+      "cid": 95,
+      "length": 33,
+      "text": "AUTH REFRESH SERVER BŁĄD: Status "
+    },
+    {
+      "offset": "0x926bd0",
+      "object_offset": "0x926bc0",
+      "cid": 94,
+      "length": 18,
+      "text": "/api/messages/sent"
+    },
+    {
+      "offset": "0x92b650",
+      "object_offset": "0x92b640",
+      "cid": 94,
+      "length": 8,
+      "text": "pupil_id"
+    },
+    {
+      "offset": "0x92bbf0",
+      "object_offset": "0x92bbe0",
+      "cid": 94,
+      "length": 529,
+      "text": "          CREATE TABLE cache_entries (\n            cache_key    TEXT PRIMARY KEY,\n            kind         TEXT NOT NULL,\n            pupil_id     INTEGER NOT NULL DEFAULT 0,\n            params       TEXT NOT NULL DEFAULT '',\n            range_from   TEXT,\n            range_to     TEXT,\n            payload      TEXT NOT NULL,\n            fetched_at   INTEGER NOT NULL,\n            fresh_until  INTEGER NOT NULL,\n            retain_until INTEGER NOT NULL,\n            protocol_v   INTEGER NOT NULL DEFAULT 0\n          )\n        "
+    },
+    {
+      "offset": "0x92cef0",
+      "object_offset": "0x92cee0",
+      "cid": 95,
+      "length": 18,
+      "text": "Nie wysłano plików"
+    },
+    {
+      "offset": "0x92d350",
+      "object_offset": "0x92d340",
+      "cid": 94,
+      "length": 53,
+      "text": "package:rodzic/repositories/dashboard_repository.dart"
+    },
+    {
+      "offset": "0x930520",
+      "object_offset": "0x930510",
+      "cid": 95,
+      "length": 30,
+      "text": "FCM: błąd pobrania wiadomości "
+    },
+    {
+      "offset": "0x932960",
+      "object_offset": "0x932950",
+      "cid": 95,
+      "length": 33,
+      "text": "MAIL REPO BŁĄD (getUnreadCount): "
+    },
+    {
+      "offset": "0x932b40",
+      "object_offset": "0x932b30",
+      "cid": 95,
+      "length": 59,
+      "text": "FCM: onTokenRefresh — ponowna rejestracja (wszystkie konta)"
+    },
+    {
+      "offset": "0x933da0",
+      "object_offset": "0x933d90",
+      "cid": 94,
+      "length": 45,
+      "text": "package:rodzic/services/api/api_envelope.dart"
+    },
+    {
+      "offset": "0x934900",
+      "object_offset": "0x9348f0",
+      "cid": 95,
+      "length": 29,
+      "text": "Nie udało się załadować ocen."
+    },
+    {
+      "offset": "0x935460",
+      "object_offset": "0x935450",
+      "cid": 94,
+      "length": 48,
+      "text": "CACHE: wymagana aktualizacja aplikacji (serwer v"
+    },
+    {
+      "offset": "0x935c20",
+      "object_offset": "0x935c10",
+      "cid": 95,
+      "length": 24,
+      "text": "WYŁĄCZ TRYB DEWELOPERSKI"
+    },
+    {
+      "offset": "0x935d80",
+      "object_offset": "0x935d70",
+      "cid": 94,
+      "length": 15,
+      "text": "buildCameraView"
+    },
+    {
+      "offset": "0x936130",
+      "object_offset": "0x936120",
+      "cid": 95,
+      "length": 23,
+      "text": "AUTH REFRESH API BŁĄD: "
+    },
+    {
+      "offset": "0x938640",
+      "object_offset": "0x938630",
+      "cid": 94,
+      "length": 24,
+      "text": "AUTH: Wylogowanie konta "
+    },
+    {
+      "offset": "0x939190",
+      "object_offset": "0x939180",
+      "cid": 94,
+      "length": 44,
+      "text": "package:rodzic/screens/homeworks_screen.dart"
+    },
+    {
+      "offset": "0x939b60",
+      "object_offset": "0x939b50",
+      "cid": 95,
+      "length": 49,
+      "text": "ZADANIA: nie udało się wczytać obrazka z treści: "
+    },
+    {
+      "offset": "0x93b5f0",
+      "object_offset": "0x93b5e0",
+      "cid": 95,
+      "length": 55,
+      "text": "STATE: Serwer wymaga aktualizacji aplikacji (protokół v"
+    },
+    {
+      "offset": "0x93d5f0",
+      "object_offset": "0x93d5e0",
+      "cid": 94,
+      "length": 29,
+      "text": "_YoutubeEmbedState@1330381673"
+    },
+    {
+      "offset": "0x93eef0",
+      "object_offset": "0x93eee0",
+      "cid": 94,
+      "length": 35,
+      "text": "package:rodzic/models/homework.dart"
+    },
+    {
+      "offset": "0x93f9a0",
+      "object_offset": "0x93f990",
+      "cid": 94,
+      "length": 42,
+      "text": "package:rodzic/screens/qr_scan_screen.dart"
+    },
+    {
+      "offset": "0x940c00",
+      "object_offset": "0x940bf0",
+      "cid": 94,
+      "length": 18,
+      "text": "dashboard_att_mode"
+    },
+    {
+      "offset": "0x9416e0",
+      "object_offset": "0x9416d0",
+      "cid": 94,
+      "length": 44,
+      "text": "package:rodzic/screens/timetable_screen.dart"
+    },
+    {
+      "offset": "0x942cb0",
+      "object_offset": "0x942ca0",
+      "cid": 94,
+      "length": 12,
+      "text": "createRecord"
+    },
+    {
+      "offset": "0x9431c0",
+      "object_offset": "0x9431b0",
+      "cid": 94,
+      "length": 16,
+      "text": "homeworks-module"
+    },
+    {
+      "offset": "0x944c50",
+      "object_offset": "0x944c40",
+      "cid": 94,
+      "length": 18,
+      "text": "unregisterFcmToken"
+    },
+    {
+      "offset": "0x945cb0",
+      "object_offset": "0x945ca0",
+      "cid": 94,
+      "length": 19,
+      "text": "CACHE: inwalidacja "
+    },
+    {
+      "offset": "0x946770",
+      "object_offset": "0x946760",
+      "cid": 95,
+      "length": 55,
+      "text": "PROVIDER: Odrzucam spóźnioną odpowiedź zadań domowych ("
+    },
+    {
+      "offset": "0x946b90",
+      "object_offset": "0x946b80",
+      "cid": 94,
+      "length": 38,
+      "text": "package:rodzic/theme/app_features.dart"
+    },
+    {
+      "offset": "0x948200",
+      "object_offset": "0x9481f0",
+      "cid": 95,
+      "length": 33,
+      "text": "MAIL REPO BŁĄD (restoreMessage): "
+    },
+    {
+      "offset": "0x948910",
+      "object_offset": "0x948900",
+      "cid": 94,
+      "length": 35,
+      "text": "REPO: Pobieram arkusz ocen (Pupil: "
+    },
+    {
+      "offset": "0x949550",
+      "object_offset": "0x949540",
+      "cid": 94,
+      "length": 48,
+      "text": "package:rodzic/screens/announcements_screen.dart"
+    },
+    {
+      "offset": "0x949a00",
+      "object_offset": "0x9499f0",
+      "cid": 94,
+      "length": 38,
+      "text": "package:rodzic/widgets/day_picker.dart"
+    },
+    {
+      "offset": "0x949b20",
+      "object_offset": "0x949b10",
+      "cid": 94,
+      "length": 10,
+      "text": "postAnswer"
+    },
+    {
+      "offset": "0x94a2c0",
+      "object_offset": "0x94a2b0",
+      "cid": 94,
+      "length": 10,
+      "text": "auth_login"
+    },
+    {
+      "offset": "0x94baa0",
+      "object_offset": "0x94ba90",
+      "cid": 94,
+      "length": 12,
+      "text": "YoutubeEmbed"
+    },
+    {
+      "offset": "0x94c340",
+      "object_offset": "0x94c330",
+      "cid": 94,
+      "length": 46,
+      "text": "package:rodzic/screens/exam_detail_screen.dart"
+    },
+    {
+      "offset": "0x94c8d0",
+      "object_offset": "0x94c8c0",
+      "cid": 94,
+      "length": 49,
+      "text": "REPO: announcements-pending nieudane (offline?): "
+    },
+    {
+      "offset": "0x94dd80",
+      "object_offset": "0x94dd70",
+      "cid": 94,
+      "length": 41,
+      "text": "package:rodzic/models/mail_recipient.dart"
+    },
+    {
+      "offset": "0x94ef00",
+      "object_offset": "0x94eef0",
+      "cid": 95,
+      "length": 28,
+      "text": "REPO BŁĄD: Brak danych ocen."
+    },
+    {
+      "offset": "0x94f690",
+      "object_offset": "0x94f680",
+      "cid": 94,
+      "length": 9,
+      "text": "ttl_devel"
+    },
+    {
+      "offset": "0x951000",
+      "object_offset": "0x950ff0",
+      "cid": 94,
+      "length": 19,
+      "text": "_gallery@1299258618"
+    },
+    {
+      "offset": "0x953c20",
+      "object_offset": "0x953c10",
+      "cid": 94,
+      "length": 10,
+      "text": "protocol_v"
+    },
+    {
+      "offset": "0x955340",
+      "object_offset": "0x955330",
+      "cid": 94,
+      "length": 24,
+      "text": "/api/homeworks/datatable"
+    },
+    {
+      "offset": "0x955520",
+      "object_offset": "0x955510",
+      "cid": 94,
+      "length": 48,
+      "text": "package:rodzic/models/notification_settings.dart"
+    },
+    {
+      "offset": "0x9556c0",
+      "object_offset": "0x9556b0",
+      "cid": 94,
+      "length": 14,
+      "text": "fontSizeOffset"
+    },
+    {
+      "offset": "0x957150",
+      "object_offset": "0x957140",
+      "cid": 94,
+      "length": 16,
+      "text": "teacher_comments"
+    },
+    {
+      "offset": "0x957700",
+      "object_offset": "0x9576f0",
+      "cid": 94,
+      "length": 44,
+      "text": "package:rodzic/providers/marks_provider.dart"
+    },
+    {
+      "offset": "0x957a70",
+      "object_offset": "0x957a60",
+      "cid": 94,
+      "length": 13,
+      "text": "CameraDevice."
+    },
+    {
+      "offset": "0x95b720",
+      "object_offset": "0x95b710",
+      "cid": 94,
+      "length": 30,
+      "text": "/api/messages/receivers/search"
+    },
+    {
+      "offset": "0x95b8a0",
+      "object_offset": "0x95b890",
+      "cid": 94,
+      "length": 37,
+      "text": "package:rodzic/theme/skin_pastel.dart"
+    },
+    {
+      "offset": "0x95d030",
+      "object_offset": "0x95d020",
+      "cid": 94,
+      "length": 14,
+      "text": "CameraLensType"
+    },
+    {
+      "offset": "0x95eec0",
+      "object_offset": "0x95eeb0",
+      "cid": 94,
+      "length": 38,
+      "text": "JUSTIFY_PROVIDER_ERROR(deleteRecord): "
+    },
+    {
+      "offset": "0x963f30",
+      "object_offset": "0x963f20",
+      "cid": 94,
+      "length": 39,
+      "text": "NOTIF REPO: odczyt z serwera nieudany ("
+    },
+    {
+      "offset": "0x9642e0",
+      "object_offset": "0x9642d0",
+      "cid": 95,
+      "length": 21,
+      "text": "ZAŁĄCZNIKI: galeria: "
+    },
+    {
+      "offset": "0x964900",
+      "object_offset": "0x9648f0",
+      "cid": 94,
+      "length": 44,
+      "text": "package:rodzic/providers/exams_provider.dart"
+    },
+    {
+      "offset": "0x965760",
+      "object_offset": "0x965750",
+      "cid": 94,
+      "length": 37,
+      "text": "pickFiles() has not been implemented."
+    },
+    {
+      "offset": "0x965ee0",
+      "object_offset": "0x965ed0",
+      "cid": 94,
+      "length": 60,
+      "text": "dev.flutter.pigeon.image_picker_ios.ImagePickerApi.pickImage"
+    },
+    {
+      "offset": "0x967e30",
+      "object_offset": "0x967e20",
+      "cid": 94,
+      "length": 15,
+      "text": "clearMailCookie"
+    },
+    {
+      "offset": "0x9685f0",
+      "object_offset": "0x9685e0",
+      "cid": 94,
+      "length": 17,
+      "text": " AND pupil_id = ?"
+    },
+    {
+      "offset": "0x968cf0",
+      "object_offset": "0x968ce0",
+      "cid": 95,
+      "length": 42,
+      "text": "REPO KRYTYCZNY: Wyjątek w mapowaniu ocen: "
+    },
+    {
+      "offset": "0x96a8e0",
+      "object_offset": "0x96a8d0",
+      "cid": 94,
+      "length": 38,
+      "text": "JUSTIFY_PROVIDER_ERROR(updateRecord): "
+    },
+    {
+      "offset": "0x96aa90",
+      "object_offset": "0x96aa80",
+      "cid": 94,
+      "length": 11,
+      "text": "selectPupil"
+    },
+    {
+      "offset": "0x96bab0",
+      "object_offset": "0x96baa0",
+      "cid": 94,
+      "length": 41,
+      "text": "package:rodzic/widgets/homework_tile.dart"
+    },
+    {
+      "offset": "0x96cad0",
+      "object_offset": "0x96cac0",
+      "cid": 94,
+      "length": 53,
+      "text": "FCM: pomijam powiadomienie dla konta spoza telefonu ("
+    },
+    {
+      "offset": "0x96e3c0",
+      "object_offset": "0x96e3b0",
+      "cid": 94,
+      "length": 46,
+      "text": "package:rodzic/widgets/subject_marks_card.dart"
+    },
+    {
+      "offset": "0x96ee80",
+      "object_offset": "0x96ee70",
+      "cid": 94,
+      "length": 57,
+      "text": "package:rodzic/screens/timetable_event_detail_screen.dart"
+    },
+    {
+      "offset": "0x96f380",
+      "object_offset": "0x96f370",
+      "cid": 94,
+      "length": 44,
+      "text": "package:rodzic/widgets/exam_detail_card.dart"
+    },
+    {
+      "offset": "0x96f8f0",
+      "object_offset": "0x96f8e0",
+      "cid": 94,
+      "length": 16,
+      "text": "availableCameras"
+    },
+    {
+      "offset": "0x970970",
+      "object_offset": "0x970960",
+      "cid": 95,
+      "length": 13,
+      "text": "Oceny bieżące"
+    },
+    {
+      "offset": "0x970c70",
+      "object_offset": "0x970c60",
+      "cid": 94,
+      "length": 10,
+      "text": "userAnswer"
+    },
+    {
+      "offset": "0x970d70",
+      "object_offset": "0x970d60",
+      "cid": 94,
+      "length": 14,
+      "text": "messages_token"
+    },
+    {
+      "offset": "0x9717d0",
+      "object_offset": "0x9717c0",
+      "cid": 94,
+      "length": 47,
+      "text": "package:rodzic/services/api/api_exceptions.dart"
+    },
+    {
+      "offset": "0x976650",
+      "object_offset": "0x976640",
+      "cid": 95,
+      "length": 27,
+      "text": "FCM: błąd unregisterToken: "
+    },
+    {
+      "offset": "0x976f40",
+      "object_offset": "0x976f30",
+      "cid": 94,
+      "length": 20,
+      "text": "/modules/api/app.php"
+    },
+    {
+      "offset": "0x977620",
+      "object_offset": "0x977610",
+      "cid": 94,
+      "length": 15,
+      "text": "selectPupilById"
+    },
+    {
+      "offset": "0x977760",
+      "object_offset": "0x977750",
+      "cid": 94,
+      "length": 49,
+      "text": "package:rodzic/repositories/marks_repository.dart"
+    },
+    {
+      "offset": "0x977fa0",
+      "object_offset": "0x977f90",
+      "cid": 94,
+      "length": 53,
+      "text": "package:rodzic/widgets/attendance_dashboard_tile.dart"
+    },
+    {
+      "offset": "0x97b460",
+      "object_offset": "0x97b450",
+      "cid": 94,
+      "length": 50,
+      "text": "package:rodzic/screens/homework_answer_screen.dart"
+    },
+    {
+      "offset": "0x97b880",
+      "object_offset": "0x97b870",
+      "cid": 94,
+      "length": 43,
+      "text": "MAIL SSO: Brak cookie w odpowiedzi (status "
+    },
+    {
+      "offset": "0x97cdc0",
+      "object_offset": "0x97cdb0",
+      "cid": 94,
+      "length": 40,
+      "text": "SESSION: Zainicjalizowano Sztab. Pupil: "
+    },
+    {
+      "offset": "0x97d0e0",
+      "object_offset": "0x97d0d0",
+      "cid": 95,
+      "length": 34,
+      "text": "REPO ERROR: Błąd mapowania oceny: "
+    },
+    {
+      "offset": "0x97e3a0",
+      "object_offset": "0x97e390",
+      "cid": 94,
+      "length": 36,
+      "text": "package:rodzic/services/session.dart"
+    },
+    {
+      "offset": "0x97ecc0",
+      "object_offset": "0x97ecb0",
+      "cid": 94,
+      "length": 21,
+      "text": "/modules/api/auth.php"
+    },
+    {
+      "offset": "0x97f070",
+      "object_offset": "0x97f060",
+      "cid": 95,
+      "length": 22,
+      "text": "Wiadomość wysłana BEZ "
+    },
+    {
+      "offset": "0x97f320",
+      "object_offset": "0x97f310",
+      "cid": 94,
+      "length": 13,
+      "text": "SourceCamera."
+    },
+    {
+      "offset": "0x97f430",
+      "object_offset": "0x97f420",
+      "cid": 94,
+      "length": 18,
+      "text": "FCM: routing kind="
+    },
+    {
+      "offset": "0x980cf0",
+      "object_offset": "0x980ce0",
+      "cid": 94,
+      "length": 53,
+      "text": "package:rodzic/repositories/timetable_repository.dart"
+    },
+    {
+      "offset": "0x981230",
+      "object_offset": "0x981220",
+      "cid": 94,
+      "length": 15,
+      "text": "setModuleCookie"
+    },
+    {
+      "offset": "0x981b50",
+      "object_offset": "0x981b40",
+      "cid": 95,
+      "length": 31,
+      "text": "AUTH: Odświeżanie refreshem w: "
+    },
+    {
+      "offset": "0x982100",
+      "object_offset": "0x9820f0",
+      "cid": 94,
+      "length": 15,
+      "text": "SchoolYearRange"
+    },
+    {
+      "offset": "0x984520",
+      "object_offset": "0x984510",
+      "cid": 94,
+      "length": 48,
+      "text": "package:rodzic/repositories/mail_repository.dart"
+    },
+    {
+      "offset": "0x9863d0",
+      "object_offset": "0x9863c0",
+      "cid": 94,
+      "length": 15,
+      "text": "AppHtmlFactory."
+    },
+    {
+      "offset": "0x987410",
+      "object_offset": "0x987400",
+      "cid": 94,
+      "length": 48,
+      "text": "package:rodzic/screens/notifications_screen.dart"
+    },
+    {
+      "offset": "0x988c50",
+      "object_offset": "0x988c40",
+      "cid": 95,
+      "length": 30,
+      "text": "MAIL REPO BŁĄD (starMessage): "
+    },
+    {
+      "offset": "0x988ec0",
+      "object_offset": "0x988eb0",
+      "cid": 94,
+      "length": 17,
+      "text": "TRYB WCAG AKTYWNY"
+    },
+    {
+      "offset": "0x989270",
+      "object_offset": "0x989260",
+      "cid": 95,
+      "length": 13,
+      "text": "Wyczyść cache"
+    },
+    {
+      "offset": "0x989910",
+      "object_offset": "0x989900",
+      "cid": 94,
+      "length": 32,
+      "text": "package:rodzic/services/log.dart"
+    },
+    {
+      "offset": "0x989ec0",
+      "object_offset": "0x989eb0",
+      "cid": 94,
+      "length": 12,
+      "text": "SkinStandard"
+    },
+    {
+      "offset": "0x98acd0",
+      "object_offset": "0x98acc0",
+      "cid": 94,
+      "length": 18,
+      "text": "get:fontSizeOffset"
+    },
+    {
+      "offset": "0x98adf0",
+      "object_offset": "0x98ade0",
+      "cid": 95,
+      "length": 22,
+      "text": "Brak ocen cząstkowych."
+    },
+    {
+      "offset": "0x98af90",
+      "object_offset": "0x98af80",
+      "cid": 95,
+      "length": 19,
+      "text": "Przywróć z archiwum"
+    },
+    {
+      "offset": "0x98c970",
+      "object_offset": "0x98c960",
+      "cid": 94,
+      "length": 41,
+      "text": "package:rodzic/widgets/youtube_embed.dart"
+    },
+    {
+      "offset": "0x98d820",
+      "object_offset": "0x98d810",
+      "cid": 94,
+      "length": 13,
+      "text": "toggleArchive"
+    },
+    {
+      "offset": "0x98e420",
+      "object_offset": "0x98e410",
+      "cid": 94,
+      "length": 43,
+      "text": "package:rodzic/services/cache/cache_db.dart"
+    },
+    {
+      "offset": "0x990aa0",
+      "object_offset": "0x990a90",
+      "cid": 94,
+      "length": 48,
+      "text": "package:rodzic/providers/dashboard_provider.dart"
+    },
+    {
+      "offset": "0x992100",
+      "object_offset": "0x9920f0",
+      "cid": 94,
+      "length": 13,
+      "text": "CACHE: zapis "
+    },
+    {
+      "offset": "0x9921e0",
+      "object_offset": "0x9921d0",
+      "cid": 94,
+      "length": 21,
+      "text": "Cache danych (sqlite)"
+    },
+    {
+      "offset": "0x992bc0",
+      "object_offset": "0x992bb0",
+      "cid": 95,
+      "length": 38,
+      "text": "PENDING: błąd sprawdzania zaległości: "
+    },
+    {
+      "offset": "0x993990",
+      "object_offset": "0x993980",
+      "cid": 94,
+      "length": 40,
+      "text": "package:rodzic/screens/exams_screen.dart"
+    },
+    {
+      "offset": "0x9943a0",
+      "object_offset": "0x994390",
+      "cid": 94,
+      "length": 42,
+      "text": "package:rodzic/models/timetable_event.dart"
+    },
+    {
+      "offset": "0x9950b0",
+      "object_offset": "0x9950a0",
+      "cid": 94,
+      "length": 35,
+      "text": "package:rodzic/state/app_state.dart"
+    },
+    {
+      "offset": "0x995bc0",
+      "object_offset": "0x995bb0",
+      "cid": 94,
+      "length": 15,
+      "text": "uploadWithRetry"
+    },
+    {
+      "offset": "0x998150",
+      "object_offset": "0x998140",
+      "cid": 94,
+      "length": 49,
+      "text": "package:rodzic/repositories/exams_repository.dart"
+    },
+    {
+      "offset": "0x999930",
+      "object_offset": "0x999920",
+      "cid": 95,
+      "length": 25,
+      "text": "FCM: błąd registerToken: "
+    },
+    {
+      "offset": "0x99a170",
+      "object_offset": "0x99a160",
+      "cid": 95,
+      "length": 29,
+      "text": "FCM: odświeżanie widoku kind="
+    },
+    {
+      "offset": "0x99d040",
+      "object_offset": "0x99d030",
+      "cid": 94,
+      "length": 13,
+      "text": "/api/messages"
+    },
+    {
+      "offset": "0x99dc60",
+      "object_offset": "0x99dc50",
+      "cid": 94,
+      "length": 55,
+      "text": "package:rodzic/widgets/timetable_event_detail_card.dart"
+    },
+    {
+      "offset": "0x99e670",
+      "object_offset": "0x99e660",
+      "cid": 94,
+      "length": 19,
+      "text": "announcement-answer"
+    },
+    {
+      "offset": "0x99ed40",
+      "object_offset": "0x99ed30",
+      "cid": 94,
+      "length": 49,
+      "text": "package:rodzic/providers/attendance_provider.dart"
+    },
+    {
+      "offset": "0x99ff50",
+      "object_offset": "0x99ff40",
+      "cid": 94,
+      "length": 40,
+      "text": "package:rodzic/screens/marks_screen.dart"
+    },
+    {
+      "offset": "0x9a01e0",
+      "object_offset": "0x9a01d0",
+      "cid": 95,
+      "length": 25,
+      "text": "PENDING: zaległa ankieta "
+    },
+    {
+      "offset": "0x9a03d0",
+      "object_offset": "0x9a03c0",
+      "cid": 94,
+      "length": 23,
+      "text": "TimetableEvent.fromJson"
+    },
+    {
+      "offset": "0x9a06d0",
+      "object_offset": "0x9a06c0",
+      "cid": 94,
+      "length": 24,
+      "text": "/modules/api/qrlogin.php"
+    },
+    {
+      "offset": "0x9a08e0",
+      "object_offset": "0x9a08d0",
+      "cid": 94,
+      "length": 26,
+      "text": "MAIL SSO: Sukces. Cookie: "
+    },
+    {
+      "offset": "0x9a3dd0",
+      "object_offset": "0x9a3dc0",
+      "cid": 94,
+      "length": 42,
+      "text": "package:rodzic/widgets/offline_banner.dart"
+    },
+    {
+      "offset": "0x9a4700",
+      "object_offset": "0x9a46f0",
+      "cid": 95,
+      "length": 53,
+      "text": "PROVIDER: Wyczyszczono same oceny (semestry zostają)."
+    },
+    {
+      "offset": "0x9a5190",
+      "object_offset": "0x9a5180",
+      "cid": 94,
+      "length": 12,
+      "text": "CameraFacing"
+    },
+    {
+      "offset": "0x9a8300",
+      "object_offset": "0x9a82f0",
+      "cid": 94,
+      "length": 14,
+      "text": "restoreMessage"
+    },
+    {
+      "offset": "0x9a8920",
+      "object_offset": "0x9a8910",
+      "cid": 94,
+      "length": 41,
+      "text": "package:rodzic/providers/data_status.dart"
+    },
+    {
+      "offset": "0x9a8a10",
+      "object_offset": "0x9a8a00",
+      "cid": 94,
+      "length": 44,
+      "text": "package:rodzic/widgets/font_size_scaler.dart"
+    },
+    {
+      "offset": "0x9a9b20",
+      "object_offset": "0x9a9b10",
+      "cid": 94,
+      "length": 33,
+      "text": "SESSION: Zmiana trybu widoku na: "
+    },
+    {
+      "offset": "0x9abc90",
+      "object_offset": "0x9abc80",
+      "cid": 94,
+      "length": 15,
+      "text": "PendingPollGate"
+    },
+    {
+      "offset": "0x9acdb0",
+      "object_offset": "0x9acda0",
+      "cid": 94,
+      "length": 22,
+      "text": "STATE: Aktywne konto: "
+    },
+    {
+      "offset": "0x9b1990",
+      "object_offset": "0x9b1980",
+      "cid": 95,
+      "length": 54,
+      "text": "AUTH: Konto usunięte, sejf i cache konta wyczyszczone."
+    },
+    {
+      "offset": "0x9b23e0",
+      "object_offset": "0x9b23d0",
+      "cid": 94,
+      "length": 15,
+      "text": "numberOfCameras"
+    },
+    {
+      "offset": "0x9b3350",
+      "object_offset": "0x9b3340",
+      "cid": 94,
+      "length": 15,
+      "text": "homework-status"
+    },
+    {
+      "offset": "0x9b5090",
+      "object_offset": "0x9b5080",
+      "cid": 95,
+      "length": 34,
+      "text": "Błąd: Nie przekazano danych oceny."
+    },
+    {
+      "offset": "0x9b5160",
+      "object_offset": "0x9b5150",
+      "cid": 94,
+      "length": 19,
+      "text": "/api/unreadMessages"
+    },
+    {
+      "offset": "0x9b54d0",
+      "object_offset": "0x9b54c0",
+      "cid": 94,
+      "length": 49,
+      "text": "package:rodzic/widgets/reprimand_detail_card.dart"
+    },
+    {
+      "offset": "0x9b5a70",
+      "object_offset": "0x9b5a60",
+      "cid": 94,
+      "length": 23,
+      "text": "/api/messages/receivers"
+    },
+    {
+      "offset": "0x9b6a90",
+      "object_offset": "0x9b6a80",
+      "cid": 94,
+      "length": 34,
+      "text": "RotatedPreview.fromCameraDirection"
+    },
+    {
+      "offset": "0x9b7340",
+      "object_offset": "0x9b7330",
+      "cid": 95,
+      "length": 20,
+      "text": "MAIL SSO: Wywołuję: "
+    },
+    {
+      "offset": "0x9b9270",
+      "object_offset": "0x9b9260",
+      "cid": 94,
+      "length": 32,
+      "text": "CACHE: wyczyszczono cache konta "
+    },
+    {
+      "offset": "0x9ba620",
+      "object_offset": "0x9ba610",
+      "cid": 94,
+      "length": 45,
+      "text": "package:rodzic/screens/attendance_screen.dart"
+    },
+    {
+      "offset": "0x9ba680",
+      "object_offset": "0x9ba670",
+      "cid": 94,
+      "length": 24,
+      "text": "Zakres (tygodnie wstecz)"
+    },
+    {
+      "offset": "0x9bdd20",
+      "object_offset": "0x9bdd10",
+      "cid": 94,
+      "length": 45,
+      "text": "package:rodzic/widgets/attachment_picker.dart"
+    },
+    {
+      "offset": "0x9bdff0",
+      "object_offset": "0x9bdfe0",
+      "cid": 94,
+      "length": 13,
+      "text": "messaging_url"
+    },
+    {
+      "offset": "0x9be1f0",
+      "object_offset": "0x9be1e0",
+      "cid": 94,
+      "length": 42,
+      "text": "package:rodzic/widgets/marks_switcher.dart"
+    },
+    {
+      "offset": "0x9bf280",
+      "object_offset": "0x9bf270",
+      "cid": 94,
+      "length": 44,
+      "text": "package:rodzic/models/dashboard_element.dart"
+    },
+    {
+      "offset": "0x9bf980",
+      "object_offset": "0x9bf970",
+      "cid": 94,
+      "length": 39,
+      "text": "package:rodzic/services/app_config.dart"
+    },
+    {
+      "offset": "0x9c1440",
+      "object_offset": "0x9c1430",
+      "cid": 94,
+      "length": 40,
+      "text": "package:rodzic/theme/style_contract.dart"
+    },
+    {
+      "offset": "0x9c14b0",
+      "object_offset": "0x9c14a0",
+      "cid": 94,
+      "length": 21,
+      "text": "Announcement.fromJson"
+    },
+    {
+      "offset": "0x9c2320",
+      "object_offset": "0x9c2310",
+      "cid": 95,
+      "length": 30,
+      "text": "MAIL REPO BŁĄD (sendMessage): "
+    },
+    {
+      "offset": "0x9c2730",
+      "object_offset": "0x9c2720",
+      "cid": 94,
+      "length": 49,
+      "text": "package:rodzic/providers/reprimands_provider.dart"
+    },
+    {
+      "offset": "0x9c2a60",
+      "object_offset": "0x9c2a50",
+      "cid": 94,
+      "length": 30,
+      "text": "package:rodzic/app_router.dart"
+    },
+    {
+      "offset": "0x9c2da0",
+      "object_offset": "0x9c2d90",
+      "cid": 94,
+      "length": 26,
+      "text": "_pickImageAsPath@701271794"
+    },
+    {
+      "offset": "0x9c2fb0",
+      "object_offset": "0x9c2fa0",
+      "cid": 95,
+      "length": 32,
+      "text": "CACHE: wyczyszczono cały cache ("
+    },
+    {
+      "offset": "0x9c3a00",
+      "object_offset": "0x9c39f0",
+      "cid": 94,
+      "length": 31,
+      "text": "Tryb wysokiego kontrastu (WCAG)"
+    },
+    {
+      "offset": "0x9c4130",
+      "object_offset": "0x9c4120",
+      "cid": 94,
+      "length": 28,
+      "text": "_pickFilesInternal@784458620"
+    },
+    {
+      "offset": "0x9c57f0",
+      "object_offset": "0x9c57e0",
+      "cid": 94,
+      "length": 53,
+      "text": "package:rodzic/providers/justifications_provider.dart"
+    },
+    {
+      "offset": "0x9c5b30",
+      "object_offset": "0x9c5b20",
+      "cid": 94,
+      "length": 39,
+      "text": "package:rodzic/theme/skin_standard.dart"
+    },
+    {
+      "offset": "0x9c60a0",
+      "object_offset": "0x9c6090",
+      "cid": 94,
+      "length": 16,
+      "text": "auth_school_code"
+    },
+    {
+      "offset": "0x9c8300",
+      "object_offset": "0x9c82f0",
+      "cid": 94,
+      "length": 42,
+      "text": "package:rodzic/widgets/reprimand_tile.dart"
+    },
+    {
+      "offset": "0x9c97d0",
+      "object_offset": "0x9c97c0",
+      "cid": 94,
+      "length": 25,
+      "text": "_toggleArchive@1215499325"
+    },
+    {
+      "offset": "0x9cb3e0",
+      "object_offset": "0x9cb3d0",
+      "cid": 94,
+      "length": 42,
+      "text": "package:rodzic/widgets/voting_section.dart"
+    },
+    {
+      "offset": "0x9cc090",
+      "object_offset": "0x9cc080",
+      "cid": 94,
+      "length": 36,
+      "text": "package:rodzic/widgets/mark_box.dart"
+    },
+    {
+      "offset": "0x9cc210",
+      "object_offset": "0x9cc200",
+      "cid": 94,
+      "length": 14,
+      "text": "Oceny okresowe"
+    },
+    {
+      "offset": "0x9cd380",
+      "object_offset": "0x9cd370",
+      "cid": 94,
+      "length": 20,
+      "text": "init:homeworkSession"
+    },
+    {
+      "offset": "0x9ceaa0",
+      "object_offset": "0x9cea90",
+      "cid": 94,
+      "length": 21,
+      "text": "captureTextFromCamera"
+    },
+    {
+      "offset": "0x9cf940",
+      "object_offset": "0x9cf930",
+      "cid": 94,
+      "length": 41,
+      "text": "package:rodzic/services/auth_service.dart"
+    },
+    {
+      "offset": "0x9d0510",
+      "object_offset": "0x9d0500",
+      "cid": 94,
+      "length": 31,
+      "text": "package:rodzic/models/exam.dart"
+    },
+    {
+      "offset": "0x9d1170",
+      "object_offset": "0x9d1160",
+      "cid": 94,
+      "length": 50,
+      "text": "package:rodzic/widgets/dashboard_tile_factory.dart"
+    },
+    {
+      "offset": "0x9d2230",
+      "object_offset": "0x9d2220",
+      "cid": 94,
+      "length": 19,
+      "text": "state_last_pupil_id"
+    },
+    {
+      "offset": "0x9d2280",
+      "object_offset": "0x9d2270",
+      "cid": 94,
+      "length": 48,
+      "text": "package:rodzic/providers/timetable_provider.dart"
+    },
+    {
+      "offset": "0x9d2fd0",
+      "object_offset": "0x9d2fc0",
+      "cid": 94,
+      "length": 34,
+      "text": "package:rodzic/models/subject.dart"
+    }
+  ]
+}

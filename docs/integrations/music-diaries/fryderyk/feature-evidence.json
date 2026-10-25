@@ -1,0 +1,1894 @@
+{
+  "source_sha256": "2c11d5a1be3f1f21d85c2b9c4deb8c59d2c3c33dfd9eebf0235657bcc6f7cca1",
+  "source_member": "Payload/Runner.app/Frameworks/App.framework/App",
+  "items": [
+    {
+      "id": "FSTR-8502e0",
+      "platform": "ios-1.1.7",
+      "offset": 8717024,
+      "offset_hex": "0x8502e0",
+      "text": "UserType",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-850970",
+      "platform": "ios-1.1.7",
+      "offset": 8718704,
+      "offset_hex": "0x850970",
+      "text": "package:fryderyk_mobile_v3/models/grades_overview.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-852ae0",
+      "platform": "ios-1.1.7",
+      "offset": 8727264,
+      "offset_hex": "0x852ae0",
+      "text": "After logging out, in order to log in again in the application you will have to generate new login data on the diary website.\n\nAre you sure you want to log out?",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-853970",
+      "platform": "ios-1.1.7",
+      "offset": 8730992,
+      "offset_hex": "0x853970",
+      "text": "package:fryderyk_mobile_v3/widgets/alert.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-8578e0",
+      "platform": "ios-1.1.7",
+      "offset": 8747232,
+      "offset_hex": "0x8578e0",
+      "text": "full_name",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-858030",
+      "platform": "ios-1.1.7",
+      "offset": 8749104,
+      "offset_hex": "0x858030",
+      "text": "remote_link",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-85c020",
+      "platform": "ios-1.1.7",
+      "offset": 8765472,
+      "offset_hex": "0x85c020",
+      "text": "uri",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-85e9e0",
+      "platform": "ios-1.1.7",
+      "offset": 8776160,
+      "offset_hex": "0x85e9e0",
+      "text": "package:fryderyk_mobile_v3/screens/qr_login_screen.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-85fe30",
+      "platform": "ios-1.1.7",
+      "offset": 8781360,
+      "offset_hex": "0x85fe30",
+      "text": "substitution_teacher_full_name",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-860a10",
+      "platform": "ios-1.1.7",
+      "offset": 8784400,
+      "offset_hex": "0x860a10",
+      "text": "package:fryderyk_mobile_v3/repositories/user_repository.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-860ae0",
+      "platform": "ios-1.1.7",
+      "offset": 8784608,
+      "offset_hex": "0x860ae0",
+      "text": "access_token",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-861f80",
+      "platform": "ios-1.1.7",
+      "offset": 8789888,
+      "offset_hex": "0x861f80",
+      "text": "isExam",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-86bf00",
+      "platform": "ios-1.1.7",
+      "offset": 8830720,
+      "offset_hex": "0x86bf00",
+      "text": "finish_date",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-86ee00",
+      "platform": "ios-1.1.7",
+      "offset": 8842752,
+      "offset_hex": "0x86ee00",
+      "text": "package:fryderyk_mobile_v3/services/abstract/abstract_user_service.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-86f290",
+      "platform": "ios-1.1.7",
+      "offset": 8843920,
+      "offset_hex": "0x86f290",
+      "text": "package:fryderyk_mobile_v3/services/abstract/abstract_attendance_service.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-8755e0",
+      "platform": "ios-1.1.7",
+      "offset": 8869344,
+      "offset_hex": "0x8755e0",
+      "text": "package:fryderyk_mobile_v3/screens_partials/recent_grades_partial_screen.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-875e20",
+      "platform": "ios-1.1.7",
+      "offset": 8871456,
+      "offset_hex": "0x875e20",
+      "text": "package:fryderyk_mobile_v3/screens_partials/main_tabs/plan_partial_screen.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-877330",
+      "platform": "ios-1.1.7",
+      "offset": 8876848,
+      "offset_hex": "0x877330",
+      "text": "Absence request has to be approved by supervising teacher or class guardian.",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-879170",
+      "platform": "ios-1.1.7",
+      "offset": 8884592,
+      "offset_hex": "0x879170",
+      "text": "LessonAccompaniment.fromJson",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-87c800",
+      "platform": "ios-1.1.7",
+      "offset": 8898560,
+      "offset_hex": "0x87c800",
+      "text": "package:fryderyk_mobile_v3/screens/grades_details_screen.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-87dcb0",
+      "platform": "ios-1.1.7",
+      "offset": 8903856,
+      "offset_hex": "0x87dcb0",
+      "text": "MessageSender.fromJson",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-8821a0",
+      "platform": "ios-1.1.7",
+      "offset": 8921504,
+      "offset_hex": "0x8821a0",
+      "text": "is_replied",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-8821e0",
+      "platform": "ios-1.1.7",
+      "offset": 8921568,
+      "offset_hex": "0x8821e0",
+      "text": "AbsenceTypeChangeRequest.fromJson",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-887920",
+      "platform": "ios-1.1.7",
+      "offset": 8943904,
+      "offset_hex": "0x887920",
+      "text": "package:fryderyk_mobile_v3/controllers/connection_status_controller.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-88b310",
+      "platform": "ios-1.1.7",
+      "offset": 8958736,
+      "offset_hex": "0x88b310",
+      "text": "lessonsWithExplainedCount",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-88de10",
+      "platform": "ios-1.1.7",
+      "offset": 8969744,
+      "offset_hex": "0x88de10",
+      "text": "package:fryderyk_mobile_v3/utils/cache/in_memory_cache.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-88e3a0",
+      "platform": "ios-1.1.7",
+      "offset": 8971168,
+      "offset_hex": "0x88e3a0",
+      "text": "package:fryderyk_mobile_v3/utils/substitution_icon_factory.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-88f850",
+      "platform": "ios-1.1.7",
+      "offset": 8976464,
+      "offset_hex": "0x88f850",
+      "text": "package:fryderyk_mobile_v3/screens_partials/main_tabs/homeworks_partial_screen.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-88f8c0",
+      "platform": "ios-1.1.7",
+      "offset": 8976576,
+      "offset_hex": "0x88f8c0",
+      "text": "cc_recipients_v2",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-8904c0",
+      "platform": "ios-1.1.7",
+      "offset": 8979648,
+      "offset_hex": "0x8904c0",
+      "text": "get:activeStudentId",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-890880",
+      "platform": "ios-1.1.7",
+      "offset": 8980608,
+      "offset_hex": "0x890880",
+      "text": "package:fryderyk_mobile_v3/repositories/grade_repository.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-891bf0",
+      "platform": "ios-1.1.7",
+      "offset": 8985584,
+      "offset_hex": "0x891bf0",
+      "text": "substitution_type",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-893680",
+      "platform": "ios-1.1.7",
+      "offset": 8992384,
+      "offset_hex": "0x893680",
+      "text": "package:fryderyk_mobile_v3/main.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-8950f0",
+      "platform": "ios-1.1.7",
+      "offset": 8999152,
+      "offset_hex": "0x8950f0",
+      "text": "package:fryderyk_mobile_v3/exceptions/custom_exception.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-895640",
+      "platform": "ios-1.1.7",
+      "offset": 9000512,
+      "offset_hex": "0x895640",
+      "text": "package:fryderyk_mobile_v3/screens_partials/main_tabs/messages_partial_screen.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-898580",
+      "platform": "ios-1.1.7",
+      "offset": 9012608,
+      "offset_hex": "0x898580",
+      "text": "package:fryderyk_mobile_v3/screens/update_required_screen.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-899a60",
+      "platform": "ios-1.1.7",
+      "offset": 9017952,
+      "offset_hex": "0x899a60",
+      "text": "Grade.fromJson",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-89b4f0",
+      "platform": "ios-1.1.7",
+      "offset": 9024752,
+      "offset_hex": "0x89b4f0",
+      "text": "search",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-89dea0",
+      "platform": "ios-1.1.7",
+      "offset": 9035424,
+      "offset_hex": "0x89dea0",
+      "text": "package:fryderyk_mobile_v3/services/implementations/version_service.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-8a24c0",
+      "platform": "ios-1.1.7",
+      "offset": 9053376,
+      "offset_hex": "0x8a24c0",
+      "text": "package:fryderyk_mobile_v3/utils/cache/cache_manager.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-8a2c40",
+      "platform": "ios-1.1.7",
+      "offset": 9055296,
+      "offset_hex": "0x8a2c40",
+      "text": "Homework.fromJson",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-8a3f50",
+      "platform": "ios-1.1.7",
+      "offset": 9060176,
+      "offset_hex": "0x8a3f50",
+      "text": "password",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-8a5b90",
+      "platform": "ios-1.1.7",
+      "offset": 9067408,
+      "offset_hex": "0x8a5b90",
+      "text": "package:fryderyk_mobile_v3/controllers/app_state_controller.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-8a60f0",
+      "platform": "ios-1.1.7",
+      "offset": 9068784,
+      "offset_hex": "0x8a60f0",
+      "text": "package:fryderyk_mobile_v3/services/abstract/abstract_version_service.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-8a7020",
+      "platform": "ios-1.1.7",
+      "offset": 9072672,
+      "offset_hex": "0x8a7020",
+      "text": "ManualLoginScreen: Provided identifier without \"m.\" prefix",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-8a9cc0",
+      "platform": "ios-1.1.7",
+      "offset": 9084096,
+      "offset_hex": "0x8a9cc0",
+      "text": "package:fryderyk_mobile_v3/services/implementations/fryd_api_service.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-8aa3b0",
+      "platform": "ios-1.1.7",
+      "offset": 9085872,
+      "offset_hex": "0x8aa3b0",
+      "text": "subject_short_name",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-8aa4f0",
+      "platform": "ios-1.1.7",
+      "offset": 9086192,
+      "offset_hex": "0x8aa4f0",
+      "text": "package:fryderyk_mobile_v3/models/message.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-8aca80",
+      "platform": "ios-1.1.7",
+      "offset": 9095808,
+      "offset_hex": "0x8aca80",
+      "text": "package:fryderyk_mobile_v3/widgets/chips_input.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-8ad560",
+      "platform": "ios-1.1.7",
+      "offset": 9098592,
+      "offset_hex": "0x8ad560",
+      "text": "get:unreadMessagesCount",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-8b4f20",
+      "platform": "ios-1.1.7",
+      "offset": 9129760,
+      "offset_hex": "0x8b4f20",
+      "text": "url",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-8b62a0",
+      "platform": "ios-1.1.7",
+      "offset": 9134752,
+      "offset_hex": "0x8b62a0",
+      "text": "package:fryderyk_mobile_v3/screens_partials/messages_tabs/inbox_messages_partial_screen.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-8b6a40",
+      "platform": "ios-1.1.7",
+      "offset": 9136704,
+      "offset_hex": "0x8b6a40",
+      "text": "GradesOverview.fromJson",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-8bc7b0",
+      "platform": "ios-1.1.7",
+      "offset": 9160624,
+      "offset_hex": "0x8bc7b0",
+      "text": "Bearer ",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-8bd700",
+      "platform": "ios-1.1.7",
+      "offset": 9164544,
+      "offset_hex": "0x8bd700",
+      "text": "late",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-8bf340",
+      "platform": "ios-1.1.7",
+      "offset": 9171776,
+      "offset_hex": "0x8bf340",
+      "text": "package:fryderyk_mobile_v3/models/absence_type_change_request.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-8c00d0",
+      "platform": "ios-1.1.7",
+      "offset": 9175248,
+      "offset_hex": "0x8c00d0",
+      "text": "AttendancesOverview.fromJson",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-8c2880",
+      "platform": "ios-1.1.7",
+      "offset": 9185408,
+      "offset_hex": "0x8c2880",
+      "text": "parent",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-8c5290",
+      "platform": "ios-1.1.7",
+      "offset": 9196176,
+      "offset_hex": "0x8c5290",
+      "text": "package:fryderyk_mobile_v3/utils/lessons_tree.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-8c8f90",
+      "platform": "ios-1.1.7",
+      "offset": 9211792,
+      "offset_hex": "0x8c8f90",
+      "text": "predicted_grade",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-8c9da0",
+      "platform": "ios-1.1.7",
+      "offset": 9215392,
+      "offset_hex": "0x8c9da0",
+      "text": "HomeworkAttachment.fromJson",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-8cbd50",
+      "platform": "ios-1.1.7",
+      "offset": 9223504,
+      "offset_hex": "0x8cbd50",
+      "text": "package:fryderyk_mobile_v3/models/grade.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-8ccbf0",
+      "platform": "ios-1.1.7",
+      "offset": 9227248,
+      "offset_hex": "0x8ccbf0",
+      "text": "bcc_recipients",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-8d1f50",
+      "platform": "ios-1.1.7",
+      "offset": 9248592,
+      "offset_hex": "0x8d1f50",
+      "text": "package:fryderyk_mobile_v3/services/abstract/abstract_homework_service.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-8d3410",
+      "platform": "ios-1.1.7",
+      "offset": 9253904,
+      "offset_hex": "0x8d3410",
+      "text": "GradesOverviewSubject.fromJson",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-8d49c0",
+      "platform": "ios-1.1.7",
+      "offset": 9259456,
+      "offset_hex": "0x8d49c0",
+      "text": "package:fryderyk_mobile_v3/helpers/app_helper.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-8d5970",
+      "platform": "ios-1.1.7",
+      "offset": 9263472,
+      "offset_hex": "0x8d5970",
+      "text": "package:fryderyk_mobile_v3/services/implementations/token_service.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-8d6810",
+      "platform": "ios-1.1.7",
+      "offset": 9267216,
+      "offset_hex": "0x8d6810",
+      "text": "package:fryderyk_mobile_v3/screens/login_guide_screen.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-8d7380",
+      "platform": "ios-1.1.7",
+      "offset": 9270144,
+      "offset_hex": "0x8d7380",
+      "text": "MessageAttachment.fromJson",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-8db3a0",
+      "platform": "ios-1.1.7",
+      "offset": 9286560,
+      "offset_hex": "0x8db3a0",
+      "text": "absence_type",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-8dd470",
+      "platform": "ios-1.1.7",
+      "offset": 9294960,
+      "offset_hex": "0x8dd470",
+      "text": "is_read",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-8ddcd0",
+      "platform": "ios-1.1.7",
+      "offset": 9297104,
+      "offset_hex": "0x8ddcd0",
+      "text": "HomeworkTeacher.fromJson",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-8de400",
+      "platform": "ios-1.1.7",
+      "offset": 9298944,
+      "offset_hex": "0x8de400",
+      "text": "subject_color",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-8df220",
+      "platform": "ios-1.1.7",
+      "offset": 9302560,
+      "offset_hex": "0x8df220",
+      "text": "Lesson.fromJson",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-8dfcf0",
+      "platform": "ios-1.1.7",
+      "offset": 9305328,
+      "offset_hex": "0x8dfcf0",
+      "text": "substituted_teacher_full_name",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-8e2040",
+      "platform": "ios-1.1.7",
+      "offset": 9314368,
+      "offset_hex": "0x8e2040",
+      "text": "teacher",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-8e5050",
+      "platform": "ios-1.1.7",
+      "offset": 9326672,
+      "offset_hex": "0x8e5050",
+      "text": "trash",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-8e8ef0",
+      "platform": "ios-1.1.7",
+      "offset": 9342704,
+      "offset_hex": "0x8e8ef0",
+      "text": "package:fryderyk_mobile_v3/types/absence_type.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-8eb870",
+      "platform": "ios-1.1.7",
+      "offset": 9353328,
+      "offset_hex": "0x8eb870",
+      "text": "package:fryderyk_mobile_v3/helpers/string_helper.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-8ebc10",
+      "platform": "ios-1.1.7",
+      "offset": 9354256,
+      "offset_hex": "0x8ebc10",
+      "text": "package:fryderyk_mobile_v3/widgets/square_icon.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-8ec8f0",
+      "platform": "ios-1.1.7",
+      "offset": 9357552,
+      "offset_hex": "0x8ec8f0",
+      "text": "package:fryderyk_mobile_v3/widgets/mobile_scanner_barcode_label.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-8ed680",
+      "platform": "ios-1.1.7",
+      "offset": 9361024,
+      "offset_hex": "0x8ed680",
+      "text": "package:fryderyk_mobile_v3/widgets/calendar_icon.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-8ef570",
+      "platform": "ios-1.1.7",
+      "offset": 9368944,
+      "offset_hex": "0x8ef570",
+      "text": "package:fryderyk_mobile_v3/services/abstract/abstract_lesson_service.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-8f0f20",
+      "platform": "ios-1.1.7",
+      "offset": 9375520,
+      "offset_hex": "0x8f0f20",
+      "text": "student",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-8f1eb0",
+      "platform": "ios-1.1.7",
+      "offset": 9379504,
+      "offset_hex": "0x8f1eb0",
+      "text": "package:fryderyk_mobile_v3/screens/message_form_screen.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-8f8cc0",
+      "platform": "ios-1.1.7",
+      "offset": 9407680,
+      "offset_hex": "0x8f8cc0",
+      "text": "package:fryderyk_mobile_v3/models/lesson_with_absence.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-8fa210",
+      "platform": "ios-1.1.7",
+      "offset": 9413136,
+      "offset_hex": "0x8fa210",
+      "text": "attachment_ids",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-8fb740",
+      "platform": "ios-1.1.7",
+      "offset": 9418560,
+      "offset_hex": "0x8fb740",
+      "text": "otherPresent",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-8fb7a0",
+      "platform": "ios-1.1.7",
+      "offset": 9418656,
+      "offset_hex": "0x8fb7a0",
+      "text": "solution accepted by teacher",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-8fd130",
+      "platform": "ios-1.1.7",
+      "offset": 9425200,
+      "offset_hex": "0x8fd130",
+      "text": "package:fryderyk_mobile_v3/screens/homework_details_screen.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-8fd1f0",
+      "platform": "ios-1.1.7",
+      "offset": 9425392,
+      "offset_hex": "0x8fd1f0",
+      "text": "package:fryderyk_mobile_v3/services/abstract/abstract_message_service.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-8fd950",
+      "platform": "ios-1.1.7",
+      "offset": 9427280,
+      "offset_hex": "0x8fd950",
+      "text": "package:fryderyk_mobile_v3/models/homework.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-905280",
+      "platform": "ios-1.1.7",
+      "offset": 9458304,
+      "offset_hex": "0x905280",
+      "text": "package:fryderyk_mobile_v3/screens_partials/absence_excuses_tabs/absence_type_change_requests_partial_screen.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-905bf0",
+      "platform": "ios-1.1.7",
+      "offset": 9460720,
+      "offset_hex": "0x905bf0",
+      "text": "package:fryderyk_mobile_v3/services/abstract/abstract_token_service.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-907260",
+      "platform": "ios-1.1.7",
+      "offset": 9466464,
+      "offset_hex": "0x907260",
+      "text": "package:fryderyk_mobile_v3/helpers/time_helper.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-90b030",
+      "platform": "ios-1.1.7",
+      "offset": 9482288,
+      "offset_hex": "0x90b030",
+      "text": "lessonsWithExcusedCount",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-90d750",
+      "platform": "ios-1.1.7",
+      "offset": 9492304,
+      "offset_hex": "0x90d750",
+      "text": "canceled",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-90e5c0",
+      "platform": "ios-1.1.7",
+      "offset": 9496000,
+      "offset_hex": "0x90e5c0",
+      "text": "attachments-limit-exceeded",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-912670",
+      "platform": "ios-1.1.7",
+      "offset": 9512560,
+      "offset_hex": "0x912670",
+      "text": "otherAbsence",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-913180",
+      "platform": "ios-1.1.7",
+      "offset": 9515392,
+      "offset_hex": "0x913180",
+      "text": "package:fryderyk_mobile_v3/screens/absence_excuses_screen.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-913ff0",
+      "platform": "ios-1.1.7",
+      "offset": 9519088,
+      "offset_hex": "0x913ff0",
+      "text": "Allowed attachment types: @types.",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9171f0",
+      "platform": "ios-1.1.7",
+      "offset": 9531888,
+      "offset_hex": "0x9171f0",
+      "text": "query",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-917cc0",
+      "platform": "ios-1.1.7",
+      "offset": 9534656,
+      "offset_hex": "0x917cc0",
+      "text": "offset",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-91b190",
+      "platform": "ios-1.1.7",
+      "offset": 9548176,
+      "offset_hex": "0x91b190",
+      "text": "You can add a maximum of @maxAttachments attachments.",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-91d5f0",
+      "platform": "ios-1.1.7",
+      "offset": 9557488,
+      "offset_hex": "0x91d5f0",
+      "text": "LessonWithAbsence.fromJson",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-91e620",
+      "platform": "ios-1.1.7",
+      "offset": 9561632,
+      "offset_hex": "0x91e620",
+      "text": "package:fryderyk_mobile_v3/services/implementations/message_service.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-920f30",
+      "platform": "ios-1.1.7",
+      "offset": 9572144,
+      "offset_hex": "0x920f30",
+      "text": "MessageRecipient.fromJson",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9213c0",
+      "platform": "ios-1.1.7",
+      "offset": 9573312,
+      "offset_hex": "0x9213c0",
+      "text": "is_deleted",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-922cf0",
+      "platform": "ios-1.1.7",
+      "offset": 9579760,
+      "offset_hex": "0x922cf0",
+      "text": "setActiveStudentId",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-927c50",
+      "platform": "ios-1.1.7",
+      "offset": 9600080,
+      "offset_hex": "0x927c50",
+      "text": "package:fryderyk_mobile_v3/screens_partials/messages_tabs/trash_messages_partial_screen.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-928f50",
+      "platform": "ios-1.1.7",
+      "offset": 9604944,
+      "offset_hex": "0x928f50",
+      "text": "package:fryderyk_mobile_v3/utils/cache/cache.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-92b1b0",
+      "platform": "ios-1.1.7",
+      "offset": 9613744,
+      "offset_hex": "0x92b1b0",
+      "text": "Attachment size (maximum allowed size is @maxSize MB).",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-92eaf0",
+      "platform": "ios-1.1.7",
+      "offset": 9628400,
+      "offset_hex": "0x92eaf0",
+      "text": "forward",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-92f490",
+      "platform": "ios-1.1.7",
+      "offset": 9630864,
+      "offset_hex": "0x92f490",
+      "text": "package:fryderyk_mobile_v3/widgets/c_badge.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-930390",
+      "platform": "ios-1.1.7",
+      "offset": 9634704,
+      "offset_hex": "0x930390",
+      "text": "absence_reason",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9379f0",
+      "platform": "ios-1.1.7",
+      "offset": 9665008,
+      "offset_hex": "0x9379f0",
+      "text": "submission_status",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-937a40",
+      "platform": "ios-1.1.7",
+      "offset": 9665088,
+      "offset_hex": "0x937a40",
+      "text": "package:fryderyk_mobile_v3/screens/message_details_screen.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-937c60",
+      "platform": "ios-1.1.7",
+      "offset": 9665632,
+      "offset_hex": "0x937c60",
+      "text": "package:fryderyk_mobile_v3/screens_partials/messages_tabs/search_messages_partial_screen.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-937cf0",
+      "platform": "ios-1.1.7",
+      "offset": 9665776,
+      "offset_hex": "0x937cf0",
+      "text": "package:fryderyk_mobile_v3/screens/intro_screen.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9397f0",
+      "platform": "ios-1.1.7",
+      "offset": 9672688,
+      "offset_hex": "0x9397f0",
+      "text": "page",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-939850",
+      "platform": "ios-1.1.7",
+      "offset": 9672784,
+      "offset_hex": "0x939850",
+      "text": "please-wait-for-attachments",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-940460",
+      "platform": "ios-1.1.7",
+      "offset": 9700448,
+      "offset_hex": "0x940460",
+      "text": "package:fryderyk_mobile_v3/types/process_state.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-940e30",
+      "platform": "ios-1.1.7",
+      "offset": 9702960,
+      "offset_hex": "0x940e30",
+      "text": "inCommonRoom",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-941080",
+      "platform": "ios-1.1.7",
+      "offset": 9703552,
+      "offset_hex": "0x941080",
+      "text": "package:fryderyk_mobile_v3/utils/cache/shared_preferences_cache.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-941400",
+      "platform": "ios-1.1.7",
+      "offset": 9704448,
+      "offset_hex": "0x941400",
+      "text": "package:fryderyk_mobile_v3/utils/device.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-943270",
+      "platform": "ios-1.1.7",
+      "offset": 9712240,
+      "offset_hex": "0x943270",
+      "text": "first_name",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-943e70",
+      "platform": "ios-1.1.7",
+      "offset": 9715312,
+      "offset_hex": "0x943e70",
+      "text": "package:fryderyk_mobile_v3/types/user_type.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9483f0",
+      "platform": "ios-1.1.7",
+      "offset": 9733104,
+      "offset_hex": "0x9483f0",
+      "text": "Message.fromJson",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-948b10",
+      "platform": "ios-1.1.7",
+      "offset": 9734928,
+      "offset_hex": "0x948b10",
+      "text": "GradesOverviewSemester.fromJson",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9492d0",
+      "platform": "ios-1.1.7",
+      "offset": 9736912,
+      "offset_hex": "0x9492d0",
+      "text": "package:fryderyk_mobile_v3/exceptions/unsupported_exception.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-94bea0",
+      "platform": "ios-1.1.7",
+      "offset": 9748128,
+      "offset_hex": "0x94bea0",
+      "text": "package:fryderyk_mobile_v3/screens/manual_login_screen.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-94c300",
+      "platform": "ios-1.1.7",
+      "offset": 9749248,
+      "offset_hex": "0x94c300",
+      "text": "User.fromJson",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-94d7e0",
+      "platform": "ios-1.1.7",
+      "offset": 9754592,
+      "offset_hex": "0x94d7e0",
+      "text": "package:fryderyk_mobile_v3/screens/main_screen.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-94e020",
+      "platform": "ios-1.1.7",
+      "offset": 9756704,
+      "offset_hex": "0x94e020",
+      "text": "package:fryderyk_mobile_v3/screens_partials/main_tabs/homepage_partial_screen.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-94f8d0",
+      "platform": "ios-1.1.7",
+      "offset": 9763024,
+      "offset_hex": "0x94f8d0",
+      "text": "explainedAbsence",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-951d90",
+      "platform": "ios-1.1.7",
+      "offset": 9772432,
+      "offset_hex": "0x951d90",
+      "text": "host",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9532e0",
+      "platform": "ios-1.1.7",
+      "offset": 9777888,
+      "offset_hex": "0x9532e0",
+      "text": "isPresentPredicate",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-95a0a0",
+      "platform": "ios-1.1.7",
+      "offset": 9805984,
+      "offset_hex": "0x95a0a0",
+      "text": "individualTeaching",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-95e490",
+      "platform": "ios-1.1.7",
+      "offset": 9823376,
+      "offset_hex": "0x95e490",
+      "text": "package:fryderyk_mobile_v3/screens/lesson_details_screen.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-961470",
+      "platform": "ios-1.1.7",
+      "offset": 9835632,
+      "offset_hex": "0x961470",
+      "text": "is_substitution",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-964cc0",
+      "platform": "ios-1.1.7",
+      "offset": 9850048,
+      "offset_hex": "0x964cc0",
+      "text": "lessonsWithLateCount",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9651e0",
+      "platform": "ios-1.1.7",
+      "offset": 9851360,
+      "offset_hex": "0x9651e0",
+      "text": "package:fryderyk_mobile_v3/screens_partials/main_tabs/attendance_partial_screen.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-967ed0",
+      "platform": "ios-1.1.7",
+      "offset": 9862864,
+      "offset_hex": "0x967ed0",
+      "text": "publish_date",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-96a030",
+      "platform": "ios-1.1.7",
+      "offset": 9871408,
+      "offset_hex": "0x96a030",
+      "text": "package:fryderyk_mobile_v3/utils/api_request_handler.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-96b110",
+      "platform": "ios-1.1.7",
+      "offset": 9875728,
+      "offset_hex": "0x96b110",
+      "text": "package:fryderyk_mobile_v3/screens_partials/absence_excuses_tabs/absences_partial_screen.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-96b6e0",
+      "platform": "ios-1.1.7",
+      "offset": 9877216,
+      "offset_hex": "0x96b6e0",
+      "text": "package:fryderyk_mobile_v3/screens_partials/recent_homeworks_partial_screen.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-96b910",
+      "platform": "ios-1.1.7",
+      "offset": 9877776,
+      "offset_hex": "0x96b910",
+      "text": "text_value",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-96d1c0",
+      "platform": "ios-1.1.7",
+      "offset": 9884096,
+      "offset_hex": "0x96d1c0",
+      "text": "subject_name",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-970270",
+      "platform": "ios-1.1.7",
+      "offset": 9896560,
+      "offset_hex": "0x970270",
+      "text": "Please wait for attachments to be uploaded before sending the message.",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-975460",
+      "platform": "ios-1.1.7",
+      "offset": 9917536,
+      "offset_hex": "0x975460",
+      "text": "package:fryderyk_mobile_v3/widgets/date_selector.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9754f0",
+      "platform": "ios-1.1.7",
+      "offset": 9917680,
+      "offset_hex": "0x9754f0",
+      "text": "package:fryderyk_mobile_v3/models/attendances_overview.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-978c10",
+      "platform": "ios-1.1.7",
+      "offset": 9931792,
+      "offset_hex": "0x978c10",
+      "text": "package:fryderyk_mobile_v3/repositories/message_repository.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-978c60",
+      "platform": "ios-1.1.7",
+      "offset": 9931872,
+      "offset_hex": "0x978c60",
+      "text": "package:fryderyk_mobile_v3/types/school_day_state.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-97ace0",
+      "platform": "ios-1.1.7",
+      "offset": 9940192,
+      "offset_hex": "0x97ace0",
+      "text": "package:fryderyk_mobile_v3/screens_partials/process_connection_error_partial_screen.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-97cdc0",
+      "platform": "ios-1.1.7",
+      "offset": 9948608,
+      "offset_hex": "0x97cdc0",
+      "text": "package:fryderyk_mobile_v3/services/implementations/attendance_service.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-97d290",
+      "platform": "ios-1.1.7",
+      "offset": 9949840,
+      "offset_hex": "0x97d290",
+      "text": "MessageTag.fromJson",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-97da10",
+      "platform": "ios-1.1.7",
+      "offset": 9951760,
+      "offset_hex": "0x97da10",
+      "text": "limit",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-97e170",
+      "platform": "ios-1.1.7",
+      "offset": 9953648,
+      "offset_hex": "0x97e170",
+      "text": "package:fryderyk_mobile_v3/screens/login_options_screen.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-97edd0",
+      "platform": "ios-1.1.7",
+      "offset": 9956816,
+      "offset_hex": "0x97edd0",
+      "text": "package:fryderyk_mobile_v3/screens_partials/process_executing_partial_screen.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9801f0",
+      "platform": "ios-1.1.7",
+      "offset": 9961968,
+      "offset_hex": "0x9801f0",
+      "text": "package:fryderyk_mobile_v3/types/message_action.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9802a0",
+      "platform": "ios-1.1.7",
+      "offset": 9962144,
+      "offset_hex": "0x9802a0",
+      "text": "package:fryderyk_mobile_v3/screens/deep_link_login_screen.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-980ac0",
+      "platform": "ios-1.1.7",
+      "offset": 9964224,
+      "offset_hex": "0x980ac0",
+      "text": "package:fryderyk_mobile_v3/repositories/homework_repository.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-981a80",
+      "platform": "ios-1.1.7",
+      "offset": 9968256,
+      "offset_hex": "0x981a80",
+      "text": "package:fryderyk_mobile_v3/widgets/linear_progress_with_label.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-981be0",
+      "platform": "ios-1.1.7",
+      "offset": 9968608,
+      "offset_hex": "0x981be0",
+      "text": "reply",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9838b0",
+      "platform": "ios-1.1.7",
+      "offset": 9975984,
+      "offset_hex": "0x9838b0",
+      "text": "recipients_v2",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-984ca0",
+      "platform": "ios-1.1.7",
+      "offset": 9981088,
+      "offset_hex": "0x984ca0",
+      "text": "package:fryderyk_mobile_v3/repositories/lesson_repository.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-985710",
+      "platform": "ios-1.1.7",
+      "offset": 9983760,
+      "offset_hex": "0x985710",
+      "text": "inbox",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-985ff0",
+      "platform": "ios-1.1.7",
+      "offset": 9986032,
+      "offset_hex": "0x985ff0",
+      "text": "maxAttachments",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-988820",
+      "platform": "ios-1.1.7",
+      "offset": 9996320,
+      "offset_hex": "0x988820",
+      "text": "present",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-988f90",
+      "platform": "ios-1.1.7",
+      "offset": 9998224,
+      "offset_hex": "0x988f90",
+      "text": "original_name",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-98a6d0",
+      "platform": "ios-1.1.7",
+      "offset": 10004176,
+      "offset_hex": "0x98a6d0",
+      "text": "package:fryderyk_mobile_v3/screens_partials/process_error_partial_screen.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-98ac30",
+      "platform": "ios-1.1.7",
+      "offset": 10005552,
+      "offset_hex": "0x98ac30",
+      "text": "student_id",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-98e830",
+      "platform": "ios-1.1.7",
+      "offset": 10020912,
+      "offset_hex": "0x98e830",
+      "text": "package:fryderyk_mobile_v3/widgets/field.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-991000",
+      "platform": "ios-1.1.7",
+      "offset": 10031104,
+      "offset_hex": "0x991000",
+      "text": "replaced",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-993e80",
+      "platform": "ios-1.1.7",
+      "offset": 10043008,
+      "offset_hex": "0x993e80",
+      "text": "replyAll",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-996d30",
+      "platform": "ios-1.1.7",
+      "offset": 10054960,
+      "offset_hex": "0x996d30",
+      "text": "bcc_recipients_v2",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-997240",
+      "platform": "ios-1.1.7",
+      "offset": 10056256,
+      "offset_hex": "0x997240",
+      "text": "original_short_name",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9975b0",
+      "platform": "ios-1.1.7",
+      "offset": 10057136,
+      "offset_hex": "0x9975b0",
+      "text": "LessonTeacher.fromJson",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-99bab0",
+      "platform": "ios-1.1.7",
+      "offset": 10074800,
+      "offset_hex": "0x99bab0",
+      "text": "package:fryderyk_mobile_v3/types/substitution_type.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-99cc40",
+      "platform": "ios-1.1.7",
+      "offset": 10079296,
+      "offset_hex": "0x99cc40",
+      "text": "package:fryderyk_mobile_v3/services/implementations/grade_service.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-99df00",
+      "platform": "ios-1.1.7",
+      "offset": 10084096,
+      "offset_hex": "0x99df00",
+      "text": "package:fryderyk_mobile_v3/services/implementations/homework_service.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-99e330",
+      "platform": "ios-1.1.7",
+      "offset": 10085168,
+      "offset_hex": "0x99e330",
+      "text": "sent_date",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9a1190",
+      "platform": "ios-1.1.7",
+      "offset": 10097040,
+      "offset_hex": "0x9a1190",
+      "text": "is_remote",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9a45a0",
+      "platform": "ios-1.1.7",
+      "offset": 10110368,
+      "offset_hex": "0x9a45a0",
+      "text": "AttendancesOverviewPeriod.fromJson",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9a6c80",
+      "platform": "ios-1.1.7",
+      "offset": 10120320,
+      "offset_hex": "0x9a6c80",
+      "text": "package:fryderyk_mobile_v3/models/lesson.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9a6d50",
+      "platform": "ios-1.1.7",
+      "offset": 10120528,
+      "offset_hex": "0x9a6d50",
+      "text": "package:fryderyk_mobile_v3/screens/profile_screen.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9a7050",
+      "platform": "ios-1.1.7",
+      "offset": 10121296,
+      "offset_hex": "0x9a7050",
+      "text": "Authorization",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9a7350",
+      "platform": "ios-1.1.7",
+      "offset": 10122064,
+      "offset_hex": "0x9a7350",
+      "text": "package:fryderyk_mobile_v3/widgets/mobile_scanner_error.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9a8560",
+      "platform": "ios-1.1.7",
+      "offset": 10126688,
+      "offset_hex": "0x9a8560",
+      "text": "notExcused",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9aa330",
+      "platform": "ios-1.1.7",
+      "offset": 10134320,
+      "offset_hex": "0x9aa330",
+      "text": "absence_type_change_request",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9afb40",
+      "platform": "ios-1.1.7",
+      "offset": 10156864,
+      "offset_hex": "0x9afb40",
+      "text": "awaiting for solution",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9b3320",
+      "platform": "ios-1.1.7",
+      "offset": 10171168,
+      "offset_hex": "0x9b3320",
+      "text": "refresh-token",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9b3ed0",
+      "platform": "ios-1.1.7",
+      "offset": 10174160,
+      "offset_hex": "0x9b3ed0",
+      "text": "students",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9b4ad0",
+      "platform": "ios-1.1.7",
+      "offset": 10177232,
+      "offset_hex": "0x9b4ad0",
+      "text": "access-token",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9b77f0",
+      "platform": "ios-1.1.7",
+      "offset": 10188784,
+      "offset_hex": "0x9b77f0",
+      "text": "package:fryderyk_mobile_v3/utils/homework_submission_status_square_icon_factory.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9b8030",
+      "platform": "ios-1.1.7",
+      "offset": 10190896,
+      "offset_hex": "0x9b8030",
+      "text": "attendancePercentage",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9b9d10",
+      "platform": "ios-1.1.7",
+      "offset": 10198288,
+      "offset_hex": "0x9b9d10",
+      "text": "package:fryderyk_mobile_v3/models/user.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9bdcb0",
+      "platform": "ios-1.1.7",
+      "offset": 10214576,
+      "offset_hex": "0x9bdcb0",
+      "text": "package:fryderyk_mobile_v3/screens_partials/messages_tabs/sent_messages_partial_screen.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9be760",
+      "platform": "ios-1.1.7",
+      "offset": 10217312,
+      "offset_hex": "0x9be760",
+      "text": "package:fryderyk_mobile_v3/widgets/current_lesson_card.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9c0770",
+      "platform": "ios-1.1.7",
+      "offset": 10225520,
+      "offset_hex": "0x9c0770",
+      "text": "package:fryderyk_mobile_v3/widgets/circular_progress_with_label.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9c3660",
+      "platform": "ios-1.1.7",
+      "offset": 10237536,
+      "offset_hex": "0x9c3660",
+      "text": "type at least @charsCount characters to start searching messages",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9c3b10",
+      "platform": "ios-1.1.7",
+      "offset": 10238736,
+      "offset_hex": "0x9c3b10",
+      "text": "package:fryderyk_mobile_v3/exceptions/unauthorized_exception.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9c6550",
+      "platform": "ios-1.1.7",
+      "offset": 10249552,
+      "offset_hex": "0x9c6550",
+      "text": "package:fryderyk_mobile_v3/services/implementations/user_service.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9c68b0",
+      "platform": "ios-1.1.7",
+      "offset": 10250416,
+      "offset_hex": "0x9c68b0",
+      "text": "package:fryderyk_mobile_v3/helpers/color_helper.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9c6fa0",
+      "platform": "ios-1.1.7",
+      "offset": 10252192,
+      "offset_hex": "0x9c6fa0",
+      "text": "identifier",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9c7ad0",
+      "platform": "ios-1.1.7",
+      "offset": 10255056,
+      "offset_hex": "0x9c7ad0",
+      "text": "isAccompaniment",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9c8610",
+      "platform": "ios-1.1.7",
+      "offset": 10257936,
+      "offset_hex": "0x9c8610",
+      "text": "short_name",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9c89f0",
+      "platform": "ios-1.1.7",
+      "offset": 10258928,
+      "offset_hex": "0x9c89f0",
+      "text": "package:fryderyk_mobile_v3/screens_partials/main_tabs/grades_partial_screen.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9c9a20",
+      "platform": "ios-1.1.7",
+      "offset": 10263072,
+      "offset_hex": "0x9c9a20",
+      "text": "LessonExam.fromJson",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9ca680",
+      "platform": "ios-1.1.7",
+      "offset": 10266240,
+      "offset_hex": "0x9ca680",
+      "text": "allowed-attachment-extensions",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9cadf0",
+      "platform": "ios-1.1.7",
+      "offset": 10268144,
+      "offset_hex": "0x9cadf0",
+      "text": "numeric_value",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9cc3c0",
+      "platform": "ios-1.1.7",
+      "offset": 10273728,
+      "offset_hex": "0x9cc3c0",
+      "text": "getUrl",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9cca50",
+      "platform": "ios-1.1.7",
+      "offset": 10275408,
+      "offset_hex": "0x9cca50",
+      "text": "You cannot skip any lesson between checked lessons.",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9cda90",
+      "platform": "ios-1.1.7",
+      "offset": 10279568,
+      "offset_hex": "0x9cda90",
+      "text": "package:fryderyk_mobile_v3/helpers/snackbar_helper.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9d0340",
+      "platform": "ios-1.1.7",
+      "offset": 10289984,
+      "offset_hex": "0x9d0340",
+      "text": "package:fryderyk_mobile_v3/services/implementations/lesson_service.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9d0b50",
+      "platform": "ios-1.1.7",
+      "offset": 10292048,
+      "offset_hex": "0x9d0b50",
+      "text": "package:fryderyk_mobile_v3/core/fryd_theme_data.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9d3aa0",
+      "platform": "ios-1.1.7",
+      "offset": 10304160,
+      "offset_hex": "0x9d3aa0",
+      "text": "refresh_token",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9d5360",
+      "platform": "ios-1.1.7",
+      "offset": 10310496,
+      "offset_hex": "0x9d5360",
+      "text": "final_grade",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9d5720",
+      "platform": "ios-1.1.7",
+      "offset": 10311456,
+      "offset_hex": "0x9d5720",
+      "text": "package:fryderyk_mobile_v3/screens_partials/recent_absences_partial_screen.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9d5930",
+      "platform": "ios-1.1.7",
+      "offset": 10311984,
+      "offset_hex": "0x9d5930",
+      "text": "HomeworkSubject.fromJson",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9d5ba0",
+      "platform": "ios-1.1.7",
+      "offset": 10312608,
+      "offset_hex": "0x9d5ba0",
+      "text": "package:fryderyk_mobile_v3/screens_partials/main_tabs/more_partial_screen.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9daf20",
+      "platform": "ios-1.1.7",
+      "offset": 10333984,
+      "offset_hex": "0x9daf20",
+      "text": "package:fryderyk_mobile_v3/core/fryd_translations.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9dcf40",
+      "platform": "ios-1.1.7",
+      "offset": 10342208,
+      "offset_hex": "0x9dcf40",
+      "text": "cc_recipients",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9de310",
+      "platform": "ios-1.1.7",
+      "offset": 10347280,
+      "offset_hex": "0x9de310",
+      "text": "is_individual",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9e0d20",
+      "platform": "ios-1.1.7",
+      "offset": 10358048,
+      "offset_hex": "0x9e0d20",
+      "text": "package:fryderyk_mobile_v3/helpers/log_helper.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9e13d0",
+      "platform": "ios-1.1.7",
+      "offset": 10359760,
+      "offset_hex": "0x9e13d0",
+      "text": "last_name",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9e1a00",
+      "platform": "ios-1.1.7",
+      "offset": 10361344,
+      "offset_hex": "0x9e1a00",
+      "text": "attachment-size-limit-exceeded",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9e4ee0",
+      "platform": "ios-1.1.7",
+      "offset": 10374880,
+      "offset_hex": "0x9e4ee0",
+      "text": "package:fryderyk_mobile_v3/services/abstract/abstract_grade_service.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9e7540",
+      "platform": "ios-1.1.7",
+      "offset": 10384704,
+      "offset_hex": "0x9e7540",
+      "text": "sent",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9e82f0",
+      "platform": "ios-1.1.7",
+      "offset": 10388208,
+      "offset_hex": "0x9e82f0",
+      "text": "package:fryderyk_mobile_v3/screens_partials/message_partial_screen.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9ea590",
+      "platform": "ios-1.1.7",
+      "offset": 10397072,
+      "offset_hex": "0x9ea590",
+      "text": "get:activeSemester",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9ea6a0",
+      "platform": "ios-1.1.7",
+      "offset": 10397344,
+      "offset_hex": "0x9ea6a0",
+      "text": "package:fryderyk_mobile_v3/screens/request_absence_type_change_form_screen.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9ead40",
+      "platform": "ios-1.1.7",
+      "offset": 10399040,
+      "offset_hex": "0x9ead40",
+      "text": "willBePresentPredicate",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9ee930",
+      "platform": "ios-1.1.7",
+      "offset": 10414384,
+      "offset_hex": "0x9ee930",
+      "text": "solution sent to teacher",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9f0ac0",
+      "platform": "ios-1.1.7",
+      "offset": 10422976,
+      "offset_hex": "0x9f0ac0",
+      "text": "package:fryderyk_mobile_v3/repositories/attendance_repository.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    },
+    {
+      "id": "FSTR-9f1bc0",
+      "platform": "ios-1.1.7",
+      "offset": 10427328,
+      "offset_hex": "0x9f1bc0",
+      "text": "package:fryderyk_mobile_v3/utils/absence_square_icon_factory.dart",
+      "evidence_type": "observed shipped literal; semantics require corroboration"
+    }
+  ]
+}

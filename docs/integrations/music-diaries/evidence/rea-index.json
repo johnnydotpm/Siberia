@@ -1,0 +1,314 @@
+{
+  "note": "Provenance index only; selected summaries, not a portable authenticated REA Evidence bundle.",
+  "records": [
+    {
+      "evidence_id": "ev_a6bc74356a8e20f699525121f60d87cb9007fcf95c3474cfd9e4527ca93497e7",
+      "operation": "inventory_artifact",
+      "artifact_sha256": "8a9486e42193be4683226da69822a354f3955e876a572ee5155109c66bcca2a3",
+      "provider": {
+        "id": "rea-artifact-graph",
+        "name": "REA safe artifact graph provider",
+        "version": "1"
+      },
+      "confidence": "observed",
+      "authority": "shipped-artifact",
+      "limitations": [],
+      "coverage": null,
+      "local_full_record": "analysis/rea-evidence.json"
+    },
+    {
+      "evidence_id": "ev_b60c9420994c20d2f21d30d49ffd7724de27383abafcf4eb507771f1ae6fec5d",
+      "operation": "inspect_artifact",
+      "artifact_sha256": "8a9486e42193be4683226da69822a354f3955e876a572ee5155109c66bcca2a3",
+      "provider": {
+        "id": "rea-artifact-graph",
+        "name": "REA safe artifact graph provider",
+        "version": "1"
+      },
+      "confidence": "observed",
+      "authority": "shipped-artifact",
+      "limitations": [
+        "Inspection derives bounded static hypotheses and next probes; it does not execute the artifact or claim format-specific semantics."
+      ],
+      "coverage": {
+        "hypotheses_omitted": 0,
+        "hypotheses_retained": 0,
+        "next_probes_omitted": 0,
+        "next_probes_retained": 0,
+        "observations_omitted": 0,
+        "observations_retained": 600,
+        "relationships_omitted": 0,
+        "relationships_retained": 365,
+        "status": "complete-within-substeps",
+        "substeps_completed": 1,
+        "unexplored_branches_omitted": 0,
+        "unexplored_branches_retained": 0
+      },
+      "local_full_record": "analysis/rea-evidence.json"
+    },
+    {
+      "evidence_id": "ev_68c713102290ac483e62262828d43af0931167bd15c05c9d3f08600b5d10e53f",
+      "operation": "inspect_android_package",
+      "artifact_sha256": "8a9486e42193be4683226da69822a354f3955e876a572ee5155109c66bcca2a3",
+      "provider": {
+        "id": "jadx",
+        "name": "JADX headless",
+        "version": "0.7.1"
+      },
+      "confidence": "observed",
+      "authority": "shipped-artifact",
+      "limitations": [
+        "Static decompiler observations do not establish runtime behavior; the APK is never executed.",
+        "Method signatures use provider display types; exact DEX descriptors and instruction offsets are unavailable. Overload indices are local to this engine and artifact.",
+        "Class inventories use parsed metadata before code generation, including synthetic members that may be omitted from decompiled source. Source positions remain unknown.",
+        "Manifest summary fields are extracted by the upstream engine; decoded XML is retained for verification. APK signatures, split APKs, native libraries and Android runtime capture are not verified by this provider."
+      ],
+      "local_full_record": "analysis/rea-fryderyk-android.json",
+      "selected_summary": {
+        "package_name": "com.netro42.fryderyk.app",
+        "version_name": "1.0.12",
+        "version_code": "12",
+        "min_sdk": "21",
+        "target_sdk": "35",
+        "class_count": 5930,
+        "resource_count": 365
+      }
+    },
+    {
+      "evidence_id": "ev_0589e44c2c4770e1c1b9ed476960f1b3cf0894c798df0b8e96573aa96e6d9d7a",
+      "operation": "inspect_android_package",
+      "artifact_sha256": "6cf44e486c7d8d6560aa5e5b1e946c46c1b86cbe545c6882db9bc7b70d4476e8",
+      "provider": {
+        "id": "jadx",
+        "name": "JADX headless",
+        "version": "0.7.1"
+      },
+      "confidence": "observed",
+      "authority": "shipped-artifact",
+      "limitations": [
+        "Static decompiler observations do not establish runtime behavior; the APK is never executed.",
+        "Method signatures use provider display types; exact DEX descriptors and instruction offsets are unavailable. Overload indices are local to this engine and artifact.",
+        "Class inventories use parsed metadata before code generation, including synthetic members that may be omitted from decompiled source. Source positions remain unknown.",
+        "Manifest summary fields are extracted by the upstream engine; decoded XML is retained for verification. APK signatures, split APKs, native libraries and Android runtime capture are not verified by this provider."
+      ],
+      "local_full_record": "analysis/rea-mobireg-android.json",
+      "selected_summary": {
+        "package_name": "pl.mobireg.eparent.music",
+        "version_name": "2.1.79",
+        "version_code": "79",
+        "min_sdk": "23",
+        "target_sdk": "33",
+        "class_count": 5222,
+        "resource_count": 697
+      }
+    },
+    {
+      "evidence_id": "ev_4457ecd4ebbc766c9c6ff1a93a0c5013009baa950dc886c9a377f6fa3e22c7c7",
+      "operation": "inspect_android_method",
+      "artifact_sha256": "6cf44e486c7d8d6560aa5e5b1e946c46c1b86cbe545c6882db9bc7b70d4476e8",
+      "provider": {
+        "id": "jadx",
+        "name": "JADX headless",
+        "version": "0.7.1"
+      },
+      "confidence": "derived",
+      "authority": "shipped-artifact",
+      "limitations": [
+        "Static decompiler observations do not establish runtime behavior; the APK is never executed.",
+        "Method signatures use provider display types; exact DEX descriptors and instruction offsets are unavailable. Overload indices are local to this engine and artifact.",
+        "Class inventories use parsed metadata before code generation, including synthetic members that may be omitted from decompiled source. Source positions remain unknown.",
+        "Manifest summary fields are extracted by the upstream engine; decoded XML is retained for verification. APK signatures, split APKs, native libraries and Android runtime capture are not verified by this provider."
+      ],
+      "local_full_record": "analysis/rea-mobireg-delta-method.json",
+      "selected_summary": {
+        "body_status": "available",
+        "representation": "java",
+        "fell_back": false,
+        "markers": []
+      }
+    },
+    {
+      "evidence_id": "ev_3ce9c012d5699c1a69ddefdc0331eeade088aa31e66cf8f4b79a67deb13b19b5",
+      "operation": "inspect_android_package",
+      "artifact_sha256": "7f472175928586c6310586a40713e326b3fd4166b8e2ac497fb3591bc821e514",
+      "provider": {
+        "id": "jadx",
+        "name": "JADX headless",
+        "version": "0.7.1"
+      },
+      "confidence": "observed",
+      "authority": "shipped-artifact",
+      "limitations": [
+        "Static decompiler observations do not establish runtime behavior; the APK is never executed.",
+        "Method signatures use provider display types; exact DEX descriptors and instruction offsets are unavailable. Overload indices are local to this engine and artifact.",
+        "Class inventories use parsed metadata before code generation, including synthetic members that may be omitted from decompiled source. Source positions remain unknown.",
+        "Manifest summary fields are extracted by the upstream engine; decoded XML is retained for verification. APK signatures, split APKs, native libraries and Android runtime capture are not verified by this provider."
+      ],
+      "local_full_record": "analysis/rea-mobireg-modern-android.json",
+      "selected_summary": {
+        "package_name": "pl.mobireg.eparent.music",
+        "version_name": "3.1.7",
+        "version_code": "116",
+        "min_sdk": "24",
+        "target_sdk": "36",
+        "class_count": 6209,
+        "resource_count": 282
+      }
+    },
+    {
+      "evidence_id": "ev_6bff82e5a8d48e44f0d00658df57ef2d878aa946c61eb6f25e22430562f8c487",
+      "operation": "inventory_artifact",
+      "artifact_sha256": "7f472175928586c6310586a40713e326b3fd4166b8e2ac497fb3591bc821e514",
+      "provider": {
+        "id": "rea-artifact-graph",
+        "name": "REA safe artifact graph provider",
+        "version": "1"
+      },
+      "confidence": "observed",
+      "authority": "shipped-artifact",
+      "limitations": [],
+      "coverage": null,
+      "local_full_record": "analysis/rea-mobireg-modern-archive-evidence.json"
+    },
+    {
+      "evidence_id": "ev_b7fbb1b70ce32c424f0d6274ed27d2d580a29b166828d7e9fc9cca660cc3d9de",
+      "operation": "inspect_artifact",
+      "artifact_sha256": "7f472175928586c6310586a40713e326b3fd4166b8e2ac497fb3591bc821e514",
+      "provider": {
+        "id": "rea-artifact-graph",
+        "name": "REA safe artifact graph provider",
+        "version": "1"
+      },
+      "confidence": "observed",
+      "authority": "shipped-artifact",
+      "limitations": [
+        "Inspection derives bounded static hypotheses and next probes; it does not execute the artifact or claim format-specific semantics."
+      ],
+      "coverage": {
+        "hypotheses_omitted": 0,
+        "hypotheses_retained": 0,
+        "next_probes_omitted": 0,
+        "next_probes_retained": 0,
+        "observations_omitted": 0,
+        "observations_retained": 507,
+        "relationships_omitted": 0,
+        "relationships_retained": 282,
+        "status": "complete-within-substeps",
+        "substeps_completed": 1,
+        "unexplored_branches_omitted": 0,
+        "unexplored_branches_retained": 0
+      },
+      "local_full_record": "analysis/rea-mobireg-modern-archive-evidence.json"
+    },
+    {
+      "evidence_id": "ev_0da1ed178de9d11cd545d70854dda36407897525639f090147ca69f55b6bc320",
+      "operation": "inspect_android_class",
+      "artifact_sha256": "6cf44e486c7d8d6560aa5e5b1e946c46c1b86cbe545c6882db9bc7b70d4476e8",
+      "provider": {
+        "id": "jadx",
+        "name": "JADX headless",
+        "version": "0.7.1"
+      },
+      "confidence": "observed",
+      "authority": "shipped-artifact",
+      "limitations": [
+        "Static decompiler observations do not establish runtime behavior; the APK is never executed.",
+        "Method signatures use provider display types; exact DEX descriptors and instruction offsets are unavailable. Overload indices are local to this engine and artifact.",
+        "Class inventories use parsed metadata before code generation, including synthetic members that may be omitted from decompiled source. Source positions remain unknown.",
+        "Manifest summary fields are extracted by the upstream engine; decoded XML is retained for verification. APK signatures, split APKs, native libraries and Android runtime capture are not verified by this provider."
+      ],
+      "local_full_record": "analysis/rea-mobireg-sync-parameters.json",
+      "selected_summary": {}
+    },
+    {
+      "evidence_id": "ev_85d804127e293f43a5a0ac928520662da89a43cf52f4d4f60ac79ff6eac5b6cd",
+      "provider": {
+        "id": "rea-artifact-graph",
+        "name": "REA safe artifact graph provider",
+        "version": "1"
+      },
+      "authority": "shipped-artifact",
+      "confidence": "observed",
+      "operation": "inspect_artifact",
+      "coverage": {
+        "status": "complete-within-substeps",
+        "substeps_completed": 1,
+        "observations_retained": 1352,
+        "observations_omitted": 0,
+        "relationships_retained": 697,
+        "relationships_omitted": 0,
+        "hypotheses_retained": 0,
+        "hypotheses_omitted": 0,
+        "unexplored_branches_retained": 0,
+        "unexplored_branches_omitted": 0,
+        "next_probes_retained": 0,
+        "next_probes_omitted": 0
+      },
+      "limitations": [
+        "Inspection derives bounded static hypotheses and next probes; it does not execute the artifact or claim format-specific semantics."
+      ],
+      "artifact_sha256": "6cf44e486c7d8d6560aa5e5b1e946c46c1b86cbe545c6882db9bc7b70d4476e8",
+      "artifact_name": "MobiReg_2.1.79_APKPure.apk"
+    },
+    {
+      "evidence_id": "ev_603f735398c6bb48481d8bfd908bcd214cd6e2b29e25f0f41e248dd9b19d6ac5",
+      "provider": {
+        "id": "rea-artifact-graph",
+        "name": "REA safe artifact graph provider",
+        "version": "1"
+      },
+      "authority": "shipped-artifact",
+      "confidence": "observed",
+      "operation": "inspect_artifact",
+      "coverage": {
+        "status": "complete-within-substeps",
+        "substeps_completed": 1,
+        "observations_retained": 337,
+        "observations_omitted": 0,
+        "relationships_retained": 173,
+        "relationships_omitted": 0,
+        "hypotheses_retained": 0,
+        "hypotheses_omitted": 0,
+        "unexplored_branches_retained": 0,
+        "unexplored_branches_omitted": 0,
+        "next_probes_retained": 0,
+        "next_probes_omitted": 0
+      },
+      "limitations": [
+        "Inspection derives bounded static hypotheses and next probes; it does not execute the artifact or claim format-specific semantics."
+      ],
+      "artifact_sha256": "a2a81a812d34353b13f4272f6f5106ae684a30e878abbe2e7351d751863e13f9",
+      "artifact_name": "_   MobiReg_v3.1.7-AppAssassin.ipa"
+    },
+    {
+      "evidence_id": "ev_b083325b6199e0def6d7ca7ba1011db91d98b9fdbd4f2f44b30ee2b573e5a84d",
+      "provider": {
+        "id": "rea-artifact-graph",
+        "name": "REA safe artifact graph provider",
+        "version": "1"
+      },
+      "authority": "shipped-artifact",
+      "confidence": "observed",
+      "operation": "inspect_artifact",
+      "coverage": {
+        "status": "complete-within-substeps",
+        "substeps_completed": 1,
+        "observations_retained": 875,
+        "observations_omitted": 0,
+        "relationships_retained": 444,
+        "relationships_omitted": 0,
+        "hypotheses_retained": 0,
+        "hypotheses_omitted": 0,
+        "unexplored_branches_retained": 0,
+        "unexplored_branches_omitted": 0,
+        "next_probes_retained": 0,
+        "next_probes_omitted": 0
+      },
+      "limitations": [
+        "Inspection derives bounded static hypotheses and next probes; it does not execute the artifact or claim format-specific semantics."
+      ],
+      "artifact_sha256": "6f8558007d58fb0da0a7d257f394f5f9e1eb852921b776013f353bd2e63d823d",
+      "artifact_name": "_  Fryderyk_v1.1.7-AppAssassin.ipa"
+    }
+  ]
+}

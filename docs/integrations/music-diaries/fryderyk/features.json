@@ -1,0 +1,534 @@
+{
+  "provider": "fryderyk",
+  "scope": "supplied Android 1.0.12 and iOS 1.1.7 only",
+  "features": [
+    {
+      "id": "FRY-001",
+      "module": "auth",
+      "feature": "Intro and login options",
+      "requirements": "Manual mobile ID/password, camera QR, deep-link, guide and invalid-credential feedback",
+      "version_evidence": "Both",
+      "evidence_references": [
+        "`manual_login_screen`, `qr_login_screen`, `deep_link_login_screen`, `login_options_screen`, TokenService",
+        "curated-evidence.json",
+        "feature-evidence.json"
+      ],
+      "operation": "mixed",
+      "contract_status": "static feature evidence; wire contract unverified",
+      "next_validation": "Recover exact original-app caller and passive wire trace, including server side effects and retry semantics. Use controlled test-account actions for verified writes; never guess methods or replay uncertain mutations. Correlate original-app screen with exact version/role, verified caller and redacted response fixture; check empty/error/offline and unknown-enum states.",
+      "operation_notes": "Guide/QR parsing is local; login/enrollment/refresh can mutate server session/device credentials. Exact endpoint side effects unverified."
+    },
+    {
+      "id": "FRY-002",
+      "module": "auth",
+      "feature": "Current user/profile",
+      "requirements": "Profile identity, linked children, active child and logout",
+      "version_evidence": "Both",
+      "evidence_references": [
+        "`users/getCurrent`, `User.fromJson`, `profile_screen`",
+        "curated-evidence.json",
+        "feature-evidence.json"
+      ],
+      "operation": "mixed",
+      "contract_status": "static feature evidence; wire contract unverified",
+      "next_validation": "Recover exact original-app caller and passive wire trace, including server side effects and retry semantics. Use controlled test-account actions for verified writes; never guess methods or replay uncertain mutations. Correlate original-app screen with exact version/role, verified caller and redacted response fixture; check empty/error/offline and unknown-enum states.",
+      "operation_notes": "Profile is a read candidate; logout can revoke server device/session access. Child selection may be local or server-persisted: unknown."
+    },
+    {
+      "id": "FRY-003",
+      "module": "app",
+      "feature": "Homepage summary",
+      "requirements": "Current/next/first lesson and school-day state, recent grades, homeworks and absences",
+      "version_evidence": "Both",
+      "evidence_references": [
+        "`homepage_partial_screen`, `current_lesson_card`, `_getSchoolDayState`, recent partials",
+        "curated-evidence.json",
+        "feature-evidence.json"
+      ],
+      "operation": "read_candidate",
+      "contract_status": "static feature evidence; wire contract unverified",
+      "next_validation": "Correlate original-app screen with exact version/role, verified caller and redacted response fixture; check empty/error/offline and unknown-enum states.",
+      "operation_notes": "Feature appears to read/display data; HTTP verb and possible implicit side effects remain unverified."
+    },
+    {
+      "id": "FRY-004",
+      "module": "lessons",
+      "feature": "School-day progression",
+      "requirements": "Before lessons/during/after/no-lessons states with empty-day and completed-day messages",
+      "version_evidence": "Both",
+      "evidence_references": [
+        "`SchoolDayState`, `beforeLessons`, `duringLesson`, `noLessons`, day-completed text",
+        "curated-evidence.json",
+        "feature-evidence.json"
+      ],
+      "operation": "local_candidate",
+      "contract_status": "static feature evidence; wire contract unverified",
+      "next_validation": "Correlate original-app screen with exact version/role, verified caller and redacted response fixture; check empty/error/offline and unknown-enum states.",
+      "operation_notes": "Local presentation/state computation inferred; persistence and any server-side preference synchronization unverified."
+    },
+    {
+      "id": "FRY-005",
+      "module": "lessons",
+      "feature": "Timetable by day",
+      "requirements": "Date navigation and day-specific lessons; preserve actual start/end times and room",
+      "version_evidence": "Both",
+      "evidence_references": [
+        "`lessons/listAtDay/`, `date_selector`, `lesson_details_screen`",
+        "curated-evidence.json",
+        "feature-evidence.json"
+      ],
+      "operation": "read_candidate",
+      "contract_status": "static feature evidence; wire contract unverified",
+      "next_validation": "Correlate original-app screen with exact version/role, verified caller and redacted response fixture; check empty/error/offline and unknown-enum states.",
+      "operation_notes": "Feature appears to read/display data; HTTP verb and possible implicit side effects remain unverified."
+    },
+    {
+      "id": "FRY-006",
+      "module": "lessons",
+      "feature": "Lesson details",
+      "requirements": "Subject, teacher, classroom, description/comment, remote link and status",
+      "version_evidence": "Both",
+      "evidence_references": [
+        "`Lesson.fromJson`, `remote_link`, `substitution_type`, lesson-detail strings",
+        "curated-evidence.json",
+        "feature-evidence.json"
+      ],
+      "operation": "read_candidate",
+      "contract_status": "static feature evidence; wire contract unverified",
+      "next_validation": "Correlate original-app screen with exact version/role, verified caller and redacted response fixture; check empty/error/offline and unknown-enum states.",
+      "operation_notes": "Feature appears to read/display data; HTTP verb and possible implicit side effects remain unverified."
+    },
+    {
+      "id": "FRY-007",
+      "module": "lessons",
+      "feature": "Music-school lesson structure",
+      "requirements": "Individual lessons/teaching, accompaniment, exam and substitution details",
+      "version_evidence": "Both",
+      "evidence_references": [
+        "`LessonAccompaniment.fromJson`, `LessonExam.fromJson`, `is_individual`, `isAccompaniment`, `isExam`, `LessonsTree`",
+        "curated-evidence.json",
+        "feature-evidence.json"
+      ],
+      "operation": "read_candidate",
+      "contract_status": "static feature evidence; wire contract unverified",
+      "next_validation": "Correlate original-app screen with exact version/role, verified caller and redacted response fixture; check empty/error/offline and unknown-enum states.",
+      "operation_notes": "Feature appears to read/display data; HTTP verb and possible implicit side effects remain unverified."
+    },
+    {
+      "id": "FRY-008",
+      "module": "lessons",
+      "feature": "Substitutions",
+      "requirements": "Replaced/cancelled/common-room/teacher-care and substitute/original teacher labels; preserve unknown provider code",
+      "version_evidence": "Both",
+      "evidence_references": [
+        "`SubstitutionType.fromTypeCode`, `substitution_teacher_full_name`, `substituted_teacher_full_name`, status labels",
+        "curated-evidence.json",
+        "feature-evidence.json"
+      ],
+      "operation": "read_candidate",
+      "contract_status": "static feature evidence; wire contract unverified",
+      "next_validation": "Correlate original-app screen with exact version/role, verified caller and redacted response fixture; check empty/error/offline and unknown-enum states.",
+      "operation_notes": "Feature appears to read/display data; HTTP verb and possible implicit side effects remain unverified."
+    },
+    {
+      "id": "FRY-009",
+      "module": "grades",
+      "feature": "Grades list and recent grades",
+      "requirements": "Grade details; do not coerce text-only marks to zero",
+      "version_evidence": "Both",
+      "evidence_references": [
+        "`grades/list/`, `Grade.fromJson`, `numeric_value`, `text_value`, `recent_grades_partial_screen`",
+        "curated-evidence.json",
+        "feature-evidence.json"
+      ],
+      "operation": "read_candidate",
+      "contract_status": "static feature evidence; wire contract unverified",
+      "next_validation": "Correlate original-app screen with exact version/role, verified caller and redacted response fixture; check empty/error/offline and unknown-enum states.",
+      "operation_notes": "Feature appears to read/display data; HTTP verb and possible implicit side effects remain unverified."
+    },
+    {
+      "id": "FRY-010",
+      "module": "grades",
+      "feature": "Grade overview by semester/subject",
+      "requirements": "Subject grouping, semester switch, predicted and final grades, empty semester and unavailable overview",
+      "version_evidence": "Both",
+      "evidence_references": [
+        "`grades/getOverview/`, `GradesOverviewSemester`, `GradesOverviewSubject`, `predicted_grade`, `final_grade`",
+        "curated-evidence.json",
+        "feature-evidence.json"
+      ],
+      "operation": "read_candidate",
+      "contract_status": "static feature evidence; wire contract unverified",
+      "next_validation": "Correlate original-app screen with exact version/role, verified caller and redacted response fixture; check empty/error/offline and unknown-enum states.",
+      "operation_notes": "Feature appears to read/display data; HTTP verb and possible implicit side effects remain unverified."
+    },
+    {
+      "id": "FRY-011",
+      "module": "attendance",
+      "feature": "Attendance totals",
+      "requirements": "Whole-school-year and monthly overview, provider denominator/counts and percentages",
+      "version_evidence": "Both",
+      "evidence_references": [
+        "`attendances/getOverview/`, `AttendancesOverviewPeriod`, `_buildYearlyAttendanceOverview`, `_buildMonthlyAttendanceOverview`",
+        "curated-evidence.json",
+        "feature-evidence.json"
+      ],
+      "operation": "read_candidate",
+      "contract_status": "static feature evidence; wire contract unverified",
+      "next_validation": "Correlate original-app screen with exact version/role, verified caller and redacted response fixture; check empty/error/offline and unknown-enum states.",
+      "operation_notes": "Feature appears to read/display data; HTTP verb and possible implicit side effects remain unverified."
+    },
+    {
+      "id": "FRY-012",
+      "module": "attendance",
+      "feature": "Attendance per lesson",
+      "requirements": "Recent absences and lesson list, absence type and reason, detail links",
+      "version_evidence": "Both",
+      "evidence_references": [
+        "`lessons/listWithAbsence/`, `LessonWithAbsence.fromJson`, `absence_type`, `absence_reason`",
+        "curated-evidence.json",
+        "feature-evidence.json"
+      ],
+      "operation": "read_candidate",
+      "contract_status": "static feature evidence; wire contract unverified",
+      "next_validation": "Correlate original-app screen with exact version/role, verified caller and redacted response fixture; check empty/error/offline and unknown-enum states.",
+      "operation_notes": "Feature appears to read/display data; HTTP verb and possible implicit side effects remain unverified."
+    },
+    {
+      "id": "FRY-013",
+      "module": "attendance",
+      "feature": "Attendance status fidelity",
+      "requirements": "Present, late, explained absence, not-excused, other absence/present; retain code and label",
+      "version_evidence": "Both",
+      "evidence_references": [
+        "`AbsenceType.fromTypeCode`, `present`, `late`, `explainedAbsence`, `notExcused`, `otherAbsence`, `otherPresent`",
+        "curated-evidence.json",
+        "feature-evidence.json"
+      ],
+      "operation": "read_candidate",
+      "contract_status": "static feature evidence; wire contract unverified",
+      "next_validation": "Correlate original-app screen with exact version/role, verified caller and redacted response fixture; check empty/error/offline and unknown-enum states.",
+      "operation_notes": "Feature appears to read/display data; HTTP verb and possible implicit side effects remain unverified."
+    },
+    {
+      "id": "FRY-014",
+      "module": "attendance",
+      "feature": "Absence change requests",
+      "requirements": "Pending request list, date range, eligible lesson selection, reason, submit and acknowledgement",
+      "version_evidence": "Both",
+      "evidence_references": [
+        "`listAbsenceTypeChangeRequests`, `requestAbsenceTypeChange`, corresponding screens, `absence_type_change_request`",
+        "curated-evidence.json",
+        "feature-evidence.json"
+      ],
+      "operation": "mixed",
+      "contract_status": "static feature evidence; wire contract unverified",
+      "next_validation": "Recover exact original-app caller and passive wire trace, including server side effects and retry semantics. Use controlled test-account actions for verified writes; never guess methods or replay uncertain mutations. Authenticated original-app screen traversal and matching passive request/response capture; record exact version, role, enum codes, nullable fields and error behavior. Controlled test-account writes only where required.",
+      "operation_notes": "Combines read/local presentation with a server-side mutation candidate; exact wire semantics and confirmation boundaries unverified."
+    },
+    {
+      "id": "FRY-015",
+      "module": "attendance",
+      "feature": "Absence request constraints",
+      "requirements": "Contiguous selected lessons; approval by supervising teacher/class guardian",
+      "version_evidence": "Both",
+      "evidence_references": [
+        "`FSTR-9cca50`, `FSTR-877330`; exact server validation still unknown",
+        "curated-evidence.json",
+        "feature-evidence.json"
+      ],
+      "operation": "mixed",
+      "contract_status": "static feature evidence; wire contract unverified",
+      "next_validation": "Recover exact original-app caller and passive wire trace, including server side effects and retry semantics. Use controlled test-account actions for verified writes; never guess methods or replay uncertain mutations. Authenticated original-app screen traversal and matching passive request/response capture; record exact version, role, enum codes, nullable fields and error behavior. Controlled test-account writes only where required.",
+      "operation_notes": "Combines read/local presentation with a server-side mutation candidate; exact wire semantics and confirmation boundaries unverified."
+    },
+    {
+      "id": "FRY-016",
+      "module": "homework",
+      "feature": "Homework list and recent homework",
+      "requirements": "Active tasks, subject/teacher, deadline and task detail",
+      "version_evidence": "Both",
+      "evidence_references": [
+        "`homeworks/list/`, `Homework.fromJson`, `finish_date`, `publish_date`, recent-homework partials",
+        "curated-evidence.json",
+        "feature-evidence.json"
+      ],
+      "operation": "read_candidate",
+      "contract_status": "static feature evidence; wire contract unverified",
+      "next_validation": "Correlate original-app screen with exact version/role, verified caller and redacted response fixture; check empty/error/offline and unknown-enum states.",
+      "operation_notes": "Feature appears to read/display data; HTTP verb and possible implicit side effects remain unverified."
+    },
+    {
+      "id": "FRY-017",
+      "module": "homework",
+      "feature": "Homework rich content and files",
+      "requirements": "Instruction HTML, teacher/subject info, attachment opening and failure state",
+      "version_evidence": "Both",
+      "evidence_references": [
+        "`HomeworkTeacher`, `HomeworkSubject`, `HomeworkAttachment`, `_openAttachment`, `homework-instruction`",
+        "curated-evidence.json",
+        "feature-evidence.json"
+      ],
+      "operation": "read_candidate",
+      "contract_status": "static feature evidence; wire contract unverified",
+      "next_validation": "Correlate original-app screen with exact version/role, verified caller and redacted response fixture; check empty/error/offline and unknown-enum states.",
+      "operation_notes": "Feature appears to read/display data; HTTP verb and possible implicit side effects remain unverified."
+    },
+    {
+      "id": "FRY-018",
+      "module": "homework",
+      "feature": "Homework submission status",
+      "requirements": "Awaiting solution, sent to teacher, accepted by teacher",
+      "version_evidence": "Both",
+      "evidence_references": [
+        "`HomeworkSubmissionStatus`, `submission_status`, status labels",
+        "curated-evidence.json",
+        "feature-evidence.json"
+      ],
+      "operation": "read_candidate",
+      "contract_status": "static feature evidence; wire contract unverified",
+      "next_validation": "Correlate original-app screen with exact version/role, verified caller and redacted response fixture; check empty/error/offline and unknown-enum states.",
+      "operation_notes": "Feature appears to read/display data; HTTP verb and possible implicit side effects remain unverified."
+    },
+    {
+      "id": "FRY-019",
+      "module": "homework",
+      "feature": "Homework submission/upload",
+      "requirements": "Do not claim a write API: recovered status display does not establish task submission",
+      "version_evidence": "Unresolved",
+      "evidence_references": [
+        "No submission route recovered; message file-upload route is unrelated",
+        "curated-evidence.json",
+        "feature-evidence.json"
+      ],
+      "operation": "unknown",
+      "contract_status": "unresolved",
+      "next_validation": "Recover exact original-app caller and passive wire trace, including server side effects and retry semantics. Use controlled test-account actions for verified writes; never guess methods or replay uncertain mutations. Authenticated original-app screen traversal and matching passive request/response capture; record exact version, role, enum codes, nullable fields and error behavior. Controlled test-account writes only where required.",
+      "operation_notes": "This workflow is unverified; available literals/declarations do not establish an implemented client action."
+    },
+    {
+      "id": "FRY-020",
+      "module": "messages",
+      "feature": "Messages inbox/sent/trash",
+      "requirements": "Folder selection, unread badges, pagination/empty/error states, read/unread presentation",
+      "version_evidence": "iOS 1.1.7",
+      "evidence_references": [
+        "Inbox/Sent/Trash partials, `messages/list/`, `messages/countUnread`, `is_read`, `is_deleted`",
+        "curated-evidence.json",
+        "feature-evidence.json"
+      ],
+      "operation": "read_candidate",
+      "contract_status": "static feature evidence; wire contract unverified",
+      "next_validation": "Correlate original-app screen with exact version/role, verified caller and redacted response fixture; check empty/error/offline and unknown-enum states.",
+      "operation_notes": "Feature appears to read/display data; HTTP verb and possible implicit side effects remain unverified."
+    },
+    {
+      "id": "FRY-021",
+      "module": "messages",
+      "feature": "Message search",
+      "requirements": "Search with configured minimum character count and empty search result",
+      "version_evidence": "iOS 1.1.7",
+      "evidence_references": [
+        "SearchMessages partial, `message-search-phrase-rule`; exact count unknown",
+        "curated-evidence.json",
+        "feature-evidence.json"
+      ],
+      "operation": "read_candidate",
+      "contract_status": "static feature evidence; wire contract unverified",
+      "next_validation": "Correlate original-app screen with exact version/role, verified caller and redacted response fixture; check empty/error/offline and unknown-enum states.",
+      "operation_notes": "Feature appears to read/display data; HTTP verb and possible implicit side effects remain unverified."
+    },
+    {
+      "id": "FRY-022",
+      "module": "messages",
+      "feature": "Message detail and mark read",
+      "requirements": "Sender/date/subject/content, recipient lists, attachments and unread counter update",
+      "version_evidence": "iOS 1.1.7",
+      "evidence_references": [
+        "`Message.fromJson`, `MessageSender`, `MessageAttachment`, `messages/markAsRead/`",
+        "curated-evidence.json",
+        "feature-evidence.json"
+      ],
+      "operation": "mixed",
+      "contract_status": "static feature evidence; wire contract unverified",
+      "next_validation": "Recover exact original-app caller and passive wire trace, including server side effects and retry semantics. Use controlled test-account actions for verified writes; never guess methods or replay uncertain mutations. Authenticated original-app screen traversal and matching passive request/response capture; record exact version, role, enum codes, nullable fields and error behavior. Controlled test-account writes only where required.",
+      "operation_notes": "Combines read/local presentation with a server-side mutation candidate; exact wire semantics and confirmation boundaries unverified."
+    },
+    {
+      "id": "FRY-023",
+      "module": "messages",
+      "feature": "Compose message",
+      "requirements": "Recipient suggestions, at least one recipient, subject/body validation, rich editor",
+      "version_evidence": "iOS 1.1.7",
+      "evidence_references": [
+        "`message_form_screen`, `messages/getRecipients`, `messages/create`, validation texts",
+        "curated-evidence.json",
+        "feature-evidence.json"
+      ],
+      "operation": "write_candidate",
+      "contract_status": "static feature evidence; wire contract unverified",
+      "next_validation": "Recover exact original-app caller and passive wire trace, including server side effects and retry semantics. Use controlled test-account actions for verified writes; never guess methods or replay uncertain mutations. Authenticated original-app screen traversal and matching passive request/response capture; record exact version, role, enum codes, nullable fields and error behavior. Controlled test-account writes only where required.",
+      "operation_notes": "UI/API literal evidence supports a mutation candidate, not a verified request contract. Do not issue speculative requests."
+    },
+    {
+      "id": "FRY-024",
+      "module": "messages",
+      "feature": "CC/BCC",
+      "requirements": "Separate recipient fields; preserve provider v2 identifiers rather than assuming e-mail addresses",
+      "version_evidence": "iOS 1.1.7",
+      "evidence_references": [
+        "`recipients_v2`, `cc_recipients_v2`, `bcc_recipients_v2`, legacy cc/bcc fields",
+        "curated-evidence.json",
+        "feature-evidence.json"
+      ],
+      "operation": "read_candidate",
+      "contract_status": "static feature evidence; wire contract unverified",
+      "next_validation": "Correlate original-app screen with exact version/role, verified caller and redacted response fixture; check empty/error/offline and unknown-enum states.",
+      "operation_notes": "Feature appears to read/display data; HTTP verb and possible implicit side effects remain unverified."
+    },
+    {
+      "id": "FRY-025",
+      "module": "messages",
+      "feature": "Reply/reply all/forward",
+      "requirements": "Recipient derivation and localized quoted body/header content",
+      "version_evidence": "iOS 1.1.7",
+      "evidence_references": [
+        "`MessageAction`, `reply`, `replyAll`, `forward`, initial-message and quoted-content strings",
+        "curated-evidence.json",
+        "feature-evidence.json"
+      ],
+      "operation": "mixed",
+      "contract_status": "static feature evidence; wire contract unverified",
+      "next_validation": "Recover exact original-app caller and passive wire trace, including server side effects and retry semantics. Use controlled test-account actions for verified writes; never guess methods or replay uncertain mutations. Authenticated original-app screen traversal and matching passive request/response capture; record exact version, role, enum codes, nullable fields and error behavior. Controlled test-account writes only where required.",
+      "operation_notes": "Combines read/local presentation with a server-side mutation candidate; exact wire semantics and confirmation boundaries unverified."
+    },
+    {
+      "id": "FRY-026",
+      "module": "messages",
+      "feature": "Message attachment add/upload",
+      "requirements": "File picker, upload progress, allowed extension/size/count validation, wait until uploads finish",
+      "version_evidence": "iOS 1.1.7",
+      "evidence_references": [
+        "`messages/uploadAttachment`, `attachment_ids`, `maxAttachments`, limit and wait strings",
+        "curated-evidence.json",
+        "feature-evidence.json"
+      ],
+      "operation": "write_candidate",
+      "contract_status": "static feature evidence; wire contract unverified",
+      "next_validation": "Recover exact original-app caller and passive wire trace, including server side effects and retry semantics. Use controlled test-account actions for verified writes; never guess methods or replay uncertain mutations. Authenticated original-app screen traversal and matching passive request/response capture; record exact version, role, enum codes, nullable fields and error behavior. Controlled test-account writes only where required.",
+      "operation_notes": "UI/API literal evidence supports a mutation candidate, not a verified request contract. Do not issue speculative requests."
+    },
+    {
+      "id": "FRY-027",
+      "module": "messages",
+      "feature": "Message attachment removal",
+      "requirements": "Remove draft/uploaded attachment and reconcile local draft only on result",
+      "version_evidence": "iOS 1.1.7",
+      "evidence_references": [
+        "`messages/removeAttachment/`, `removeAttachment`",
+        "curated-evidence.json",
+        "feature-evidence.json"
+      ],
+      "operation": "write_candidate",
+      "contract_status": "static feature evidence; wire contract unverified",
+      "next_validation": "Recover exact original-app caller and passive wire trace, including server side effects and retry semantics. Use controlled test-account actions for verified writes; never guess methods or replay uncertain mutations. Authenticated original-app screen traversal and matching passive request/response capture; record exact version, role, enum codes, nullable fields and error behavior. Controlled test-account writes only where required.",
+      "operation_notes": "UI/API literal evidence supports a mutation candidate, not a verified request contract. Do not issue speculative requests."
+    },
+    {
+      "id": "FRY-028",
+      "module": "messages",
+      "feature": "Message deletion",
+      "requirements": "Delete/trash action and refresh affected folders/unread counts",
+      "version_evidence": "iOS 1.1.7",
+      "evidence_references": [
+        "`messages/delete/` and trash partial; soft/hard delete semantics unknown",
+        "curated-evidence.json",
+        "feature-evidence.json"
+      ],
+      "operation": "write_candidate",
+      "contract_status": "static feature evidence; wire contract unverified",
+      "next_validation": "Recover exact original-app caller and passive wire trace, including server side effects and retry semantics. Use controlled test-account actions for verified writes; never guess methods or replay uncertain mutations. Authenticated original-app screen traversal and matching passive request/response capture; record exact version, role, enum codes, nullable fields and error behavior. Controlled test-account writes only where required.",
+      "operation_notes": "UI/API literal evidence supports a mutation candidate, not a verified request contract. Do not issue speculative requests."
+    },
+    {
+      "id": "FRY-029",
+      "module": "messages",
+      "feature": "Message restore/permanent delete",
+      "requirements": "Do not invent restore or permanent-delete contracts from trash folder alone",
+      "version_evidence": "Unresolved",
+      "evidence_references": [
+        "No distinct route/verified action recovered",
+        "curated-evidence.json",
+        "feature-evidence.json"
+      ],
+      "operation": "unknown",
+      "contract_status": "unresolved",
+      "next_validation": "Recover exact original-app caller and passive wire trace, including server side effects and retry semantics. Use controlled test-account actions for verified writes; never guess methods or replay uncertain mutations. Authenticated original-app screen traversal and matching passive request/response capture; record exact version, role, enum codes, nullable fields and error behavior. Controlled test-account writes only where required.",
+      "operation_notes": "This workflow is unverified; available literals/declarations do not establish an implemented client action."
+    },
+    {
+      "id": "FRY-030",
+      "module": "app",
+      "feature": "Theme/language/preferences",
+      "requirements": "Preserve Siberia visual settings and local language; original has FrydThemeData and translations",
+      "version_evidence": "Both",
+      "evidence_references": [
+        "App-owned `fryd_theme_data.dart`, `fryd_translations.dart`, color helper",
+        "curated-evidence.json",
+        "feature-evidence.json"
+      ],
+      "operation": "local_candidate",
+      "contract_status": "static feature evidence; wire contract unverified",
+      "next_validation": "Correlate original-app screen with exact version/role, verified caller and redacted response fixture; check empty/error/offline and unknown-enum states.",
+      "operation_notes": "Local presentation/state computation inferred; persistence and any server-side preference synchronization unverified."
+    },
+    {
+      "id": "FRY-031",
+      "module": "app",
+      "feature": "Offline/cache/connectivity",
+      "requirements": "Cache reads, stale-data indicator, refresh/error recovery, account-scoped invalidation",
+      "version_evidence": "Both",
+      "evidence_references": [
+        "CacheManager/InMemoryCache/SharedPreferencesCache, ConnectionStatusController, process states",
+        "curated-evidence.json",
+        "feature-evidence.json"
+      ],
+      "operation": "mixed",
+      "contract_status": "static feature evidence; wire contract unverified",
+      "next_validation": "Recover exact original-app caller and passive wire trace, including server side effects and retry semantics. Use controlled test-account actions for verified writes; never guess methods or replay uncertain mutations. Correlate original-app screen with exact version/role, verified caller and redacted response fixture; check empty/error/offline and unknown-enum states.",
+      "operation_notes": "Local cache writes and network reads inferred; invalidation triggers and refresh side effects unverified."
+    },
+    {
+      "id": "FRY-032",
+      "module": "app",
+      "feature": "Minimum version/update required",
+      "requirements": "Map provider incompatibility to actionable error; distinguish server policy from app store version",
+      "version_evidence": "Both",
+      "evidence_references": [
+        "VERSION_API_URL, VersionService, `update_required_screen`",
+        "curated-evidence.json",
+        "feature-evidence.json"
+      ],
+      "operation": "read_candidate",
+      "contract_status": "static feature evidence; wire contract unverified",
+      "next_validation": "Correlate original-app screen with exact version/role, verified caller and redacted response fixture; check empty/error/offline and unknown-enum states.",
+      "operation_notes": "Feature appears to read/display data; HTTP verb and possible implicit side effects remain unverified."
+    },
+    {
+      "id": "FRY-033",
+      "module": "app",
+      "feature": "Notification delivery",
+      "requirements": "In-app unread count established. Actual remote push registration/delivery not established",
+      "version_evidence": "Partial/unresolved",
+      "evidence_references": [
+        "Info.plist declares remote-notification/fetch, but declaration alone does not prove an app workflow",
+        "curated-evidence.json",
+        "feature-evidence.json"
+      ],
+      "operation": "unknown",
+      "contract_status": "unresolved",
+      "next_validation": "Recover exact original-app caller and passive wire trace, including server side effects and retry semantics. Use controlled test-account actions for verified writes; never guess methods or replay uncertain mutations. Correlate original-app screen with exact version/role, verified caller and redacted response fixture; check empty/error/offline and unknown-enum states.",
+      "operation_notes": "This workflow is unverified; available literals/declarations do not establish an implemented client action."
+    }
+  ]
+}
