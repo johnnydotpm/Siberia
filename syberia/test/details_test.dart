@@ -170,7 +170,7 @@ void main() {
       id: 'hw1',
       title: 'Zadania',
       subject: 'Matematyka',
-      date: _today.add(const Duration(days: 1)),
+      date: DateTime(_today.year, _today.month, _today.day + 1),
       kind: EventKind.homework,
     );
     final controller = await _pump(
@@ -230,7 +230,7 @@ void main() {
       id: 'hw1',
       title: 'Zadania',
       subject: 'Matematyka',
-      date: _today.add(const Duration(days: 1)),
+      date: DateTime(_today.year, _today.month, _today.day + 1),
       kind: EventKind.homework,
     );
     await _pump(tester, _snapshot(events: [homework]), tab: 4);

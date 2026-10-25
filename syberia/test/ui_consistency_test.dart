@@ -22,14 +22,14 @@ AppSnapshot _snapshot({List<AttendanceRecord>? attendance}) {
     id: id,
     title: 'Wpis $id',
     subject: 'fizyka',
-    date: today.add(Duration(days: days)),
+    date: DateTime(today.year, today.month, today.day + days),
     kind: EventKind.exam,
     typeLabel: type,
   );
   AttendanceRecord record(String id, AttendanceKind kind, int daysAgo) =>
       AttendanceRecord(
         id: id,
-        date: today.subtract(Duration(days: daysAgo)),
+        date: DateTime(today.year, today.month, today.day - daysAgo),
         lessonNumber: 1,
         subject: 'Fizyka',
         type: kind.name,
@@ -57,7 +57,7 @@ AppSnapshot _snapshot({List<AttendanceRecord>? attendance}) {
         id: 'hw1',
         title: 'Zadanie',
         subject: 'fizyka',
-        date: today.add(const Duration(days: 1)),
+        date: DateTime(today.year, today.month, today.day + 1),
         kind: EventKind.homework,
       ),
       event('e1', 'sprawdzian', 2),

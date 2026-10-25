@@ -188,7 +188,8 @@ Future<AppController> _controller() async {
 class _Repository extends AppRepository {
   @override
   Future<AppSnapshot> load() async {
-    final tomorrow = DateTime.now().add(const Duration(days: 1));
+    final now = DateTime.now();
+    final tomorrow = DateTime(now.year, now.month, now.day + 1);
     final start = DateTime(tomorrow.year, tomorrow.month, tomorrow.day, 8);
     return AppSnapshot(
       profile: const StudentProfile(
