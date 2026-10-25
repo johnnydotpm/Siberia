@@ -101,7 +101,7 @@ class LibrusReferenceCache {
       if (!await file.exists()) return null;
       final value = jsonDecode(await file.readAsString());
       if (value is! Map || value['account'] != account) return null;
-      final fetchedAt = DateTime.tryParse('${value['fetchedAt']}');
+      final fetchedAt = DateTime.tryParse('${value['fetchedAt']}')?.toLocal();
       final responses = value['responses'];
       final missing = value['knownMissing'];
       if (fetchedAt == null || responses is! Map) return null;
@@ -138,7 +138,8 @@ class LibrusReferenceCache {
       await temporary.writeAsString(
         jsonEncode({
           'account': references.account,
-          'fetchedAt': references.fetchedAt.toIso8601String(),
+          // In UTC, so the hour the clocks go back reads back right.
+          'fetchedAt': references.fetchedAt.toUtc().toIso8601String(),
           'responses': references.responses,
           'knownMissing': references.knownMissing.toList(),
         }),

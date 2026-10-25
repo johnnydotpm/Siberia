@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter_test/flutter_test.dart';
+import 'package:syberia/src/data/snapshot_cache.dart';
 import 'package:syberia/src/domain/calendar_days.dart';
+import 'package:syberia/src/domain/models.dart';
 import 'package:syberia/src/ui/app_shell.dart';
 
 // The clock changes matter in a zone that has them: the suite also runs
@@ -59,6 +63,62 @@ void main() {
     expect(
       messageSection(DateTime(2027, 3, 31, 10), DateTime(2027, 4, 2, 9)),
       MessageSection.thisWeek,
+    );
+  });
+
+  AppSnapshot snapshot({required List<Lesson> lessons, DateTime? lastSync}) =>
+      AppSnapshot(
+        profile: const StudentProfile(
+          id: 'cache',
+          name: 'Uczeń Testowy',
+          school: '',
+          provider: 'Librus Synergia',
+        ),
+        lessons: lessons,
+        grades: const [],
+        events: const [],
+        messages: const [],
+        attendance: const [],
+        announcements: const [],
+        notices: const [],
+        lastSync: lastSync ?? DateTime(2026, 10, 21, 8),
+      );
+
+  test('the cache keeps the moment in the hour the clocks go back', () {
+    // In Warsaw both are 02:30: first in summer time, then in winter time.
+    final first = DateTime.utc(2026, 10, 25, 0, 30).toLocal();
+    final second = DateTime.utc(2026, 10, 25, 1, 30).toLocal();
+    final raw = SnapshotCache.encode(
+      snapshot(
+        lessons: [
+          Lesson(
+            id: 'night',
+            subject: 'Matematyka',
+            teacher: '',
+            room: '',
+            start: first,
+            end: second,
+          ),
+        ],
+        lastSync: second,
+      ),
+    );
+    final restored = SnapshotCache.decode(raw)!;
+    expect(restored.lessons.single.start, first);
+    expect(restored.lessons.single.end, second, reason: 'not an hour early');
+    expect(restored.lastSync, second);
+    // The text names the moment, whatever zone reads it.
+    expect((jsonDecode(raw) as Map)['lastSync'], endsWith('Z'));
+  });
+
+  test('a cache written before keeps its local times', () {
+    final raw = jsonDecode(
+      SnapshotCache.encode(snapshot(lessons: const [])),
+    ) as Map<String, Object?>;
+    raw['lastSync'] = '2026-10-21T08:00:00.000';
+    expect(
+      SnapshotCache.decode(jsonEncode(raw))!.lastSync,
+      DateTime(2026, 10, 21, 8),
     );
   });
 }

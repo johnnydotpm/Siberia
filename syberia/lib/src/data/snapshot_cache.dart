@@ -76,8 +76,12 @@ abstract final class SnapshotCache {
     Object? value,
     T Function(Map<String, Object?>) read,
   ) => (value as List).map((item) => read(_map(item))).toList(growable: false);
-  static String _date(DateTime value) => value.toIso8601String();
-  static DateTime _parseDate(Object? value) => DateTime.parse(value! as String);
+  // In UTC: a local time alone is ambiguous in the hour the clocks go back,
+  // and came back an hour early. Older caches hold local times, which parse
+  // as before.
+  static String _date(DateTime value) => value.toUtc().toIso8601String();
+  static DateTime _parseDate(Object? value) =>
+      DateTime.parse(value! as String).toLocal();
   static DateTime? _optionalDate(Object? value) =>
       value == null ? null : _parseDate(value);
 
