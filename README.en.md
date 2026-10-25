@@ -125,7 +125,6 @@ The application will be in `build/linux/x64/release/bundle`.
 - Expand unit and on-device integration tests
 - Further accessibility improvements
 - Split `lib/src/ui/app_shell.dart` into separate screen files
-- Additional app styles, including frutiger aero, minimal, and skeuomorphism
 - More languages
 
 ## License and acknowledgements
