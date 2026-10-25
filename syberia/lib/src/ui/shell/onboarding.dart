@@ -247,8 +247,13 @@ class _OnboardingState extends State<_Onboarding>
                     onNext: _allowNotifications,
                   ),
                   _DoneStep(
+                    controller: _controller,
                     motion: _motion(_SetupStep.done),
                     permissionRefused: _permissionRefused,
+                    onEdit: (step) {
+                      HapticFeedback.lightImpact();
+                      _go(step);
+                    },
                     onStart: _finish,
                   ),
                 ],
@@ -815,14 +820,14 @@ class _NotificationsStepState extends State<_NotificationsStep> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
+                      _WholeWords(
                         title,
                         style: theme.textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.w700,
                         ),
                       ),
                       const SizedBox(height: 2),
-                      Text(
+                      _WholeWords(
                         text,
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: colors.onSurfaceVariant,
@@ -920,15 +925,21 @@ class _NotificationsStepState extends State<_NotificationsStep> {
   );
 }
 
-/// The end: a few things worth knowing, and into the app.
+/// The end: what was chosen, a few things worth knowing, and into the app.
 class _DoneStep extends StatelessWidget {
   const _DoneStep({
+    required this.controller,
     required this.motion,
     required this.permissionRefused,
+    required this.onEdit,
     required this.onStart,
   });
+  final AppController controller;
   final _StepMotion motion;
   final bool permissionRefused;
+
+  /// Back to a step from its row in the summary.
+  final ValueChanged<_SetupStep> onEdit;
   final VoidCallback onStart;
 
   @override
@@ -937,7 +948,13 @@ class _DoneStep extends StatelessWidget {
         !kIsWeb &&
         (defaultTargetPlatform == TargetPlatform.android ||
             defaultTargetPlatform == TargetPlatform.iOS);
-    Widget tip(Key key, IconData icon, String text, {bool warning = false}) {
+    Widget tip(
+      Key key,
+      IconData icon,
+      String text, {
+      bool warning = false,
+      Widget? extra,
+    }) {
       final colors = Theme.of(context).colorScheme;
       return Card(
         key: key,
@@ -953,11 +970,17 @@ class _DoneStep extends StatelessWidget {
               ),
               const SizedBox(width: 14),
               Expanded(
-                child: Text(
-                  text,
-                  style: TextStyle(
-                    color: warning ? colors.onErrorContainer : null,
-                  ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text(
+                      text,
+                      style: TextStyle(
+                        color: warning ? colors.onErrorContainer : null,
+                      ),
+                    ),
+                    if (extra != null) ...[const SizedBox(height: 10), extra],
+                  ],
                 ),
               ),
             ],
@@ -983,11 +1006,20 @@ class _DoneStep extends StatelessWidget {
             context.tr('onboardingTipPermission'),
             warning: true,
           ),
+        _SetupSummary(
+          controller: controller,
+          permissionRefused: permissionRefused,
+          onEdit: onEdit,
+        ),
         if (widgets)
-          tip(
-            const ValueKey('onboarding-tip-widget'),
-            Icons.widgets_rounded,
-            context.tr('onboardingTipWidget'),
+          _WidgetTip(
+            bridge: controller.homeWidget,
+            tip: (extra) => tip(
+              const ValueKey('onboarding-tip-widget'),
+              Icons.widgets_rounded,
+              context.tr('onboardingTipWidget'),
+              extra: extra,
+            ),
           ),
         tip(
           const ValueKey('onboarding-tip-profiles'),

@@ -56,6 +56,7 @@ part 'shell/onboarding.dart';
 part 'shell/onboarding_intro.dart';
 part 'shell/onboarding_motion.dart';
 part 'shell/onboarding_sign_in.dart';
+part 'shell/onboarding_finale.dart';
 part 'shell/free_days.dart';
 part 'shell/motion.dart';
 part 'shell/sync_news.dart';

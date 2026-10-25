@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math' as math;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -8,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syberia/src/app.dart';
 import 'package:syberia/src/data/app_repository.dart';
 import 'package:syberia/src/domain/models.dart';
+import 'package:syberia/src/home_widget.dart';
 import 'package:syberia/src/school_notifications.dart';
 import 'package:syberia/src/startup.dart';
 import 'package:syberia/src/state/app_controller.dart';
@@ -134,10 +136,33 @@ class _SignedIn extends AppRepository {
   );
 }
 
+/// The home screen widget, placed by a pretend launcher.
+class _Widgets extends HomeWidgetBridge {
+  _Widgets({this.canPin = true});
+  final bool canPin;
+  var placed = 0;
+  var pins = 0;
+
+  @override
+  Future<bool> canPinWidget() async => configurableInApp && canPin;
+
+  @override
+  Future<bool> pinWidget() async {
+    pins++;
+    return true;
+  }
+
+  @override
+  Future<List<PlacedHomeWidget>> placedWidgets() async => [
+    for (var id = 0; id < placed; id++) PlacedHomeWidget(id: id),
+  ];
+}
+
 /// The setup run again on a signed-in phone, opening without the animation.
 Future<(AppController, _Presenter)> _repeat(
   WidgetTester tester, {
   bool allow = true,
+  HomeWidgetBridge? widgets,
 }) async {
   SharedPreferences.setMockInitialValues({
     'app_design_v1': 'classic',
@@ -151,6 +176,7 @@ Future<(AppController, _Presenter)> _repeat(
     _SignedIn(),
     updatesEnabled: false,
     notifications: SchoolNotificationService(presenter),
+    homeWidget: widgets,
   );
   await controller.bootstrap();
   controller.restartOnboarding();
@@ -761,6 +787,135 @@ void main() {
       await toNotifications(tester);
       expect(chosen('choose'), findsOneWidget);
       await tester.pumpWidget(const SizedBox.shrink());
+    });
+  });
+
+  group('the last step', () {
+    Future<void> toEnd(WidgetTester tester, {bool skip = true}) async {
+      for (final step in ['welcome', 'appearance', 'account']) {
+        await tester.tap(_nextOn('onboarding-$step'));
+        await tester.pumpAndSettle();
+      }
+      await tester.tap(
+        skip
+            ? find.byKey(const ValueKey('onboarding-skip'))
+            : _nextOn('onboarding-notifications'),
+      );
+      await tester.pumpAndSettle();
+    }
+
+    String summary(WidgetTester tester, String row) => tester
+        .widget<Text>(
+          find
+              .descendant(
+                of: find.byKey(ValueKey('summary-$row')),
+                matching: find.byType(Text),
+              )
+              .last,
+        )
+        .data!;
+
+    testWidgets('sums up what was chosen, and a row goes back to its step', (
+      tester,
+    ) async {
+      await _repeat(tester);
+      await tester.tap(_nextOn('onboarding-welcome'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('onboarding-theme-dark')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('onboarding-back')));
+      await tester.pumpAndSettle();
+      await toEnd(tester);
+      expect(summary(tester, 'language'), 'English');
+      expect(summary(tester, 'theme'), 'Dark');
+      expect(summary(tester, 'profiles'), '—');
+      expect(summary(tester, 'notifications'), 'All');
+
+      final theme = find.byKey(const ValueKey('summary-theme'));
+      await tester.ensureVisible(theme);
+      await tester.pumpAndSettle();
+      await tester.tap(theme);
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('onboarding-appearance')),
+        findsOneWidget,
+      );
+      expect(find.byKey(const ValueKey('onboarding-done')), findsNothing);
+      await tester.pumpWidget(const SizedBox.shrink());
+    });
+
+    testWidgets('says when notifications are off or not allowed', (
+      tester,
+    ) async {
+      await _repeat(tester, allow: false);
+      await toEnd(tester, skip: false);
+      expect(summary(tester, 'notifications'), 'All · not allowed');
+      await tester.pumpWidget(const SizedBox.shrink());
+
+      final (other, _) = await _repeat(tester);
+      await other.setNotificationsEnabled(false);
+      await toEnd(tester);
+      expect(summary(tester, 'notifications'), 'Off');
+      await tester.pumpWidget(const SizedBox.shrink());
+    });
+
+    testWidgets('places the widget on Android, and says once it is there', (
+      tester,
+    ) async {
+      final widgets = _Widgets();
+      await _repeat(tester, widgets: widgets);
+      await toEnd(tester);
+      final pin = find.byKey(const ValueKey('onboarding-pin-widget'));
+      await tester.ensureVisible(pin);
+      await tester.pumpAndSettle();
+      await tester.tap(pin);
+      await tester.pumpAndSettle();
+      expect(widgets.pins, 1);
+      expect(
+        find.byKey(const ValueKey('onboarding-widget-added')),
+        findsNothing,
+      );
+
+      // The launcher's dialog places it, and the app comes back.
+      widgets.placed = 1;
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.paused);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('onboarding-widget-added')),
+        findsOneWidget,
+      );
+      expect(pin, findsNothing);
+      await tester.pumpWidget(const SizedBox.shrink());
+    });
+
+    testWidgets('offers no button where the launcher cannot place it, nor on '
+        'iPhone', (tester) async {
+      await _repeat(tester, widgets: _Widgets(canPin: false));
+      await toEnd(tester);
+      expect(
+        find.byKey(const ValueKey('onboarding-tip-widget')),
+        findsOneWidget,
+      );
+      expect(find.byKey(const ValueKey('onboarding-pin-widget')), findsNothing);
+      await tester.pumpWidget(const SizedBox.shrink());
+
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      try {
+        await _repeat(tester, widgets: _Widgets());
+        await toEnd(tester);
+        expect(
+          find.byKey(const ValueKey('onboarding-tip-widget')),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const ValueKey('onboarding-pin-widget')),
+          findsNothing,
+        );
+        await tester.pumpWidget(const SizedBox.shrink());
+      } finally {
+        debugDefaultTargetPlatformOverride = null;
+      }
     });
   });
 

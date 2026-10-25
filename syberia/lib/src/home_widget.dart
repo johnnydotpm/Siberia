@@ -294,6 +294,15 @@ class HomeWidgetBridge {
     );
   }
 
+  /// Whether the launcher can place the widget when asked (Android 8+).
+  Future<bool> canPinWidget() async =>
+      configurableInApp && (await _invoke<bool>('canPinWidget') ?? false);
+
+  /// Asks the launcher to place the widget; it shows its own dialog. False
+  /// when it would not.
+  Future<bool> pinWidget() async =>
+      configurableInApp && (await _invoke<bool>('pinWidget') ?? false);
+
   /// Whether the widget can take its colours from the wallpaper (Android 12+).
   Future<bool> dynamicColorsSupported() async =>
       await _invoke<bool>('dynamicColorsSupported') ?? false;
