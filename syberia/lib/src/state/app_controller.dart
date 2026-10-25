@@ -37,6 +37,7 @@ class AppController extends ChangeNotifier {
   final _syncingProfiles = <String>{};
   bool _signingIn = false;
   bool _onboardingDone = true;
+  Duration? _intro;
   bool _markingMessagesRead = false;
   bool _loadingSentMessages = false;
   AppError? _sentMessagesError;
@@ -103,10 +104,23 @@ class AppController extends ChangeNotifier {
     await configureBackground();
   }
 
-  /// Goes through the setup again, from the settings.
+  /// Goes through the setup again, from the settings, opening on the logo
+  /// animation as a first launch does.
   void restartOnboarding() {
     _onboardingDone = false;
+    _intro = Duration.zero;
     notifyListeners();
+  }
+
+  /// Has the setup open on the startup animation, carried on [from] where the
+  /// startup screen got to and played to the whole logo.
+  void playIntro({Duration from = Duration.zero}) => _intro = from;
+
+  /// The animation the setup is to open on, given once.
+  Duration? takeIntro() {
+    final intro = _intro;
+    _intro = null;
+    return intro;
   }
 
   /// Whether the open profile is syncing, or an account is being added.

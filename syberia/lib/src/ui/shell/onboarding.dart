@@ -26,7 +26,19 @@ class _OnboardingState extends State<_Onboarding> {
   /// Run again from Settings, on a phone that is signed in already.
   late final bool _again = widget.controller.profiles.isNotEmpty;
 
+  /// The startup animation to open on, until its mark has landed on the
+  /// first step's logo.
+  late Duration? _intro = _controller.takeIntro();
+  final _logoKey = GlobalKey();
+
   AppController get _controller => widget.controller;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // With less motion the first step shows at once.
+    if (MediaQuery.disableAnimationsOf(context)) _intro = null;
+  }
 
   @override
   void dispose() {
@@ -86,55 +98,80 @@ class _OnboardingState extends State<_Onboarding> {
   @override
   Widget build(BuildContext context) => ListenableBuilder(
     listenable: _controller,
-    builder: (context, _) => PopScope(
-      // The system back button steps back, and leaves the app only from
-      // the first step of a new install.
-      canPop: _step == _SetupStep.welcome && !_again,
-      onPopInvokedWithResult: (popped, _) {
-        if (!popped) _back();
-      },
-      child: Scaffold(
-        key: const ValueKey('onboarding'),
-        body: SafeArea(
-          child: Column(
-            children: [
-              _SetupHeader(
-                step: _step,
-                onBack:
-                    (_step.index > 0 || _again) &&
-                        !_controller.syncing &&
-                        !_asking
-                    ? _back
-                    : null,
-              ),
-              Expanded(
-                child: PageView(
-                  controller: _pages,
-                  // Each step decides when to go on.
-                  physics: const NeverScrollableScrollPhysics(),
-                  children: [
-                    _WelcomeStep(controller: _controller, onNext: _next),
-                    _AppearanceStep(controller: _controller, onNext: _next),
-                    _AccountStep(
-                      controller: _controller,
-                      onNext: _signedIn ? _next : null,
-                      onSignedIn: _next,
-                    ),
-                    _NotificationsStep(
-                      controller: _controller,
-                      asking: _asking,
-                      onSkip: _next,
-                      onNext: _allowNotifications,
-                    ),
-                    _DoneStep(
-                      permissionRefused: _permissionRefused,
-                      onStart: _finish,
-                    ),
-                  ],
-                ),
-              ),
-            ],
+    builder: (context, _) => Stack(
+      fit: StackFit.expand,
+      children: [
+        _setup(context),
+        if (_intro case final intro?)
+          _SetupIntro(
+            key: const ValueKey('setup-intro'),
+            from: intro,
+            target: _logoKey,
+            background: startupBackground(
+              Theme.of(context).brightness,
+              amoled: _controller.colorMode == AppColorMode.amoled,
+            ),
+            onFlight: () {},
+            onDone: () => setState(() => _intro = null),
           ),
+      ],
+    ),
+  );
+
+  Widget _setup(BuildContext context) => PopScope(
+    // The system back button steps back, and leaves the app only from
+    // the first step of a new install.
+    canPop: _step == _SetupStep.welcome && !_again,
+    onPopInvokedWithResult: (popped, _) {
+      if (!popped) _back();
+    },
+    child: Scaffold(
+      key: const ValueKey('onboarding'),
+      body: SafeArea(
+        child: Column(
+          children: [
+            _SetupHeader(
+              step: _step,
+              onBack:
+                  (_step.index > 0 || _again) &&
+                      !_controller.syncing &&
+                      !_asking
+                  ? _back
+                  : null,
+            ),
+            Expanded(
+              child: PageView(
+                controller: _pages,
+                // Each step decides when to go on.
+                physics: const NeverScrollableScrollPhysics(),
+                children: [
+                  _WelcomeStep(
+                    controller: _controller,
+                    onNext: _next,
+                    logoKey: _logoKey,
+                    // Until the mark of the animation lands on it.
+                    hideLogo: _intro != null,
+                  ),
+                  _AppearanceStep(controller: _controller, onNext: _next),
+                  _AccountStep(
+                    controller: _controller,
+                    onNext: _signedIn ? _next : null,
+                    onSignedIn: _next,
+                  ),
+                  _NotificationsStep(
+                    controller: _controller,
+                    asking: _asking,
+                    onSkip: _next,
+                    onNext: _allowNotifications,
+                  ),
+                  _DoneStep(
+                    permissionRefused: _permissionRefused,
+                    onStart: _finish,
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     ),
@@ -315,9 +352,18 @@ Widget _setupNext(
 /// "Hello" in each language of the app, one after another, and the choice
 /// of language. The logo hides the demo, as on the sign-in screen.
 class _WelcomeStep extends StatefulWidget {
-  const _WelcomeStep({required this.controller, required this.onNext});
+  const _WelcomeStep({
+    required this.controller,
+    required this.onNext,
+    required this.logoKey,
+    required this.hideLogo,
+  });
   final AppController controller;
   final VoidCallback onNext;
+
+  /// On the logo, where the startup animation's mark lands.
+  final GlobalKey logoKey;
+  final bool hideLogo;
 
   @override
   State<_WelcomeStep> createState() => _WelcomeStepState();
@@ -378,7 +424,10 @@ class _WelcomeStepState extends State<_WelcomeStep> {
                 (recognizer) => recognizer.onLongPress = controller.startDemo,
               ),
         },
-        child: const AppLogo(),
+        child: Opacity(
+          opacity: widget.hideLogo ? 0 : 1,
+          child: AppLogo(key: widget.logoKey),
+        ),
       ),
       title: _greetings[_greeting],
       text: context.tr('onboardingLanguage'),

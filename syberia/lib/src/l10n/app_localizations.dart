@@ -134,6 +134,7 @@ class AppLocalizations {
       'notification_notices': 'Nowe uwagi',
       'notification_attendance': 'Nowe wpisy frekwencji',
       'notification_events': 'Nowe wydarzenia',
+      'introSkip': 'Dotknij, aby pominąć',
       'onboardingLanguage': 'Wybierz język',
       'onboardingAppearanceText':
           'Możesz to zmienić w każdej chwili w ustawieniach.',
@@ -535,6 +536,7 @@ class AppLocalizations {
       'notification_notices': 'New remarks',
       'notification_attendance': 'New attendance entries',
       'notification_events': 'New events',
+      'introSkip': 'Tap to skip',
       'onboardingLanguage': 'Choose your language',
       'onboardingAppearanceText': 'You can change this any time in Settings.',
       'onboardingAccount': 'Sign in to Librus',
@@ -938,6 +940,7 @@ class AppLocalizations {
       'notification_notices': 'Новые замечания',
       'notification_attendance': 'Новые записи посещаемости',
       'notification_events': 'Новые события',
+      'introSkip': 'Коснитесь, чтобы пропустить',
       'onboardingLanguage': 'Выберите язык',
       'onboardingAppearanceText':
           'Это можно поменять в любой момент в настройках.',
@@ -1340,6 +1343,7 @@ class AppLocalizations {
       'notification_notices': 'Neue Bemerkungen',
       'notification_attendance': 'Neue Anwesenheitseinträge',
       'notification_events': 'Neue Termine',
+      'introSkip': 'Tippen zum Überspringen',
       'onboardingLanguage': 'Wähle deine Sprache',
       'onboardingAppearanceText':
           'Das kannst du jederzeit in den Einstellungen ändern.',
@@ -1751,6 +1755,7 @@ class AppLocalizations {
       'notification_notices': 'Нові зауваження',
       'notification_attendance': 'Нові записи відвідуваності',
       'notification_events': 'Нові події',
+      'introSkip': 'Торкніться, щоб пропустити',
       'onboardingLanguage': 'Оберіть мову',
       'onboardingAppearanceText': 'Це можна змінити будь-коли в налаштуваннях.',
       'onboardingAccount': 'Вхід у Librus',

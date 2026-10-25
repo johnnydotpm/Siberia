@@ -52,6 +52,7 @@ part 'shell/settings_previews.dart';
 part 'shell/notification_settings.dart';
 part 'shell/account.dart';
 part 'shell/onboarding.dart';
+part 'shell/onboarding_intro.dart';
 part 'shell/free_days.dart';
 part 'shell/motion.dart';
 part 'shell/sync_news.dart';

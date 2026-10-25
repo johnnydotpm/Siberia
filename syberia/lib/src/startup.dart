@@ -12,7 +12,9 @@ import 'state/app_controller.dart';
 import 'ui/brand_logo.dart';
 
 /// Draws the first Flutter frame before account restoration and network I/O.
-/// Startup finishes as soon as initialization does; the animation adds no delay.
+/// Startup finishes as soon as initialization does; the animation adds no
+/// delay. On a first launch the setup carries the animation on from where it
+/// got to and plays it to the whole logo.
 class StartupApp extends StatefulWidget {
   const StartupApp({
     required this.initialize,
@@ -32,6 +34,9 @@ class _StartupAppState extends State<StartupApp> {
   Locale? _locale;
   bool _failed = false;
   int _attempt = 0;
+
+  /// How long the animation has been running.
+  final _logoTime = BrandLogoTime();
 
   @override
   void initState() {
@@ -64,6 +69,9 @@ class _StartupAppState extends State<StartupApp> {
       if (!mounted) {
         controller.dispose();
         return;
+      }
+      if (!controller.onboardingDone && !controller.isDemo) {
+        controller.playIntro(from: _logoTime.elapsed);
       }
       setState(() => _controller = controller);
     } on Object {
@@ -99,16 +107,17 @@ class _StartupAppState extends State<StartupApp> {
       },
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF176B8F)),
-        scaffoldBackgroundColor: Colors.white,
+        scaffoldBackgroundColor: startupBackground(Brightness.light),
       ),
       darkTheme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color(0xFF176B8F),
           brightness: Brightness.dark,
         ),
-        scaffoldBackgroundColor: _colorMode == AppColorMode.amoled
-            ? Colors.black
-            : const Color(0xFF0B1A22),
+        scaffoldBackgroundColor: startupBackground(
+          Brightness.dark,
+          amoled: _colorMode == AppColorMode.amoled,
+        ),
       ),
       home: Builder(
         builder: (context) => AnnotatedRegion<SystemUiOverlayStyle>(
@@ -130,6 +139,7 @@ class _StartupAppState extends State<StartupApp> {
                         ),
                         child: AnimatedBrandLogo(
                           key: ValueKey('startup-logo-$_attempt'),
+                          time: _logoTime,
                         ),
                       ),
                       if (_failed) ...[
