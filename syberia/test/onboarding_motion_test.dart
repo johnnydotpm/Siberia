@@ -674,6 +674,96 @@ void main() {
     });
   });
 
+  group('the notifications step', () {
+    Future<void> toNotifications(WidgetTester tester) async {
+      for (final step in ['welcome', 'appearance', 'account']) {
+        await tester.tap(_nextOn('onboarding-$step'));
+        await tester.pumpAndSettle();
+      }
+    }
+
+    Finder chosen(String choice) =>
+        find.byKey(ValueKey('notify-$choice-chosen'));
+
+    testWidgets('starts on All, and Off asks nothing', (tester) async {
+      final (controller, presenter) = await _repeat(tester);
+      await toNotifications(tester);
+      expect(chosen('all'), findsOneWidget);
+      expect(find.byKey(const ValueKey('notify-list')), findsNothing);
+
+      await tester.tap(find.byKey(const ValueKey('notify-off')));
+      await tester.pumpAndSettle();
+      expect(chosen('off'), findsOneWidget);
+      expect(chosen('all'), findsNothing);
+      expect(controller.notificationSettings.enabled, isFalse);
+      await tester.tap(_nextOn('onboarding-notifications'));
+      await tester.pumpAndSettle();
+      expect(presenter.asked, 0);
+      expect(find.byKey(const ValueKey('onboarding-done')), findsOneWidget);
+      await tester.pumpWidget(const SizedBox.shrink());
+    });
+
+    testWidgets('Choose unfolds the full list, and All turns everything '
+        'back on', (tester) async {
+      final (controller, presenter) = await _repeat(tester);
+      await toNotifications(tester);
+      await tester.tap(find.byKey(const ValueKey('notify-choose')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('notify-list')), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('notifications-master')),
+        findsNothing,
+        reason: 'off is a choice of its own',
+      );
+      final grades = find.byKey(const ValueKey('notification-grades'));
+      await tester.ensureVisible(grades);
+      await tester.pumpAndSettle();
+      await tester.tap(grades);
+      await tester.pumpAndSettle();
+      expect(
+        controller.notificationSettings.allows(
+          SchoolNotificationCategory.grades,
+        ),
+        isFalse,
+      );
+
+      final all = find.byKey(const ValueKey('notify-all'));
+      await tester.ensureVisible(all);
+      await tester.pumpAndSettle();
+      await tester.tap(all);
+      await tester.pumpAndSettle();
+      expect(controller.notificationSettings.everything, isTrue);
+      expect(find.byKey(const ValueKey('notify-list')), findsNothing);
+      expect(presenter.asked, 0, reason: 'only Next asks');
+      await tester.pumpWidget(const SizedBox.shrink());
+    });
+
+    testWidgets('opens where the settings already are', (tester) async {
+      final (controller, _) = await _repeat(tester);
+      await controller.setNotificationCategoryEnabled(
+        SchoolNotificationCategory.homework,
+        false,
+      );
+      await toNotifications(tester);
+      expect(chosen('choose'), findsOneWidget);
+      expect(find.byKey(const ValueKey('notify-list')), findsOneWidget);
+      await tester.pumpWidget(const SizedBox.shrink());
+
+      final (other, _) = await _repeat(tester);
+      await other.setNotificationsEnabled(false);
+      await toNotifications(tester);
+      expect(chosen('off'), findsOneWidget);
+      await tester.pumpWidget(const SizedBox.shrink());
+
+      // Reminders set otherwise are a choice too.
+      final (third, _) = await _repeat(tester);
+      await third.setTestReminders(const TestReminderSettings(morning: true));
+      await toNotifications(tester);
+      expect(chosen('choose'), findsOneWidget);
+      await tester.pumpWidget(const SizedBox.shrink());
+    });
+  });
+
   test('the frame of the animation is whole between its marks', () {
     for (final phase in [0.38, 0.5, 0.8]) {
       expect(BrandLogoFrame.word(phase), 1);

@@ -164,7 +164,10 @@ void main() {
       reason: 'signing in moves on by itself',
     );
     expect(presenter.asked, 0, reason: 'not on signing in');
+    // Choosing shows the full list, which profiles notify included.
+    await _tap(tester, find.byKey(const ValueKey('notify-choose')));
     expect(find.byKey(const ValueKey('notification-profiles')), findsOneWidget);
+    expect(presenter.asked, 0, reason: 'nor on choosing');
 
     await _tap(tester, _next());
     expect(presenter.asked, 1);

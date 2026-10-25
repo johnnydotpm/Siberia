@@ -732,8 +732,9 @@ class _AccountStepState extends State<_AccountStep> {
   }
 }
 
-/// What notifications come and when, said before the system asks for them.
-class _NotificationsStep extends StatelessWidget {
+/// What notifications come and when, said before the system asks for them:
+/// all of them, the ones chosen, or none.
+class _NotificationsStep extends StatefulWidget {
   const _NotificationsStep({
     required this.controller,
     required this.motion,
@@ -748,25 +749,172 @@ class _NotificationsStep extends StatelessWidget {
   final VoidCallback onNext;
 
   @override
+  State<_NotificationsStep> createState() => _NotificationsStepState();
+}
+
+/// The choices of the notifications step.
+enum _NotifyChoice { all, choose, off }
+
+class _NotificationsStepState extends State<_NotificationsStep> {
+  /// Where the settings already are: all on, off, or something between.
+  late _NotifyChoice _choice = switch (widget.controller.notificationSettings) {
+    final settings when !settings.enabled => _NotifyChoice.off,
+    final settings when settings.everything => _NotifyChoice.all,
+    _ => _NotifyChoice.choose,
+  };
+
+  Future<void> _pick(_NotifyChoice choice) async {
+    if (choice == _choice) return;
+    HapticFeedback.selectionClick();
+    setState(() => _choice = choice);
+    final controller = widget.controller;
+    switch (choice) {
+      case _NotifyChoice.all:
+        await controller.useAllNotifications();
+      case _NotifyChoice.choose:
+        if (!controller.notificationSettings.enabled) {
+          await controller.setNotificationsEnabled(true);
+        }
+      case _NotifyChoice.off:
+        await controller.setNotificationsEnabled(false);
+    }
+  }
+
+  Widget _option(
+    _NotifyChoice choice,
+    IconData icon,
+    String title,
+    String text,
+  ) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    final chosen = choice == _choice;
+    return Semantics(
+      selected: chosen,
+      inMutuallyExclusiveGroup: true,
+      button: true,
+      child: Card(
+        key: ValueKey('notify-${choice.name}'),
+        clipBehavior: Clip.antiAlias,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(
+            color: chosen ? colors.primary : Colors.transparent,
+            width: 2,
+          ),
+        ),
+        child: InkWell(
+          onTap: () => _pick(choice),
+          child: Padding(
+            padding: const EdgeInsets.all(_Space.inset),
+            child: Row(
+              children: [
+                _SettingsIcon(icon),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        text,
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: colors.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 8),
+                AnimatedSwitcher(
+                  duration: _motion(context, const Duration(milliseconds: 200)),
+                  transitionBuilder: (child, animation) =>
+                      ScaleTransition(scale: animation, child: child),
+                  child: chosen
+                      ? Icon(
+                          Icons.check_circle_rounded,
+                          key: ValueKey('notify-${choice.name}-chosen'),
+                          color: colors.primary,
+                        )
+                      : Icon(
+                          Icons.radio_button_unchecked_rounded,
+                          key: const ValueKey('unchosen'),
+                          color: colors.outline,
+                        ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) => _SetupPage(
     key: const ValueKey('onboarding-notifications'),
-    motion: motion,
+    motion: widget.motion,
     icon: Icons.notifications_active_rounded,
     badge: _BadgeMotion.bell,
     title: context.tr('notifications'),
     text: context.tr('onboardingNotificationsText'),
     actions: [
-      _setupNext(context, onNext, busy: asking),
+      _setupNext(context, widget.onNext, busy: widget.asking),
       TextButton(
         key: const ValueKey('onboarding-skip'),
-        onPressed: asking ? null : onSkip,
+        onPressed: widget.asking ? null : widget.onSkip,
         child: Text(context.tr('onboardingSkip')),
       ),
     ],
     children: [
-      Card(
-        clipBehavior: Clip.antiAlias,
-        child: _NotificationSettingsBody(controller, onPermission: (_) {}),
+      _option(
+        _NotifyChoice.all,
+        Icons.notifications_active_rounded,
+        context.tr('notifyAll'),
+        context.tr('notifyAllText'),
+      ),
+      _option(
+        _NotifyChoice.choose,
+        Icons.tune_rounded,
+        context.tr('notifyChoose'),
+        context.tr('notifyChooseText'),
+      ),
+      _option(
+        _NotifyChoice.off,
+        Icons.notifications_off_rounded,
+        context.tr('notifyOff'),
+        context.tr('notifyOffText'),
+      ),
+      // The full list unfolds under "choose".
+      AnimatedSwitcher(
+        duration: _motion(context, _Motion.list),
+        switchInCurve: _Motion.curve,
+        switchOutCurve: _Motion.curve,
+        transitionBuilder: (child, animation) => SizeTransition(
+          sizeFactor: animation,
+          alignment: Alignment.topCenter,
+          child: FadeTransition(opacity: animation, child: child),
+        ),
+        child: _choice == _NotifyChoice.choose
+            ? Card(
+                key: const ValueKey('notify-list'),
+                clipBehavior: Clip.antiAlias,
+                child: _NotificationSettingsBody(
+                  widget.controller,
+                  onPermission: (_) {},
+                  showMaster: false,
+                ),
+              )
+            : const SizedBox(
+                key: ValueKey('notify-none'),
+                width: double.infinity,
+              ),
       ),
     ],
   );

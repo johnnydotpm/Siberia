@@ -480,6 +480,16 @@ class AppController extends ChangeNotifier {
     return enabled ? requestNotificationPermissionIfEnabled() : null;
   }
 
+  /// Every kind of notification on, and the reminders as they come.
+  Future<bool?> useAllNotifications() async {
+    _notificationSettings = const SchoolNotificationSettings();
+    notifyListeners();
+    await notifications?.saveSettings(_notificationSettings);
+    await configureBackground();
+    await _updateReminders();
+    return requestNotificationPermissionIfEnabled();
+  }
+
   Future<bool?> setNotificationCategoryEnabled(
     SchoolNotificationCategory category,
     bool enabled,

@@ -148,6 +148,17 @@ class SchoolNotificationSettings {
   bool get hasEnabledCategory =>
       enabled && SchoolNotificationCategory.values.any(allows);
 
+  /// Whether every kind of notification is on and the reminders are as they
+  /// come: "all" in the setup.
+  bool get everything =>
+      enabled &&
+      SchoolNotificationCategory.values.every(
+        (category) => categories[category] ?? true,
+      ) &&
+      attendanceKinds.length == AttendanceKind.values.length &&
+      timetableChanges.length == TimetableChange.values.length &&
+      reminders == const TestReminderSettings();
+
   bool get remindersOn => enabled && reminders.any;
 
   /// Whether anything needs the background check: new data to report, or

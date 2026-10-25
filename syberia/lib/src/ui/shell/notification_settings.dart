@@ -81,10 +81,14 @@ class _NotificationSettingsBody extends StatelessWidget {
     this.controller, {
     required this.onPermission,
     this.afterMaster,
+    this.showMaster = true,
   });
   final AppController controller;
   final void Function(bool? granted) onPermission;
   final Widget? afterMaster;
+
+  /// False in the setup, where "off" is a choice of its own.
+  final bool showMaster;
 
   @override
   Widget build(BuildContext context) {
@@ -93,24 +97,26 @@ class _NotificationSettingsBody extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        SwitchListTile.adaptive(
-          key: const ValueKey('notifications-master'),
-          secondary: const _SettingsIcon(Icons.notifications_active_rounded),
-          title: _WholeWords(
-            context.tr('notifications'),
-            style: const TextStyle(fontWeight: FontWeight.w800),
+        if (showMaster)
+          SwitchListTile.adaptive(
+            key: const ValueKey('notifications-master'),
+            secondary: const _SettingsIcon(Icons.notifications_active_rounded),
+            title: _WholeWords(
+              context.tr('notifications'),
+              style: const TextStyle(fontWeight: FontWeight.w800),
+            ),
+            subtitle: Text(context.tr('notificationsDescription')),
+            value: settings.enabled,
+            onChanged: (value) async =>
+                denied(await controller.setNotificationsEnabled(value)),
           ),
-          subtitle: Text(context.tr('notificationsDescription')),
-          value: settings.enabled,
-          onChanged: (value) async =>
-              denied(await controller.setNotificationsEnabled(value)),
-        ),
         ?afterMaster,
         if (controller.profiles.length > 1) ...[
-          const Divider(height: 1, indent: 16, endIndent: 16),
+          if (showMaster) const Divider(height: 1, indent: 16, endIndent: 16),
           _NotificationProfiles(controller),
         ],
-        const Divider(height: 1, indent: 16, endIndent: 16),
+        if (showMaster || controller.profiles.length > 1)
+          const Divider(height: 1, indent: 16, endIndent: 16),
         for (final category in SchoolNotificationCategory.values)
           switch (category) {
             SchoolNotificationCategory.attendance =>
