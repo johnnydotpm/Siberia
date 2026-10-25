@@ -247,6 +247,33 @@ void main() {
     expect(haptics, ['HapticFeedbackType.lightImpact']);
     await tester.pumpWidget(const SizedBox.shrink());
   });
+
+  testWidgets('an event of next year stays inside its card with large text', (
+    tester,
+  ) async {
+    // Its date then carries the year, and leaves the title less room.
+    tester.platformDispatcher.textScaleFactorTestValue = 1.3;
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+    await _pump(
+      tester,
+      _snapshot(
+        events: [
+          SchoolEvent(
+            id: 'meeting',
+            title: 'Zebranie z rodzicami',
+            subject: 'Wychowanie fizyczne',
+            date: DateTime(_now.year + 1, 1, 4),
+            kind: EventKind.event,
+            typeLabel: 'Wywiadówka',
+          ),
+        ],
+      ),
+      tab: 3,
+      width: 360,
+    );
+    expect(find.byKey(const ValueKey('event-label-meeting')), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
 }
 
 class _Repository extends AppRepository {

@@ -449,91 +449,109 @@ class _EventTile extends StatelessWidget {
           horizontal: _Space.inset,
           vertical: 12,
         ),
-        child: Row(
-          children: [
-            _IconTile(
-              key: ValueKey('event-type-${item.id}-${type.name}'),
-              icon: type.icon,
-              background: tone.background,
-              foreground: tone.foreground,
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      if (hasSubject) ...[
-                        Container(
-                          width: 8,
-                          height: 8,
-                          decoration: BoxDecoration(
-                            color: subjectAccent,
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                        const SizedBox(width: 6),
-                      ],
-                      Flexible(
-                        child: Text(
-                          title,
-                          maxLines: hasSubject ? 1 : 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: _rowTitleStyle(context),
-                        ),
-                      ),
-                      // "Wycieczka do Krakowa" needs no "Wycieczka" next to it.
-                      if (label != null &&
-                          !_plainPolish(title)
-                              .startsWith(_plainPolish(label))) ...[
-                        const SizedBox(width: 6),
-                        Container(
-                          key: ValueKey('event-label-${item.id}'),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 7,
-                            vertical: 2,
-                          ),
-                          decoration: BoxDecoration(
-                            color: tone.background,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            label,
-                            maxLines: 1,
-                            style: theme.textTheme.labelSmall?.copyWith(
-                              color: tone.foreground,
-                              fontWeight: FontWeight.w800,
+        // The date, a year longer for one of next year, wraps rather than
+        // pushing the card's content out.
+        child: LayoutBuilder(
+          builder: (context, card) => Row(
+            children: [
+              _IconTile(
+                key: ValueKey('event-type-${item.id}-${type.name}'),
+                icon: type.icon,
+                background: tone.background,
+                foreground: tone.foreground,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // The kind gives way before it pushes out of the card, as
+                    // when a date of next year makes the date beside it wider.
+                    LayoutBuilder(
+                      builder: (context, constraints) => Row(
+                        children: [
+                          if (hasSubject) ...[
+                            Container(
+                              width: 8,
+                              height: 8,
+                              decoration: BoxDecoration(
+                                color: subjectAccent,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                          ],
+                          Flexible(
+                            child: Text(
+                              title,
+                              maxLines: hasSubject ? 1 : 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: _rowTitleStyle(context),
                             ),
                           ),
-                        ),
-                      ],
-                    ],
-                  ),
-                  if (details.isNotEmpty)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 3),
-                      child: Text(
-                        details,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: colors.onSurfaceVariant,
-                        ),
+                          // "Wycieczka do Krakowa" needs no "Wycieczka" next to it.
+                          if (label != null &&
+                              !_plainPolish(title)
+                                  .startsWith(_plainPolish(label))) ...[
+                            const SizedBox(width: 6),
+                            ConstrainedBox(
+                              constraints: BoxConstraints(
+                                maxWidth: constraints.maxWidth * 0.45,
+                              ),
+                              child: Container(
+                                key: ValueKey('event-label-${item.id}'),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 7,
+                                  vertical: 2,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: tone.background,
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Text(
+                                  label,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: theme.textTheme.labelSmall?.copyWith(
+                                    color: tone.foreground,
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ],
                       ),
                     ),
-                ],
+                    if (details.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 3),
+                        child: Text(
+                          details,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: colors.onSurfaceVariant,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(width: 8),
-            Text(
-              when,
-              style: theme.textTheme.labelMedium?.copyWith(
-                color: soon ? colors.error : colors.onSurfaceVariant,
-                fontWeight: soon ? FontWeight.w800 : FontWeight.w600,
+              const SizedBox(width: 8),
+              ConstrainedBox(
+                constraints: BoxConstraints(maxWidth: card.maxWidth * 0.35),
+                child: Text(
+                  when,
+                  textAlign: TextAlign.end,
+                  style: theme.textTheme.labelMedium?.copyWith(
+                    color: soon ? colors.error : colors.onSurfaceVariant,
+                    fontWeight: soon ? FontWeight.w800 : FontWeight.w600,
+                  ),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
