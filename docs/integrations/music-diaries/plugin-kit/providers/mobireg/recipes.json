@@ -1,0 +1,321 @@
+{
+  "schema_version": 1,
+  "documentation_only": true,
+  "operation_catalog": "../../contracts/operations.json",
+  "recipes": [
+    {
+      "id": "MR-ONBOARD-PASSWORD",
+      "operations": [
+        "MA-PASSWORD",
+        "MA-USERS",
+        "MRA-02"
+      ],
+      "steps": [
+        "Normalize legitimate diary authority and school; preserve original password text.",
+        "POST auth JSON and require HTTP200/status OK/String token.",
+        "Persist account-owned JWT and password securely.",
+        "Call users with requirePupil=false; update account context, module URLs and messagesToken.",
+        "Build child choices and choose pupil; load terms for that pupil."
+      ],
+      "effect": "auth/local-write/read"
+    },
+    {
+      "id": "MR-ONBOARD-QR",
+      "operations": [
+        "MA-QR",
+        "MA-USERS",
+        "MRA-02"
+      ],
+      "steps": [
+        "Parse QR URI as documented in discovery-auth.json.",
+        "Exchange only code at qrlogin.php on selected diary origin.",
+        "Existing matching password account preserves password; QR-only account stores optional refresh and clears password.",
+        "Fetch users context and child/year choices."
+      ],
+      "effect": "auth/local-write/read"
+    },
+    {
+      "id": "MR-RECOVER-AUTH",
+      "operations": [
+        "MA-REFRESH",
+        "MA-PASSWORD",
+        "MA-USERS"
+      ],
+      "steps": [
+        "Read one account-owned credential record; deduplicate refresh by owner.",
+        "QR-only account uses stored refresh; password account can perform login with stored password.",
+        "Gateway401 invokes unauthorized recovery; gateway itself never retries.",
+        "On successful reauth invalidate/rebuild module sessions and retry confirmed safe reads only.",
+        "Stale account-generation results must be discarded."
+      ],
+      "effect": "auth",
+      "policy": "Last two steps are Siberia reliability design, not observed vendor retry policy."
+    },
+    {
+      "id": "MR-DISCOVERY",
+      "operations": [
+        "MA-USERS",
+        "MRA-02"
+      ],
+      "steps": [
+        "users.data must be a map. Decode id/role/pupils/firstname/lastname/moduleURLs/messagesToken.",
+        "Pupil source callback requires int id and stringifies firstname/lastname with empty defaults.",
+        "Account.pupilsOrSelf returns supplied list, or self when list empty, role==1 and userId>0.",
+        "Select child under owning account; terms is list and uses id,parentId,label,isYear,dateFrom,dateTo.",
+        "Bind cache to owner+child+selected term; never copy account refresh token per child."
+      ],
+      "effect": "read/local-write"
+    },
+    {
+      "id": "MR-GRADES",
+      "operations": [
+        "MRA-01",
+        "MRA-02"
+      ],
+      "models": [
+        "Mark.fromApiJson",
+        "TermMark.fromApiJson",
+        "Subject.fromJson",
+        "Term.fromJson"
+      ],
+      "steps": [
+        "Load terms, then marks with string termId.",
+        "Join subjects/teachers/markGroups/grades by opaque scoped IDs.",
+        "Preserve avg1/avg2, term/proposal/final flags, hierarchy, count-to-average metadata and display value.",
+        "Do not infer numeric grade from arbitrary text; averages use provider policy."
+      ],
+      "effect": "read"
+    },
+    {
+      "id": "MR-ACADEMIC",
+      "operations": [
+        "MRA-03",
+        "MRA-04",
+        "MRA-05",
+        "MRA-06",
+        "MRA-07"
+      ],
+      "steps": [
+        "Use exact selector and camel-case wire parameters from central catalog.",
+        "Timetable wire dates use yyyy-MM-dd wall date, not UTC conversion.",
+        "Preserve unknown attendance/status enums and full lesson/exam collections.",
+        "Dashboard is mixed dated typed feed; retain unknown element types as explicit unsupported cards."
+      ],
+      "effect": "read"
+    },
+    {
+      "id": "MR-POLLS",
+      "operations": [
+        "MRA-08",
+        "MRA-09",
+        "MRA-10",
+        "MRA-11",
+        "MRA-12"
+      ],
+      "steps": [
+        "Load list/pending count; fetch missing detail separately. Opening detail may confirm read state.",
+        "Retain userAnswer,declined,pending,pollOpen,answers; type2 empty options defaults TAK/NIE in source.",
+        "Submit answer or decline only after explicit user action.",
+        "HTTP success alone is insufficient: payload.success must equal true.",
+        "Invalidate announcement detail/list/dashboard for same child and reconcile pendingCount."
+      ],
+      "effect": "remote-write"
+    },
+    {
+      "id": "MR-JUSTIFICATIONS",
+      "operations": [
+        "MRA-13",
+        "MRA-14",
+        "MRA-15",
+        "MRA-16",
+        "MRA-17",
+        "MRA-18"
+      ],
+      "steps": [
+        "Fetch eligible events and records independently; selected event IDs come from verified child/day data.",
+        "Create JSON includes pupil_id,message,event_ids; update excludes pupil_id; DELETE no body.",
+        "These are requests, not direct official attendance modifications.",
+        "Preserve raw numeric status; unknown numeric meanings must not be labeled approved/rejected.",
+        "After write refresh justifications/detail/eligible events/attendance/dashboard."
+      ],
+      "effect": "remote-write"
+    },
+    {
+      "id": "MR-MAIL-SESSION",
+      "operations": [],
+      "steps": [
+        "Use users.messagingUrl unchanged for GET {url}/{school}/{encodeComponent(messagesToken)} with Accept text/html, build UA, redirects disabled.",
+        "Collect Set-Cookie even on302; source strips each cookie after first semicolon and joins pairs.",
+        "Persist account mailbox cookie separately. API base removes one exact trailing /sso.",
+        "MailJSON headers Cookie,Content-Type application/json,Accept application/json and UA.",
+        "401/403 => auth challenge; original wrapper forces SSO and retries once. Avoid replay after uncertain mutation result."
+      ],
+      "effect": "auth"
+    },
+    {
+      "id": "MR-MAIL-READ",
+      "operations": [
+        "MM-INBOX",
+        "MM-SENT",
+        "MM-IMPORTANT",
+        "MM-TRASH",
+        "MM-UNREAD",
+        "MM-READ",
+        "MM-DOWNLOAD"
+      ],
+      "steps": [
+        "Folder requests POST JSON limit20,skip offset,optional query; response object items,total.",
+        "GET read/{id} both reads body and may acknowledge read; model reads subject, while sends use title.",
+        "Unread endpoint is separate JSON school/messagesToken call returning integer text.",
+        "Mail attachments GET dynamic URL with mailbox Cookie; HTTP200 bytes."
+      ],
+      "effect": "read/possible-read-ack"
+    },
+    {
+      "id": "MR-MAIL-WRITE",
+      "operations": [
+        "MM-SEND",
+        "MM-UPLOAD",
+        "MM-SEARCH-RECIPIENTS",
+        "MM-RECIPIENT-TYPE",
+        "MM-RECIPIENTS",
+        "MM-DELETE",
+        "MM-STAR",
+        "MM-RESTORE"
+      ],
+      "steps": [
+        "Keep recipient IDs opaque strings. Numeric IDs normalize to user_ prefix; roles may come from role/_type.",
+        "Send PUT title,content,odbiorcy string-list and optional previousMessageId; use returned int message id.",
+        "Upload each file afterwards as multipart files to that messageID.",
+        "Body success followed by failed upload is partial success; show exactly failed attachments and do not resend body.",
+        "Star path spelling stared is intentional; star/archive are toggles, not idempotent set operations."
+      ],
+      "effect": "remote-write"
+    },
+    {
+      "id": "MR-HOMEWORK-SESSION",
+      "operations": [],
+      "steps": [
+        "Use users.homeworksUrl, not mailbox/diary origin. GET {H}/{school}/account/ssov2/{encodeComponent(messagesToken)}.",
+        "Keep homeworkCookie separate from mailbox Cookie.",
+        "JSON requests requireHTTP200;401/419 mean session challenge; empty200 maps to{}.",
+        "Original wrapper reauthenticates once; malformedJSON is also null in source but new adapter should surface malformed response separately."
+      ],
+      "effect": "auth"
+    },
+    {
+      "id": "MR-HOMEWORK",
+      "operations": [
+        "HW-DIARY",
+        "HW-LIST",
+        "HW-SHOW",
+        "HW-SOLUTION",
+        "HW-UPLOAD",
+        "HW-ARCHIVE",
+        "HW-DOWNLOAD"
+      ],
+      "steps": [
+        "Separate diary homework teachers/items from module data table. Select source using oldHomeworkModule policy only after verifying value semantics.",
+        "List active/archive with deadline_at ascending; detail query student is selected pupil.",
+        "Upload files with multipart files plus student String. Solution PATCH content,files,student uses exact caller file-reference structure still gated.",
+        "Archive PATCH {} toggles source state; refresh after confirmed completion, never blind retry.",
+        "Homework download uses dynamic URL without automatic Cookie;401/403 refreshes detail for new URL and asks retry."
+      ],
+      "effect": "read/remote-write"
+    },
+    {
+      "id": "MR-LEGACY",
+      "operations": [
+        "MRL-DISCOVER",
+        "MRL-SETTINGS",
+        "MRL-FULL",
+        "MRL-DELTA",
+        "MRL-READ",
+        "MRL-FCM"
+      ],
+      "steps": [
+        "Use separately selected legacy mode; never silently fall back from modern auth to legacy password rules.",
+        "parent_pass is lowercaseMD5 of original entered password bytes in legacy editor chain.",
+        "POST common form to njson.php; Settings protocol must exactly1.6.0.",
+        "Apply full/delta table records transactionally using legacy-table-mappings.json, _s I/U/D.",
+        "Commit server cursor/db id only after whole supported import succeeds; server db id change forces full.",
+        "Read acknowledgement messages.php action=read; discovery ParentStudents can also register FCM token."
+      ],
+      "effect": "read/sync/read-ack"
+    }
+  ],
+  "legacy_operation_defs": [
+    {
+      "id": "MRL-DISCOVER",
+      "method": "POST",
+      "path": "{schoolBase}/modules/api/njson.php",
+      "extra_form": {
+        "view": "ParentStudents"
+      },
+      "response": "ParentStudents list; StudentModel id,name,surname,sex,phone"
+    },
+    {
+      "id": "MRL-SETTINGS",
+      "method": "POST",
+      "path": "{schoolBase}/modules/api/njson.php",
+      "extra_form": {
+        "view": "Settings"
+      },
+      "response": "Settings[0], protocol1.6.0,id,time,version,permissions?"
+    },
+    {
+      "id": "MRL-FULL",
+      "method": "POST",
+      "path": "{schoolBase}/modules/api/njson.php",
+      "extra_form": {
+        "start_date": "range start",
+        "end_date": "range end",
+        "get_all_mark_groups": "1",
+        "student_id": "optional diary pupil ID"
+      },
+      "response": "named imported table arrays"
+    },
+    {
+      "id": "MRL-DELTA",
+      "method": "POST",
+      "path": "{schoolBase}/modules/api/njson.php",
+      "extra_form": {
+        "start_date": "range start",
+        "end_date": "range end",
+        "get_all_mark_groups": "1",
+        "student_id": "optional diary pupil ID",
+        "last_end_date": "previous range end",
+        "lmt": "previous server cursor formatted walltime"
+      },
+      "response": "named table arrays with _s I/U/D"
+    },
+    {
+      "id": "MRL-READ",
+      "method": "POST",
+      "path": "{schoolBase}/modules/api/messages.php",
+      "extra_form": {
+        "action": "read",
+        "message_id": "diary message ID"
+      },
+      "response": "server acknowledgement must be validated independently"
+    },
+    {
+      "id": "MRL-FCM",
+      "method": "POST",
+      "path": "{schoolBase}/modules/api/njson.php",
+      "extra_form": {
+        "view": "ParentStudents",
+        "token": "FCMtoken"
+      },
+      "response": "legacy discovery-shaped response"
+    }
+  ],
+  "legacy_common_form": {
+    "login": "app compatibility SyncParameters.login; retrieve privately as SPEC instructs",
+    "pass": "app compatibility SyncParameters.pass; retrieve privately as SPEC instructs",
+    "device_id": "configured device identity",
+    "app_version": "79 in observed build",
+    "parent_login": "school account login",
+    "parent_pass": "lowercase MD5(original user password bytes) in observed legacy editor chain"
+  }
+}

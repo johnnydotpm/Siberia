@@ -1,0 +1,965 @@
+{
+  "source_sha256": "2c11d5a1be3f1f21d85c2b9c4deb8c59d2c3c33dfd9eebf0235657bcc6f7cca1",
+  "functions": 38,
+  "raw_instructions_checked": 3613,
+  "canonical_string_objects_decoded": 38482,
+  "canonical_cluster_count": 38483,
+  "string_decode_errors": [
+    [
+      10956,
+      "0x8b8650",
+      94,
+      10964
+    ]
+  ],
+  "direct_BL_validated": 408,
+  "direct_PP_LDR_index_validated": 48,
+  "string_reference_occurrences_validated": 134,
+  "mismatches": [],
+  "references": [
+    {
+      "pc": "0x2a17c0",
+      "pool_index": 1642,
+      "ref": 33898,
+      "literal": "access-token",
+      "original_payload_offset": "0x9b4ad0"
+    },
+    {
+      "pc": "0x2a1864",
+      "pool_index": 8318,
+      "ref": 39194,
+      "literal": "unauthorized",
+      "original_payload_offset": "0x9ecdb0"
+    },
+    {
+      "pc": "0x2a18c4",
+      "pool_index": 10957,
+      "ref": 26951,
+      "literal": "TokenService: Error during getting access token: ",
+      "original_payload_offset": "0x96a700"
+    },
+    {
+      "pc": "0x2a18f8",
+      "pool_index": 8318,
+      "ref": 39194,
+      "literal": "unauthorized",
+      "original_payload_offset": "0x9ecdb0"
+    },
+    {
+      "pc": "0x2a15c4",
+      "pool_index": 1644,
+      "ref": 10628,
+      "literal": "url",
+      "original_payload_offset": "0x8b4f20"
+    },
+    {
+      "pc": "0x2a15f0",
+      "pool_index": 8318,
+      "ref": 39194,
+      "literal": "unauthorized",
+      "original_payload_offset": "0x9ecdb0"
+    },
+    {
+      "pc": "0x2a163c",
+      "pool_index": 10956,
+      "ref": 3475,
+      "literal": "TokenService: Error during getting URL: ",
+      "original_payload_offset": "0x868300"
+    },
+    {
+      "pc": "0x2a1670",
+      "pool_index": 8318,
+      "ref": 39194,
+      "literal": "unauthorized",
+      "original_payload_offset": "0x9ecdb0"
+    },
+    {
+      "pc": "0x28e9e0",
+      "pool_index": 8189,
+      "ref": 20172,
+      "literal": "success",
+      "original_payload_offset": "0x9210f0"
+    },
+    {
+      "pc": "0x28ea4c",
+      "pool_index": 637,
+      "ref": 35886,
+      "literal": "data",
+      "original_payload_offset": "0x9c9c50"
+    },
+    {
+      "pc": "0x28ea88",
+      "pool_index": 3047,
+      "ref": 17336,
+      "literal": "error",
+      "original_payload_offset": "0x902610"
+    },
+    {
+      "pc": "0x28eaa4",
+      "pool_index": 1147,
+      "ref": 37624,
+      "literal": "code",
+      "original_payload_offset": "0x9dc430"
+    },
+    {
+      "pc": "0x28eb1c",
+      "pool_index": 3047,
+      "ref": 17336,
+      "literal": "error",
+      "original_payload_offset": "0x902610"
+    },
+    {
+      "pc": "0x28eb44",
+      "pool_index": 1150,
+      "ref": 22611,
+      "literal": "message",
+      "original_payload_offset": "0x93c4e0"
+    },
+    {
+      "pc": "0x28ebc8",
+      "pool_index": 8316,
+      "ref": 8667,
+      "literal": "Request failed with status code: ",
+      "original_payload_offset": "0x89ff50"
+    },
+    {
+      "pc": "0x28ec14",
+      "pool_index": 8317,
+      "ref": 20531,
+      "literal": "legacy-app-version-detected",
+      "original_payload_offset": "0x924c40"
+    },
+    {
+      "pc": "0x28ec54",
+      "pool_index": 8318,
+      "ref": 39194,
+      "literal": "unauthorized",
+      "original_payload_offset": "0x9ecdb0"
+    },
+    {
+      "pc": "0x28ec88",
+      "pool_index": 8319,
+      "ref": 17661,
+      "literal": "unexpected-error-try-again",
+      "original_payload_offset": "0x905de0"
+    },
+    {
+      "pc": "0x322da4",
+      "pool_index": 1641,
+      "ref": 12719,
+      "literal": "username",
+      "original_payload_offset": "0x8d0ce0"
+    },
+    {
+      "pc": "0x322dbc",
+      "pool_index": 1642,
+      "ref": 33898,
+      "literal": "access-token",
+      "original_payload_offset": "0x9b4ad0"
+    },
+    {
+      "pc": "0x322dd8",
+      "pool_index": 1643,
+      "ref": 33769,
+      "literal": "refresh-token",
+      "original_payload_offset": "0x9b3320"
+    },
+    {
+      "pc": "0x322df4",
+      "pool_index": 1644,
+      "ref": 10628,
+      "literal": "url",
+      "original_payload_offset": "0x8b4f20"
+    },
+    {
+      "pc": "0x322ebc",
+      "pool_index": 1645,
+      "ref": 5058,
+      "literal": "TokenService: Error during checking login status: ",
+      "original_payload_offset": "0x8793e0"
+    },
+    {
+      "pc": "0x28e1ec",
+      "pool_index": 9200,
+      "ref": 8899,
+      "literal": "app",
+      "original_payload_offset": "0x8a2610"
+    },
+    {
+      "pc": "0x28e230",
+      "pool_index": 9201,
+      "ref": 16707,
+      "literal": "/login",
+      "original_payload_offset": "0x8fb820"
+    },
+    {
+      "pc": "0x28e378",
+      "pool_index": 9214,
+      "ref": 31450,
+      "literal": "invalid-deeplink",
+      "original_payload_offset": "0x99a3d0"
+    },
+    {
+      "pc": "0x28e404",
+      "pool_index": 1641,
+      "ref": 12719,
+      "literal": "username",
+      "original_payload_offset": "0x8d0ce0"
+    },
+    {
+      "pc": "0x28e424",
+      "pool_index": 1641,
+      "ref": 12719,
+      "literal": "username",
+      "original_payload_offset": "0x8d0ce0"
+    },
+    {
+      "pc": "0x28e43c",
+      "pool_index": 1642,
+      "ref": 33898,
+      "literal": "access-token",
+      "original_payload_offset": "0x9b4ad0"
+    },
+    {
+      "pc": "0x28e464",
+      "pool_index": 9215,
+      "ref": 2786,
+      "literal": "access_token",
+      "original_payload_offset": "0x860ae0"
+    },
+    {
+      "pc": "0x28e4b8",
+      "pool_index": 1642,
+      "ref": 33898,
+      "literal": "access-token",
+      "original_payload_offset": "0x9b4ad0"
+    },
+    {
+      "pc": "0x28e4d0",
+      "pool_index": 1643,
+      "ref": 33769,
+      "literal": "refresh-token",
+      "original_payload_offset": "0x9b3320"
+    },
+    {
+      "pc": "0x28e4f8",
+      "pool_index": 9218,
+      "ref": 36819,
+      "literal": "refresh_token",
+      "original_payload_offset": "0x9d3aa0"
+    },
+    {
+      "pc": "0x28e54c",
+      "pool_index": 1643,
+      "ref": 33769,
+      "literal": "refresh-token",
+      "original_payload_offset": "0x9b3320"
+    },
+    {
+      "pc": "0x28e564",
+      "pool_index": 1644,
+      "ref": 10628,
+      "literal": "url",
+      "original_payload_offset": "0x8b4f20"
+    },
+    {
+      "pc": "0x28e584",
+      "pool_index": 1644,
+      "ref": 10628,
+      "literal": "url",
+      "original_payload_offset": "0x8b4f20"
+    },
+    {
+      "pc": "0x28e5d8",
+      "pool_index": 1644,
+      "ref": 10628,
+      "literal": "url",
+      "original_payload_offset": "0x8b4f20"
+    },
+    {
+      "pc": "0x26fd24",
+      "pool_index": 1641,
+      "ref": 12719,
+      "literal": "username",
+      "original_payload_offset": "0x8d0ce0"
+    },
+    {
+      "pc": "0x26fd3c",
+      "pool_index": 1642,
+      "ref": 33898,
+      "literal": "access-token",
+      "original_payload_offset": "0x9b4ad0"
+    },
+    {
+      "pc": "0x26fd54",
+      "pool_index": 1643,
+      "ref": 33769,
+      "literal": "refresh-token",
+      "original_payload_offset": "0x9b3320"
+    },
+    {
+      "pc": "0x26fd6c",
+      "pool_index": 1644,
+      "ref": 10628,
+      "literal": "url",
+      "original_payload_offset": "0x8b4f20"
+    },
+    {
+      "pc": "0x28e834",
+      "pool_index": 9223,
+      "ref": 33612,
+      "literal": "/identify",
+      "original_payload_offset": "0x9b1a10"
+    },
+    {
+      "pc": "0x28e864",
+      "pool_index": 8301,
+      "ref": 3523,
+      "literal": "Content-Type",
+      "original_payload_offset": "0x868c00"
+    },
+    {
+      "pc": "0x28e870",
+      "pool_index": 8302,
+      "ref": 26257,
+      "literal": "application/json",
+      "original_payload_offset": "0x962f80"
+    },
+    {
+      "pc": "0x28e87c",
+      "pool_index": 8303,
+      "ref": 26900,
+      "literal": "Accept",
+      "original_payload_offset": "0x969ef0"
+    },
+    {
+      "pc": "0x28e888",
+      "pool_index": 8302,
+      "ref": 26257,
+      "literal": "application/json",
+      "original_payload_offset": "0x962f80"
+    },
+    {
+      "pc": "0x28e894",
+      "pool_index": 8304,
+      "ref": 26420,
+      "literal": "App-Version",
+      "original_payload_offset": "0x964b70"
+    },
+    {
+      "pc": "0x28e8c0",
+      "pool_index": 1641,
+      "ref": 12719,
+      "literal": "username",
+      "original_payload_offset": "0x8d0ce0"
+    },
+    {
+      "pc": "0x28e8d4",
+      "pool_index": 9224,
+      "ref": 9048,
+      "literal": "password",
+      "original_payload_offset": "0x8a3f50"
+    },
+    {
+      "pc": "0x28e8e4",
+      "pool_index": 1515,
+      "ref": 32150,
+      "literal": "device",
+      "original_payload_offset": "0x9a1770"
+    },
+    {
+      "pc": "0x2a1954",
+      "pool_index": 1641,
+      "ref": 12719,
+      "literal": "username",
+      "original_payload_offset": "0x8d0ce0"
+    },
+    {
+      "pc": "0x2a196c",
+      "pool_index": 1643,
+      "ref": 33769,
+      "literal": "refresh-token",
+      "original_payload_offset": "0x9b3320"
+    },
+    {
+      "pc": "0x2a19c4",
+      "pool_index": 1642,
+      "ref": 33898,
+      "literal": "access-token",
+      "original_payload_offset": "0x9b4ad0"
+    },
+    {
+      "pc": "0x2a19f0",
+      "pool_index": 9215,
+      "ref": 2786,
+      "literal": "access_token",
+      "original_payload_offset": "0x860ae0"
+    },
+    {
+      "pc": "0x2a1a44",
+      "pool_index": 1642,
+      "ref": 33898,
+      "literal": "access-token",
+      "original_payload_offset": "0x9b4ad0"
+    },
+    {
+      "pc": "0x2a1a5c",
+      "pool_index": 1643,
+      "ref": 33769,
+      "literal": "refresh-token",
+      "original_payload_offset": "0x9b3320"
+    },
+    {
+      "pc": "0x2a1a84",
+      "pool_index": 9218,
+      "ref": 36819,
+      "literal": "refresh_token",
+      "original_payload_offset": "0x9d3aa0"
+    },
+    {
+      "pc": "0x2a1ad8",
+      "pool_index": 1643,
+      "ref": 33769,
+      "literal": "refresh-token",
+      "original_payload_offset": "0x9b3320"
+    },
+    {
+      "pc": "0x2a1afc",
+      "pool_index": 9215,
+      "ref": 2786,
+      "literal": "access_token",
+      "original_payload_offset": "0x860ae0"
+    },
+    {
+      "pc": "0x2a1b3c",
+      "pool_index": 8318,
+      "ref": 39194,
+      "literal": "unauthorized",
+      "original_payload_offset": "0x9ecdb0"
+    },
+    {
+      "pc": "0x2a1b88",
+      "pool_index": 10965,
+      "ref": 14482,
+      "literal": "TokenService: Error during refreshing access token: ",
+      "original_payload_offset": "0x8e3b90"
+    },
+    {
+      "pc": "0x2a1bbc",
+      "pool_index": 8318,
+      "ref": 39194,
+      "literal": "unauthorized",
+      "original_payload_offset": "0x9ecdb0"
+    },
+    {
+      "pc": "0x2a1c5c",
+      "pool_index": 10966,
+      "ref": 16825,
+      "literal": "/reIdentify",
+      "original_payload_offset": "0x8fcd10"
+    },
+    {
+      "pc": "0x2a1c8c",
+      "pool_index": 8301,
+      "ref": 3523,
+      "literal": "Content-Type",
+      "original_payload_offset": "0x868c00"
+    },
+    {
+      "pc": "0x2a1c98",
+      "pool_index": 8302,
+      "ref": 26257,
+      "literal": "application/json",
+      "original_payload_offset": "0x962f80"
+    },
+    {
+      "pc": "0x2a1ca4",
+      "pool_index": 8303,
+      "ref": 26900,
+      "literal": "Accept",
+      "original_payload_offset": "0x969ef0"
+    },
+    {
+      "pc": "0x2a1cb0",
+      "pool_index": 8302,
+      "ref": 26257,
+      "literal": "application/json",
+      "original_payload_offset": "0x962f80"
+    },
+    {
+      "pc": "0x2a1cbc",
+      "pool_index": 8304,
+      "ref": 26420,
+      "literal": "App-Version",
+      "original_payload_offset": "0x964b70"
+    },
+    {
+      "pc": "0x32680c",
+      "pool_index": 10940,
+      "ref": 37670,
+      "literal": "messages/countUnread",
+      "original_payload_offset": "0x9dcb50"
+    },
+    {
+      "pc": "0x290db0",
+      "pool_index": 17580,
+      "ref": 3620,
+      "literal": "messages/create",
+      "original_payload_offset": "0x869b80"
+    },
+    {
+      "pc": "0x290dc8",
+      "pool_index": 17580,
+      "ref": 3620,
+      "literal": "messages/create",
+      "original_payload_offset": "0x869b80"
+    },
+    {
+      "pc": "0x290df8",
+      "pool_index": 9816,
+      "ref": 1858,
+      "literal": "recipients",
+      "original_payload_offset": "0x856de0"
+    },
+    {
+      "pc": "0x290e0c",
+      "pool_index": 17581,
+      "ref": 37692,
+      "literal": "cc_recipients",
+      "original_payload_offset": "0x9dcf40"
+    },
+    {
+      "pc": "0x290e20",
+      "pool_index": 17582,
+      "ref": 12336,
+      "literal": "bcc_recipients",
+      "original_payload_offset": "0x8ccbf0"
+    },
+    {
+      "pc": "0x290e34",
+      "pool_index": 13439,
+      "ref": 18450,
+      "literal": "subject",
+      "original_payload_offset": "0x90e3a0"
+    },
+    {
+      "pc": "0x290e48",
+      "pool_index": 9646,
+      "ref": 28036,
+      "literal": "content",
+      "original_payload_offset": "0x975d50"
+    },
+    {
+      "pc": "0x290e5c",
+      "pool_index": 17583,
+      "ref": 16568,
+      "literal": "attachment_ids",
+      "original_payload_offset": "0x8fa210"
+    },
+    {
+      "pc": "0x3dc218",
+      "pool_index": 20305,
+      "ref": 14200,
+      "literal": "messages/delete/",
+      "original_payload_offset": "0x8e0c60"
+    },
+    {
+      "pc": "0x327f88",
+      "pool_index": 17731,
+      "ref": 29908,
+      "literal": "messages/getRecipients",
+      "original_payload_offset": "0x989e70"
+    },
+    {
+      "pc": "0x3020e0",
+      "pool_index": 14314,
+      "ref": 19371,
+      "literal": "messages/list/",
+      "original_payload_offset": "0x918140"
+    },
+    {
+      "pc": "0x30214c",
+      "pool_index": 14315,
+      "ref": 30689,
+      "literal": "?query=",
+      "original_payload_offset": "0x9924f0"
+    },
+    {
+      "pc": "0x326bb0",
+      "pool_index": 20335,
+      "ref": 18619,
+      "literal": "messages/markAsRead/",
+      "original_payload_offset": "0x910120"
+    },
+    {
+      "pc": "0x3de3ac",
+      "pool_index": 17637,
+      "ref": 29772,
+      "literal": "messages/removeAttachment/",
+      "original_payload_offset": "0x988750"
+    },
+    {
+      "pc": "0x290f00",
+      "pool_index": 1770,
+      "ref": 10745,
+      "literal": "id",
+      "original_payload_offset": "0x8b6340"
+    },
+    {
+      "pc": "0x290f5c",
+      "pool_index": 13439,
+      "ref": 18450,
+      "literal": "subject",
+      "original_payload_offset": "0x90e3a0"
+    },
+    {
+      "pc": "0x290fbc",
+      "pool_index": 9646,
+      "ref": 28036,
+      "literal": "content",
+      "original_payload_offset": "0x975d50"
+    },
+    {
+      "pc": "0x29102c",
+      "pool_index": 14327,
+      "ref": 31826,
+      "literal": "sent_date",
+      "original_payload_offset": "0x99e330"
+    },
+    {
+      "pc": "0x29109c",
+      "pool_index": 14330,
+      "ref": 31706,
+      "literal": "sender",
+      "original_payload_offset": "0x99cf30"
+    },
+    {
+      "pc": "0x2910f4",
+      "pool_index": 14333,
+      "ref": 29305,
+      "literal": "recipients_v2",
+      "original_payload_offset": "0x9838b0"
+    },
+    {
+      "pc": "0x2911d4",
+      "pool_index": 14333,
+      "ref": 29305,
+      "literal": "recipients_v2",
+      "original_payload_offset": "0x9838b0"
+    },
+    {
+      "pc": "0x2912c4",
+      "pool_index": 14341,
+      "ref": 7135,
+      "literal": "cc_recipients_v2",
+      "original_payload_offset": "0x88f8c0"
+    },
+    {
+      "pc": "0x2913a4",
+      "pool_index": 14341,
+      "ref": 7135,
+      "literal": "cc_recipients_v2",
+      "original_payload_offset": "0x88f8c0"
+    },
+    {
+      "pc": "0x291494",
+      "pool_index": 14348,
+      "ref": 31120,
+      "literal": "bcc_recipients_v2",
+      "original_payload_offset": "0x996d30"
+    },
+    {
+      "pc": "0x291574",
+      "pool_index": 14348,
+      "ref": 31120,
+      "literal": "bcc_recipients_v2",
+      "original_payload_offset": "0x996d30"
+    },
+    {
+      "pc": "0x291664",
+      "pool_index": 14355,
+      "ref": 13881,
+      "literal": "is_read",
+      "original_payload_offset": "0x8dd470"
+    },
+    {
+      "pc": "0x2916c0",
+      "pool_index": 14358,
+      "ref": 5876,
+      "literal": "is_replied",
+      "original_payload_offset": "0x8821a0"
+    },
+    {
+      "pc": "0x291714",
+      "pool_index": 14361,
+      "ref": 20191,
+      "literal": "is_deleted",
+      "original_payload_offset": "0x9213c0"
+    },
+    {
+      "pc": "0x291770",
+      "pool_index": 14364,
+      "ref": 30055,
+      "literal": "tags",
+      "original_payload_offset": "0x98b7d0"
+    },
+    {
+      "pc": "0x291850",
+      "pool_index": 14364,
+      "ref": 30055,
+      "literal": "tags",
+      "original_payload_offset": "0x98b7d0"
+    },
+    {
+      "pc": "0x291940",
+      "pool_index": 9647,
+      "ref": 29050,
+      "literal": "attachments",
+      "original_payload_offset": "0x980d30"
+    },
+    {
+      "pc": "0x291a1c",
+      "pool_index": 9647,
+      "ref": 29050,
+      "literal": "attachments",
+      "original_payload_offset": "0x980d30"
+    },
+    {
+      "pc": "0x44d168",
+      "pool_index": 16308,
+      "ref": 6163,
+      "literal": "on ",
+      "original_payload_offset": "0x885030"
+    },
+    {
+      "pc": "0x291c04",
+      "pool_index": 1403,
+      "ref": 15912,
+      "literal": "key",
+      "original_payload_offset": "0x8f31f0"
+    },
+    {
+      "pc": "0x2a0e1c",
+      "pool_index": 1403,
+      "ref": 15912,
+      "literal": "key",
+      "original_payload_offset": "0x8f31f0"
+    },
+    {
+      "pc": "0x2a0ed8",
+      "pool_index": 8127,
+      "ref": 4604,
+      "literal": "role",
+      "original_payload_offset": "0x874350"
+    },
+    {
+      "pc": "0x2a09c8",
+      "pool_index": 1770,
+      "ref": 10745,
+      "literal": "id",
+      "original_payload_offset": "0x8b6340"
+    },
+    {
+      "pc": "0x2a0a7c",
+      "pool_index": 1644,
+      "ref": 10628,
+      "literal": "url",
+      "original_payload_offset": "0x8b4f20"
+    },
+    {
+      "pc": "0x2a0bb4",
+      "pool_index": 1770,
+      "ref": 10745,
+      "literal": "id",
+      "original_payload_offset": "0x8b6340"
+    },
+    {
+      "pc": "0x2a0c60",
+      "pool_index": 3623,
+      "ref": 39238,
+      "literal": "color",
+      "original_payload_offset": "0x9ed570"
+    },
+    {
+      "pc": "0x2a1044",
+      "pool_index": 8396,
+      "ref": 14680,
+      "literal": "body",
+      "original_payload_offset": "0x8e5d00"
+    },
+    {
+      "pc": "0x2a10f0",
+      "pool_index": 10943,
+      "ref": 10679,
+      "literal": "/api/",
+      "original_payload_offset": "0x8b5780"
+    },
+    {
+      "pc": "0x2a112c",
+      "pool_index": 8301,
+      "ref": 3523,
+      "literal": "Content-Type",
+      "original_payload_offset": "0x868c00"
+    },
+    {
+      "pc": "0x2a1138",
+      "pool_index": 8302,
+      "ref": 26257,
+      "literal": "application/json",
+      "original_payload_offset": "0x962f80"
+    },
+    {
+      "pc": "0x2a1144",
+      "pool_index": 8303,
+      "ref": 26900,
+      "literal": "Accept",
+      "original_payload_offset": "0x969ef0"
+    },
+    {
+      "pc": "0x2a1150",
+      "pool_index": 8302,
+      "ref": 26257,
+      "literal": "application/json",
+      "original_payload_offset": "0x962f80"
+    },
+    {
+      "pc": "0x2a115c",
+      "pool_index": 10944,
+      "ref": 32661,
+      "literal": "Authorization",
+      "original_payload_offset": "0x9a7050"
+    },
+    {
+      "pc": "0x2a1174",
+      "pool_index": 10945,
+      "ref": 11085,
+      "literal": "Bearer ",
+      "original_payload_offset": "0x8bc7b0"
+    },
+    {
+      "pc": "0x2a11bc",
+      "pool_index": 8304,
+      "ref": 26420,
+      "literal": "App-Version",
+      "original_payload_offset": "0x964b70"
+    },
+    {
+      "pc": "0x3de908",
+      "pool_index": 10943,
+      "ref": 10679,
+      "literal": "/api/",
+      "original_payload_offset": "0x8b5780"
+    },
+    {
+      "pc": "0x3de914",
+      "pool_index": 17646,
+      "ref": 24559,
+      "literal": "messages/uploadAttachment",
+      "original_payload_offset": "0x950de0"
+    },
+    {
+      "pc": "0x3de964",
+      "pool_index": 8303,
+      "ref": 26900,
+      "literal": "Accept",
+      "original_payload_offset": "0x969ef0"
+    },
+    {
+      "pc": "0x3de96c",
+      "pool_index": 8302,
+      "ref": 26257,
+      "literal": "application/json",
+      "original_payload_offset": "0x962f80"
+    },
+    {
+      "pc": "0x3de98c",
+      "pool_index": 10945,
+      "ref": 11085,
+      "literal": "Bearer ",
+      "original_payload_offset": "0x8bc7b0"
+    },
+    {
+      "pc": "0x3de9c0",
+      "pool_index": 10944,
+      "ref": 32661,
+      "literal": "Authorization",
+      "original_payload_offset": "0x9a7050"
+    },
+    {
+      "pc": "0x3de9e4",
+      "pool_index": 8304,
+      "ref": 26420,
+      "literal": "App-Version",
+      "original_payload_offset": "0x964b70"
+    },
+    {
+      "pc": "0x3022e0",
+      "pool_index": 10943,
+      "ref": 10679,
+      "literal": "/api/",
+      "original_payload_offset": "0x8b5780"
+    },
+    {
+      "pc": "0x30231c",
+      "pool_index": 8301,
+      "ref": 3523,
+      "literal": "Content-Type",
+      "original_payload_offset": "0x868c00"
+    },
+    {
+      "pc": "0x302328",
+      "pool_index": 8302,
+      "ref": 26257,
+      "literal": "application/json",
+      "original_payload_offset": "0x962f80"
+    },
+    {
+      "pc": "0x302334",
+      "pool_index": 8303,
+      "ref": 26900,
+      "literal": "Accept",
+      "original_payload_offset": "0x969ef0"
+    },
+    {
+      "pc": "0x302340",
+      "pool_index": 8302,
+      "ref": 26257,
+      "literal": "application/json",
+      "original_payload_offset": "0x962f80"
+    },
+    {
+      "pc": "0x30234c",
+      "pool_index": 10944,
+      "ref": 32661,
+      "literal": "Authorization",
+      "original_payload_offset": "0x9a7050"
+    },
+    {
+      "pc": "0x302364",
+      "pool_index": 10945,
+      "ref": 11085,
+      "literal": "Bearer ",
+      "original_payload_offset": "0x8bc7b0"
+    },
+    {
+      "pc": "0x3023ac",
+      "pool_index": 8304,
+      "ref": 26420,
+      "literal": "App-Version",
+      "original_payload_offset": "0x964b70"
+    },
+    {
+      "pc": "0x302504",
+      "pool_index": 8466,
+      "ref": 16853,
+      "literal": "GET",
+      "original_payload_offset": "0x8fd250"
+    }
+  ],
+  "limitations": [
+    "Build-specific canonical string cluster range and classIDs",
+    "VM/noncanonical strings excluded",
+    "Peephole pool-base calculation inherited, directLDR/header index and string payloads checked independently",
+    "Static no target execution"
+  ]
+}

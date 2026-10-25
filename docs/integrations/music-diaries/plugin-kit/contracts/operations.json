@@ -1,0 +1,683 @@
+{
+  "schema_version": 1,
+  "purpose": "Documentation navigation, not executable plugin configuration",
+  "runtime_verified": false,
+  "count_semantics": "Request variants; shared transports are not additional feature endpoints. Legacy and later discovery records are in provider reference documents.",
+  "entry_count": 69,
+  "operations": [
+    {
+      "id": "FR-AUTH-identify",
+      "provider": "fryderyk",
+      "record_file": "fryderyk-contracts.json",
+      "record_pointer": "/auth/identify",
+      "method": "POST",
+      "path": "TOKEN_API_URL + /identify",
+      "kind": "authentication",
+      "runtime_verified": false
+    },
+    {
+      "id": "FR-AUTH-refresh",
+      "provider": "fryderyk",
+      "record_file": "fryderyk-contracts.json",
+      "record_pointer": "/auth/refresh",
+      "method": "POST",
+      "path": "TOKEN_API_URL + /reIdentify",
+      "kind": "authentication",
+      "runtime_verified": false
+    },
+    {
+      "id": "FR-AUTH-version_validate",
+      "provider": "fryderyk",
+      "record_file": "fryderyk-contracts.json",
+      "record_pointer": "/auth/version_validate",
+      "method": "POST",
+      "path": "VERSION_API_URL + /validate",
+      "kind": "compatibility",
+      "runtime_verified": false
+    },
+    {
+      "id": "FR-CORE-01",
+      "provider": "fryderyk",
+      "record_file": "fryderyk-contracts.json",
+      "record_pointer": "/core_routes/0",
+      "method": "GET",
+      "path": "users/getCurrent",
+      "runtime_verified": false
+    },
+    {
+      "id": "FR-CORE-02",
+      "provider": "fryderyk",
+      "record_file": "fryderyk-contracts.json",
+      "record_pointer": "/core_routes/1",
+      "method": "GET",
+      "path": "grades/getOverview/{studentId}",
+      "runtime_verified": false
+    },
+    {
+      "id": "FR-CORE-03",
+      "provider": "fryderyk",
+      "record_file": "fryderyk-contracts.json",
+      "record_pointer": "/core_routes/2",
+      "method": "GET",
+      "path": "grades/list/{studentId}/10",
+      "runtime_verified": false
+    },
+    {
+      "id": "FR-CORE-04",
+      "provider": "fryderyk",
+      "record_file": "fryderyk-contracts.json",
+      "record_pointer": "/core_routes/3",
+      "method": "GET",
+      "path": "attendances/getOverview/{studentId}",
+      "runtime_verified": false
+    },
+    {
+      "id": "FR-CORE-05",
+      "provider": "fryderyk",
+      "record_file": "fryderyk-contracts.json",
+      "record_pointer": "/core_routes/4",
+      "method": "GET",
+      "path": "attendances/listAbsenceTypeChangeRequests/{studentId}",
+      "runtime_verified": false
+    },
+    {
+      "id": "FR-CORE-06",
+      "provider": "fryderyk",
+      "record_file": "fryderyk-contracts.json",
+      "record_pointer": "/core_routes/5",
+      "method": "GET",
+      "path": "lessons/listAtDay/{studentId}/{y-MM-dd}",
+      "runtime_verified": false
+    },
+    {
+      "id": "FR-CORE-07",
+      "provider": "fryderyk",
+      "record_file": "fryderyk-contracts.json",
+      "record_pointer": "/core_routes/6",
+      "method": "GET",
+      "path": "lessons/listWithAbsence/{studentId}/{limit??0}",
+      "runtime_verified": false
+    },
+    {
+      "id": "FR-CORE-08",
+      "provider": "fryderyk",
+      "record_file": "fryderyk-contracts.json",
+      "record_pointer": "/core_routes/7",
+      "method": "GET",
+      "path": "homeworks/list/{studentId}/{limit??0}",
+      "runtime_verified": false
+    },
+    {
+      "id": "FR-CORE-09",
+      "provider": "fryderyk",
+      "record_file": "fryderyk-contracts.json",
+      "record_pointer": "/core_routes/8",
+      "method": "POST",
+      "path": "attendances/requestAbsenceTypeChange",
+      "runtime_verified": false
+    },
+    {
+      "id": "FR-MAIL-01",
+      "provider": "fryderyk",
+      "record_file": "fryderyk-contracts.json",
+      "record_pointer": "/ios_messaging/0",
+      "method": "GET",
+      "path": "messages/list/{folder}/{page}/8[?query={query}]",
+      "runtime_verified": false
+    },
+    {
+      "id": "FR-MAIL-02",
+      "provider": "fryderyk",
+      "record_file": "fryderyk-contracts.json",
+      "record_pointer": "/ios_messaging/1",
+      "method": "GET",
+      "path": "messages/getRecipients",
+      "runtime_verified": false
+    },
+    {
+      "id": "FR-MAIL-03",
+      "provider": "fryderyk",
+      "record_file": "fryderyk-contracts.json",
+      "record_pointer": "/ios_messaging/2",
+      "method": "POST",
+      "path": "messages/countUnread",
+      "runtime_verified": false
+    },
+    {
+      "id": "FR-MAIL-04",
+      "provider": "fryderyk",
+      "record_file": "fryderyk-contracts.json",
+      "record_pointer": "/ios_messaging/3",
+      "method": "POST",
+      "path": "messages/markAsRead/{messageId}",
+      "runtime_verified": false
+    },
+    {
+      "id": "FR-MAIL-05",
+      "provider": "fryderyk",
+      "record_file": "fryderyk-contracts.json",
+      "record_pointer": "/ios_messaging/4",
+      "method": "POST",
+      "path": "messages/delete/{messageId}",
+      "runtime_verified": false
+    },
+    {
+      "id": "FR-MAIL-06",
+      "provider": "fryderyk",
+      "record_file": "fryderyk-contracts.json",
+      "record_pointer": "/ios_messaging/5",
+      "method": "POST",
+      "path": "messages/removeAttachment/{attachmentId}",
+      "runtime_verified": false
+    },
+    {
+      "id": "FR-MAIL-07",
+      "provider": "fryderyk",
+      "record_file": "fryderyk-contracts.json",
+      "record_pointer": "/ios_messaging/6",
+      "method": "POST",
+      "path": "messages/create[/{contextId}/{action.name}]",
+      "runtime_verified": false
+    },
+    {
+      "id": "FR-MAIL-08",
+      "provider": "fryderyk",
+      "record_file": "fryderyk-contracts.json",
+      "record_pointer": "/ios_messaging/7",
+      "method": "POST_multipart",
+      "path": "messages/uploadAttachment",
+      "runtime_verified": false
+    },
+    {
+      "id": "MA-PASSWORD",
+      "provider": "mobireg",
+      "record_file": "mobireg-auth-gateway.json",
+      "record_pointer": "/operations/0",
+      "method": "POST",
+      "path": "https://{clean_address}/{trimmed_school}/modules/api/auth.php",
+      "selector": null,
+      "runtime_verified": false
+    },
+    {
+      "id": "MA-QR",
+      "provider": "mobireg",
+      "record_file": "mobireg-auth-gateway.json",
+      "record_pointer": "/operations/1",
+      "method": "POST",
+      "path": "https://{clean_address}/{trimmed_school}/modules/api/qrlogin.php",
+      "selector": null,
+      "runtime_verified": false
+    },
+    {
+      "id": "MA-REFRESH",
+      "provider": "mobireg",
+      "record_file": "mobireg-auth-gateway.json",
+      "record_pointer": "/operations/2",
+      "method": "POST",
+      "path": "https://{account.address}/{account.schoolCode}/modules/api/refresh.php",
+      "selector": null,
+      "runtime_verified": false
+    },
+    {
+      "id": "MA-GATEWAY",
+      "provider": "mobireg",
+      "record_file": "mobireg-auth-gateway.json",
+      "record_pointer": "/operations/3",
+      "method": "POST",
+      "path": "https://{page_address}/{school}/modules/api/app.php",
+      "selector": null,
+      "runtime_verified": false
+    },
+    {
+      "id": "MA-FCM-REGISTER",
+      "provider": "mobireg",
+      "record_file": "mobireg-auth-gateway.json",
+      "record_pointer": "/operations/4",
+      "method": "POST",
+      "path": "gateway view register-fcm",
+      "selector": null,
+      "runtime_verified": false
+    },
+    {
+      "id": "MA-FCM-UNREGISTER",
+      "provider": "mobireg",
+      "record_file": "mobireg-auth-gateway.json",
+      "record_pointer": "/operations/5",
+      "method": "POST",
+      "path": "gateway view unregister-fcm",
+      "selector": null,
+      "runtime_verified": false
+    },
+    {
+      "id": "MA-REST-GET",
+      "provider": "mobireg",
+      "record_file": "mobireg-auth-gateway.json",
+      "record_pointer": "/operations/6",
+      "method": "GET",
+      "path": "https://{page_address}/{school}/api{caller_path}",
+      "selector": null,
+      "runtime_verified": false
+    },
+    {
+      "id": "MA-REST-MUTATE",
+      "provider": "mobireg",
+      "record_file": "mobireg-auth-gateway.json",
+      "record_pointer": "/operations/7",
+      "method": "POST|PUT|DELETE",
+      "path": "https://{page_address}/{school}/api{caller_path}",
+      "selector": null,
+      "runtime_verified": false
+    },
+    {
+      "id": "MRA-01",
+      "provider": "mobireg",
+      "record_file": "mobireg-academic.json",
+      "record_pointer": "/operations/0",
+      "method": "POST",
+      "path": null,
+      "selector": "marks",
+      "runtime_verified": false
+    },
+    {
+      "id": "MRA-02",
+      "provider": "mobireg",
+      "record_file": "mobireg-academic.json",
+      "record_pointer": "/operations/1",
+      "method": "POST",
+      "path": null,
+      "selector": "terms",
+      "runtime_verified": false
+    },
+    {
+      "id": "MRA-03",
+      "provider": "mobireg",
+      "record_file": "mobireg-academic.json",
+      "record_pointer": "/operations/2",
+      "method": "POST",
+      "path": null,
+      "selector": "tests",
+      "runtime_verified": false
+    },
+    {
+      "id": "MRA-04",
+      "provider": "mobireg",
+      "record_file": "mobireg-academic.json",
+      "record_pointer": "/operations/3",
+      "method": "POST",
+      "path": null,
+      "selector": "attendance-stats",
+      "runtime_verified": false
+    },
+    {
+      "id": "MRA-05",
+      "provider": "mobireg",
+      "record_file": "mobireg-academic.json",
+      "record_pointer": "/operations/4",
+      "method": "POST",
+      "path": null,
+      "selector": "reprimands",
+      "runtime_verified": false
+    },
+    {
+      "id": "MRA-06",
+      "provider": "mobireg",
+      "record_file": "mobireg-academic.json",
+      "record_pointer": "/operations/5",
+      "method": "POST",
+      "path": null,
+      "selector": "timetable-events",
+      "runtime_verified": false
+    },
+    {
+      "id": "MRA-07",
+      "provider": "mobireg",
+      "record_file": "mobireg-academic.json",
+      "record_pointer": "/operations/6",
+      "method": "POST",
+      "path": null,
+      "selector": "dashboard",
+      "runtime_verified": false
+    },
+    {
+      "id": "MRA-08",
+      "provider": "mobireg",
+      "record_file": "mobireg-academic.json",
+      "record_pointer": "/operations/7",
+      "method": "POST",
+      "path": null,
+      "selector": "announcements",
+      "runtime_verified": false
+    },
+    {
+      "id": "MRA-09",
+      "provider": "mobireg",
+      "record_file": "mobireg-academic.json",
+      "record_pointer": "/operations/8",
+      "method": "POST",
+      "path": null,
+      "selector": "announcement",
+      "runtime_verified": false
+    },
+    {
+      "id": "MRA-10",
+      "provider": "mobireg",
+      "record_file": "mobireg-academic.json",
+      "record_pointer": "/operations/9",
+      "method": "POST",
+      "path": null,
+      "selector": "announcements-pending",
+      "runtime_verified": false
+    },
+    {
+      "id": "MRA-11",
+      "provider": "mobireg",
+      "record_file": "mobireg-academic.json",
+      "record_pointer": "/operations/10",
+      "method": "POST",
+      "path": null,
+      "selector": "announcement-answer",
+      "runtime_verified": false
+    },
+    {
+      "id": "MRA-12",
+      "provider": "mobireg",
+      "record_file": "mobireg-academic.json",
+      "record_pointer": "/operations/11",
+      "method": "POST",
+      "path": null,
+      "selector": "announcement-answer",
+      "runtime_verified": false
+    },
+    {
+      "id": "MRA-13",
+      "provider": "mobireg",
+      "record_file": "mobireg-academic.json",
+      "record_pointer": "/operations/12",
+      "method": "POST",
+      "path": null,
+      "selector": "justification-events",
+      "runtime_verified": false
+    },
+    {
+      "id": "MRA-14",
+      "provider": "mobireg",
+      "record_file": "mobireg-academic.json",
+      "record_pointer": "/operations/13",
+      "method": "POST",
+      "path": "{apiBase}/justifications?pupil_id={selectedPupil}",
+      "selector": null,
+      "runtime_verified": false
+    },
+    {
+      "id": "MRA-15",
+      "provider": "mobireg",
+      "record_file": "mobireg-academic.json",
+      "record_pointer": "/operations/14",
+      "method": "POST",
+      "path": "{apiBase}/justifications/{recordId}",
+      "selector": null,
+      "runtime_verified": false
+    },
+    {
+      "id": "MRA-16",
+      "provider": "mobireg",
+      "record_file": "mobireg-academic.json",
+      "record_pointer": "/operations/15",
+      "method": "POST",
+      "path": "{apiBase}/justifications",
+      "selector": null,
+      "runtime_verified": false
+    },
+    {
+      "id": "MRA-17",
+      "provider": "mobireg",
+      "record_file": "mobireg-academic.json",
+      "record_pointer": "/operations/16",
+      "method": "POST",
+      "path": "{apiBase}/justifications/{recordId}",
+      "selector": null,
+      "runtime_verified": false
+    },
+    {
+      "id": "MRA-18",
+      "provider": "mobireg",
+      "record_file": "mobireg-academic.json",
+      "record_pointer": "/operations/17",
+      "method": "POST",
+      "path": "{apiBase}/justifications/{recordId}",
+      "selector": null,
+      "runtime_verified": false
+    },
+    {
+      "id": "MM-INBOX",
+      "provider": "mobireg",
+      "record_file": "mobireg-modules.json",
+      "record_pointer": "/operations/0",
+      "method": "POST",
+      "path": "{messaging_url}/api/messages/inbox",
+      "selector": null,
+      "runtime_verified": false
+    },
+    {
+      "id": "MM-SENT",
+      "provider": "mobireg",
+      "record_file": "mobireg-modules.json",
+      "record_pointer": "/operations/1",
+      "method": "POST",
+      "path": "{messaging_url}/api/messages/sent",
+      "selector": null,
+      "runtime_verified": false
+    },
+    {
+      "id": "MM-IMPORTANT",
+      "provider": "mobireg",
+      "record_file": "mobireg-modules.json",
+      "record_pointer": "/operations/2",
+      "method": "POST",
+      "path": "{messaging_url}/api/messages/important",
+      "selector": null,
+      "runtime_verified": false
+    },
+    {
+      "id": "MM-TRASH",
+      "provider": "mobireg",
+      "record_file": "mobireg-modules.json",
+      "record_pointer": "/operations/3",
+      "method": "POST",
+      "path": "{messaging_url}/api/messages/trash",
+      "selector": null,
+      "runtime_verified": false
+    },
+    {
+      "id": "MM-UNREAD",
+      "provider": "mobireg",
+      "record_file": "mobireg-modules.json",
+      "record_pointer": "/operations/4",
+      "method": "POST",
+      "path": "{messaging_url}/api/unreadMessages",
+      "selector": null,
+      "runtime_verified": false
+    },
+    {
+      "id": "MM-READ",
+      "provider": "mobireg",
+      "record_file": "mobireg-modules.json",
+      "record_pointer": "/operations/5",
+      "method": "GET",
+      "path": "{messaging_url}/api/messages/read/{message_id}",
+      "selector": null,
+      "runtime_verified": false
+    },
+    {
+      "id": "MM-SEND",
+      "provider": "mobireg",
+      "record_file": "mobireg-modules.json",
+      "record_pointer": "/operations/6",
+      "method": "PUT",
+      "path": "{messaging_url}/api/messages",
+      "selector": null,
+      "runtime_verified": false
+    },
+    {
+      "id": "MM-UPLOAD",
+      "provider": "mobireg",
+      "record_file": "mobireg-modules.json",
+      "record_pointer": "/operations/7",
+      "method": "POST",
+      "path": "{messaging_url}/api/messages/{message_id}/files",
+      "selector": null,
+      "runtime_verified": false
+    },
+    {
+      "id": "MM-SEARCH-RECIPIENTS",
+      "provider": "mobireg",
+      "record_file": "mobireg-modules.json",
+      "record_pointer": "/operations/8",
+      "method": "POST",
+      "path": "{messaging_url}/api/messages/receivers/search",
+      "selector": null,
+      "runtime_verified": false
+    },
+    {
+      "id": "MM-RECIPIENT-TYPE",
+      "provider": "mobireg",
+      "record_file": "mobireg-modules.json",
+      "record_pointer": "/operations/9",
+      "method": "POST",
+      "path": "{messaging_url}/api/messages/receivers",
+      "selector": null,
+      "runtime_verified": false
+    },
+    {
+      "id": "MM-RECIPIENTS",
+      "provider": "mobireg",
+      "record_file": "mobireg-modules.json",
+      "record_pointer": "/operations/10",
+      "method": "POST",
+      "path": "{messaging_url}/api/messages/receivers",
+      "selector": null,
+      "runtime_verified": false
+    },
+    {
+      "id": "MM-DELETE",
+      "provider": "mobireg",
+      "record_file": "mobireg-modules.json",
+      "record_pointer": "/operations/11",
+      "method": "DELETE",
+      "path": "{messaging_url}/api/messages/{message_id}",
+      "selector": null,
+      "runtime_verified": false
+    },
+    {
+      "id": "MM-STAR",
+      "provider": "mobireg",
+      "record_file": "mobireg-modules.json",
+      "record_pointer": "/operations/12",
+      "method": "POST",
+      "path": "{messaging_url}/api/messages/{message_id}/stared",
+      "selector": null,
+      "runtime_verified": false
+    },
+    {
+      "id": "MM-RESTORE",
+      "provider": "mobireg",
+      "record_file": "mobireg-modules.json",
+      "record_pointer": "/operations/13",
+      "method": "POST",
+      "path": "{messaging_url}/api/messages/{message_id}/restore",
+      "selector": null,
+      "runtime_verified": false
+    },
+    {
+      "id": "HW-LIST",
+      "provider": "mobireg",
+      "record_file": "mobireg-modules.json",
+      "record_pointer": "/operations/14",
+      "method": "POST",
+      "path": "{homework_base}/api/homeworks/datatable",
+      "selector": null,
+      "runtime_verified": false
+    },
+    {
+      "id": "HW-SHOW",
+      "provider": "mobireg",
+      "record_file": "mobireg-modules.json",
+      "record_pointer": "/operations/15",
+      "method": "GET",
+      "path": "{homework_base}/api/homeworks/{homework_id}?student={pupil_id}",
+      "selector": null,
+      "runtime_verified": false
+    },
+    {
+      "id": "HW-SOLUTION",
+      "provider": "mobireg",
+      "record_file": "mobireg-modules.json",
+      "record_pointer": "/operations/16",
+      "method": "PATCH",
+      "path": "{homework_base}/api/homeworks/{homework_id}",
+      "selector": null,
+      "runtime_verified": false
+    },
+    {
+      "id": "HW-UPLOAD",
+      "provider": "mobireg",
+      "record_file": "mobireg-modules.json",
+      "record_pointer": "/operations/17",
+      "method": "POST",
+      "path": "{homework_base}/api/homeworks/{homework_id}/files",
+      "selector": null,
+      "runtime_verified": false
+    },
+    {
+      "id": "HW-ARCHIVE",
+      "provider": "mobireg",
+      "record_file": "mobireg-modules.json",
+      "record_pointer": "/operations/18",
+      "method": "PATCH",
+      "path": "{homework_base}/api/homeworks/{homework_id}/archive",
+      "selector": null,
+      "runtime_verified": false
+    },
+    {
+      "id": "MM-DOWNLOAD",
+      "provider": "mobireg",
+      "record_file": "mobireg-modules.json",
+      "record_pointer": "/operations/19",
+      "method": "GET",
+      "path": "{MailAttachment.url}",
+      "selector": null,
+      "runtime_verified": false
+    },
+    {
+      "id": "HW-DOWNLOAD",
+      "provider": "mobireg",
+      "record_file": "mobireg-modules.json",
+      "record_pointer": "/operations/20",
+      "method": "GET",
+      "path": "{HomeworkFile.url}",
+      "selector": null,
+      "runtime_verified": false
+    },
+    {
+      "id": "MA-USERS",
+      "provider": "mobireg",
+      "record_file": "../providers/mobireg/discovery-auth.json",
+      "record_pointer": "/users_operation",
+      "method": "POST",
+      "path": "{normalizedSchoolBase}/modules/api/app.php",
+      "selector": "users",
+      "requirePupil": false,
+      "runtime_verified": false
+    },
+    {
+      "id": "HW-DIARY",
+      "provider": "mobireg",
+      "record_file": "../providers/mobireg/discovery-auth.json",
+      "record_pointer": "/diary_homework_operation",
+      "method": "POST",
+      "path": "{normalizedSchoolBase}/modules/api/app.php",
+      "selector": "homeworks",
+      "runtime_verified": false
+    }
+  ]
+}

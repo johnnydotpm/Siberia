@@ -1,0 +1,12 @@
+{
+  "status": "passed",
+  "constructor_entrypoints": 28,
+  "key_pc_assertions": 295,
+  "wire_field_rows": 244,
+  "manually_described_field_contracts": 157,
+  "features": 61,
+  "legacy_import_tables": 34,
+  "synthetic_cases": 41,
+  "recipes": 14,
+  "validation_scope": "JSON structural consistency, source hash and key-PC exact match, independent r2 constructor entrypoint membership, original ELF executable segment coverage. No provider implementation/runtime/network test."
+}

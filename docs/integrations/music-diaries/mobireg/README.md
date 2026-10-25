@@ -1,5 +1,8 @@
 # MobiReg music editions: integration dossier
 
+> Historical first-pass handoff. Prefer the [detailed specification and agent runbook](../plugin-kit/providers/mobireg/SPEC.md) for recovered endpoint/auth contracts, field schemas, examples and remaining gates. In a conflict, the newer version-scoped caller evidence takes precedence.
+
+
 The supplied Android 2.1.79, additional Android 3.1.7 XAPK and iOS 3.1.7 packages have the same application identifier, `pl.mobireg.eparent.music`, but use substantially different client generations. Android2.1.79 is a native Java/Kotlin application with a relational SQLite cache and a legacy `njson.php` protocol. Both 3.1.7 releases are newer Flutter/Dart applications (`package:rodzic`) with JWT authentication, module sessions, mail and homework APIs, and many more candidate features.
 
 Implementing only the legacy Android2.1.79 protocol does **not** establish support for all functionality of either supplied3.1.7 application. Preserve two protocol profiles and an explicit capability map. Do not assume that a school supports either profile until its version/response is verified.

@@ -1,0 +1,1983 @@
+{
+  "kind": "field observation registry, not a complete server schema",
+  "read_me": "Types reflect exact client casts for specified build. Unknowns are per field; do not convert candidate defaults into server facts. Android numeric_value is String.",
+  "fields": [
+    {
+      "model": "AbsenceTypeChangeRequest",
+      "field": "id",
+      "version": "Android1.0.12",
+      "wire_type_observed": "int",
+      "nullable_observed": "no at explicit cast",
+      "default_observed": "none observed in reviewed scalar cast",
+      "transform": "preserve raw value",
+      "key_pcs": [
+        "0x61df70"
+      ],
+      "type_cast_pcs": [
+        "0x61dfa8"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/absence_type_change_request.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "AbsenceTypeChangeRequest",
+      "field": "absence_type",
+      "version": "Android1.0.12",
+      "wire_type_observed": "int",
+      "nullable_observed": "no at explicit cast",
+      "default_observed": "none observed in reviewed scalar cast",
+      "transform": "AbsenceType.fromTypeCode(integer custom code)",
+      "key_pcs": [
+        "0x61dfc8"
+      ],
+      "type_cast_pcs": [
+        "0x61e004"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/absence_type_change_request.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "AbsenceTypeChangeRequest",
+      "field": "absence_reason",
+      "version": "Android1.0.12",
+      "wire_type_observed": "String",
+      "nullable_observed": "no at explicit cast",
+      "default_observed": "none observed in reviewed scalar cast",
+      "transform": "preserve raw value",
+      "key_pcs": [
+        "0x61e044"
+      ],
+      "type_cast_pcs": [
+        "0x61e084"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/absence_type_change_request.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "AbsenceTypeChangeRequest",
+      "field": "start",
+      "version": "Android1.0.12",
+      "wire_type_observed": "String",
+      "nullable_observed": "no at explicit cast",
+      "default_observed": "none observed in reviewed scalar cast",
+      "transform": "DateTime.parse(inputString); timezone follows encoded offset or local if absent",
+      "key_pcs": [
+        "0x61e0a4"
+      ],
+      "type_cast_pcs": [
+        "0x61e0e0"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/absence_type_change_request.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "AbsenceTypeChangeRequest",
+      "field": "end",
+      "version": "Android1.0.12",
+      "wire_type_observed": "String",
+      "nullable_observed": "no at explicit cast",
+      "default_observed": "none observed in reviewed scalar cast",
+      "transform": "DateTime.parse(inputString); timezone follows encoded offset or local if absent",
+      "key_pcs": [
+        "0x61e10c"
+      ],
+      "type_cast_pcs": [
+        "0x61e148"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/absence_type_change_request.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "AttendancesOverviewPeriod",
+      "field": "firstDayOfPeriod",
+      "version": "Android1.0.12",
+      "wire_type_observed": "String",
+      "nullable_observed": "no at explicit cast",
+      "default_observed": "none observed in reviewed scalar cast",
+      "transform": "DateTime.parse(inputString); timezone follows encoded offset or local if absent",
+      "key_pcs": [
+        "0x621a04"
+      ],
+      "type_cast_pcs": [
+        "0x621a44"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/attendances_overview.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "AttendancesOverviewPeriod",
+      "field": "lastDayOfPeriod",
+      "version": "Android1.0.12",
+      "wire_type_observed": "String",
+      "nullable_observed": "no at explicit cast",
+      "default_observed": "none observed in reviewed scalar cast",
+      "transform": "DateTime.parse(inputString); timezone follows encoded offset or local if absent",
+      "key_pcs": [
+        "0x621a74"
+      ],
+      "type_cast_pcs": [
+        "0x621ab4"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/attendances_overview.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "AttendancesOverviewPeriod",
+      "field": "attendancePercentage",
+      "version": "Android1.0.12",
+      "wire_type_observed": "num",
+      "nullable_observed": "no at explicit cast",
+      "default_observed": "none observed in reviewed scalar cast",
+      "transform": "preserve raw value",
+      "key_pcs": [
+        "0x621ae4"
+      ],
+      "type_cast_pcs": [
+        "0x621b20"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/attendances_overview.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "AttendancesOverviewPeriod",
+      "field": "lessonsWithExplainedCount",
+      "version": "Android1.0.12",
+      "wire_type_observed": "int",
+      "nullable_observed": "no at explicit cast",
+      "default_observed": "none observed in reviewed scalar cast",
+      "transform": "preserve raw value",
+      "key_pcs": [
+        "0x621b40"
+      ],
+      "type_cast_pcs": [
+        "0x621b7c"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/attendances_overview.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "AttendancesOverviewPeriod",
+      "field": "lessonsWithExcusedCount",
+      "version": "Android1.0.12",
+      "wire_type_observed": "int",
+      "nullable_observed": "no at explicit cast",
+      "default_observed": "none observed in reviewed scalar cast",
+      "transform": "preserve raw value",
+      "key_pcs": [
+        "0x621b9c"
+      ],
+      "type_cast_pcs": [
+        "0x621bd8"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/attendances_overview.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "AttendancesOverviewPeriod",
+      "field": "lessonsWithLateCount",
+      "version": "Android1.0.12",
+      "wire_type_observed": "int",
+      "nullable_observed": "no at explicit cast",
+      "default_observed": "none observed in reviewed scalar cast",
+      "transform": "preserve raw value",
+      "key_pcs": [
+        "0x621bf4"
+      ],
+      "type_cast_pcs": [
+        "0x621c30"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/attendances_overview.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "AttendancesOverview",
+      "field": "year",
+      "version": "Android1.0.12",
+      "wire_type_observed": "Map<String, dynamic>",
+      "nullable_observed": "conditional; inspect branch/default",
+      "default_observed": "branch exists; exact fallback annotated individually below if reviewed",
+      "transform": "preserve raw value",
+      "key_pcs": [
+        "0x621788"
+      ],
+      "type_cast_pcs": [
+        "0x6217ac"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/attendances_overview.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "AttendancesOverview",
+      "field": "months",
+      "version": "Android1.0.12",
+      "wire_type_observed": "List",
+      "nullable_observed": "conditional; inspect branch/default",
+      "default_observed": "branch exists; exact fallback annotated individually below if reviewed",
+      "transform": "preserve raw value",
+      "key_pcs": [
+        "0x6217e0",
+        "0x6218c0"
+      ],
+      "type_cast_pcs": [
+        "0x621884",
+        "0x621900"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/attendances_overview.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "Grade",
+      "field": "text_value",
+      "version": "Android1.0.12",
+      "wire_type_observed": "String",
+      "nullable_observed": "no at explicit cast",
+      "default_observed": "none observed in reviewed scalar cast",
+      "transform": "preserve raw value",
+      "key_pcs": [
+        "0x62307c"
+      ],
+      "type_cast_pcs": [
+        "0x6230bc"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/grade.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "Grade",
+      "field": "numeric_value",
+      "version": "Android1.0.12",
+      "wire_type_observed": "String",
+      "nullable_observed": "no at explicit cast",
+      "default_observed": "none observed in reviewed scalar cast",
+      "transform": "retain required String; do not replace text-only/unparseable grade with zero",
+      "key_pcs": [
+        "0x6230dc"
+      ],
+      "type_cast_pcs": [
+        "0x62311c"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/grade.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "Grade",
+      "field": "weight",
+      "version": "Android1.0.12",
+      "wire_type_observed": "String?",
+      "nullable_observed": "yes",
+      "default_observed": "preserve null",
+      "transform": "nullable String in Android1.0.12; iOS1.1.7 has additional value/factor branches, not interchangeable",
+      "key_pcs": [
+        "0x62313c"
+      ],
+      "type_cast_pcs": [
+        "0x62317c"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/grade.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "Grade",
+      "field": "name",
+      "version": "Android1.0.12",
+      "wire_type_observed": "String?",
+      "nullable_observed": "yes",
+      "default_observed": "preserve null",
+      "transform": "preserve raw value",
+      "key_pcs": [
+        "0x62319c"
+      ],
+      "type_cast_pcs": [
+        "0x6231dc"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/grade.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "Grade",
+      "field": "comment",
+      "version": "Android1.0.12",
+      "wire_type_observed": "String?",
+      "nullable_observed": "yes",
+      "default_observed": "preserve null",
+      "transform": "preserve raw value",
+      "key_pcs": [
+        "0x6231fc"
+      ],
+      "type_cast_pcs": [
+        "0x62323c"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/grade.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "Grade",
+      "field": "created",
+      "version": "Android1.0.12",
+      "wire_type_observed": "String",
+      "nullable_observed": "no at explicit cast",
+      "default_observed": "none observed in reviewed scalar cast",
+      "transform": "DateTime.parse(inputString); timezone follows encoded offset or local if absent",
+      "key_pcs": [
+        "0x62325c"
+      ],
+      "type_cast_pcs": [
+        "0x62329c"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/grade.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "Grade",
+      "field": "subject_color",
+      "version": "Android1.0.12",
+      "wire_type_observed": "String",
+      "nullable_observed": "yes, constant fallback",
+      "default_observed": "constant Color@9e8e71 if absent/null; numeric color value not recovered",
+      "transform": "int.parse(inputString,radix:16) -> Flutter ARGB Color; preserve full32bitvalue",
+      "key_pcs": [
+        "0x6232cc",
+        "0x6232f8"
+      ],
+      "type_cast_pcs": [
+        "0x623338"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/grade.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "Grade",
+      "field": "subject_name",
+      "version": "Android1.0.12",
+      "wire_type_observed": "String?",
+      "nullable_observed": "yes",
+      "default_observed": "preserve null",
+      "transform": "preserve raw value",
+      "key_pcs": [
+        "0x623448"
+      ],
+      "type_cast_pcs": [
+        "0x623480"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/grade.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "Grade",
+      "field": "subject_short_name",
+      "version": "Android1.0.12",
+      "wire_type_observed": "String?",
+      "nullable_observed": "yes",
+      "default_observed": "preserve null",
+      "transform": "preserve raw value",
+      "key_pcs": [
+        "0x62349c"
+      ],
+      "type_cast_pcs": [
+        "0x6234dc"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/grade.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "GradesOverviewSubject",
+      "field": "name",
+      "version": "Android1.0.12",
+      "wire_type_observed": "String",
+      "nullable_observed": "no at explicit cast",
+      "default_observed": "none observed in reviewed scalar cast",
+      "transform": "preserve raw value",
+      "key_pcs": [
+        "0x622b2c"
+      ],
+      "type_cast_pcs": [
+        "0x622b6c"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/grades_overview.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "GradesOverviewSubject",
+      "field": "short_name",
+      "version": "Android1.0.12",
+      "wire_type_observed": "String",
+      "nullable_observed": "no at explicit cast",
+      "default_observed": "none observed in reviewed scalar cast",
+      "transform": "preserve raw value",
+      "key_pcs": [
+        "0x622b8c"
+      ],
+      "type_cast_pcs": [
+        "0x622bcc"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/grades_overview.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "GradesOverviewSubject",
+      "field": "color",
+      "version": "Android1.0.12",
+      "wire_type_observed": "String",
+      "nullable_observed": "no at explicit cast",
+      "default_observed": "none observed in reviewed scalar cast",
+      "transform": "int.parse(inputString,radix:16) -> Flutter ARGB Color; preserve full32bitvalue",
+      "key_pcs": [
+        "0x622bec"
+      ],
+      "type_cast_pcs": [
+        "0x622c28"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/grades_overview.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "GradesOverviewSubject",
+      "field": "predicted_grade",
+      "version": "Android1.0.12",
+      "wire_type_observed": "Map<String, dynamic>",
+      "nullable_observed": "conditional; inspect branch/default",
+      "default_observed": "branch exists; exact fallback annotated individually below if reviewed",
+      "transform": "preserve raw value",
+      "key_pcs": [
+        "0x622d10",
+        "0x622d3c"
+      ],
+      "type_cast_pcs": [
+        "0x622d60"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/grades_overview.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "GradesOverviewSubject",
+      "field": "final_grade",
+      "version": "Android1.0.12",
+      "wire_type_observed": "Map<String, dynamic>",
+      "nullable_observed": "conditional; inspect branch/default",
+      "default_observed": "branch exists; exact fallback annotated individually below if reviewed",
+      "transform": "preserve raw value",
+      "key_pcs": [
+        "0x622d9c",
+        "0x622dc8"
+      ],
+      "type_cast_pcs": [
+        "0x622dec"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/grades_overview.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "GradesOverviewSubject",
+      "field": "grades",
+      "version": "Android1.0.12",
+      "wire_type_observed": "List",
+      "nullable_observed": "conditional; inspect branch/default",
+      "default_observed": "branch exists; exact fallback annotated individually below if reviewed",
+      "transform": "preserve raw value",
+      "key_pcs": [
+        "0x622e28",
+        "0x622f08"
+      ],
+      "type_cast_pcs": [
+        "0x622ecc",
+        "0x622f48"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/grades_overview.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "GradesOverviewSemester",
+      "field": "name",
+      "version": "Android1.0.12",
+      "wire_type_observed": "String",
+      "nullable_observed": "no at explicit cast",
+      "default_observed": "none observed in reviewed scalar cast",
+      "transform": "preserve raw value",
+      "key_pcs": [
+        "0x622748"
+      ],
+      "type_cast_pcs": [
+        "0x622788"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/grades_overview.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "GradesOverviewSemester",
+      "field": "start",
+      "version": "Android1.0.12",
+      "wire_type_observed": "String",
+      "nullable_observed": "no at explicit cast",
+      "default_observed": "none observed in reviewed scalar cast",
+      "transform": "DateTime.parse(inputString); timezone follows encoded offset or local if absent",
+      "key_pcs": [
+        "0x6227a8"
+      ],
+      "type_cast_pcs": [
+        "0x6227e4"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/grades_overview.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "GradesOverviewSemester",
+      "field": "end",
+      "version": "Android1.0.12",
+      "wire_type_observed": "String",
+      "nullable_observed": "no at explicit cast",
+      "default_observed": "none observed in reviewed scalar cast",
+      "transform": "DateTime.parse(inputString); timezone follows encoded offset or local if absent",
+      "key_pcs": [
+        "0x622814"
+      ],
+      "type_cast_pcs": [
+        "0x622850"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/grades_overview.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "GradesOverviewSemester",
+      "field": "subjects",
+      "version": "Android1.0.12",
+      "wire_type_observed": "List",
+      "nullable_observed": "conditional; inspect branch/default",
+      "default_observed": "branch exists; exact fallback annotated individually below if reviewed",
+      "transform": "preserve raw value",
+      "key_pcs": [
+        "0x622880",
+        "0x622960"
+      ],
+      "type_cast_pcs": [
+        "0x622924",
+        "0x6229a0"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/grades_overview.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "GradesOverview",
+      "field": "semesters",
+      "version": "Android1.0.12",
+      "wire_type_observed": "List",
+      "nullable_observed": "conditional; inspect branch/default",
+      "default_observed": "branch exists; exact fallback annotated individually below if reviewed",
+      "transform": "preserve raw value",
+      "key_pcs": [
+        "0x6224c8",
+        "0x6225a8"
+      ],
+      "type_cast_pcs": [
+        "0x62256c",
+        "0x6225e8"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/grades_overview.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "HomeworkSubject",
+      "field": "name",
+      "version": "Android1.0.12",
+      "wire_type_observed": "String",
+      "nullable_observed": "no at explicit cast",
+      "default_observed": "none observed in reviewed scalar cast",
+      "transform": "preserve raw value",
+      "key_pcs": [
+        "0x625004"
+      ],
+      "type_cast_pcs": [
+        "0x625044"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/homework.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "HomeworkSubject",
+      "field": "short_name",
+      "version": "Android1.0.12",
+      "wire_type_observed": "String",
+      "nullable_observed": "no at explicit cast",
+      "default_observed": "none observed in reviewed scalar cast",
+      "transform": "preserve raw value",
+      "key_pcs": [
+        "0x625064"
+      ],
+      "type_cast_pcs": [
+        "0x6250a4"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/homework.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "HomeworkSubject",
+      "field": "color",
+      "version": "Android1.0.12",
+      "wire_type_observed": "String",
+      "nullable_observed": "no at explicit cast",
+      "default_observed": "none observed in reviewed scalar cast",
+      "transform": "int.parse(inputString,radix:16) -> Flutter ARGB Color; preserve full32bitvalue",
+      "key_pcs": [
+        "0x6250c0"
+      ],
+      "type_cast_pcs": [
+        "0x6250fc"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/homework.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "HomeworkAttachment",
+      "field": "name",
+      "version": "Android1.0.12",
+      "wire_type_observed": "String",
+      "nullable_observed": "no at explicit cast",
+      "default_observed": "none observed in reviewed scalar cast",
+      "transform": "preserve raw value",
+      "key_pcs": [
+        "0x6252ac"
+      ],
+      "type_cast_pcs": [
+        "0x6252ec"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/homework.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "HomeworkAttachment",
+      "field": "url",
+      "version": "Android1.0.12",
+      "wire_type_observed": "String",
+      "nullable_observed": "no at explicit cast",
+      "default_observed": "none observed in reviewed scalar cast",
+      "transform": "preserve raw value",
+      "key_pcs": [
+        "0x625308"
+      ],
+      "type_cast_pcs": [
+        "0x625344"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/homework.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "HomeworkTeacher",
+      "field": "id",
+      "version": "Android1.0.12",
+      "wire_type_observed": "int",
+      "nullable_observed": "no at explicit cast",
+      "default_observed": "none observed in reviewed scalar cast",
+      "transform": "preserve raw value",
+      "key_pcs": [
+        "0x624f10"
+      ],
+      "type_cast_pcs": [
+        "0x624f40"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/homework.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "HomeworkTeacher",
+      "field": "full_name",
+      "version": "Android1.0.12",
+      "wire_type_observed": "String",
+      "nullable_observed": "no at explicit cast",
+      "default_observed": "none observed in reviewed scalar cast",
+      "transform": "preserve raw value",
+      "key_pcs": [
+        "0x624f5c"
+      ],
+      "type_cast_pcs": [
+        "0x624f9c"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/homework.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "Homework",
+      "field": "id",
+      "version": "Android1.0.12",
+      "wire_type_observed": "int",
+      "nullable_observed": "no at explicit cast",
+      "default_observed": "none observed in reviewed scalar cast",
+      "transform": "preserve raw value",
+      "key_pcs": [
+        "0x62496c"
+      ],
+      "type_cast_pcs": [
+        "0x62499c"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/homework.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "Homework",
+      "field": "subject",
+      "version": "Android1.0.12",
+      "wire_type_observed": "Map<String, dynamic>",
+      "nullable_observed": "conditional; inspect branch/default",
+      "default_observed": "branch exists; exact fallback annotated individually below if reviewed",
+      "transform": "preserve raw value",
+      "key_pcs": [
+        "0x6249c0"
+      ],
+      "type_cast_pcs": [
+        "0x6249e4"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/homework.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "Homework",
+      "field": "publish_date",
+      "version": "Android1.0.12",
+      "wire_type_observed": "String",
+      "nullable_observed": "no at explicit cast",
+      "default_observed": "none observed in reviewed scalar cast",
+      "transform": "DateTime.parse(inputString); timezone follows encoded offset or local if absent",
+      "key_pcs": [
+        "0x624a1c"
+      ],
+      "type_cast_pcs": [
+        "0x624a5c"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/homework.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "Homework",
+      "field": "finish_date",
+      "version": "Android1.0.12",
+      "wire_type_observed": "String",
+      "nullable_observed": "no at explicit cast",
+      "default_observed": "none observed in reviewed scalar cast",
+      "transform": "DateTime.parse(inputString); timezone follows encoded offset or local if absent",
+      "key_pcs": [
+        "0x624a88"
+      ],
+      "type_cast_pcs": [
+        "0x624ac8"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/homework.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "Homework",
+      "field": "teacher",
+      "version": "Android1.0.12",
+      "wire_type_observed": "Map<String, dynamic>",
+      "nullable_observed": "conditional; inspect branch/default",
+      "default_observed": "branch exists; exact fallback annotated individually below if reviewed",
+      "transform": "preserve raw value",
+      "key_pcs": [
+        "0x624afc"
+      ],
+      "type_cast_pcs": [
+        "0x624b20"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/homework.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "Homework",
+      "field": "content",
+      "version": "Android1.0.12",
+      "wire_type_observed": "String",
+      "nullable_observed": "no at explicit cast",
+      "default_observed": "none observed in reviewed scalar cast",
+      "transform": "preserve raw value",
+      "key_pcs": [
+        "0x624b58"
+      ],
+      "type_cast_pcs": [
+        "0x624b98"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/homework.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "Homework",
+      "field": "attachments",
+      "version": "Android1.0.12",
+      "wire_type_observed": "List",
+      "nullable_observed": "conditional; inspect branch/default",
+      "default_observed": "branch exists; exact fallback annotated individually below if reviewed",
+      "transform": "preserve raw value",
+      "key_pcs": [
+        "0x624bf4",
+        "0x624cdc"
+      ],
+      "type_cast_pcs": [
+        "0x624c98",
+        "0x624d1c"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/homework.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "LessonAccompaniment",
+      "field": "subject",
+      "version": "Android1.0.12",
+      "wire_type_observed": "String",
+      "nullable_observed": "no at explicit cast",
+      "default_observed": "none observed in reviewed scalar cast",
+      "transform": "preserve raw value",
+      "key_pcs": [
+        "0x6270e4"
+      ],
+      "type_cast_pcs": [
+        "0x627124"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/lesson.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "LessonAccompaniment",
+      "field": "accompanist",
+      "version": "Android1.0.12",
+      "wire_type_observed": "String",
+      "nullable_observed": "no at explicit cast",
+      "default_observed": "none observed in reviewed scalar cast",
+      "transform": "preserve raw value",
+      "key_pcs": [
+        "0x627144"
+      ],
+      "type_cast_pcs": [
+        "0x627184"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/lesson.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "LessonAccompaniment",
+      "field": "start",
+      "version": "Android1.0.12",
+      "wire_type_observed": "String",
+      "nullable_observed": "no at explicit cast",
+      "default_observed": "none observed in reviewed scalar cast",
+      "transform": "DateTime.parse(inputString); timezone follows encoded offset or local if absent",
+      "key_pcs": [
+        "0x6271a4"
+      ],
+      "type_cast_pcs": [
+        "0x6271e0"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/lesson.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "LessonAccompaniment",
+      "field": "end",
+      "version": "Android1.0.12",
+      "wire_type_observed": "String",
+      "nullable_observed": "no at explicit cast",
+      "default_observed": "none observed in reviewed scalar cast",
+      "transform": "DateTime.parse(inputString); timezone follows encoded offset or local if absent",
+      "key_pcs": [
+        "0x62720c"
+      ],
+      "type_cast_pcs": [
+        "0x627248"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/lesson.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "LessonExam",
+      "field": "description",
+      "version": "Android1.0.12",
+      "wire_type_observed": "String",
+      "nullable_observed": "no at explicit cast",
+      "default_observed": "none observed in reviewed scalar cast",
+      "transform": "preserve raw value",
+      "key_pcs": [
+        "0x627344"
+      ],
+      "type_cast_pcs": [
+        "0x627384"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/lesson.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "LessonExam",
+      "field": "start",
+      "version": "Android1.0.12",
+      "wire_type_observed": "String",
+      "nullable_observed": "no at explicit cast",
+      "default_observed": "none observed in reviewed scalar cast",
+      "transform": "DateTime.parse(inputString); timezone follows encoded offset or local if absent",
+      "key_pcs": [
+        "0x6273b4"
+      ],
+      "type_cast_pcs": [
+        "0x6273f0"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/lesson.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "LessonExam",
+      "field": "end",
+      "version": "Android1.0.12",
+      "wire_type_observed": "String",
+      "nullable_observed": "no at explicit cast",
+      "default_observed": "none observed in reviewed scalar cast",
+      "transform": "DateTime.parse(inputString); timezone follows encoded offset or local if absent",
+      "key_pcs": [
+        "0x62741c"
+      ],
+      "type_cast_pcs": [
+        "0x627458"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/lesson.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "LessonTeacher",
+      "field": "id",
+      "version": "Android1.0.12",
+      "wire_type_observed": "int",
+      "nullable_observed": "no at explicit cast",
+      "default_observed": "none observed in reviewed scalar cast",
+      "transform": "preserve raw value",
+      "key_pcs": [
+        "0x62754c"
+      ],
+      "type_cast_pcs": [
+        "0x62757c"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/lesson.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "LessonTeacher",
+      "field": "full_name",
+      "version": "Android1.0.12",
+      "wire_type_observed": "String",
+      "nullable_observed": "no at explicit cast",
+      "default_observed": "none observed in reviewed scalar cast",
+      "transform": "preserve raw value",
+      "key_pcs": [
+        "0x627598"
+      ],
+      "type_cast_pcs": [
+        "0x6275d8"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/lesson.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "Lesson",
+      "field": "name",
+      "version": "Android1.0.12",
+      "wire_type_observed": "String",
+      "nullable_observed": "no at explicit cast",
+      "default_observed": "none observed in reviewed scalar cast",
+      "transform": "preserve raw value",
+      "key_pcs": [
+        "0x625d6c"
+      ],
+      "type_cast_pcs": [
+        "0x625dac"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/lesson.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "Lesson",
+      "field": "short_name",
+      "version": "Android1.0.12",
+      "wire_type_observed": "String",
+      "nullable_observed": "no at explicit cast",
+      "default_observed": "none observed in reviewed scalar cast",
+      "transform": "preserve raw value",
+      "key_pcs": [
+        "0x625dcc"
+      ],
+      "type_cast_pcs": [
+        "0x625e04"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/lesson.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "Lesson",
+      "field": "original_name",
+      "version": "Android1.0.12",
+      "wire_type_observed": "String?",
+      "nullable_observed": "yes",
+      "default_observed": "preserve null",
+      "transform": "preserve raw value",
+      "key_pcs": [
+        "0x625e24"
+      ],
+      "type_cast_pcs": [
+        "0x625e64"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/lesson.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "Lesson",
+      "field": "original_short_name",
+      "version": "Android1.0.12",
+      "wire_type_observed": "String?",
+      "nullable_observed": "yes",
+      "default_observed": "preserve null",
+      "transform": "preserve raw value",
+      "key_pcs": [
+        "0x625e84"
+      ],
+      "type_cast_pcs": [
+        "0x625ebc"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/lesson.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "Lesson",
+      "field": "primary_description",
+      "version": "Android1.0.12",
+      "wire_type_observed": "String?",
+      "nullable_observed": "yes",
+      "default_observed": "preserve null",
+      "transform": "preserve raw value",
+      "key_pcs": [
+        "0x625edc"
+      ],
+      "type_cast_pcs": [
+        "0x625f1c"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/lesson.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "Lesson",
+      "field": "secondary_description",
+      "version": "Android1.0.12",
+      "wire_type_observed": "String?",
+      "nullable_observed": "yes",
+      "default_observed": "preserve null",
+      "transform": "preserve raw value",
+      "key_pcs": [
+        "0x625f3c"
+      ],
+      "type_cast_pcs": [
+        "0x625f7c"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/lesson.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "Lesson",
+      "field": "room",
+      "version": "Android1.0.12",
+      "wire_type_observed": "String",
+      "nullable_observed": "no at explicit cast",
+      "default_observed": "none observed in reviewed scalar cast",
+      "transform": "preserve raw value",
+      "key_pcs": [
+        "0x625f9c"
+      ],
+      "type_cast_pcs": [
+        "0x625fdc"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/lesson.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "Lesson",
+      "field": "color",
+      "version": "Android1.0.12",
+      "wire_type_observed": "String",
+      "nullable_observed": "no at explicit cast",
+      "default_observed": "none observed in reviewed scalar cast",
+      "transform": "int.parse(inputString,radix:16) -> Flutter ARGB Color; preserve full32bitvalue",
+      "key_pcs": [
+        "0x625ffc"
+      ],
+      "type_cast_pcs": [
+        "0x626038"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/lesson.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "Lesson",
+      "field": "absence_type",
+      "version": "Android1.0.12",
+      "wire_type_observed": "int",
+      "nullable_observed": "conditional; inspect branch/default",
+      "default_observed": "branch exists; exact fallback annotated individually below if reviewed",
+      "transform": "AbsenceType.fromTypeCode(integer custom code)",
+      "key_pcs": [
+        "0x626120",
+        "0x626160"
+      ],
+      "type_cast_pcs": [
+        "0x62619c"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/lesson.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "Lesson",
+      "field": "is_substitution",
+      "version": "Android1.0.12",
+      "wire_type_observed": "bool",
+      "nullable_observed": "no at explicit cast",
+      "default_observed": "none observed in reviewed scalar cast",
+      "transform": "preserve raw value",
+      "key_pcs": [
+        "0x6261e4"
+      ],
+      "type_cast_pcs": [
+        "0x626220"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/lesson.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "Lesson",
+      "field": "substitution_type",
+      "version": "Android1.0.12",
+      "wire_type_observed": "int",
+      "nullable_observed": "conditional; inspect branch/default",
+      "default_observed": "branch exists; exact fallback annotated individually below if reviewed",
+      "transform": "preserve raw value",
+      "key_pcs": [
+        "0x626240",
+        "0x626280"
+      ],
+      "type_cast_pcs": [
+        "0x6262bc"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/lesson.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "Lesson",
+      "field": "is_remote",
+      "version": "Android1.0.12",
+      "wire_type_observed": "bool",
+      "nullable_observed": "no at explicit cast",
+      "default_observed": "none observed in reviewed scalar cast",
+      "transform": "preserve raw value",
+      "key_pcs": [
+        "0x62631c"
+      ],
+      "type_cast_pcs": [
+        "0x626358"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/lesson.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "Lesson",
+      "field": "remote_link",
+      "version": "Android1.0.12",
+      "wire_type_observed": "String?",
+      "nullable_observed": "yes",
+      "default_observed": "preserve null",
+      "transform": "preserve raw value",
+      "key_pcs": [
+        "0x626378"
+      ],
+      "type_cast_pcs": [
+        "0x6263b8"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/lesson.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "Lesson",
+      "field": "teachers",
+      "version": "Android1.0.12",
+      "wire_type_observed": "List",
+      "nullable_observed": "conditional; inspect branch/default",
+      "default_observed": "branch exists; exact fallback annotated individually below if reviewed",
+      "transform": "preserve raw value",
+      "key_pcs": [
+        "0x6263d8",
+        "0x6264bc"
+      ],
+      "type_cast_pcs": [
+        "0x62647c",
+        "0x6264fc"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/lesson.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "Lesson",
+      "field": "exams",
+      "version": "Android1.0.12",
+      "wire_type_observed": "List",
+      "nullable_observed": "conditional; inspect branch/default",
+      "default_observed": "branch exists; exact fallback annotated individually below if reviewed",
+      "transform": "preserve raw value",
+      "key_pcs": [
+        "0x6265ac",
+        "0x626690"
+      ],
+      "type_cast_pcs": [
+        "0x626650",
+        "0x6266d0"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/lesson.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "Lesson",
+      "field": "accompaniments",
+      "version": "Android1.0.12",
+      "wire_type_observed": "List",
+      "nullable_observed": "conditional; inspect branch/default",
+      "default_observed": "branch exists; exact fallback annotated individually below if reviewed",
+      "transform": "preserve raw value",
+      "key_pcs": [
+        "0x626780",
+        "0x626864"
+      ],
+      "type_cast_pcs": [
+        "0x626824",
+        "0x6268a4"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/lesson.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "Lesson",
+      "field": "absence_type_change_request",
+      "version": "Android1.0.12",
+      "wire_type_observed": "Map<String, dynamic>",
+      "nullable_observed": "conditional; inspect branch/default",
+      "default_observed": "branch exists; exact fallback annotated individually below if reviewed",
+      "transform": "preserve raw value",
+      "key_pcs": [
+        "0x626954",
+        "0x6269e0"
+      ],
+      "type_cast_pcs": [
+        "0x6269a0",
+        "0x626a04"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/lesson.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "Lesson",
+      "field": "start",
+      "version": "Android1.0.12",
+      "wire_type_observed": "String",
+      "nullable_observed": "no at explicit cast",
+      "default_observed": "none observed in reviewed scalar cast",
+      "transform": "DateTime.parse(inputString); timezone follows encoded offset or local if absent",
+      "key_pcs": [
+        "0x626a40"
+      ],
+      "type_cast_pcs": [
+        "0x626a7c"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/lesson.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "Lesson",
+      "field": "end",
+      "version": "Android1.0.12",
+      "wire_type_observed": "String",
+      "nullable_observed": "no at explicit cast",
+      "default_observed": "none observed in reviewed scalar cast",
+      "transform": "DateTime.parse(inputString); timezone follows encoded offset or local if absent",
+      "key_pcs": [
+        "0x626aa8"
+      ],
+      "type_cast_pcs": [
+        "0x626ae4"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/lesson.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "LessonWithAbsence",
+      "field": "name",
+      "version": "Android1.0.12",
+      "wire_type_observed": "String",
+      "nullable_observed": "no at explicit cast",
+      "default_observed": "none observed in reviewed scalar cast",
+      "transform": "preserve raw value",
+      "key_pcs": [
+        "0x620b30"
+      ],
+      "type_cast_pcs": [
+        "0x620b70"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/lesson_with_absence.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "LessonWithAbsence",
+      "field": "short_name",
+      "version": "Android1.0.12",
+      "wire_type_observed": "String",
+      "nullable_observed": "no at explicit cast",
+      "default_observed": "none observed in reviewed scalar cast",
+      "transform": "preserve raw value",
+      "key_pcs": [
+        "0x620b90"
+      ],
+      "type_cast_pcs": [
+        "0x620bd0"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/lesson_with_absence.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "LessonWithAbsence",
+      "field": "color",
+      "version": "Android1.0.12",
+      "wire_type_observed": "String",
+      "nullable_observed": "no at explicit cast",
+      "default_observed": "none observed in reviewed scalar cast",
+      "transform": "int.parse(inputString,radix:16) -> Flutter ARGB Color; preserve full32bitvalue",
+      "key_pcs": [
+        "0x620bf0"
+      ],
+      "type_cast_pcs": [
+        "0x620c2c"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/lesson_with_absence.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "LessonWithAbsence",
+      "field": "absence_type",
+      "version": "Android1.0.12",
+      "wire_type_observed": "int",
+      "nullable_observed": "no at explicit cast",
+      "default_observed": "none observed in reviewed scalar cast",
+      "transform": "AbsenceType.fromTypeCode(integer custom code)",
+      "key_pcs": [
+        "0x620d14"
+      ],
+      "type_cast_pcs": [
+        "0x620d50"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/lesson_with_absence.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "LessonWithAbsence",
+      "field": "absence_type_change_request",
+      "version": "Android1.0.12",
+      "wire_type_observed": "Map<String, dynamic>",
+      "nullable_observed": "conditional; inspect branch/default",
+      "default_observed": "branch exists; exact fallback annotated individually below if reviewed",
+      "transform": "preserve raw value",
+      "key_pcs": [
+        "0x620db0",
+        "0x620e3c"
+      ],
+      "type_cast_pcs": [
+        "0x620dfc",
+        "0x620e60",
+        "0x620e84"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/lesson_with_absence.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "LessonWithAbsence",
+      "field": "start",
+      "version": "Android1.0.12",
+      "wire_type_observed": "String",
+      "nullable_observed": "no at explicit cast",
+      "default_observed": "none observed in reviewed scalar cast",
+      "transform": "DateTime.parse(inputString); timezone follows encoded offset or local if absent",
+      "key_pcs": [
+        "0x620eac"
+      ],
+      "type_cast_pcs": [
+        "0x620ee8"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/lesson_with_absence.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "LessonWithAbsence",
+      "field": "end",
+      "version": "Android1.0.12",
+      "wire_type_observed": "String",
+      "nullable_observed": "no at explicit cast",
+      "default_observed": "none observed in reviewed scalar cast",
+      "transform": "DateTime.parse(inputString); timezone follows encoded offset or local if absent",
+      "key_pcs": [
+        "0x620f14"
+      ],
+      "type_cast_pcs": [
+        "0x620f50"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/lesson_with_absence.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "User",
+      "field": "id",
+      "version": "Android1.0.12",
+      "wire_type_observed": "int",
+      "nullable_observed": "no at explicit cast",
+      "default_observed": "none observed in reviewed scalar cast",
+      "transform": "preserve raw value",
+      "key_pcs": [
+        "0x617fec"
+      ],
+      "type_cast_pcs": [
+        "0x618024"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/user.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "User",
+      "field": "role",
+      "version": "Android1.0.12",
+      "wire_type_observed": "String",
+      "nullable_observed": "no at explicit cast",
+      "default_observed": "none observed in reviewed scalar cast",
+      "transform": "EnumByName.byName(UserType, inputString): student/guardian",
+      "key_pcs": [
+        "0x618044"
+      ],
+      "type_cast_pcs": [
+        "0x618084"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/user.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "User",
+      "field": "first_name",
+      "version": "Android1.0.12",
+      "wire_type_observed": "String",
+      "nullable_observed": "no at explicit cast",
+      "default_observed": "none observed in reviewed scalar cast",
+      "transform": "preserve raw value",
+      "key_pcs": [
+        "0x6180c4"
+      ],
+      "type_cast_pcs": [
+        "0x618104"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/user.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "User",
+      "field": "last_name",
+      "version": "Android1.0.12",
+      "wire_type_observed": "String",
+      "nullable_observed": "no at explicit cast",
+      "default_observed": "none observed in reviewed scalar cast",
+      "transform": "preserve raw value",
+      "key_pcs": [
+        "0x618124"
+      ],
+      "type_cast_pcs": [
+        "0x618164"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/user.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "User",
+      "field": "students",
+      "version": "Android1.0.12",
+      "wire_type_observed": "List",
+      "nullable_observed": "yes, maps to empty list",
+      "default_observed": "empty List<User> when absent/null branch0x618184..0x6182c0",
+      "transform": "if supplied list, recursively User.fromJson(item); closure0x6183b4 ->0x6183ec",
+      "key_pcs": [
+        "0x618184",
+        "0x6181a8"
+      ],
+      "type_cast_pcs": [
+        "0x6181e8"
+      ],
+      "evidence": "blutter-android/asm/fryderyk_mobile_v3/models/user.dart",
+      "status": "key ownership and explicit type test verified; fallback only when stated",
+      "unknowns": "server guarantees, omitted-vs-null policy and branch outcomes require fixtures unless explicitly stated"
+    },
+    {
+      "model": "Message",
+      "field": "id",
+      "version": "iOS1.1.7",
+      "wire_type_observed": "integer",
+      "nullable_observed": "no at reviewed scalar cast",
+      "default_observed": "none observed",
+      "transform": "preserve raw; nested decoder where named",
+      "key_pcs": [
+        "0x00290f00"
+      ],
+      "type_cast_pcs": [],
+      "evidence": "corrected-asm/Message/Message.fromJson_282794.txt",
+      "status": "owned decoder key and native scalar class tests observed; precise nullable branch incomplete for complex values",
+      "unknowns": "live fixtures and full fallback branch coverage"
+    },
+    {
+      "model": "Message",
+      "field": "subject",
+      "version": "iOS1.1.7",
+      "wire_type_observed": "string",
+      "nullable_observed": "no at reviewed scalar cast",
+      "default_observed": "none observed",
+      "transform": "preserve raw; nested decoder where named",
+      "key_pcs": [
+        "0x00290f5c"
+      ],
+      "type_cast_pcs": [],
+      "evidence": "corrected-asm/Message/Message.fromJson_282794.txt",
+      "status": "owned decoder key and native scalar class tests observed; precise nullable branch incomplete for complex values",
+      "unknowns": "live fixtures and full fallback branch coverage"
+    },
+    {
+      "model": "Message",
+      "field": "content",
+      "version": "iOS1.1.7",
+      "wire_type_observed": "string",
+      "nullable_observed": "no at reviewed scalar cast",
+      "default_observed": "none observed",
+      "transform": "HTML parse(content) retained for rich rendering",
+      "key_pcs": [
+        "0x00290fbc"
+      ],
+      "type_cast_pcs": [],
+      "evidence": "corrected-asm/Message/Message.fromJson_282794.txt",
+      "status": "owned decoder key and native scalar class tests observed; precise nullable branch incomplete for complex values",
+      "unknowns": "live fixtures and full fallback branch coverage"
+    },
+    {
+      "model": "Message",
+      "field": "sent_date",
+      "version": "iOS1.1.7",
+      "wire_type_observed": "string",
+      "nullable_observed": "no at reviewed scalar cast",
+      "default_observed": "none observed",
+      "transform": "DateTime.parse(sent_date)",
+      "key_pcs": [
+        "0x0029102c"
+      ],
+      "type_cast_pcs": [],
+      "evidence": "corrected-asm/Message/Message.fromJson_282794.txt",
+      "status": "owned decoder key and native scalar class tests observed; precise nullable branch incomplete for complex values",
+      "unknowns": "live fixtures and full fallback branch coverage"
+    },
+    {
+      "model": "Message",
+      "field": "sender",
+      "version": "iOS1.1.7",
+      "wire_type_observed": "object<MessageSender>",
+      "nullable_observed": "map cast, nullability unresolved",
+      "default_observed": "none observed",
+      "transform": "preserve raw; nested decoder where named",
+      "key_pcs": [
+        "0x0029109c"
+      ],
+      "type_cast_pcs": [],
+      "evidence": "corrected-asm/Message/Message.fromJson_282794.txt",
+      "status": "owned decoder key and native scalar class tests observed; precise nullable branch incomplete for complex values",
+      "unknowns": "live fixtures and full fallback branch coverage"
+    },
+    {
+      "model": "Message",
+      "field": "recipients_v2",
+      "version": "iOS1.1.7",
+      "wire_type_observed": "array<MessageRecipient>",
+      "nullable_observed": "conditional collection branch",
+      "default_observed": "empty typed list fallback visible; verify missing-vs-null-vs-wrong-type distinction",
+      "transform": "preserve raw; nested decoder where named",
+      "key_pcs": [
+        "0x002910f4"
+      ],
+      "type_cast_pcs": [],
+      "evidence": "corrected-asm/Message/Message.fromJson_282794.txt",
+      "status": "owned decoder key and native scalar class tests observed; precise nullable branch incomplete for complex values",
+      "unknowns": "live fixtures and full fallback branch coverage"
+    },
+    {
+      "model": "Message",
+      "field": "cc_recipients_v2",
+      "version": "iOS1.1.7",
+      "wire_type_observed": "array<MessageRecipient>",
+      "nullable_observed": "conditional collection branch",
+      "default_observed": "empty typed list fallback visible; verify missing-vs-null-vs-wrong-type distinction",
+      "transform": "preserve raw; nested decoder where named",
+      "key_pcs": [
+        "0x002912c4"
+      ],
+      "type_cast_pcs": [],
+      "evidence": "corrected-asm/Message/Message.fromJson_282794.txt",
+      "status": "owned decoder key and native scalar class tests observed; precise nullable branch incomplete for complex values",
+      "unknowns": "live fixtures and full fallback branch coverage"
+    },
+    {
+      "model": "Message",
+      "field": "bcc_recipients_v2",
+      "version": "iOS1.1.7",
+      "wire_type_observed": "array<MessageRecipient>",
+      "nullable_observed": "conditional collection branch",
+      "default_observed": "empty typed list fallback visible; verify missing-vs-null-vs-wrong-type distinction",
+      "transform": "preserve raw; nested decoder where named",
+      "key_pcs": [
+        "0x00291494"
+      ],
+      "type_cast_pcs": [],
+      "evidence": "corrected-asm/Message/Message.fromJson_282794.txt",
+      "status": "owned decoder key and native scalar class tests observed; precise nullable branch incomplete for complex values",
+      "unknowns": "live fixtures and full fallback branch coverage"
+    },
+    {
+      "model": "Message",
+      "field": "is_read",
+      "version": "iOS1.1.7",
+      "wire_type_observed": "boolean",
+      "nullable_observed": "no at reviewed scalar cast",
+      "default_observed": "none observed",
+      "transform": "preserve raw; nested decoder where named",
+      "key_pcs": [
+        "0x00291664"
+      ],
+      "type_cast_pcs": [],
+      "evidence": "corrected-asm/Message/Message.fromJson_282794.txt",
+      "status": "owned decoder key and native scalar class tests observed; precise nullable branch incomplete for complex values",
+      "unknowns": "live fixtures and full fallback branch coverage"
+    },
+    {
+      "model": "Message",
+      "field": "is_replied",
+      "version": "iOS1.1.7",
+      "wire_type_observed": "boolean",
+      "nullable_observed": "no at reviewed scalar cast",
+      "default_observed": "none observed",
+      "transform": "preserve raw; nested decoder where named",
+      "key_pcs": [
+        "0x002916c0"
+      ],
+      "type_cast_pcs": [],
+      "evidence": "corrected-asm/Message/Message.fromJson_282794.txt",
+      "status": "owned decoder key and native scalar class tests observed; precise nullable branch incomplete for complex values",
+      "unknowns": "live fixtures and full fallback branch coverage"
+    },
+    {
+      "model": "Message",
+      "field": "is_deleted",
+      "version": "iOS1.1.7",
+      "wire_type_observed": "boolean",
+      "nullable_observed": "no at reviewed scalar cast",
+      "default_observed": "none observed",
+      "transform": "preserve raw; nested decoder where named",
+      "key_pcs": [
+        "0x00291714"
+      ],
+      "type_cast_pcs": [],
+      "evidence": "corrected-asm/Message/Message.fromJson_282794.txt",
+      "status": "owned decoder key and native scalar class tests observed; precise nullable branch incomplete for complex values",
+      "unknowns": "live fixtures and full fallback branch coverage"
+    },
+    {
+      "model": "Message",
+      "field": "tags",
+      "version": "iOS1.1.7",
+      "wire_type_observed": "array<MessageTag>",
+      "nullable_observed": "conditional collection branch",
+      "default_observed": "empty typed list fallback visible; verify missing-vs-null-vs-wrong-type distinction",
+      "transform": "preserve raw; nested decoder where named",
+      "key_pcs": [
+        "0x00291770"
+      ],
+      "type_cast_pcs": [],
+      "evidence": "corrected-asm/Message/Message.fromJson_282794.txt",
+      "status": "owned decoder key and native scalar class tests observed; precise nullable branch incomplete for complex values",
+      "unknowns": "live fixtures and full fallback branch coverage"
+    },
+    {
+      "model": "Message",
+      "field": "attachments",
+      "version": "iOS1.1.7",
+      "wire_type_observed": "array<MessageAttachment>",
+      "nullable_observed": "conditional collection branch",
+      "default_observed": "empty typed list fallback visible; verify missing-vs-null-vs-wrong-type distinction",
+      "transform": "preserve raw; nested decoder where named",
+      "key_pcs": [
+        "0x00291940"
+      ],
+      "type_cast_pcs": [],
+      "evidence": "corrected-asm/Message/Message.fromJson_282794.txt",
+      "status": "owned decoder key and native scalar class tests observed; precise nullable branch incomplete for complex values",
+      "unknowns": "live fixtures and full fallback branch coverage"
+    },
+    {
+      "model": "MessageSender",
+      "field": "key",
+      "version": "iOS1.1.7",
+      "wire_type_observed": "string",
+      "nullable_observed": "no at reviewed scalar cast",
+      "default_observed": "none observed",
+      "transform": "lookup recipient key, not email/student id",
+      "key_pcs": [
+        "0x00291c04"
+      ],
+      "type_cast_pcs": [],
+      "evidence": "corrected-asm/MessageSender/MessageSender.fromJson_283498.txt",
+      "status": "owned decoder key and native scalar class tests observed; precise nullable branch incomplete for complex values",
+      "unknowns": "live fixtures and full fallback branch coverage"
+    },
+    {
+      "model": "MessageSender",
+      "field": "name",
+      "version": "iOS1.1.7",
+      "wire_type_observed": "string",
+      "nullable_observed": "no at reviewed scalar cast",
+      "default_observed": "none observed",
+      "transform": "preserve raw; nested decoder where named",
+      "key_pcs": [
+        "0x00291c60"
+      ],
+      "type_cast_pcs": [],
+      "evidence": "corrected-asm/MessageSender/MessageSender.fromJson_283498.txt",
+      "status": "owned decoder key and native scalar class tests observed; precise nullable branch incomplete for complex values",
+      "unknowns": "live fixtures and full fallback branch coverage"
+    },
+    {
+      "model": "MessageRecipient",
+      "field": "key",
+      "version": "iOS1.1.7",
+      "wire_type_observed": "string",
+      "nullable_observed": "no at reviewed scalar cast",
+      "default_observed": "none observed",
+      "transform": "lookup recipient key, not email/student id",
+      "key_pcs": [
+        "0x002a0e1c"
+      ],
+      "type_cast_pcs": [],
+      "evidence": "corrected-asm/MessageRecipient/MessageRecipient.fromJson_2926b0.txt",
+      "status": "owned decoder key and native scalar class tests observed; precise nullable branch incomplete for complex values",
+      "unknowns": "live fixtures and full fallback branch coverage"
+    },
+    {
+      "model": "MessageRecipient",
+      "field": "name",
+      "version": "iOS1.1.7",
+      "wire_type_observed": "string",
+      "nullable_observed": "no at reviewed scalar cast",
+      "default_observed": "none observed",
+      "transform": "preserve raw; nested decoder where named",
+      "key_pcs": [
+        "0x002a0e7c"
+      ],
+      "type_cast_pcs": [],
+      "evidence": "corrected-asm/MessageRecipient/MessageRecipient.fromJson_2926b0.txt",
+      "status": "owned decoder key and native scalar class tests observed; precise nullable branch incomplete for complex values",
+      "unknowns": "live fixtures and full fallback branch coverage"
+    },
+    {
+      "model": "MessageRecipient",
+      "field": "role",
+      "version": "iOS1.1.7",
+      "wire_type_observed": "string",
+      "nullable_observed": "no at reviewed scalar cast",
+      "default_observed": "none observed",
+      "transform": "preserve raw; nested decoder where named",
+      "key_pcs": [
+        "0x002a0ed8"
+      ],
+      "type_cast_pcs": [],
+      "evidence": "corrected-asm/MessageRecipient/MessageRecipient.fromJson_2926b0.txt",
+      "status": "owned decoder key and native scalar class tests observed; precise nullable branch incomplete for complex values",
+      "unknowns": "live fixtures and full fallback branch coverage"
+    },
+    {
+      "model": "MessageAttachment",
+      "field": "id",
+      "version": "iOS1.1.7",
+      "wire_type_observed": "integer",
+      "nullable_observed": "no at reviewed scalar cast",
+      "default_observed": "none observed",
+      "transform": "preserve raw; nested decoder where named",
+      "key_pcs": [
+        "0x002a09c8"
+      ],
+      "type_cast_pcs": [],
+      "evidence": "corrected-asm/MessageAttachment/MessageAttachment.fromJson_29225c.txt",
+      "status": "owned decoder key and native scalar class tests observed; precise nullable branch incomplete for complex values",
+      "unknowns": "live fixtures and full fallback branch coverage"
+    },
+    {
+      "model": "MessageAttachment",
+      "field": "name",
+      "version": "iOS1.1.7",
+      "wire_type_observed": "string",
+      "nullable_observed": "no at reviewed scalar cast",
+      "default_observed": "none observed",
+      "transform": "preserve raw; nested decoder where named",
+      "key_pcs": [
+        "0x002a0a24"
+      ],
+      "type_cast_pcs": [],
+      "evidence": "corrected-asm/MessageAttachment/MessageAttachment.fromJson_29225c.txt",
+      "status": "owned decoder key and native scalar class tests observed; precise nullable branch incomplete for complex values",
+      "unknowns": "live fixtures and full fallback branch coverage"
+    },
+    {
+      "model": "MessageAttachment",
+      "field": "url",
+      "version": "iOS1.1.7",
+      "wire_type_observed": "string",
+      "nullable_observed": "no at reviewed scalar cast",
+      "default_observed": "none observed",
+      "transform": "preserve raw; nested decoder where named",
+      "key_pcs": [
+        "0x002a0a7c"
+      ],
+      "type_cast_pcs": [],
+      "evidence": "corrected-asm/MessageAttachment/MessageAttachment.fromJson_29225c.txt",
+      "status": "owned decoder key and native scalar class tests observed; precise nullable branch incomplete for complex values",
+      "unknowns": "live fixtures and full fallback branch coverage"
+    },
+    {
+      "model": "MessageTag",
+      "field": "id",
+      "version": "iOS1.1.7",
+      "wire_type_observed": "integer",
+      "nullable_observed": "no at reviewed scalar cast",
+      "default_observed": "none observed",
+      "transform": "preserve raw; nested decoder where named",
+      "key_pcs": [
+        "0x002a0bb4"
+      ],
+      "type_cast_pcs": [],
+      "evidence": "corrected-asm/MessageTag/MessageTag.fromJson_292448.txt",
+      "status": "owned decoder key and native scalar class tests observed; precise nullable branch incomplete for complex values",
+      "unknowns": "live fixtures and full fallback branch coverage"
+    },
+    {
+      "model": "MessageTag",
+      "field": "name",
+      "version": "iOS1.1.7",
+      "wire_type_observed": "string",
+      "nullable_observed": "no at reviewed scalar cast",
+      "default_observed": "none observed",
+      "transform": "preserve raw; nested decoder where named",
+      "key_pcs": [
+        "0x002a0c08"
+      ],
+      "type_cast_pcs": [],
+      "evidence": "corrected-asm/MessageTag/MessageTag.fromJson_292448.txt",
+      "status": "owned decoder key and native scalar class tests observed; precise nullable branch incomplete for complex values",
+      "unknowns": "live fixtures and full fallback branch coverage"
+    },
+    {
+      "model": "MessageTag",
+      "field": "color",
+      "version": "iOS1.1.7",
+      "wire_type_observed": "string",
+      "nullable_observed": "no at reviewed scalar cast",
+      "default_observed": "none observed",
+      "transform": "preserve raw; nested decoder where named",
+      "key_pcs": [
+        "0x002a0c60"
+      ],
+      "type_cast_pcs": [],
+      "evidence": "corrected-asm/MessageTag/MessageTag.fromJson_292448.txt",
+      "status": "owned decoder key and native scalar class tests observed; precise nullable branch incomplete for complex values",
+      "unknowns": "live fixtures and full fallback branch coverage"
+    }
+  ]
+}

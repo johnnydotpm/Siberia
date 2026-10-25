@@ -1,0 +1,427 @@
+{
+  "status": "final bounded static contract recovery; no backend contacted",
+  "warning": "Do not cite uncorrected meta-named PP comments (off by +2). Use corrected-asm; corrected pool index=(PP-byte-offset-16)/8. Native PCs equal original iOS MachO offsets. Android PCs are Blutter ELF virtual addresses.",
+  "auth": {
+    "bootstrap_token_url": "https://swiadectwa.fryderyk.edu.pl/api/tokens",
+    "bootstrap_version_url": "https://swiadectwa.fryderyk.edu.pl/api/version",
+    "identify": {
+      "method": "POST",
+      "url": "TOKEN_API_URL + /identify",
+      "json_body": {
+        "username": "mobile username",
+        "password": "mobile password",
+        "device": "await Device.getName()"
+      },
+      "headers": {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "App-Version": "await AppHelper.getVersion()"
+      },
+      "evidence": [
+        "Android TokenService._identify 0x615ab4; http.post 0x615c24",
+        "iOS TokenService._identify 0x28e7b0; JSON keys0x28e8c0/0x28e8d4/0x28e8e4; postBL0x28e91c"
+      ]
+    },
+    "refresh": {
+      "method": "POST",
+      "url": "TOKEN_API_URL + /reIdentify",
+      "json_body": {
+        "u": "stored username",
+        "t": "stored refresh-token"
+      },
+      "headers": "same identify headers",
+      "evidence": [
+        "Android _reIdentify0x619b34; keys0x619c34/0x619c48; postBL0x619c84"
+      ]
+    },
+    "login_result": {
+      "reads": [
+        "access_token",
+        "refresh_token",
+        "url"
+      ],
+      "stores": {
+        "username": "mobile username",
+        "access-token": "response.access_token",
+        "refresh-token": "response.refresh_token",
+        "url": "response.url"
+      },
+      "data_url": "stored url + /api/ + resource",
+      "evidence": [
+        "Android login0x6156b0, stores0x615724/0x6157b8/0x61584c/0x6158d8"
+      ],
+      "bootstrap_assignment_evidence": "Android main0x8f41b4 reads dotenv TOKEN_API_URL; value stored TokenService.field13 at0x8f4208; _identify and _reIdentify load that field"
+    },
+    "version_validate": {
+      "method": "POST",
+      "url": "VERSION_API_URL + /validate",
+      "body": "omitted at callsite",
+      "headers": "Content-Type/Accept application/json + App-Version",
+      "evidence": [
+        "Android VersionService.validate0x5f34b0; postBL0x5f35a4"
+      ]
+    },
+    "deep_link": {
+      "http_endpoint": false,
+      "host": "app",
+      "path": "/login",
+      "query_key": "c",
+      "decode": "query c -> Base64Codec.decode -> Utf8Codec.decode -> split(\":\") -> element0 username, element1 password -> login. No JSON decoding. Extra split segments are not consumed here.",
+      "scheme": "fryderyk (Info.plist)",
+      "evidence": [
+        "Android loginByDeepLink0x615484, host0x6154e0,path0x615524,c0x615574,base640x6155d8,UTF80x6155e8,splitcolon0x615600,loginBL0x615658"
+      ],
+      "unknown": "scheme enforcement at caller; additional colon handling: only first two split elements are read here"
+    },
+    "logout": {
+      "operation": "local only in recovered function",
+      "deletes": [
+        "username",
+        "access-token",
+        "refresh-token",
+        "url"
+      ],
+      "then": "CacheManager.clearAll",
+      "evidence": [
+        "Android logout0x6142f4 through0x6143a0"
+      ],
+      "server_revocation": "No server call recovered; guide warning about fresh credentials does not establish revocation"
+    }
+  },
+  "core_routes": [
+    {
+      "method": "GET",
+      "path": "users/getCurrent",
+      "base": "response.url + /api/",
+      "headers": "Content-Type: application/json; Accept: application/json; Authorization: Bearer access-token; App-Version",
+      "json_body": null,
+      "response_data_decoder": "User",
+      "evidence": "UserService.getCurrent0x618f1c/get0x618f94",
+      "confidence": "static caller and dispatch proof; argument semantic studentId corroborated by model/UI context"
+    },
+    {
+      "method": "GET",
+      "path": "grades/getOverview/{studentId}",
+      "base": "response.url + /api/",
+      "headers": "Content-Type: application/json; Accept: application/json; Authorization: Bearer access-token; App-Version",
+      "json_body": null,
+      "response_data_decoder": "GradesOverview",
+      "evidence": "GradeService.getOverview0x6223dc",
+      "confidence": "static caller and dispatch proof; argument semantic studentId corroborated by model/UI context"
+    },
+    {
+      "method": "GET",
+      "path": "grades/list/{studentId}/10",
+      "base": "response.url + /api/",
+      "headers": "Content-Type: application/json; Accept: application/json; Authorization: Bearer access-token; App-Version",
+      "json_body": null,
+      "response_data_decoder": "List<Grade>",
+      "evidence": "GradeService.list0x628278; raw stored Smi0x14 decoded10",
+      "confidence": "static caller and dispatch proof; argument semantic studentId corroborated by model/UI context"
+    },
+    {
+      "method": "GET",
+      "path": "attendances/getOverview/{studentId}",
+      "base": "response.url + /api/",
+      "headers": "Content-Type: application/json; Accept: application/json; Authorization: Bearer access-token; App-Version",
+      "json_body": null,
+      "response_data_decoder": "AttendancesOverview",
+      "evidence": "AttendanceService.getOverview0x62169c",
+      "confidence": "static caller and dispatch proof; argument semantic studentId corroborated by model/UI context"
+    },
+    {
+      "method": "GET",
+      "path": "attendances/listAbsenceTypeChangeRequests/{studentId}",
+      "base": "response.url + /api/",
+      "headers": "Content-Type: application/json; Accept: application/json; Authorization: Bearer access-token; App-Version",
+      "json_body": null,
+      "response_data_decoder": "List<AbsenceTypeChangeRequest>",
+      "evidence": "AttendanceService.listAbsenceTypeChangeRequests0x61d878",
+      "confidence": "static caller and dispatch proof; argument semantic studentId corroborated by model/UI context"
+    },
+    {
+      "method": "GET",
+      "path": "lessons/listAtDay/{studentId}/{y-MM-dd}",
+      "base": "response.url + /api/",
+      "headers": "Content-Type: application/json; Accept: application/json; Authorization: Bearer access-token; App-Version",
+      "json_body": null,
+      "response_data_decoder": "List<Lesson>",
+      "evidence": "LessonService.listAtDay0x625b58; DateFormat y-MM-dd",
+      "confidence": "static caller and dispatch proof; argument semantic studentId corroborated by model/UI context"
+    },
+    {
+      "method": "GET",
+      "path": "lessons/listWithAbsence/{studentId}/{limit??0}",
+      "base": "response.url + /api/",
+      "headers": "Content-Type: application/json; Accept: application/json; Authorization: Bearer access-token; App-Version",
+      "json_body": null,
+      "response_data_decoder": "List<LessonWithAbsence>",
+      "evidence": "LessonService.listWithAbsence0x620408",
+      "confidence": "static caller and dispatch proof; argument semantic studentId corroborated by model/UI context"
+    },
+    {
+      "method": "GET",
+      "path": "homeworks/list/{studentId}/{limit??0}",
+      "base": "response.url + /api/",
+      "headers": "Content-Type: application/json; Accept: application/json; Authorization: Bearer access-token; App-Version",
+      "json_body": null,
+      "response_data_decoder": "List<Homework>",
+      "evidence": "HomeworkService.list0x62422c",
+      "confidence": "static caller and dispatch proof; argument semantic studentId corroborated by model/UI context"
+    },
+    {
+      "method": "POST",
+      "path": "attendances/requestAbsenceTypeChange",
+      "base": "response.url + /api/",
+      "headers": "Content-Type: application/json; Accept: application/json; Authorization: Bearer access-token; App-Version",
+      "json_body": {
+        "id": "optional identifier passed by caller",
+        "student_id": "integer",
+        "start": "yyyy-MM-dd HH:mm:ss",
+        "end": "yyyy-MM-dd HH:mm:ss",
+        "absence_type": 3,
+        "absence_reason": "caller string"
+      },
+      "response_data_decoder": "AbsenceTypeChangeRequest",
+      "evidence": "AttendanceService.requestAbsenceTypeChange0x65aaa8 body keys0x65ab1c/0x65ab2c/0x65ab78/0x65abd4/0x65ac30/0x65ac44; raw Smi6=>3; post0x65aeb8",
+      "confidence": "static caller and dispatch proof; argument semantic studentId corroborated by model/UI context"
+    }
+  ],
+  "ios_messaging": [
+    {
+      "method": "GET",
+      "path": "messages/list/{folder}/{page}/8[?query={query}]",
+      "base": "response.url + /api/",
+      "body": null,
+      "evidence": "MessageService.list0x302094; rawSmi0x10=>8; suffix0x30214c; get-wrapper0x302248; shared wrapper0x302248 -> closure0x3024a4 -> BaseClient0x3024e4 literalGET0x302504",
+      "confidence": "corrected iOS AOT caller; live behavior unobserved"
+    },
+    {
+      "method": "GET",
+      "path": "messages/getRecipients",
+      "base": "response.url + /api/",
+      "body": null,
+      "evidence": "MessageService.getRecipients0x327f54 -> get-wrapper0x302248; shared wrapper0x302248 -> closure0x3024a4 -> BaseClient0x3024e4 literalGET0x302504",
+      "confidence": "corrected iOS AOT caller; live behavior unobserved"
+    },
+    {
+      "method": "POST",
+      "path": "messages/countUnread",
+      "base": "response.url + /api/",
+      "body": "null encoded by shared post wrapper",
+      "evidence": "countUnread0x3267dc BL0x326814 -> sharedpost0x2a1020",
+      "confidence": "corrected iOS AOT caller; live behavior unobserved"
+    },
+    {
+      "method": "POST",
+      "path": "messages/markAsRead/{messageId}",
+      "base": "response.url + /api/",
+      "body": "null encoded by shared post wrapper",
+      "evidence": "markAsRead0x326b70 BL0x326be4 -> sharedpost0x2a1020",
+      "confidence": "corrected iOS AOT caller; live behavior unobserved"
+    },
+    {
+      "method": "POST",
+      "path": "messages/delete/{messageId}",
+      "base": "response.url + /api/",
+      "body": "null encoded by shared post wrapper",
+      "evidence": "delete0x3dc1d8 BL0x3dc24c -> sharedpost0x2a1020",
+      "confidence": "corrected iOS AOT caller; live behavior unobserved"
+    },
+    {
+      "method": "POST",
+      "path": "messages/removeAttachment/{attachmentId}",
+      "base": "response.url + /api/",
+      "body": "null encoded by shared post wrapper",
+      "evidence": "removeAttachment0x3de36c BL0x3de3e0 -> sharedpost0x2a1020",
+      "confidence": "corrected iOS AOT caller; live behavior unobserved"
+    },
+    {
+      "method": "POST",
+      "path": "messages/create[/{contextId}/{action.name}]",
+      "base": "response.url + /api/",
+      "body": {
+        "recipients": "argStack24",
+        "cc_recipients": "arg6",
+        "bcc_recipients": "arg5",
+        "subject": "argStack16",
+        "content": "arg7",
+        "attachment_ids": "arg2"
+      },
+      "evidence": "create0x290cf4; optional suffix only if both nonnull; keys0x290df8/0x290e0c/0x290e20/0x290e34/0x290e48/0x290e5c; sharedpostBL0x290e8c; Message.fromJson0x290ed4",
+      "confidence": "corrected iOS AOT caller; live behavior unobserved",
+      "optional_suffix_status": "Object field+15 corresponds to uncompressed _Enum.name; semantic contextId likely original message ID, still needs direct UI argument provenance."
+    },
+    {
+      "method": "POST_multipart",
+      "path": "messages/uploadAttachment",
+      "base": "response.url + /api/",
+      "body": {
+        "field": "file",
+        "filename": "last slash-separated local path component",
+        "content_type": "application/octet-stream"
+      },
+      "evidence": "uploadFile0x3de870; request ctor0x3df3a4 loads POST0x3df430; MultipartFile._0x3df034 loads file0x3df044",
+      "confidence": "corrected iOS AOT caller; live behavior unobserved",
+      "response_data_type": "integer upload attachment ID (returned by MessageService.uploadAttachment int runtime check)"
+    }
+  ],
+  "remaining": [
+    "Exact live server acceptance and dynamic data origin not observed",
+    "Model key ownership extraction is available in android-model-constructors.json and ios-model-constructors.json; full nullability/constructor defaults not all traced",
+    "Message page index origin and folder values need UI caller review",
+    "No task submission write route recovered",
+    "Uncorrected parser annotations must not be used"
+  ],
+  "ios_validation": "ios-native-validation.json: raw bytes, BLs, direct PP header indices and134 exact literal payload mappings; zero mismatches",
+  "response_envelope": {
+    "handler": "Android TokenService.handleResponse0x615c88, repeated data service handlers; iOS shared handler0x2a1258",
+    "processing": "Response.body -> JSON map; success must be bool; if true returns data; if false reads error.code and error.message",
+    "errors": {
+      "426": "UnsupportedException (legacy-app-version-detected fallback)",
+      "401": "UnauthorizedException (unauthorized fallback)",
+      "other": "CustomException (unexpected-error-try-again fallback)"
+    },
+    "warning": "HTTP status examined on error path, JSON parsing occurs first; no blanket status200 success assumption"
+  },
+  "enum_objects": [
+    {
+      "enum": "AbsenceType",
+      "values": [
+        {
+          "name": "otherAbsence",
+          "enum_index": 8,
+          "provider_code": 8,
+          "snapshot_object_address": "0x9ef461"
+        },
+        {
+          "name": "otherPresent",
+          "enum_index": 7,
+          "provider_code": 7,
+          "snapshot_object_address": "0x9ef481"
+        },
+        {
+          "name": "outEarlier",
+          "enum_index": 6,
+          "provider_code": 6,
+          "snapshot_object_address": "0x9ef4a1"
+        },
+        {
+          "name": "late",
+          "enum_index": 5,
+          "provider_code": 5,
+          "snapshot_object_address": "0x9ef4c1"
+        },
+        {
+          "name": "notExcused",
+          "enum_index": 4,
+          "provider_code": 4,
+          "snapshot_object_address": "0x9ef4e1"
+        },
+        {
+          "name": "explainedAbsence",
+          "enum_index": 3,
+          "provider_code": 3,
+          "snapshot_object_address": "0x9ef501"
+        },
+        {
+          "name": "absence",
+          "enum_index": 2,
+          "provider_code": 2,
+          "snapshot_object_address": "0x9ef521"
+        },
+        {
+          "name": "present",
+          "enum_index": 1,
+          "provider_code": 1,
+          "snapshot_object_address": "0x9ef541"
+        },
+        {
+          "name": "unknown",
+          "enum_index": 0,
+          "provider_code": 0,
+          "snapshot_object_address": "0x9ef561"
+        }
+      ],
+      "source": "blutter-android/objs.txt; fromTypeCode closures compare custom provider_code field, not enum_index"
+    },
+    {
+      "enum": "SubstitutionType",
+      "values": [
+        {
+          "name": "lookAfter",
+          "enum_index": 4,
+          "provider_code": 5,
+          "snapshot_object_address": "0x9ef2a1"
+        },
+        {
+          "name": "inCommonRoom",
+          "enum_index": 3,
+          "provider_code": 4,
+          "snapshot_object_address": "0x9ef2c1"
+        },
+        {
+          "name": "ignored",
+          "enum_index": 2,
+          "provider_code": 3,
+          "snapshot_object_address": "0x9ef2e1"
+        },
+        {
+          "name": "replaced",
+          "enum_index": 1,
+          "provider_code": 2,
+          "snapshot_object_address": "0x9ef301"
+        },
+        {
+          "name": "canceled",
+          "enum_index": 0,
+          "provider_code": 1,
+          "snapshot_object_address": "0x9ef321"
+        }
+      ],
+      "source": "blutter-android/objs.txt; fromTypeCode closures compare custom provider_code field, not enum_index"
+    },
+    {
+      "enum": "HomeworkSubmissionStatus",
+      "values": [
+        {
+          "name": "accepted",
+          "enum_index": 2,
+          "provider_code": null,
+          "snapshot_object_address": "0x9ef581"
+        },
+        {
+          "name": "sent",
+          "enum_index": 1,
+          "provider_code": null,
+          "snapshot_object_address": "0x9ef5a1"
+        },
+        {
+          "name": "uncompleted",
+          "enum_index": 0,
+          "provider_code": null,
+          "snapshot_object_address": "0x9ef5c1"
+        }
+      ],
+      "source": "blutter-android/objs.txt; fromTypeCode closures compare custom provider_code field, not enum_index"
+    },
+    {
+      "enum": "UserType",
+      "values": [
+        {
+          "name": "guardian",
+          "enum_index": 1,
+          "provider_code": null,
+          "snapshot_object_address": "0x9ef261"
+        },
+        {
+          "name": "student",
+          "enum_index": 0,
+          "provider_code": null,
+          "snapshot_object_address": "0x9ef281"
+        }
+      ],
+      "source": "blutter-android/objs.txt; fromTypeCode closures compare custom provider_code field, not enum_index"
+    }
+  ]
+}

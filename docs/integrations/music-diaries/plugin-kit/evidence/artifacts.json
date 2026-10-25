@@ -1,0 +1,32 @@
+[
+  {
+    "file": "Fryderyk_1.0.12_APKPure.xapk",
+    "sha256": "8d00837744f299b9ae6667a8667733ddee46fdcd0aae420261db712e5f4652b1",
+    "size": 32223518,
+    "members": 7
+  },
+  {
+    "file": "MobiReg_2.1.79_APKPure.apk",
+    "sha256": "6cf44e486c7d8d6560aa5e5b1e946c46c1b86cbe545c6882db9bc7b70d4476e8",
+    "size": 22236967,
+    "members": 697
+  },
+  {
+    "file": "_   MobiReg_v3.1.7-AppAssassin.ipa",
+    "sha256": "a2a81a812d34353b13f4272f6f5106ae684a30e878abbe2e7351d751863e13f9",
+    "size": 11672193,
+    "members": 173
+  },
+  {
+    "file": "_  Fryderyk_v1.1.7-AppAssassin.ipa",
+    "sha256": "6f8558007d58fb0da0a7d257f394f5f9e1eb852921b776013f353bd2e63d823d",
+    "size": 14756514,
+    "members": 444
+  },
+  {
+    "file": "MobiReg_3.1.7_APKPure.xapk",
+    "sha256": "a8ab26b4101507ce7e80f067ee135dc7632571facb26358042da02487b5010e7",
+    "size": 35783949,
+    "members": 6
+  }
+]

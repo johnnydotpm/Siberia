@@ -1,5 +1,8 @@
 # Fryderyk: evidence-backed integration handoff
 
+> Historical first-pass handoff. Prefer the [detailed specification and agent runbook](../plugin-kit/providers/fryderyk/SPEC.md) for recovered endpoint/auth contracts, field schemas, examples and remaining gates. In a conflict, the newer version-scoped caller evidence takes precedence.
+
+
 ## Scope and evidence boundary
 
 Analyzed supplied Android 1.0.12 and iOS 1.1.7 (build 35), package/bundle `com.netro42.fryderyk.app`. Both ship a Flutter application whose app-owned Dart package is `fryderyk_mobile_v3`. These are different releases: do not assume platform parity. The iOS release contains messaging modules and API candidates absent from the bounded search of the older Android app.

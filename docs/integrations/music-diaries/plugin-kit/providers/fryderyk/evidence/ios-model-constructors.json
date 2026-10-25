@@ -1,0 +1,290 @@
+[
+  {
+    "class": "Message",
+    "source": "corrected-asm/Message/Message.fromJson_282794.txt",
+    "lookup_literals": [
+      {
+        "key": "id",
+        "load_pc": "0x00290f00",
+        "pool_index": 1770
+      },
+      {
+        "key": "subject",
+        "load_pc": "0x00290f5c",
+        "pool_index": 13439
+      },
+      {
+        "key": "content",
+        "load_pc": "0x00290fbc",
+        "pool_index": 9646
+      },
+      {
+        "key": "sent_date",
+        "load_pc": "0x0029102c",
+        "pool_index": 14327
+      },
+      {
+        "key": "sender",
+        "load_pc": "0x0029109c",
+        "pool_index": 14330
+      },
+      {
+        "key": "recipients_v2",
+        "load_pc": "0x002910f4",
+        "pool_index": 14333
+      },
+      {
+        "key": "cc_recipients_v2",
+        "load_pc": "0x002912c4",
+        "pool_index": 14341
+      },
+      {
+        "key": "bcc_recipients_v2",
+        "load_pc": "0x00291494",
+        "pool_index": 14348
+      },
+      {
+        "key": "is_read",
+        "load_pc": "0x00291664",
+        "pool_index": 14355
+      },
+      {
+        "key": "is_replied",
+        "load_pc": "0x002916c0",
+        "pool_index": 14358
+      },
+      {
+        "key": "is_deleted",
+        "load_pc": "0x00291714",
+        "pool_index": 14361
+      },
+      {
+        "key": "tags",
+        "load_pc": "0x00291770",
+        "pool_index": 14364
+      },
+      {
+        "key": "attachments",
+        "load_pc": "0x00291940",
+        "pool_index": 9647
+      }
+    ]
+  },
+  {
+    "class": "MessageSender",
+    "source": "corrected-asm/MessageSender/MessageSender.fromJson_283498.txt",
+    "lookup_literals": [
+      {
+        "key": "key",
+        "load_pc": "0x00291c04",
+        "pool_index": 1403
+      },
+      {
+        "key": "name",
+        "load_pc": "0x00291c60",
+        "pool_index": 5660
+      }
+    ]
+  },
+  {
+    "class": "MessageRecipient",
+    "source": "corrected-asm/MessageRecipient/MessageRecipient.fromJson_2926b0.txt",
+    "lookup_literals": [
+      {
+        "key": "key",
+        "load_pc": "0x002a0e1c",
+        "pool_index": 1403
+      },
+      {
+        "key": "name",
+        "load_pc": "0x002a0e7c",
+        "pool_index": 5660
+      },
+      {
+        "key": "role",
+        "load_pc": "0x002a0ed8",
+        "pool_index": 8127
+      }
+    ]
+  },
+  {
+    "class": "MessageAttachment",
+    "source": "corrected-asm/MessageAttachment/MessageAttachment.fromJson_29225c.txt",
+    "lookup_literals": [
+      {
+        "key": "id",
+        "load_pc": "0x002a09c8",
+        "pool_index": 1770
+      },
+      {
+        "key": "name",
+        "load_pc": "0x002a0a24",
+        "pool_index": 5660
+      },
+      {
+        "key": "url",
+        "load_pc": "0x002a0a7c",
+        "pool_index": 1644
+      }
+    ]
+  },
+  {
+    "class": "MessageTag",
+    "source": "corrected-asm/MessageTag/MessageTag.fromJson_292448.txt",
+    "lookup_literals": [
+      {
+        "key": "id",
+        "load_pc": "0x002a0bb4",
+        "pool_index": 1770
+      },
+      {
+        "key": "name",
+        "load_pc": "0x002a0c08",
+        "pool_index": 5660
+      },
+      {
+        "key": "color",
+        "load_pc": "0x002a0c60",
+        "pool_index": 3623
+      }
+    ]
+  },
+  {
+    "class": "Homework",
+    "source": "corrected-asm/Homework/Homework.fromJson_31fdd0.txt",
+    "lookup_literals": [
+      {
+        "key": "id",
+        "load_pc": "0x0032e554",
+        "pool_index": 1770
+      },
+      {
+        "key": "subject",
+        "load_pc": "0x0032e5a8",
+        "pool_index": 13439
+      },
+      {
+        "key": "publish_date",
+        "load_pc": "0x0032e600",
+        "pool_index": 14002
+      },
+      {
+        "key": "finish_date",
+        "load_pc": "0x0032e668",
+        "pool_index": 14005
+      },
+      {
+        "key": "teacher",
+        "load_pc": "0x0032e6d8",
+        "pool_index": 9644
+      },
+      {
+        "key": "content",
+        "load_pc": "0x0032e730",
+        "pool_index": 9646
+      },
+      {
+        "key": "attachments",
+        "load_pc": "0x0032e7c8",
+        "pool_index": 9647
+      }
+    ]
+  },
+  {
+    "class": "Grade",
+    "source": "corrected-asm/Grade/Grade.fromJson_31e3c4.txt",
+    "lookup_literals": [
+      {
+        "key": "text_value",
+        "load_pc": "0x0032cb34",
+        "pool_index": 14146
+      },
+      {
+        "key": "numeric_value",
+        "load_pc": "0x0032cb94",
+        "pool_index": 14149
+      },
+      {
+        "key": "weight",
+        "load_pc": "0x0032cbf4",
+        "pool_index": 9450
+      },
+      {
+        "key": "1.0",
+        "load_pc": "0x0032cc78",
+        "pool_index": 8451
+      },
+      {
+        "key": "value",
+        "load_pc": "0x0032cc90",
+        "pool_index": 3716
+      },
+      {
+        "key": "factor",
+        "load_pc": "0x0032cd4c",
+        "pool_index": 14156
+      },
+      {
+        "key": "name",
+        "load_pc": "0x0032ce0c",
+        "pool_index": 5660
+      },
+      {
+        "key": "comment",
+        "load_pc": "0x0032ce6c",
+        "pool_index": 13379
+      },
+      {
+        "key": "created",
+        "load_pc": "0x0032cecc",
+        "pool_index": 14163
+      },
+      {
+        "key": "subject_color",
+        "load_pc": "0x0032cf3c",
+        "pool_index": 14166
+      },
+      {
+        "key": "subject_name",
+        "load_pc": "0x0032d0b8",
+        "pool_index": 14169
+      },
+      {
+        "key": "subject_short_name",
+        "load_pc": "0x0032d10c",
+        "pool_index": 14172
+      }
+    ]
+  },
+  {
+    "class": "User",
+    "source": "corrected-asm/User/User.fromJson_315adc.txt",
+    "lookup_literals": [
+      {
+        "key": "id",
+        "load_pc": "0x00324248",
+        "pool_index": 1770
+      },
+      {
+        "key": "role",
+        "load_pc": "0x003242a4",
+        "pool_index": 8127
+      },
+      {
+        "key": "first_name",
+        "load_pc": "0x00324324",
+        "pool_index": 11126
+      },
+      {
+        "key": "last_name",
+        "load_pc": "0x00324384",
+        "pool_index": 11129
+      },
+      {
+        "key": "students",
+        "load_pc": "0x003243e4",
+        "pool_index": 11132
+      }
+    ]
+  }
+]

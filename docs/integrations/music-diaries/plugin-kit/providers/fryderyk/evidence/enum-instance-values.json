@@ -1,0 +1,118 @@
+{
+  "source": "Original iOS1.1.7 App SHA256 2c11d5a1be3f1f21d85c2b9c4deb8c59d2c3c33dfd9eebf0235657bcc6f7cca1",
+  "method": "Independently decode canonical instance fill: bitmap unsigned, unboxed words two signed-marker192 uint32s, refs big-end signed-byte reference IDs; names joined to corrected ROData string records. Both ranges consumed exactly.",
+  "enums": [
+    {
+      "name": "MessageAction",
+      "cid": 5730,
+      "source_file_offset": "0x711627",
+      "snapshot_fill_offset": "0x14c2a7",
+      "raw_hex": "82c2c00126dac1c00170fcc0c00163ce",
+      "bitmap": 2,
+      "bytes_consumed": 16,
+      "range_length": 16,
+      "objects": [
+        [
+          {
+            "word": 1,
+            "unboxed": 2
+          },
+          {
+            "word": 2,
+            "ref": 21338,
+            "string": "forward"
+          }
+        ],
+        [
+          {
+            "word": 1,
+            "unboxed": 1
+          },
+          {
+            "word": 2,
+            "ref": 30844,
+            "string": "replyAll"
+          }
+        ],
+        [
+          {
+            "word": 1,
+            "unboxed": 0
+          },
+          {
+            "word": 2,
+            "ref": 29134,
+            "string": "reply"
+          }
+        ]
+      ]
+    },
+    {
+      "name": "FileType",
+      "cid": 5925,
+      "source_file_offset": "0x71204d",
+      "snapshot_fill_offset": "0x14cccd",
+      "raw_hex": "82c5c040edc0c011f3c3c0010bd6c4c00105d4c2c00124f3",
+      "bitmap": 2,
+      "bytes_consumed": 24,
+      "range_length": 24,
+      "objects": [
+        [
+          {
+            "word": 1,
+            "unboxed": 5
+          },
+          {
+            "word": 2,
+            "ref": 8301,
+            "string": "custom"
+          }
+        ],
+        [
+          {
+            "word": 1,
+            "unboxed": 0
+          },
+          {
+            "word": 2,
+            "ref": 2291,
+            "string": "any"
+          }
+        ],
+        [
+          {
+            "word": 1,
+            "unboxed": 3
+          },
+          {
+            "word": 2,
+            "ref": 17878,
+            "string": "video"
+          }
+        ],
+        [
+          {
+            "word": 1,
+            "unboxed": 4
+          },
+          {
+            "word": 2,
+            "ref": 17108,
+            "string": "audio"
+          }
+        ],
+        [
+          {
+            "word": 1,
+            "unboxed": 2
+          },
+          {
+            "word": 2,
+            "ref": 21107,
+            "string": "image"
+          }
+        ]
+      ]
+    }
+  ]
+}

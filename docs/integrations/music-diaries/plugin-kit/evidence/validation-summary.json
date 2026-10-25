@@ -1,0 +1,50 @@
+{
+  "status": "passed",
+  "repository_head_unchanged": "e628216e01dc36786581f9a392f1bc7d946d5be8",
+  "repository_clean": true,
+  "new_commits_or_pushes": false,
+  "reports": [
+    {
+      "file": "analysis/deep/README.md",
+      "sha256": "28c6e39a0ed6f77a39c544a201087cb05410d4aa1073a8f8b19a094eb2f6a68e",
+      "bytes": 8447
+    },
+    {
+      "file": "analysis/fryderyk/deep/DEEP-CONTRACTS.md",
+      "sha256": "1bbc52b6e667b119c48008d7b23f4fe6dd7220802c1ffc0ac9b88ea1d8c57243",
+      "bytes": 14994
+    },
+    {
+      "file": "analysis/mobireg/deep/LEGACY-CONTRACT-CORRECTIONS.md",
+      "sha256": "8ae9845075735e1fa52fb06750fe92dc418d2e5e49d5e02898b4a2cb4edfce42",
+      "bytes": 8663
+    },
+    {
+      "file": "analysis/mobireg/deep/MODERN-AUTH-GATEWAY.md",
+      "sha256": "7dccf600951f7d448aa3e73a099d3bdb23fe8199423dc7f7c93efd95e2326c86",
+      "bytes": 12915
+    },
+    {
+      "file": "analysis/mobireg/deep/MODERN-MODULE-CONTRACTS.md",
+      "sha256": "2173f39ad5a28d1bec951f9b3dd514669a8f0c0d45c1c58ce63c793dde11660c",
+      "bytes": 13359
+    },
+    {
+      "file": "analysis/mobireg/deep/academic-contracts.md",
+      "sha256": "c05e0133917abec3623abc22b7f15a5b05c91fe71c2268d96a8989edc135919c",
+      "bytes": 12585
+    }
+  ],
+  "native_validation": {
+    "mobireg_raw_branch_and_pp_checks": 3086,
+    "mobireg_module_entrypoints": 21,
+    "mobireg_academic_callers": 18,
+    "fryderyk_android_raw_branch_and_pp_checks": 795,
+    "fryderyk_ios_raw_instructions": 3613,
+    "fryderyk_ios_BL": 408,
+    "fryderyk_ios_PP": 48,
+    "fryderyk_ios_literal_occurrences": 134,
+    "mismatches": 0
+  },
+  "limits": "Static evidence and file integrity only. No school account/runtime/API acceptance tests."
+}

@@ -1,5 +1,8 @@
 # Next-agent task sequence
 
+> Historical first-pass handoff. Prefer the [detailed specification and agent runbook](plugin-kit/siberia/AGENT-RUNBOOK.md) for recovered endpoint/auth contracts, field schemas, examples and remaining gates. In a conflict, the newer version-scoped caller evidence takes precedence.
+
+
 ## Working rules
 
 Read the repository's current `AGENTS.md`/instructions and compare HEAD with baseline `c09caaa5f2780a9e1c60aaf94bf9e02e25fe4efc`. Source paths below refer to the real `syberia/` app directory. Read the architecture handoff before modifying code.

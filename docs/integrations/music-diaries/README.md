@@ -1,5 +1,7 @@
 # Music-school diaries → SiberiaGB: agent handoff
 
+**Latest, detailed implementation documentation:** start with the [plugin documentation kit](plugin-kit/README.md). It supersedes the first-pass endpoint/auth uncertainties below and contains request recipes, field/default tables, synthetic examples, all94feature mappings, source edit plans and agent acceptance criteria. This remains documentation only; no provider/plugin is implemented. In particular, legacy MobiReg passwords use MD5, modern password login uses the selected original text, and Fryderyk `/login` is a deep link rather than an HTTP login endpoint.
+
 Prepared **2026-10-25** against Siberia commit **`c09caaa5f2780a9e1c60aaf94bf9e02e25fe4efc`**. This is a reverse-engineering and implementation-planning deliverable; provider support has not been implemented.
 
 ## Start here

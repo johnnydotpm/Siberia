@@ -1,0 +1,1186 @@
+{
+  "method": "static literal recovery; does not establish execution, call graph or wire contracts",
+  "sources": {
+    "ios": {
+      "sha256": "2c11d5a1be3f1f21d85c2b9c4deb8c59d2c3c33dfd9eebf0235657bcc6f7cca1",
+      "path": "analysis\\extracted\\fryderyk-ios\\Payload\\Runner.app\\Frameworks\\App.framework\\App"
+    },
+    "android": {
+      "sha256": "8fdabb00afead92a3f36b71621ddf5976441191255b504c49de01c9681aeb738",
+      "archive": "analysis\\extracted\\fryderyk-android\\config.arm64_v8a.apk",
+      "member": "lib/arm64-v8a/libapp.so"
+    }
+  },
+  "counts": {
+    "ios_parsed_dart_strings": 38488,
+    "android_ascii_runs": 49839
+  },
+  "routes": [
+    {
+      "platform": "ios",
+      "literal": "attendances/getOverview/",
+      "offset": 8752128,
+      "offset_hex": "0x858c00",
+      "http_method": null,
+      "payload": null,
+      "response_schema": null,
+      "confidence": "observed literal; inferred endpoint candidate"
+    },
+    {
+      "platform": "ios",
+      "literal": "messages/create",
+      "offset": 8821632,
+      "offset_hex": "0x869b80",
+      "http_method": null,
+      "payload": null,
+      "response_schema": null,
+      "confidence": "observed literal; inferred endpoint candidate"
+    },
+    {
+      "platform": "ios",
+      "literal": "attendances/requestAbsenceTypeChange",
+      "offset": 8945968,
+      "offset_hex": "0x888130",
+      "http_method": null,
+      "payload": null,
+      "response_schema": null,
+      "confidence": "observed literal; inferred endpoint candidate"
+    },
+    {
+      "platform": "ios",
+      "literal": "grades/list/",
+      "offset": 9190144,
+      "offset_hex": "0x8c3b00",
+      "http_method": null,
+      "payload": null,
+      "response_schema": null,
+      "confidence": "observed literal; inferred endpoint candidate"
+    },
+    {
+      "platform": "ios",
+      "literal": "messages/delete/",
+      "offset": 9309280,
+      "offset_hex": "0x8e0c60",
+      "http_method": null,
+      "payload": null,
+      "response_schema": null,
+      "confidence": "observed literal; inferred endpoint candidate"
+    },
+    {
+      "platform": "ios",
+      "literal": "homeworks/list/",
+      "offset": 9414384,
+      "offset_hex": "0x8fa6f0",
+      "http_method": null,
+      "payload": null,
+      "response_schema": null,
+      "confidence": "observed literal; inferred endpoint candidate"
+    },
+    {
+      "platform": "ios",
+      "literal": "/login",
+      "offset": 9418784,
+      "offset_hex": "0x8fb820",
+      "http_method": null,
+      "payload": null,
+      "response_schema": null,
+      "confidence": "observed literal; inferred endpoint candidate"
+    },
+    {
+      "platform": "ios",
+      "literal": "/reIdentify",
+      "offset": 9424144,
+      "offset_hex": "0x8fcd10",
+      "http_method": null,
+      "payload": null,
+      "response_schema": null,
+      "confidence": "observed literal; inferred endpoint candidate"
+    },
+    {
+      "platform": "ios",
+      "literal": "messages/markAsRead/",
+      "offset": 9503008,
+      "offset_hex": "0x910120",
+      "http_method": null,
+      "payload": null,
+      "response_schema": null,
+      "confidence": "observed literal; inferred endpoint candidate"
+    },
+    {
+      "platform": "ios",
+      "literal": "messages/list/",
+      "offset": 9535808,
+      "offset_hex": "0x918140",
+      "http_method": null,
+      "payload": null,
+      "response_schema": null,
+      "confidence": "observed literal; inferred endpoint candidate"
+    },
+    {
+      "platform": "ios",
+      "literal": "lessons/listWithAbsence/",
+      "offset": 9701792,
+      "offset_hex": "0x9409a0",
+      "http_method": null,
+      "payload": null,
+      "response_schema": null,
+      "confidence": "observed literal; inferred endpoint candidate"
+    },
+    {
+      "platform": "ios",
+      "literal": "grades/getOverview/",
+      "offset": 9762640,
+      "offset_hex": "0x94f750",
+      "http_method": null,
+      "payload": null,
+      "response_schema": null,
+      "confidence": "observed literal; inferred endpoint candidate"
+    },
+    {
+      "platform": "ios",
+      "literal": "attendances/listAbsenceTypeChangeRequests/",
+      "offset": 9765904,
+      "offset_hex": "0x950410",
+      "http_method": null,
+      "payload": null,
+      "response_schema": null,
+      "confidence": "observed literal; inferred endpoint candidate"
+    },
+    {
+      "platform": "ios",
+      "literal": "messages/uploadAttachment",
+      "offset": 9768416,
+      "offset_hex": "0x950de0",
+      "http_method": null,
+      "payload": null,
+      "response_schema": null,
+      "confidence": "observed literal; inferred endpoint candidate"
+    },
+    {
+      "platform": "ios",
+      "literal": "lessons/listAtDay/",
+      "offset": 9821136,
+      "offset_hex": "0x95dbd0",
+      "http_method": null,
+      "payload": null,
+      "response_schema": null,
+      "confidence": "observed literal; inferred endpoint candidate"
+    },
+    {
+      "platform": "ios",
+      "literal": "messages/removeAttachment/",
+      "offset": 9996112,
+      "offset_hex": "0x988750",
+      "http_method": null,
+      "payload": null,
+      "response_schema": null,
+      "confidence": "observed literal; inferred endpoint candidate"
+    },
+    {
+      "platform": "ios",
+      "literal": "messages/getRecipients",
+      "offset": 10002032,
+      "offset_hex": "0x989e70",
+      "http_method": null,
+      "payload": null,
+      "response_schema": null,
+      "confidence": "observed literal; inferred endpoint candidate"
+    },
+    {
+      "platform": "ios",
+      "literal": "/identify",
+      "offset": 10164752,
+      "offset_hex": "0x9b1a10",
+      "http_method": null,
+      "payload": null,
+      "response_schema": null,
+      "confidence": "observed literal; inferred endpoint candidate"
+    },
+    {
+      "platform": "ios",
+      "literal": "users/getCurrent",
+      "offset": 10280768,
+      "offset_hex": "0x9cdf40",
+      "http_method": null,
+      "payload": null,
+      "response_schema": null,
+      "confidence": "observed literal; inferred endpoint candidate"
+    },
+    {
+      "platform": "ios",
+      "literal": "/validate",
+      "offset": 10295680,
+      "offset_hex": "0x9d1980",
+      "http_method": null,
+      "payload": null,
+      "response_schema": null,
+      "confidence": "observed literal; inferred endpoint candidate"
+    },
+    {
+      "platform": "ios",
+      "literal": "messages/countUnread",
+      "offset": 10341200,
+      "offset_hex": "0x9dcb50",
+      "http_method": null,
+      "payload": null,
+      "response_schema": null,
+      "confidence": "observed literal; inferred endpoint candidate"
+    },
+    {
+      "platform": "android",
+      "literal": "attendances/getOverview/",
+      "offset": 226845,
+      "offset_hex": "0x3761d",
+      "http_method": null,
+      "payload": null,
+      "response_schema": null,
+      "confidence": "observed literal; inferred endpoint candidate"
+    },
+    {
+      "platform": "android",
+      "literal": "attendances/requestAbsenceTypeChange",
+      "offset": 307922,
+      "offset_hex": "0x4b2d2",
+      "http_method": null,
+      "payload": null,
+      "response_schema": null,
+      "confidence": "observed literal; inferred endpoint candidate"
+    },
+    {
+      "platform": "android",
+      "literal": "grades/list/",
+      "offset": 411569,
+      "offset_hex": "0x647b1",
+      "http_method": null,
+      "payload": null,
+      "response_schema": null,
+      "confidence": "observed literal; inferred endpoint candidate"
+    },
+    {
+      "platform": "android",
+      "literal": "homeworks/list/",
+      "offset": 501319,
+      "offset_hex": "0x7a647",
+      "http_method": null,
+      "payload": null,
+      "response_schema": null,
+      "confidence": "observed literal; inferred endpoint candidate"
+    },
+    {
+      "platform": "android",
+      "literal": "/login",
+      "offset": 503440,
+      "offset_hex": "0x7ae90",
+      "http_method": null,
+      "payload": null,
+      "response_schema": null,
+      "confidence": "observed literal; inferred endpoint candidate"
+    },
+    {
+      "platform": "android",
+      "literal": "/reIdentify",
+      "offset": 505928,
+      "offset_hex": "0x7b848",
+      "http_method": null,
+      "payload": null,
+      "response_schema": null,
+      "confidence": "observed literal; inferred endpoint candidate"
+    },
+    {
+      "platform": "android",
+      "literal": "lessons/listWithAbsence/",
+      "offset": 627786,
+      "offset_hex": "0x9944a",
+      "http_method": null,
+      "payload": null,
+      "response_schema": null,
+      "confidence": "observed literal; inferred endpoint candidate"
+    },
+    {
+      "platform": "android",
+      "literal": "grades/getOverview/",
+      "offset": 653649,
+      "offset_hex": "0x9f951",
+      "http_method": null,
+      "payload": null,
+      "response_schema": null,
+      "confidence": "observed literal; inferred endpoint candidate"
+    },
+    {
+      "platform": "android",
+      "literal": "attendances/listAbsenceTypeChangeRequests/",
+      "offset": 655120,
+      "offset_hex": "0x9ff10",
+      "http_method": null,
+      "payload": null,
+      "response_schema": null,
+      "confidence": "observed literal; inferred endpoint candidate"
+    },
+    {
+      "platform": "android",
+      "literal": "lessons/listAtDay/",
+      "offset": 677904,
+      "offset_hex": "0xa5810",
+      "http_method": null,
+      "payload": null,
+      "response_schema": null,
+      "confidence": "observed literal; inferred endpoint candidate"
+    },
+    {
+      "platform": "android",
+      "literal": "/identify",
+      "offset": 826656,
+      "offset_hex": "0xc9d20",
+      "http_method": null,
+      "payload": null,
+      "response_schema": null,
+      "confidence": "observed literal; inferred endpoint candidate"
+    },
+    {
+      "platform": "android",
+      "literal": "users/getCurrent",
+      "offset": 874148,
+      "offset_hex": "0xd56a4",
+      "http_method": null,
+      "payload": null,
+      "response_schema": null,
+      "confidence": "observed literal; inferred endpoint candidate"
+    },
+    {
+      "platform": "android",
+      "literal": "/validate",
+      "offset": 880324,
+      "offset_hex": "0xd6ec4",
+      "http_method": null,
+      "payload": null,
+      "response_schema": null,
+      "confidence": "observed literal; inferred endpoint candidate"
+    }
+  ],
+  "application_source_paths": {
+    "ios": [
+      {
+        "offset": 8718704,
+        "path": "package:fryderyk_mobile_v3/models/grades_overview.dart"
+      },
+      {
+        "offset": 8730992,
+        "path": "package:fryderyk_mobile_v3/widgets/alert.dart"
+      },
+      {
+        "offset": 8776160,
+        "path": "package:fryderyk_mobile_v3/screens/qr_login_screen.dart"
+      },
+      {
+        "offset": 8784400,
+        "path": "package:fryderyk_mobile_v3/repositories/user_repository.dart"
+      },
+      {
+        "offset": 8842752,
+        "path": "package:fryderyk_mobile_v3/services/abstract/abstract_user_service.dart"
+      },
+      {
+        "offset": 8843920,
+        "path": "package:fryderyk_mobile_v3/services/abstract/abstract_attendance_service.dart"
+      },
+      {
+        "offset": 8869344,
+        "path": "package:fryderyk_mobile_v3/screens_partials/recent_grades_partial_screen.dart"
+      },
+      {
+        "offset": 8871456,
+        "path": "package:fryderyk_mobile_v3/screens_partials/main_tabs/plan_partial_screen.dart"
+      },
+      {
+        "offset": 8898560,
+        "path": "package:fryderyk_mobile_v3/screens/grades_details_screen.dart"
+      },
+      {
+        "offset": 8943904,
+        "path": "package:fryderyk_mobile_v3/controllers/connection_status_controller.dart"
+      },
+      {
+        "offset": 8969744,
+        "path": "package:fryderyk_mobile_v3/utils/cache/in_memory_cache.dart"
+      },
+      {
+        "offset": 8971168,
+        "path": "package:fryderyk_mobile_v3/utils/substitution_icon_factory.dart"
+      },
+      {
+        "offset": 8976464,
+        "path": "package:fryderyk_mobile_v3/screens_partials/main_tabs/homeworks_partial_screen.dart"
+      },
+      {
+        "offset": 8980608,
+        "path": "package:fryderyk_mobile_v3/repositories/grade_repository.dart"
+      },
+      {
+        "offset": 8992384,
+        "path": "package:fryderyk_mobile_v3/main.dart"
+      },
+      {
+        "offset": 8999152,
+        "path": "package:fryderyk_mobile_v3/exceptions/custom_exception.dart"
+      },
+      {
+        "offset": 9000512,
+        "path": "package:fryderyk_mobile_v3/screens_partials/main_tabs/messages_partial_screen.dart"
+      },
+      {
+        "offset": 9012608,
+        "path": "package:fryderyk_mobile_v3/screens/update_required_screen.dart"
+      },
+      {
+        "offset": 9035424,
+        "path": "package:fryderyk_mobile_v3/services/implementations/version_service.dart"
+      },
+      {
+        "offset": 9053376,
+        "path": "package:fryderyk_mobile_v3/utils/cache/cache_manager.dart"
+      },
+      {
+        "offset": 9067408,
+        "path": "package:fryderyk_mobile_v3/controllers/app_state_controller.dart"
+      },
+      {
+        "offset": 9068784,
+        "path": "package:fryderyk_mobile_v3/services/abstract/abstract_version_service.dart"
+      },
+      {
+        "offset": 9084096,
+        "path": "package:fryderyk_mobile_v3/services/implementations/fryd_api_service.dart"
+      },
+      {
+        "offset": 9086192,
+        "path": "package:fryderyk_mobile_v3/models/message.dart"
+      },
+      {
+        "offset": 9095808,
+        "path": "package:fryderyk_mobile_v3/widgets/chips_input.dart"
+      },
+      {
+        "offset": 9134752,
+        "path": "package:fryderyk_mobile_v3/screens_partials/messages_tabs/inbox_messages_partial_screen.dart"
+      },
+      {
+        "offset": 9171776,
+        "path": "package:fryderyk_mobile_v3/models/absence_type_change_request.dart"
+      },
+      {
+        "offset": 9196176,
+        "path": "package:fryderyk_mobile_v3/utils/lessons_tree.dart"
+      },
+      {
+        "offset": 9223504,
+        "path": "package:fryderyk_mobile_v3/models/grade.dart"
+      },
+      {
+        "offset": 9248592,
+        "path": "package:fryderyk_mobile_v3/services/abstract/abstract_homework_service.dart"
+      },
+      {
+        "offset": 9259456,
+        "path": "package:fryderyk_mobile_v3/helpers/app_helper.dart"
+      },
+      {
+        "offset": 9263472,
+        "path": "package:fryderyk_mobile_v3/services/implementations/token_service.dart"
+      },
+      {
+        "offset": 9267216,
+        "path": "package:fryderyk_mobile_v3/screens/login_guide_screen.dart"
+      },
+      {
+        "offset": 9342704,
+        "path": "package:fryderyk_mobile_v3/types/absence_type.dart"
+      },
+      {
+        "offset": 9353328,
+        "path": "package:fryderyk_mobile_v3/helpers/string_helper.dart"
+      },
+      {
+        "offset": 9354256,
+        "path": "package:fryderyk_mobile_v3/widgets/square_icon.dart"
+      },
+      {
+        "offset": 9357552,
+        "path": "package:fryderyk_mobile_v3/widgets/mobile_scanner_barcode_label.dart"
+      },
+      {
+        "offset": 9361024,
+        "path": "package:fryderyk_mobile_v3/widgets/calendar_icon.dart"
+      },
+      {
+        "offset": 9368944,
+        "path": "package:fryderyk_mobile_v3/services/abstract/abstract_lesson_service.dart"
+      },
+      {
+        "offset": 9379504,
+        "path": "package:fryderyk_mobile_v3/screens/message_form_screen.dart"
+      },
+      {
+        "offset": 9407680,
+        "path": "package:fryderyk_mobile_v3/models/lesson_with_absence.dart"
+      },
+      {
+        "offset": 9425200,
+        "path": "package:fryderyk_mobile_v3/screens/homework_details_screen.dart"
+      },
+      {
+        "offset": 9425392,
+        "path": "package:fryderyk_mobile_v3/services/abstract/abstract_message_service.dart"
+      },
+      {
+        "offset": 9427280,
+        "path": "package:fryderyk_mobile_v3/models/homework.dart"
+      },
+      {
+        "offset": 9458304,
+        "path": "package:fryderyk_mobile_v3/screens_partials/absence_excuses_tabs/absence_type_change_requests_partial_screen.dart"
+      },
+      {
+        "offset": 9460720,
+        "path": "package:fryderyk_mobile_v3/services/abstract/abstract_token_service.dart"
+      },
+      {
+        "offset": 9466464,
+        "path": "package:fryderyk_mobile_v3/helpers/time_helper.dart"
+      },
+      {
+        "offset": 9515392,
+        "path": "package:fryderyk_mobile_v3/screens/absence_excuses_screen.dart"
+      },
+      {
+        "offset": 9561632,
+        "path": "package:fryderyk_mobile_v3/services/implementations/message_service.dart"
+      },
+      {
+        "offset": 9600080,
+        "path": "package:fryderyk_mobile_v3/screens_partials/messages_tabs/trash_messages_partial_screen.dart"
+      },
+      {
+        "offset": 9604944,
+        "path": "package:fryderyk_mobile_v3/utils/cache/cache.dart"
+      },
+      {
+        "offset": 9630864,
+        "path": "package:fryderyk_mobile_v3/widgets/c_badge.dart"
+      },
+      {
+        "offset": 9665088,
+        "path": "package:fryderyk_mobile_v3/screens/message_details_screen.dart"
+      },
+      {
+        "offset": 9665632,
+        "path": "package:fryderyk_mobile_v3/screens_partials/messages_tabs/search_messages_partial_screen.dart"
+      },
+      {
+        "offset": 9665776,
+        "path": "package:fryderyk_mobile_v3/screens/intro_screen.dart"
+      },
+      {
+        "offset": 9700448,
+        "path": "package:fryderyk_mobile_v3/types/process_state.dart"
+      },
+      {
+        "offset": 9703552,
+        "path": "package:fryderyk_mobile_v3/utils/cache/shared_preferences_cache.dart"
+      },
+      {
+        "offset": 9704448,
+        "path": "package:fryderyk_mobile_v3/utils/device.dart"
+      },
+      {
+        "offset": 9715312,
+        "path": "package:fryderyk_mobile_v3/types/user_type.dart"
+      },
+      {
+        "offset": 9736912,
+        "path": "package:fryderyk_mobile_v3/exceptions/unsupported_exception.dart"
+      },
+      {
+        "offset": 9748128,
+        "path": "package:fryderyk_mobile_v3/screens/manual_login_screen.dart"
+      },
+      {
+        "offset": 9754592,
+        "path": "package:fryderyk_mobile_v3/screens/main_screen.dart"
+      },
+      {
+        "offset": 9756704,
+        "path": "package:fryderyk_mobile_v3/screens_partials/main_tabs/homepage_partial_screen.dart"
+      },
+      {
+        "offset": 9823376,
+        "path": "package:fryderyk_mobile_v3/screens/lesson_details_screen.dart"
+      },
+      {
+        "offset": 9851360,
+        "path": "package:fryderyk_mobile_v3/screens_partials/main_tabs/attendance_partial_screen.dart"
+      },
+      {
+        "offset": 9871408,
+        "path": "package:fryderyk_mobile_v3/utils/api_request_handler.dart"
+      },
+      {
+        "offset": 9875728,
+        "path": "package:fryderyk_mobile_v3/screens_partials/absence_excuses_tabs/absences_partial_screen.dart"
+      },
+      {
+        "offset": 9877216,
+        "path": "package:fryderyk_mobile_v3/screens_partials/recent_homeworks_partial_screen.dart"
+      },
+      {
+        "offset": 9917536,
+        "path": "package:fryderyk_mobile_v3/widgets/date_selector.dart"
+      },
+      {
+        "offset": 9917680,
+        "path": "package:fryderyk_mobile_v3/models/attendances_overview.dart"
+      },
+      {
+        "offset": 9931792,
+        "path": "package:fryderyk_mobile_v3/repositories/message_repository.dart"
+      },
+      {
+        "offset": 9931872,
+        "path": "package:fryderyk_mobile_v3/types/school_day_state.dart"
+      },
+      {
+        "offset": 9940192,
+        "path": "package:fryderyk_mobile_v3/screens_partials/process_connection_error_partial_screen.dart"
+      },
+      {
+        "offset": 9948608,
+        "path": "package:fryderyk_mobile_v3/services/implementations/attendance_service.dart"
+      },
+      {
+        "offset": 9953648,
+        "path": "package:fryderyk_mobile_v3/screens/login_options_screen.dart"
+      },
+      {
+        "offset": 9956816,
+        "path": "package:fryderyk_mobile_v3/screens_partials/process_executing_partial_screen.dart"
+      },
+      {
+        "offset": 9961968,
+        "path": "package:fryderyk_mobile_v3/types/message_action.dart"
+      },
+      {
+        "offset": 9962144,
+        "path": "package:fryderyk_mobile_v3/screens/deep_link_login_screen.dart"
+      },
+      {
+        "offset": 9964224,
+        "path": "package:fryderyk_mobile_v3/repositories/homework_repository.dart"
+      },
+      {
+        "offset": 9968256,
+        "path": "package:fryderyk_mobile_v3/widgets/linear_progress_with_label.dart"
+      },
+      {
+        "offset": 9981088,
+        "path": "package:fryderyk_mobile_v3/repositories/lesson_repository.dart"
+      },
+      {
+        "offset": 10004176,
+        "path": "package:fryderyk_mobile_v3/screens_partials/process_error_partial_screen.dart"
+      },
+      {
+        "offset": 10020912,
+        "path": "package:fryderyk_mobile_v3/widgets/field.dart"
+      },
+      {
+        "offset": 10074800,
+        "path": "package:fryderyk_mobile_v3/types/substitution_type.dart"
+      },
+      {
+        "offset": 10079296,
+        "path": "package:fryderyk_mobile_v3/services/implementations/grade_service.dart"
+      },
+      {
+        "offset": 10084096,
+        "path": "package:fryderyk_mobile_v3/services/implementations/homework_service.dart"
+      },
+      {
+        "offset": 10120320,
+        "path": "package:fryderyk_mobile_v3/models/lesson.dart"
+      },
+      {
+        "offset": 10120528,
+        "path": "package:fryderyk_mobile_v3/screens/profile_screen.dart"
+      },
+      {
+        "offset": 10122064,
+        "path": "package:fryderyk_mobile_v3/widgets/mobile_scanner_error.dart"
+      },
+      {
+        "offset": 10188784,
+        "path": "package:fryderyk_mobile_v3/utils/homework_submission_status_square_icon_factory.dart"
+      },
+      {
+        "offset": 10198288,
+        "path": "package:fryderyk_mobile_v3/models/user.dart"
+      },
+      {
+        "offset": 10214576,
+        "path": "package:fryderyk_mobile_v3/screens_partials/messages_tabs/sent_messages_partial_screen.dart"
+      },
+      {
+        "offset": 10217312,
+        "path": "package:fryderyk_mobile_v3/widgets/current_lesson_card.dart"
+      },
+      {
+        "offset": 10225520,
+        "path": "package:fryderyk_mobile_v3/widgets/circular_progress_with_label.dart"
+      },
+      {
+        "offset": 10238736,
+        "path": "package:fryderyk_mobile_v3/exceptions/unauthorized_exception.dart"
+      },
+      {
+        "offset": 10249552,
+        "path": "package:fryderyk_mobile_v3/services/implementations/user_service.dart"
+      },
+      {
+        "offset": 10250416,
+        "path": "package:fryderyk_mobile_v3/helpers/color_helper.dart"
+      },
+      {
+        "offset": 10258928,
+        "path": "package:fryderyk_mobile_v3/screens_partials/main_tabs/grades_partial_screen.dart"
+      },
+      {
+        "offset": 10279568,
+        "path": "package:fryderyk_mobile_v3/helpers/snackbar_helper.dart"
+      },
+      {
+        "offset": 10289984,
+        "path": "package:fryderyk_mobile_v3/services/implementations/lesson_service.dart"
+      },
+      {
+        "offset": 10292048,
+        "path": "package:fryderyk_mobile_v3/core/fryd_theme_data.dart"
+      },
+      {
+        "offset": 10311456,
+        "path": "package:fryderyk_mobile_v3/screens_partials/recent_absences_partial_screen.dart"
+      },
+      {
+        "offset": 10312608,
+        "path": "package:fryderyk_mobile_v3/screens_partials/main_tabs/more_partial_screen.dart"
+      },
+      {
+        "offset": 10333984,
+        "path": "package:fryderyk_mobile_v3/core/fryd_translations.dart"
+      },
+      {
+        "offset": 10358048,
+        "path": "package:fryderyk_mobile_v3/helpers/log_helper.dart"
+      },
+      {
+        "offset": 10374880,
+        "path": "package:fryderyk_mobile_v3/services/abstract/abstract_grade_service.dart"
+      },
+      {
+        "offset": 10388208,
+        "path": "package:fryderyk_mobile_v3/screens_partials/message_partial_screen.dart"
+      },
+      {
+        "offset": 10397344,
+        "path": "package:fryderyk_mobile_v3/screens/request_absence_type_change_form_screen.dart"
+      },
+      {
+        "offset": 10422976,
+        "path": "package:fryderyk_mobile_v3/repositories/attendance_repository.dart"
+      },
+      {
+        "offset": 10427328,
+        "path": "package:fryderyk_mobile_v3/utils/absence_square_icon_factory.dart"
+      }
+    ],
+    "android": [
+      {
+        "offset": 212339,
+        "path": "package:fryderyk_mobile_v3/models/grades_overview.dart"
+      },
+      {
+        "offset": 218107,
+        "path": "package:fryderyk_mobile_v3/widgets/alert.dart"
+      },
+      {
+        "offset": 240263,
+        "path": "package:fryderyk_mobile_v3/repositories/user_repository.dart"
+      },
+      {
+        "offset": 258855,
+        "path": "package:fryderyk_mobile_v3/views/profile_screen.dart"
+      },
+      {
+        "offset": 264997,
+        "path": "package:fryderyk_mobile_v3/services/abstract/abstract_user_service.dart"
+      },
+      {
+        "offset": 265546,
+        "path": "package:fryderyk_mobile_v3/services/abstract/abstract_attendance_service.dart"
+      },
+      {
+        "offset": 268939,
+        "path": "package:fryderyk_mobile_v3/views/login_options_screen.dart"
+      },
+      {
+        "offset": 284868,
+        "path": "package:fryderyk_mobile_v3/views_partials/recent_homeworks_partial_screen.dart"
+      },
+      {
+        "offset": 306869,
+        "path": "package:fryderyk_mobile_v3/controllers/connection_status_controller.dart"
+      },
+      {
+        "offset": 313081,
+        "path": "package:fryderyk_mobile_v3/helpers/fetch_helper.dart"
+      },
+      {
+        "offset": 317972,
+        "path": "package:fryderyk_mobile_v3/utils/cache/in_memory_cache.dart"
+      },
+      {
+        "offset": 322523,
+        "path": "package:fryderyk_mobile_v3/repositories/grade_repository.dart"
+      },
+      {
+        "offset": 324828,
+        "path": "package:fryderyk_mobile_v3/views/lesson_details_screen.dart"
+      },
+      {
+        "offset": 327295,
+        "path": "package:fryderyk_mobile_v3/main.dart"
+      },
+      {
+        "offset": 330327,
+        "path": "package:fryderyk_mobile_v3/exceptions/custom_exception.dart"
+      },
+      {
+        "offset": 332230,
+        "path": "package:fryderyk_mobile_v3/views/main_screen.dart"
+      },
+      {
+        "offset": 351674,
+        "path": "package:fryderyk_mobile_v3/services/implementations/version_service.dart"
+      },
+      {
+        "offset": 359436,
+        "path": "package:fryderyk_mobile_v3/utils/cache/cache_manager.dart"
+      },
+      {
+        "offset": 365746,
+        "path": "package:fryderyk_mobile_v3/controllers/app_state_controller.dart"
+      },
+      {
+        "offset": 366393,
+        "path": "package:fryderyk_mobile_v3/services/abstract/abstract_version_service.dart"
+      },
+      {
+        "offset": 372822,
+        "path": "package:fryderyk_mobile_v3/services/implementations/fryd_api_service.dart"
+      },
+      {
+        "offset": 403924,
+        "path": "package:fryderyk_mobile_v3/models/absence_type_change_request.dart"
+      },
+      {
+        "offset": 414133,
+        "path": "package:fryderyk_mobile_v3/utils/lessons_tree.dart"
+      },
+      {
+        "offset": 415383,
+        "path": "package:fryderyk_mobile_v3/core/fryd_colors.dart"
+      },
+      {
+        "offset": 417133,
+        "path": "package:fryderyk_mobile_v3/views_partials/absence_excuses_tabs/absence_type_change_requests_partial_screen.dart"
+      },
+      {
+        "offset": 421450,
+        "path": "package:fryderyk_mobile_v3/models/grade.dart"
+      },
+      {
+        "offset": 422683,
+        "path": "package:fryderyk_mobile_v3/views_partials/main_tabs/grades_partial_screen.dart"
+      },
+      {
+        "offset": 431980,
+        "path": "package:fryderyk_mobile_v3/services/abstract/abstract_homework_service.dart"
+      },
+      {
+        "offset": 436969,
+        "path": "package:fryderyk_mobile_v3/helpers/app_helper.dart"
+      },
+      {
+        "offset": 438280,
+        "path": "package:fryderyk_mobile_v3/services/implementations/token_service.dart"
+      },
+      {
+        "offset": 450160,
+        "path": "package:fryderyk_mobile_v3/views_partials/main_tabs/plan_partial_screen.dart"
+      },
+      {
+        "offset": 471344,
+        "path": "package:fryderyk_mobile_v3/types/absence_type.dart"
+      },
+      {
+        "offset": 475730,
+        "path": "package:fryderyk_mobile_v3/helpers/string_helper.dart"
+      },
+      {
+        "offset": 476104,
+        "path": "package:fryderyk_mobile_v3/widgets/square_icon.dart"
+      },
+      {
+        "offset": 477627,
+        "path": "package:fryderyk_mobile_v3/widgets/mobile_scanner_barcode_label.dart"
+      },
+      {
+        "offset": 479021,
+        "path": "package:fryderyk_mobile_v3/widgets/calendar_icon.dart"
+      },
+      {
+        "offset": 482260,
+        "path": "package:fryderyk_mobile_v3/services/abstract/abstract_lesson_service.dart"
+      },
+      {
+        "offset": 485382,
+        "path": "package:fryderyk_mobile_v3/views_partials/recent_absences_partial_screen.dart"
+      },
+      {
+        "offset": 498184,
+        "path": "package:fryderyk_mobile_v3/models/lesson_with_absence.dart"
+      },
+      {
+        "offset": 507135,
+        "path": "package:fryderyk_mobile_v3/models/homework.dart"
+      },
+      {
+        "offset": 521351,
+        "path": "package:fryderyk_mobile_v3/services/abstract/abstract_token_service.dart"
+      },
+      {
+        "offset": 553498,
+        "path": "package:fryderyk_mobile_v3/views_partials/main_tabs/homepage_partial_screen.dart"
+      },
+      {
+        "offset": 574671,
+        "path": "package:fryderyk_mobile_v3/views_partials/message_partial_screen.dart"
+      },
+      {
+        "offset": 580083,
+        "path": "package:fryderyk_mobile_v3/utils/cache/cache.dart"
+      },
+      {
+        "offset": 590333,
+        "path": "package:fryderyk_mobile_v3/widgets/c_badge.dart"
+      },
+      {
+        "offset": 600540,
+        "path": "package:fryderyk_mobile_v3/views_partials/main_tabs/attendance_partial_screen.dart"
+      },
+      {
+        "offset": 627283,
+        "path": "package:fryderyk_mobile_v3/types/process_state.dart"
+      },
+      {
+        "offset": 628693,
+        "path": "package:fryderyk_mobile_v3/utils/cache/shared_preferences_cache.dart"
+      },
+      {
+        "offset": 628857,
+        "path": "package:fryderyk_mobile_v3/utils/device.dart"
+      },
+      {
+        "offset": 633221,
+        "path": "package:fryderyk_mobile_v3/types/user_type.dart"
+      },
+      {
+        "offset": 642908,
+        "path": "package:fryderyk_mobile_v3/exceptions/unsupported_exception.dart"
+      },
+      {
+        "offset": 683063,
+        "path": "package:fryderyk_mobile_v3/views_partials/absence_excuses_tabs/absences_partial_screen.dart"
+      },
+      {
+        "offset": 698611,
+        "path": "package:fryderyk_mobile_v3/views/update_required_screen.dart"
+      },
+      {
+        "offset": 716450,
+        "path": "package:fryderyk_mobile_v3/views/qr_login_screen.dart"
+      },
+      {
+        "offset": 717367,
+        "path": "package:fryderyk_mobile_v3/views/absence_excuses_screen.dart"
+      },
+      {
+        "offset": 720533,
+        "path": "package:fryderyk_mobile_v3/widgets/date_selector.dart"
+      },
+      {
+        "offset": 720600,
+        "path": "package:fryderyk_mobile_v3/models/attendances_overview.dart"
+      },
+      {
+        "offset": 727297,
+        "path": "package:fryderyk_mobile_v3/types/school_day_state.dart"
+      },
+      {
+        "offset": 733616,
+        "path": "package:fryderyk_mobile_v3/views/intro_screen.dart"
+      },
+      {
+        "offset": 734019,
+        "path": "package:fryderyk_mobile_v3/services/implementations/attendance_service.dart"
+      },
+      {
+        "offset": 740449,
+        "path": "package:fryderyk_mobile_v3/repositories/homework_repository.dart"
+      },
+      {
+        "offset": 742321,
+        "path": "package:fryderyk_mobile_v3/widgets/linear_progress_with_label.dart"
+      },
+      {
+        "offset": 748061,
+        "path": "package:fryderyk_mobile_v3/repositories/lesson_repository.dart"
+      },
+      {
+        "offset": 765345,
+        "path": "package:fryderyk_mobile_v3/widgets/field.dart"
+      },
+      {
+        "offset": 772713,
+        "path": "package:fryderyk_mobile_v3/views/deep_link_login_screen.dart"
+      },
+      {
+        "offset": 774640,
+        "path": "package:fryderyk_mobile_v3/views_partials/main_tabs/homeworks_partial_screen.dart"
+      },
+      {
+        "offset": 788600,
+        "path": "package:fryderyk_mobile_v3/views_partials/process_error_partial_screen.dart"
+      },
+      {
+        "offset": 789124,
+        "path": "package:fryderyk_mobile_v3/types/substitution_type.dart"
+      },
+      {
+        "offset": 789680,
+        "path": "package:fryderyk_mobile_v3/views/login_guide_screen.dart"
+      },
+      {
+        "offset": 790882,
+        "path": "package:fryderyk_mobile_v3/services/implementations/grade_service.dart"
+      },
+      {
+        "offset": 792948,
+        "path": "package:fryderyk_mobile_v3/services/implementations/homework_service.dart"
+      },
+      {
+        "offset": 807859,
+        "path": "package:fryderyk_mobile_v3/models/lesson.dart"
+      },
+      {
+        "offset": 808513,
+        "path": "package:fryderyk_mobile_v3/widgets/mobile_scanner_error.dart"
+      },
+      {
+        "offset": 836514,
+        "path": "package:fryderyk_mobile_v3/utils/homework_submission_status_square_icon_factory.dart"
+      },
+      {
+        "offset": 840284,
+        "path": "package:fryderyk_mobile_v3/models/user.dart"
+      },
+      {
+        "offset": 847957,
+        "path": "package:fryderyk_mobile_v3/widgets/current_lesson_card.dart"
+      },
+      {
+        "offset": 851738,
+        "path": "package:fryderyk_mobile_v3/widgets/circular_progress_with_label.dart"
+      },
+      {
+        "offset": 857048,
+        "path": "package:fryderyk_mobile_v3/exceptions/unauthorized_exception.dart"
+      },
+      {
+        "offset": 861165,
+        "path": "package:fryderyk_mobile_v3/services/implementations/user_service.dart"
+      },
+      {
+        "offset": 861551,
+        "path": "package:fryderyk_mobile_v3/helpers/color_helper.dart"
+      },
+      {
+        "offset": 867425,
+        "path": "package:fryderyk_mobile_v3/views/request_absence_type_change_form_screen.dart"
+      },
+      {
+        "offset": 871844,
+        "path": "package:fryderyk_mobile_v3/views/homework_details_screen.dart"
+      },
+      {
+        "offset": 873695,
+        "path": "package:fryderyk_mobile_v3/helpers/snackbar_helper.dart"
+      },
+      {
+        "offset": 877801,
+        "path": "package:fryderyk_mobile_v3/services/implementations/lesson_service.dart"
+      },
+      {
+        "offset": 878539,
+        "path": "package:fryderyk_mobile_v3/core/fryd_theme_data.dart"
+      },
+      {
+        "offset": 878690,
+        "path": "package:fryderyk_mobile_v3/views_partials/process_connection_error_partial_screen.dart"
+      },
+      {
+        "offset": 896774,
+        "path": "package:fryderyk_mobile_v3/core/fryd_translations.dart"
+      },
+      {
+        "offset": 907003,
+        "path": "package:fryderyk_mobile_v3/helpers/log_helper.dart"
+      },
+      {
+        "offset": 914561,
+        "path": "package:fryderyk_mobile_v3/services/abstract/abstract_grade_service.dart"
+      },
+      {
+        "offset": 930805,
+        "path": "package:fryderyk_mobile_v3/views/manual_login_screen.dart"
+      },
+      {
+        "offset": 935855,
+        "path": "package:fryderyk_mobile_v3/views/grades_details_screen.dart"
+      },
+      {
+        "offset": 936025,
+        "path": "package:fryderyk_mobile_v3/views_partials/recent_grades_partial_screen.dart"
+      },
+      {
+        "offset": 936750,
+        "path": "package:fryderyk_mobile_v3/repositories/attendance_repository.dart"
+      },
+      {
+        "offset": 937496,
+        "path": "package:fryderyk_mobile_v3/views_partials/process_executing_partial_screen.dart"
+      },
+      {
+        "offset": 938632,
+        "path": "package:fryderyk_mobile_v3/utils/absence_square_icon_factory.dart"
+      }
+    ]
+  }
+}

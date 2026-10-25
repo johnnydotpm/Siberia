@@ -1,0 +1,876 @@
+{
+  "schema_version": 1,
+  "provenance": "synthetic, static-derived",
+  "warning": "These are invented examples/vectors, not real server captures. Some model payloads are explicitly field subsets and not complete valid records. Expected behavior combines observed client semantics and labeled Siberia reliability policy.",
+  "cases": [
+    {
+      "id": "QR-default",
+      "provenance": "synthetic, static-derived",
+      "kind": "parser_vector",
+      "scope": "scanner",
+      "input": "mobireg://qrlogin?school=SYNTHETIC&code=ONE-TIME-EXAMPLE",
+      "expected": {
+        "parsed": {
+          "addr": "mobireg.pl",
+          "school": "SYNTHETIC",
+          "code": "ONE-TIME-EXAMPLE"
+        }
+      },
+      "operation_refs": [
+        "MA-QR"
+      ],
+      "runtime_observed": false
+    },
+    {
+      "id": "QR-address",
+      "provenance": "synthetic, static-derived",
+      "kind": "parser_vector",
+      "scope": "scanner",
+      "input": "  mobireg://qrlogin?school=%20SYNTHETIC%20&code=a%2Bb%3D&addr=diary.example.invalid  ",
+      "expected": {
+        "parsed": {
+          "addr": "diary.example.invalid",
+          "school": "SYNTHETIC",
+          "code": "a+b="
+        }
+      },
+      "operation_refs": [
+        "MA-QR"
+      ],
+      "runtime_observed": false
+    },
+    {
+      "id": "QR-reject-scheme",
+      "provenance": "synthetic, static-derived",
+      "kind": "parser_vector",
+      "scope": "scanner",
+      "input": "https://qrlogin?school=SYNTHETIC&code=x",
+      "expected": {
+        "parsed": null
+      },
+      "operation_refs": [
+        "MA-QR"
+      ],
+      "runtime_observed": false
+    },
+    {
+      "id": "QR-reject-host",
+      "provenance": "synthetic, static-derived",
+      "kind": "parser_vector",
+      "scope": "scanner",
+      "input": "mobireg://other?school=SYNTHETIC&code=x",
+      "expected": {
+        "parsed": null
+      },
+      "operation_refs": [
+        "MA-QR"
+      ],
+      "runtime_observed": false
+    },
+    {
+      "id": "QR-reject-school",
+      "provenance": "synthetic, static-derived",
+      "kind": "parser_vector",
+      "scope": "scanner",
+      "input": "mobireg://qrlogin?code=x",
+      "expected": {
+        "parsed": null
+      },
+      "operation_refs": [
+        "MA-QR"
+      ],
+      "runtime_observed": false
+    },
+    {
+      "id": "QR-reject-code",
+      "provenance": "synthetic, static-derived",
+      "kind": "parser_vector",
+      "scope": "scanner",
+      "input": "mobireg://qrlogin?school=SYNTHETIC&code=%20",
+      "expected": {
+        "parsed": null
+      },
+      "operation_refs": [
+        "MA-QR"
+      ],
+      "runtime_observed": false
+    },
+    {
+      "id": "AUTH-password-spaces",
+      "provenance": "synthetic, static-derived",
+      "kind": "request_vector",
+      "scope": "auth request selection",
+      "input": {
+        "login": "  EXAMPLE  ",
+        "password": "  example password  "
+      },
+      "expected": {
+        "json_body": {
+          "login": "EXAMPLE",
+          "password": "  example password  "
+        },
+        "legacy_hash_applied": false
+      },
+      "operation_refs": [
+        "MA-PASSWORD"
+      ],
+      "runtime_observed": false
+    },
+    {
+      "id": "AUTH-success",
+      "provenance": "synthetic, static-derived",
+      "kind": "response_fragment",
+      "scope": "auth.php",
+      "input": {
+        "status": "OK",
+        "token": "SYNTHETIC-NOT-A-JWT"
+      },
+      "expected": {
+        "auth_success": true,
+        "credential_owner": "account",
+        "note": "Placeholder represents required String; does not establish JWT claims."
+      },
+      "operation_refs": [
+        "MA-PASSWORD"
+      ],
+      "runtime_observed": false
+    },
+    {
+      "id": "AUTH-denied",
+      "provenance": "synthetic, static-derived",
+      "kind": "response_fragment",
+      "scope": "auth.php",
+      "input": {
+        "status": "ERROR",
+        "message": "Synthetic denied"
+      },
+      "expected": {
+        "auth_success": false,
+        "preserve_unrelated_account": true
+      },
+      "operation_refs": [
+        "MA-PASSWORD"
+      ],
+      "runtime_observed": false
+    },
+    {
+      "id": "AUTH-qr-success",
+      "provenance": "synthetic, static-derived",
+      "kind": "response_fragment",
+      "scope": "qrlogin.php",
+      "input": {
+        "status": "OK",
+        "token": "SYNTHETIC-TOKEN",
+        "refresh": "SYNTHETIC-REFRESH",
+        "user": {
+          "login": "EXAMPLE"
+        }
+      },
+      "expected": {
+        "qr_account": "store account token+optional refresh; clear password unless existing password account branch"
+      },
+      "operation_refs": [
+        "MA-QR"
+      ],
+      "runtime_observed": false
+    },
+    {
+      "id": "AUTH-refresh-missing-replacement",
+      "provenance": "synthetic, static-derived",
+      "kind": "response_fragment",
+      "scope": "refresh.php",
+      "input": {
+        "status": "OK",
+        "token": "SYNTHETIC-NEW-TOKEN"
+      },
+      "expected": {
+        "update_jwt": true,
+        "do_not_infer_refresh_revocation": true
+      },
+      "operation_refs": [
+        "MA-REFRESH"
+      ],
+      "runtime_observed": false
+    },
+    {
+      "id": "ENV-minimal",
+      "provenance": "synthetic, static-derived",
+      "kind": "response_fragment",
+      "scope": "gateway",
+      "input": {
+        "v": 1,
+        "data": []
+      },
+      "expected": {
+        "success": true,
+        "ttlFresh_seconds": 60,
+        "ttlRetain_seconds": 1209600
+      },
+      "operation_refs": [
+        "MA-GATEWAY"
+      ],
+      "runtime_observed": false
+    },
+    {
+      "id": "ENV-explicit-ttl",
+      "provenance": "synthetic, static-derived",
+      "kind": "response_fragment",
+      "scope": "gateway",
+      "input": {
+        "v": "1",
+        "serverTime": "2026-10-25T09:00:00+01:00",
+        "ttlFresh": 12.9,
+        "ttlRetain": 100,
+        "data": {
+          "items": []
+        }
+      },
+      "expected": {
+        "version": 1,
+        "ttlFresh_seconds": 12,
+        "ttlRetain_seconds": 100,
+        "serverTime_retention": "do not assume cache clock uses it"
+      },
+      "operation_refs": [
+        "MA-GATEWAY"
+      ],
+      "runtime_observed": false
+    },
+    {
+      "id": "ENV-version2",
+      "provenance": "synthetic, static-derived",
+      "kind": "response_fragment",
+      "scope": "gateway",
+      "input": {
+        "v": 2,
+        "data": []
+      },
+      "expected": {
+        "error": "updateRequired",
+        "cache_action": "retain previous valid data"
+      },
+      "operation_refs": [
+        "MA-GATEWAY"
+      ],
+      "runtime_observed": false
+    },
+    {
+      "id": "ENV-partial-missing-data",
+      "provenance": "synthetic, static-derived",
+      "kind": "response_fragment",
+      "scope": "gateway",
+      "input": {
+        "v": 1
+      },
+      "expected": {
+        "error": "badResponse",
+        "empty_success": false
+      },
+      "operation_refs": [
+        "MA-GATEWAY"
+      ],
+      "runtime_observed": false
+    },
+    {
+      "id": "ENV-errno",
+      "provenance": "synthetic, static-derived",
+      "kind": "response_fragment",
+      "scope": "gateway",
+      "input": {
+        "v": 1,
+        "data": {
+          "errno": 123,
+          "message": "Synthetic API error"
+        }
+      },
+      "expected": {
+        "error": "apiError",
+        "errno": 123
+      },
+      "operation_refs": [
+        "MA-GATEWAY"
+      ],
+      "runtime_observed": false
+    },
+    {
+      "id": "ENV-plain-list",
+      "provenance": "synthetic, static-derived",
+      "kind": "response_fragment",
+      "scope": "gateway strict vs REST fallback",
+      "input": [
+        {
+          "id": 1
+        }
+      ],
+      "expected": {
+        "gateway": "badResponse",
+        "restGet": "fallback protocol0 envelope, defaultTTL"
+      },
+      "operation_refs": [
+        "MA-GATEWAY",
+        "MA-REST-GET"
+      ],
+      "runtime_observed": false
+    },
+    {
+      "id": "FCM-merge",
+      "provenance": "synthetic, static-derived",
+      "kind": "request_vector",
+      "scope": "gateway form",
+      "input": {
+        "jwt": "SYNTHETIC-JWT",
+        "extraParams": {
+          "token": "SYNTHETIC-FCM",
+          "keepLogins": "A,B"
+        }
+      },
+      "expected": {
+        "final_fields": {
+          "token": "SYNTHETIC-FCM",
+          "JWTToken": "SYNTHETIC-JWT",
+          "keepLogins": "A,B"
+        },
+        "requirePupil": false
+      },
+      "operation_refs": [
+        "MA-FCM-REGISTER"
+      ],
+      "runtime_observed": false
+    },
+    {
+      "id": "USERS-parent",
+      "provenance": "synthetic, static-derived",
+      "kind": "response_fragment",
+      "scope": "users envelope data",
+      "input": {
+        "id": 700,
+        "role": 2,
+        "firstname": "Example",
+        "lastname": "Parent",
+        "pupils": [
+          {
+            "id": 701,
+            "firstname": "Example",
+            "lastname": "Child"
+          }
+        ],
+        "messagingUrl": "https://mail.example.invalid/sso",
+        "homeworksUrl": "https://homework.example.invalid",
+        "oldHomeworkModule": 0,
+        "messagesToken": "SYNTHETIC-MODULE-TOKEN"
+      },
+      "expected": {
+        "pupil_ids": [
+          701
+        ],
+        "module_origins": "retain separate configured values",
+        "numeric_role_meaning": "do not infer all role meanings from synthetic label"
+      },
+      "operation_refs": [
+        "MA-USERS"
+      ],
+      "runtime_observed": false
+    },
+    {
+      "id": "USERS-self",
+      "provenance": "synthetic, static-derived",
+      "kind": "response_fragment",
+      "scope": "pupilsOrSelf arguments",
+      "input": {
+        "pupils": [],
+        "role": 1,
+        "userId": 701,
+        "firstName": "Example",
+        "lastName": "Student"
+      },
+      "expected": {
+        "pupil_ids": [
+          701
+        ],
+        "names_from_account": true
+      },
+      "operation_refs": [
+        "MA-USERS"
+      ],
+      "runtime_observed": false
+    },
+    {
+      "id": "TERMS-alias-types",
+      "provenance": "synthetic, static-derived",
+      "kind": "response_fragment",
+      "scope": "Term.fromJson",
+      "input": {
+        "id": "20",
+        "parentId": null,
+        "label": null,
+        "isYear": "1",
+        "dateFrom": "2026-09-01",
+        "dateTo": "2027-08-31"
+      },
+      "expected": {
+        "id": 20,
+        "parentId": 0,
+        "label": "",
+        "isYear": true
+      },
+      "operation_refs": [
+        "MRA-02"
+      ],
+      "runtime_observed": false
+    },
+    {
+      "id": "MARK-text-grade",
+      "provenance": "synthetic, static-derived",
+      "kind": "response_fragment",
+      "scope": "Mark.fromApiJson field subset",
+      "input": {
+        "id": 100,
+        "subjectId": 8,
+        "value": "bardzo dobry",
+        "bgColor": null,
+        "color": "#112233",
+        "comments": null,
+        "comment": "Synthetic explanation",
+        "count_to_avg": 0,
+        "teacher_id": 10,
+        "markGroupId": "3"
+      },
+      "expected": {
+        "value_preserved": "bardzo dobry",
+        "bgColor": "#112233",
+        "comments": "Synthetic explanation",
+        "count_to_avg": 0,
+        "markGroupId": 3
+      },
+      "operation_refs": [
+        "MRA-01"
+      ],
+      "runtime_observed": false
+    },
+    {
+      "id": "ATTENDANCE-strict-id",
+      "provenance": "synthetic, static-derived",
+      "kind": "response_fragment",
+      "scope": "AttendanceRecord.fromJson",
+      "input": {
+        "d": "2026-10-25",
+        "sid": "8",
+        "ab": "SYNTHETIC-ABSENCE",
+        "ca": "",
+        "tn": null
+      },
+      "expected": {
+        "decode_issue": "sid requires int in this constructor; do not globally coerce numeric Strings"
+      },
+      "operation_refs": [
+        "MRA-04"
+      ],
+      "runtime_observed": false
+    },
+    {
+      "id": "TIMETABLE-substitution",
+      "provenance": "synthetic, static-derived",
+      "kind": "response_fragment",
+      "scope": "TimetableEvent field subset",
+      "input": {
+        "id": "501",
+        "dateTimeFrom": "2026-10-25T12:00:00",
+        "dateTimeTo": "2026-10-25T12:45:00",
+        "subjectName": "Synthetic instrument lesson",
+        "title": "Practice topic",
+        "roomName": "A",
+        "tests": [],
+        "teachers": [],
+        "substitution": 1,
+        "oldSubjectName": "Original title",
+        "oldTeachers": []
+      },
+      "expected": {
+        "preserve_old_fields": true,
+        "enum_semantics": "substitution raw numeric code retained until verified"
+      },
+      "operation_refs": [
+        "MRA-06"
+      ],
+      "runtime_observed": false
+    },
+    {
+      "id": "POLL-answer-ok",
+      "provenance": "synthetic, static-derived",
+      "kind": "response_fragment",
+      "scope": "announcement-answer envelope data",
+      "input": {
+        "success": true,
+        "userAnswer": "TAK",
+        "declined": false,
+        "pendingCount": "2"
+      },
+      "expected": {
+        "accepted": true,
+        "pendingCount": 2,
+        "invalidate": [
+          "announcements",
+          "announcement",
+          "dashboard"
+        ]
+      },
+      "operation_refs": [
+        "MRA-11"
+      ],
+      "runtime_observed": false
+    },
+    {
+      "id": "POLL-answer-error",
+      "provenance": "synthetic, static-derived",
+      "kind": "response_fragment",
+      "scope": "announcement-answer envelope data",
+      "input": {
+        "success": false,
+        "error": "Synthetic closed poll"
+      },
+      "expected": {
+        "accepted": false,
+        "do_not_clear_pending_optimistically": true
+      },
+      "operation_refs": [
+        "MRA-11"
+      ],
+      "runtime_observed": false
+    },
+    {
+      "id": "JUST-create-id",
+      "provenance": "synthetic, static-derived",
+      "kind": "response_fragment",
+      "scope": "POST justifications raw body",
+      "input": {
+        "id": 42
+      },
+      "expected": {
+        "created_id": 42,
+        "do_not_expect_read_envelope": true
+      },
+      "operation_refs": [
+        "MRA-16"
+      ],
+      "runtime_observed": false
+    },
+    {
+      "id": "JUST-numeric-string",
+      "provenance": "synthetic, static-derived",
+      "kind": "response_fragment",
+      "scope": "JustificationRecord field subset",
+      "input": {
+        "id": "42",
+        "status": "1",
+        "event_count": "2"
+      },
+      "expected": {
+        "decode_issue": "num? assertions reject numeric Strings in this path; preserve issue, no status guessing"
+      },
+      "operation_refs": [
+        "MRA-14"
+      ],
+      "runtime_observed": false
+    },
+    {
+      "id": "MAIL-sso302",
+      "provenance": "synthetic, static-derived",
+      "kind": "session_vector",
+      "scope": "SSO response headers",
+      "input": {
+        "http_status": 302,
+        "headers": {
+          "Set-Cookie": [
+            "example_session=SYNTHETIC; Path=/; HttpOnly",
+            "example_csrf=SYNTHETIC2; Path=/"
+          ]
+        }
+      },
+      "expected": {
+        "cookie": "example_session=SYNTHETIC; example_csrf=SYNTHETIC2",
+        "collect_before_status200_check": true
+      },
+      "operation_refs": [],
+      "runtime_observed": false
+    },
+    {
+      "id": "MAIL-folder",
+      "provenance": "synthetic, static-derived",
+      "kind": "response_fragment",
+      "scope": "folder response",
+      "input": {
+        "items": [],
+        "total": 0
+      },
+      "expected": {
+        "items": [],
+        "total": 0,
+        "main_envelope_parser": false
+      },
+      "operation_refs": [
+        "MM-INBOX"
+      ],
+      "runtime_observed": false
+    },
+    {
+      "id": "MAIL-response-subject",
+      "provenance": "synthetic, static-derived",
+      "kind": "response_fragment",
+      "scope": "MailMessage field subset",
+      "input": {
+        "id": 5,
+        "subject": "Synthetic subject",
+        "content": "<p>Example</p>",
+        "author": {
+          "id": 2,
+          "name": "Example",
+          "role": "Synthetic"
+        },
+        "recipients": [],
+        "files": [],
+        "date": "2026-10-25T09:00:00",
+        "read_at": null,
+        "stared": true,
+        "trashed": false,
+        "previous": []
+      },
+      "expected": {
+        "send_key": "title",
+        "response_key": "subject",
+        "read_at": null
+      },
+      "operation_refs": [
+        "MM-READ"
+      ],
+      "runtime_observed": false
+    },
+    {
+      "id": "MAIL-recipient-ids",
+      "provenance": "synthetic, static-derived",
+      "kind": "response_fragment",
+      "scope": "recipient decoder",
+      "input": {
+        "ids": [
+          42,
+          "0042",
+          "group_example",
+          "user_42"
+        ]
+      },
+      "expected": {
+        "normalized": [
+          "user_42",
+          "user_0042",
+          "group_example",
+          "user_42"
+        ],
+        "preserve_opaque_strings": true
+      },
+      "operation_refs": [
+        "MM-SEARCH-RECIPIENTS"
+      ],
+      "runtime_observed": false
+    },
+    {
+      "id": "MAIL-partial-upload",
+      "provenance": "synthetic, static-derived",
+      "kind": "workflow_vector",
+      "scope": "send state",
+      "input": {
+        "body_result": {
+          "id": 5
+        },
+        "attachment_results": [
+          {
+            "name": "first.txt",
+            "success": true
+          },
+          {
+            "name": "second.txt",
+            "success": false
+          }
+        ]
+      },
+      "expected": {
+        "message_sent": true,
+        "state": "partial_attachment_failure",
+        "retry_body": false,
+        "failed_files": [
+          "second.txt"
+        ]
+      },
+      "operation_refs": [
+        "MM-SEND",
+        "MM-UPLOAD"
+      ],
+      "runtime_observed": false
+    },
+    {
+      "id": "HOMEWORK-session419",
+      "provenance": "synthetic, static-derived",
+      "kind": "session_vector",
+      "scope": "homework response",
+      "input": {
+        "http_status": 419
+      },
+      "expected": {
+        "challenge": "homework session only",
+        "reauthenticate_once": true,
+        "clear_diary_auth": false
+      },
+      "operation_refs": [
+        "HW-SHOW"
+      ],
+      "runtime_observed": false
+    },
+    {
+      "id": "HOMEWORK-detail",
+      "provenance": "synthetic, static-derived",
+      "kind": "response_fragment",
+      "scope": "homework detail field subset",
+      "input": {
+        "teacher": "Example",
+        "content": "Synthetic task",
+        "groups": [],
+        "files": [],
+        "status": "1",
+        "solution": {
+          "content": "Synthetic answer",
+          "sent_at": "2026-10-25 09:00:00",
+          "files": []
+        }
+      },
+      "expected": {
+        "separate_solution_and_teacher_comment": true,
+        "status_label": "unknown enum; retain raw1"
+      },
+      "operation_refs": [
+        "HW-SHOW"
+      ],
+      "runtime_observed": false
+    },
+    {
+      "id": "HOMEWORK-expired-url",
+      "provenance": "synthetic, static-derived",
+      "kind": "workflow_vector",
+      "scope": "attachment transport",
+      "input": {
+        "http_status": 403,
+        "url": "https://files.example.invalid/file?signature=SYNTHETIC"
+      },
+      "expected": {
+        "refresh_parent_detail": true,
+        "ask_retry_new_url": true,
+        "forward_mail_cookie": false
+      },
+      "operation_refs": [
+        "HW-DOWNLOAD"
+      ],
+      "runtime_observed": false
+    },
+    {
+      "id": "HOMEWORK-archive-toggle",
+      "provenance": "synthetic, static-derived",
+      "kind": "request_vector",
+      "scope": "request",
+      "input": {
+        "method": "PATCH",
+        "path": "/api/homeworks/12/archive",
+        "body": {}
+      },
+      "expected": {
+        "no_archived_bool_field": true,
+        "blind_retry": false
+      },
+      "operation_refs": [
+        "HW-ARCHIVE"
+      ],
+      "runtime_observed": false
+    },
+    {
+      "id": "LEGACY-md5",
+      "provenance": "synthetic, static-derived",
+      "kind": "request_vector",
+      "scope": "legacy credential vector",
+      "input": {
+        "password": "password"
+      },
+      "expected": {
+        "parent_pass": "5f4dcc3b5aa765d61d8327deb882cf99",
+        "modern_uses_same_hash": false
+      },
+      "operation_refs": [
+        "MRL-DISCOVER"
+      ],
+      "runtime_observed": false
+    },
+    {
+      "id": "LEGACY-table-actions",
+      "provenance": "synthetic, static-derived",
+      "kind": "response_fragment",
+      "scope": "named table fragment",
+      "input": {
+        "Students": [
+          {
+            "id": 701,
+            "_s": "I"
+          },
+          {
+            "id": 702,
+            "_s": "D"
+          }
+        ]
+      },
+      "expected": {
+        "grammar_only": true,
+        "partial_rows_not_valid_complete_Students_records": true,
+        "deletion_retains_primary_key_identity": true
+      },
+      "operation_refs": [
+        "MRL-DELTA"
+      ],
+      "runtime_observed": false
+    },
+    {
+      "id": "LEGACY-cursor-failure",
+      "provenance": "synthetic, static-derived",
+      "kind": "workflow_vector",
+      "scope": "sync state",
+      "input": {
+        "old_cursor": "2026-10-24 12:00:00",
+        "server_settings_time": "2026-10-25T09:00:00",
+        "row_decode_failed": true
+      },
+      "expected": {
+        "commit_cursor": false,
+        "rollback": true,
+        "retain_previous_snapshot": true
+      },
+      "operation_refs": [
+        "MRL-DELTA"
+      ],
+      "runtime_observed": false
+    },
+    {
+      "id": "AUTH-ambiguous-mutation",
+      "provenance": "synthetic, static-derived",
+      "kind": "workflow_vector",
+      "scope": "transport state",
+      "input": {
+        "request_was_sent": true,
+        "response": "timeout"
+      },
+      "expected": {
+        "state": "outcomeUnknown",
+        "automatic_resend": false,
+        "reconcile_read_first": true
+      },
+      "operation_refs": [
+        "MM-SEND",
+        "HW-SOLUTION",
+        "MRA-16"
+      ],
+      "runtime_observed": false
+    }
+  ]
+}

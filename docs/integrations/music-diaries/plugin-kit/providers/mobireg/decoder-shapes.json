@@ -1,0 +1,4009 @@
+{
+  "schema_version": 1,
+  "scope": "Client-consumed constructor fields, not complete server JSON Schema. All facts static Android3.1.7.",
+  "unknown_value": "unresolved means not safely established, never a guessed optional/default.",
+  "alias_rule": "Aliases listed on primary field are first-non-null in observed order unless conversion states otherwise. Empty String does not automatically fall through.",
+  "models": [
+    {
+      "name": "Account.fromJson",
+      "source": "rodzic/models/account.dart",
+      "entry_pc": "0x4a52b8",
+      "source_sha256": "6b1aa213c535f810448fa36bf4f7c1cab14c84fcfbea13a81d95f225497ee0f3",
+      "fields": [
+        {
+          "wire_key": "id",
+          "key_pcs": [
+            "0x4a52e4"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "String identity; local persisted account record, not remote numeric user id",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "address",
+          "key_pcs": [
+            "0x4a533c"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": ""
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "null => empty String; non-null must satisfy String assertion",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "school",
+          "key_pcs": [
+            "0x4a53ac"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": ""
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "null => empty String; non-null must satisfy String assertion",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "login",
+          "key_pcs": [
+            "0x4a541c"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": ""
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "null => empty String; non-null must satisfy String assertion",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "userId",
+          "key_pcs": [
+            "0x4a548c"
+          ],
+          "output_type": "int",
+          "missing_default": {
+            "status": "observed",
+            "value": 0
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "null=>0; strict int assertion; unlike users context no String int coercion",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "role",
+          "key_pcs": [
+            "0x4a54f8"
+          ],
+          "output_type": "int",
+          "missing_default": {
+            "status": "observed",
+            "value": 0
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "null=>0; strict int assertion; unlike users context no String int coercion",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "firstName",
+          "key_pcs": [
+            "0x4a5564"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": ""
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "null => empty String; non-null must satisfy String assertion",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "lastName",
+          "key_pcs": [
+            "0x4a55d4"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": ""
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "null => empty String; non-null must satisfy String assertion",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "pupils",
+          "key_pcs": [
+            "0x4a5644"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        },
+        {
+          "wire_key": "messagingUrl",
+          "key_pcs": [
+            "0x4a5734"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": ""
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "null => empty String; non-null must satisfy String assertion",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "oldHomeworkModule",
+          "key_pcs": [
+            "0x4a57a4"
+          ],
+          "output_type": "int",
+          "missing_default": {
+            "status": "observed",
+            "value": 0
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "null=>0; strict int assertion; unlike users context no String int coercion",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "homeworksUrl",
+          "key_pcs": [
+            "0x4a5810"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": ""
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "null => empty String; non-null must satisfy String assertion",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "authType",
+          "key_pcs": [
+            "0x4a5880"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": "password"
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "null => password; String assertion",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "contextVersion",
+          "key_pcs": [
+            "0x4a58ec"
+          ],
+          "output_type": "int",
+          "missing_default": {
+            "status": "observed",
+            "value": 0
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "null=>0; strict int assertion; unlike users context no String int coercion",
+          "status": "static-derived-field-contract"
+        }
+      ],
+      "coverage": {
+        "key_count": 14,
+        "resolved_field_count": 13
+      }
+    },
+    {
+      "name": "Announcement.fromJson",
+      "source": "rodzic/models/announcement.dart",
+      "entry_pc": "0x49b1ec",
+      "source_sha256": "2e22307556d18d844940e19ab740bae5affe8275e69502764391806398bb4484",
+      "fields": [
+        {
+          "wire_key": "read",
+          "key_pcs": [
+            "0x49b218"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        },
+        {
+          "wire_key": "xread",
+          "key_pcs": [
+            "0x49b240"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        },
+        {
+          "wire_key": "answers",
+          "key_pcs": [
+            "0x49b308"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        },
+        {
+          "wire_key": "userAnswer",
+          "key_pcs": [
+            "0x49b570"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        },
+        {
+          "wire_key": "valid",
+          "key_pcs": [
+            "0x49b5ec"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        },
+        {
+          "wire_key": "id",
+          "key_pcs": [
+            "0x49b694",
+            "0x49b6d0",
+            "0x49b754"
+          ],
+          "output_type": "int",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "integer accepted or String int.parse; required identity, malformed can throw",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "type",
+          "key_pcs": [
+            "0x49b7b0",
+            "0x49b7d8"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        },
+        {
+          "wire_key": "kind",
+          "key_pcs": [
+            "0x49b840",
+            "0x49b868"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        },
+        {
+          "wire_key": "title",
+          "key_pcs": [
+            "0x49b8f0"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": ""
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "null=>empty String; String assertion",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "dateTime",
+          "key_pcs": [
+            "0x49b960"
+          ],
+          "output_type": "DateTime",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "DateTime.parse of selected String; invalid required timestamp can throw",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "author",
+          "key_pcs": [
+            "0x49b9bc"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": ""
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "null=>empty String; String assertion",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "login",
+          "key_pcs": [
+            "0x49ba2c"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": ""
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "null=>empty String; String assertion",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "content",
+          "key_pcs": [
+            "0x49ba9c"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": ""
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "null=>empty String; String assertion",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "declined",
+          "key_pcs": [
+            "0x49bb0c"
+          ],
+          "output_type": "bool",
+          "missing_default": {
+            "status": "observed",
+            "value": false
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "_flag recognizes true, numeric1, String1/Stringtrue",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "pollOpen",
+          "key_pcs": [
+            "0x49bb3c",
+            "0x49bb60"
+          ],
+          "output_type": "bool",
+          "missing_default": {
+            "status": "observed",
+            "value": true
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "missing/null=>true; otherwise _flag",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "pending",
+          "key_pcs": [
+            "0x49bbc8"
+          ],
+          "output_type": "bool",
+          "missing_default": {
+            "status": "observed",
+            "value": false
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "_flag recognizes true, numeric1, String1/Stringtrue",
+          "status": "static-derived-field-contract"
+        }
+      ],
+      "coverage": {
+        "key_count": 16,
+        "resolved_field_count": 9
+      }
+    },
+    {
+      "name": "AttendanceTerm.fromJson",
+      "source": "rodzic/models/attendance_data.dart",
+      "entry_pc": "0x4a1950",
+      "source_sha256": "da076a5f9590d499af85bb2244bad8f06f19b00444668cf782dd51933780917b",
+      "fields": [
+        {
+          "wire_key": "id",
+          "key_pcs": [
+            "0x4a197c"
+          ],
+          "output_type": "int",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "required int assertion; no numeric String coercion",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "isYear",
+          "key_pcs": [
+            "0x4a19d0"
+          ],
+          "output_type": "int",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "required int assertion; no numeric String coercion",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "label",
+          "key_pcs": [
+            "0x4a1a3c"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "required String assertion",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "dateFrom",
+          "key_pcs": [
+            "0x4a1a94"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "required String assertion",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "dateTo",
+          "key_pcs": [
+            "0x4a1ae8"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "required String assertion",
+          "status": "static-derived-field-contract"
+        }
+      ],
+      "coverage": {
+        "key_count": 5,
+        "resolved_field_count": 5
+      }
+    },
+    {
+      "name": "AttendanceRecord.fromJson",
+      "source": "rodzic/models/attendance_data.dart",
+      "entry_pc": "0x4a1cac",
+      "source_sha256": "da076a5f9590d499af85bb2244bad8f06f19b00444668cf782dd51933780917b",
+      "fields": [
+        {
+          "wire_key": "ca",
+          "key_pcs": [
+            "0x4a1cd8"
+          ],
+          "output_type": "String?",
+          "missing_default": {
+            "status": "observed",
+            "value": null
+          },
+          "nullable": true,
+          "aliases": [],
+          "conversion": "non-null toString; empty string then normalized to null",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "d",
+          "key_pcs": [
+            "0x4a1d3c"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "required String assertion",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "sid",
+          "key_pcs": [
+            "0x4a1d94"
+          ],
+          "output_type": "int",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "required int assertion",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "ab",
+          "key_pcs": [
+            "0x4a1de8"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "required String assertion",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "tn",
+          "key_pcs": [
+            "0x4a1e60"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": ""
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "non-null toString, missing/null=>empty String",
+          "status": "static-derived-field-contract"
+        }
+      ],
+      "coverage": {
+        "key_count": 5,
+        "resolved_field_count": 5
+      }
+    },
+    {
+      "name": "DashboardAttendance.fromJson",
+      "source": "rodzic/models/dashboard_attendance.dart",
+      "entry_pc": "0x75cc10",
+      "source_sha256": "e170166449b46b44e80fadc046bb10f359eee81bd06f81f1548abf5fa6e406a5",
+      "fields": [
+        {
+          "wire_key": "date",
+          "key_pcs": [
+            "0x75cc34"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        },
+        {
+          "wire_key": "id",
+          "key_pcs": [
+            "0x75cc90"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        },
+        {
+          "wire_key": "name",
+          "key_pcs": [
+            "0x75cd24"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        },
+        {
+          "wire_key": "subjectName",
+          "key_pcs": [
+            "0x75cd80"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        },
+        {
+          "wire_key": "subject_name",
+          "key_pcs": [
+            "0x75cdb4"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        },
+        {
+          "wire_key": "startTime",
+          "key_pcs": [
+            "0x75ceac"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        },
+        {
+          "wire_key": "start_time",
+          "key_pcs": [
+            "0x75cf18"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        },
+        {
+          "wire_key": "countAs",
+          "key_pcs": [
+            "0x75cf8c"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        },
+        {
+          "wire_key": "count_as",
+          "key_pcs": [
+            "0x75cfc0"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        },
+        {
+          "wire_key": "eventId",
+          "key_pcs": [
+            "0x75d02c"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        },
+        {
+          "wire_key": "event_id",
+          "key_pcs": [
+            "0x75d060"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        }
+      ],
+      "coverage": {
+        "key_count": 11,
+        "resolved_field_count": 0
+      }
+    },
+    {
+      "name": "DashboardElement.fromJson",
+      "source": "rodzic/models/dashboard_element.dart",
+      "entry_pc": "0x75c844",
+      "source_sha256": "c816079d4701a2447fa70e414ac8b9425ac6843e35c02dbea879d99f6c313305",
+      "fields": [
+        {
+          "wire_key": "type",
+          "key_pcs": [
+            "0x75c870"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        },
+        {
+          "wire_key": "date",
+          "key_pcs": [
+            "0x75c8f4"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        },
+        {
+          "wire_key": "label",
+          "key_pcs": [
+            "0x75c9ac"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        },
+        {
+          "wire_key": "data",
+          "key_pcs": [
+            "0x75ca14"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        }
+      ],
+      "coverage": {
+        "key_count": 4,
+        "resolved_field_count": 0
+      }
+    },
+    {
+      "name": "Exam.fromJson",
+      "source": "rodzic/models/exam.dart",
+      "entry_pc": "0x492758",
+      "source_sha256": "455c2d617065bb3c0f01f54ff19f6e2a62131710711b20d586aad426bb423310",
+      "fields": [
+        {
+          "wire_key": "dateTime",
+          "key_pcs": [
+            "0x492784"
+          ],
+          "output_type": "date/time value",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": true,
+          "aliases": [
+            "date"
+          ],
+          "conversion": "first non-null primary/alias; date parsing uses dedicated branches; invalid-date fallback still gated",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "date",
+          "key_pcs": [
+            "0x4927ac"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed",
+          "alias_of": "dateTime"
+        },
+        {
+          "wire_key": "addedTime",
+          "key_pcs": [
+            "0x492810"
+          ],
+          "output_type": "date/time value",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": true,
+          "aliases": [
+            "added_date"
+          ],
+          "conversion": "first non-null primary/alias; date parsing uses dedicated branches; invalid-date fallback still gated",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "added_date",
+          "key_pcs": [
+            "0x492838"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed",
+          "alias_of": "addedTime"
+        },
+        {
+          "wire_key": "id",
+          "key_pcs": [
+            "0x49289c"
+          ],
+          "output_type": "int",
+          "missing_default": {
+            "status": "observed",
+            "value": 0
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "int.tryParse((value ?? \"0\").toString()) ?? 0",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "pupil_id",
+          "key_pcs": [
+            "0x492924"
+          ],
+          "output_type": "int",
+          "missing_default": {
+            "status": "observed",
+            "value": 0
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "int.tryParse((value ?? \"0\").toString()) ?? 0",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "teacherId",
+          "key_pcs": [
+            "0x4929ac"
+          ],
+          "output_type": "int",
+          "missing_default": {
+            "status": "observed",
+            "value": 0
+          },
+          "nullable": false,
+          "aliases": [
+            "teacher_id"
+          ],
+          "conversion": "first non-null teacherId/teacher_id then int.tryParse textual value",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "teacher_id",
+          "key_pcs": [
+            "0x4929d4"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed",
+          "alias_of": "teacherId"
+        },
+        {
+          "wire_key": "title",
+          "key_pcs": [
+            "0x492a5c"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": ""
+          },
+          "nullable": false,
+          "aliases": [
+            "name"
+          ],
+          "conversion": "first non-null primary/alias then stringify",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "name",
+          "key_pcs": [
+            "0x492a84"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed",
+          "alias_of": "title"
+        },
+        {
+          "wire_key": "description",
+          "key_pcs": [
+            "0x492ae8"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": ""
+          },
+          "nullable": false,
+          "aliases": [
+            "content"
+          ],
+          "conversion": "first non-null primary/alias then stringify",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "content",
+          "key_pcs": [
+            "0x492b10"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed",
+          "alias_of": "description"
+        },
+        {
+          "wire_key": "test_type",
+          "key_pcs": [
+            "0x492b74"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": "Sprawdzian"
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "null => literal Sprawdzian; stringify",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "subjectName",
+          "key_pcs": [
+            "0x492c70"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": ""
+          },
+          "nullable": false,
+          "aliases": [
+            "subject_name"
+          ],
+          "conversion": "first non-null primary/alias then stringify",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "subject_name",
+          "key_pcs": [
+            "0x492c98"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed",
+          "alias_of": "subjectName"
+        },
+        {
+          "wire_key": "teacher_name",
+          "key_pcs": [
+            "0x492cfc"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": ""
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "null => empty String; stringify",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "teacher_surname",
+          "key_pcs": [
+            "0x492d60"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": ""
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "null => empty String; stringify",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "startTime",
+          "key_pcs": [
+            "0x492dc4"
+          ],
+          "output_type": "date/time value",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": true,
+          "aliases": [
+            "start_time"
+          ],
+          "conversion": "first non-null primary/alias; date parsing uses dedicated branches; invalid-date fallback still gated",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "start_time",
+          "key_pcs": [
+            "0x492e28"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed",
+          "alias_of": "startTime"
+        },
+        {
+          "wire_key": "endTime",
+          "key_pcs": [
+            "0x492e94"
+          ],
+          "output_type": "date/time value",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": true,
+          "aliases": [
+            "end_time"
+          ],
+          "conversion": "first non-null primary/alias; date parsing uses dedicated branches; invalid-date fallback still gated",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "end_time",
+          "key_pcs": [
+            "0x492ef4"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed",
+          "alias_of": "endTime"
+        }
+      ],
+      "coverage": {
+        "key_count": 21,
+        "resolved_field_count": 13
+      }
+    },
+    {
+      "name": "HomeworkDetail.fromJson",
+      "source": "rodzic/models/homework.dart",
+      "entry_pc": "0x763744",
+      "source_sha256": "27eacb7b121c34d3abd50b295432dac49ba02084b2242db82d4c80e9a41b59b2",
+      "fields": [
+        {
+          "wire_key": "teacher_comments",
+          "key_pcs": [
+            "0x763770"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        },
+        {
+          "wire_key": "teacher",
+          "key_pcs": [
+            "0x763798"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": ""
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "stringify(value ?? \"\")",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "content",
+          "key_pcs": [
+            "0x7637dc"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": ""
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "stringify(value ?? \"\")",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "groups",
+          "key_pcs": [
+            "0x76381c",
+            "0x7638f4"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        },
+        {
+          "wire_key": "files",
+          "key_pcs": [
+            "0x7639d0",
+            "0x763aa8"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        },
+        {
+          "wire_key": "status",
+          "key_pcs": [
+            "0x763b94"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        },
+        {
+          "wire_key": "solution",
+          "key_pcs": [
+            "0x763c28",
+            "0x763ca8"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        }
+      ],
+      "coverage": {
+        "key_count": 7,
+        "resolved_field_count": 2
+      }
+    },
+    {
+      "name": "HomeworkSolution.fromJson",
+      "source": "rodzic/models/homework.dart",
+      "entry_pc": "0x763d68",
+      "source_sha256": "27eacb7b121c34d3abd50b295432dac49ba02084b2242db82d4c80e9a41b59b2",
+      "fields": [
+        {
+          "wire_key": "content",
+          "key_pcs": [
+            "0x763d94"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": ""
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "stringify(value ?? \"\")",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "sent_at",
+          "key_pcs": [
+            "0x763dd4"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": ""
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "stringify(value ?? \"\")",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "files",
+          "key_pcs": [
+            "0x763e18",
+            "0x763eec"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        }
+      ],
+      "coverage": {
+        "key_count": 3,
+        "resolved_field_count": 2
+      }
+    },
+    {
+      "name": "HomeworkFile.fromJson",
+      "source": "rodzic/models/homework.dart",
+      "entry_pc": "0x76403c",
+      "source_sha256": "27eacb7b121c34d3abd50b295432dac49ba02084b2242db82d4c80e9a41b59b2",
+      "fields": [
+        {
+          "wire_key": "id",
+          "key_pcs": [
+            "0x764068"
+          ],
+          "output_type": "int",
+          "missing_default": {
+            "status": "observed",
+            "value": 0
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "int.tryParse((value ?? 0).toString()) ?? 0",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "name",
+          "key_pcs": [
+            "0x7640cc"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": "plik"
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "stringify(value ?? \"plik\")",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "extension",
+          "key_pcs": [
+            "0x764110"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": ""
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "stringify(value ?? \"\")",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "url",
+          "key_pcs": [
+            "0x764150"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": ""
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "stringify(value ?? \"\")",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "size",
+          "key_pcs": [
+            "0x764190"
+          ],
+          "output_type": "int",
+          "missing_default": {
+            "status": "observed",
+            "value": 0
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "int.tryParse((value ?? 0).toString()) ?? 0",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "sender",
+          "key_pcs": [
+            "0x7641f0"
+          ],
+          "output_type": "int",
+          "missing_default": {
+            "status": "observed",
+            "value": 0
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "int.tryParse((value??0).toString())??0",
+          "status": "static-derived-field-contract"
+        }
+      ],
+      "coverage": {
+        "key_count": 6,
+        "resolved_field_count": 6
+      }
+    },
+    {
+      "name": "Homework.fromDiaryJson",
+      "source": "rodzic/models/homework.dart",
+      "entry_pc": "0x4943f4",
+      "source_sha256": "27eacb7b121c34d3abd50b295432dac49ba02084b2242db82d4c80e9a41b59b2",
+      "fields": [
+        {
+          "wire_key": "dateTime",
+          "key_pcs": [
+            "0x494420"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        },
+        {
+          "wire_key": "addedTime",
+          "key_pcs": [
+            "0x49447c"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        },
+        {
+          "wire_key": "id",
+          "key_pcs": [
+            "0x4944c4"
+          ],
+          "output_type": "int",
+          "missing_default": {
+            "status": "observed",
+            "value": 0
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "int.tryParse((value ?? 0).toString()) ?? 0",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "subjectId",
+          "key_pcs": [
+            "0x494528"
+          ],
+          "output_type": "int",
+          "missing_default": {
+            "status": "observed",
+            "value": 0
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "int.tryParse((value ?? 0).toString()) ?? 0",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "subjectName",
+          "key_pcs": [
+            "0x49458c"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": ""
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "stringify(value ?? \"\")",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "title",
+          "key_pcs": [
+            "0x4945cc"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": ""
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "stringify(value ?? \"\")",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "description",
+          "key_pcs": [
+            "0x49460c"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": ""
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "stringify(value ?? \"\")",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "teacherId",
+          "key_pcs": [
+            "0x494690"
+          ],
+          "output_type": "int",
+          "missing_default": {
+            "status": "observed",
+            "value": 0
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "int.tryParse((value ?? 0).toString()) ?? 0",
+          "status": "static-derived-field-contract"
+        }
+      ],
+      "coverage": {
+        "key_count": 8,
+        "resolved_field_count": 6
+      }
+    },
+    {
+      "name": "Homework.fromModuleJson",
+      "source": "rodzic/models/homework.dart",
+      "entry_pc": "0x49527c",
+      "source_sha256": "27eacb7b121c34d3abd50b295432dac49ba02084b2242db82d4c80e9a41b59b2",
+      "fields": [
+        {
+          "wire_key": "deadline_at",
+          "key_pcs": [
+            "0x4952a8"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        },
+        {
+          "wire_key": "studentIds",
+          "key_pcs": [
+            "0x495304"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        },
+        {
+          "wire_key": "teacher_comments",
+          "key_pcs": [
+            "0x49532c"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        },
+        {
+          "wire_key": "statuses",
+          "key_pcs": [
+            "0x495354"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        },
+        {
+          "wire_key": "id",
+          "key_pcs": [
+            "0x49537c"
+          ],
+          "output_type": "int",
+          "missing_default": {
+            "status": "observed",
+            "value": 0
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "int.tryParse((value ?? 0).toString()) ?? 0",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "subject",
+          "key_pcs": [
+            "0x4953e0"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": ""
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "stringify(value ?? \"\")",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "title",
+          "key_pcs": [
+            "0x495420"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": ""
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "stringify(value ?? \"\")",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "created_at",
+          "key_pcs": [
+            "0x495460"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        },
+        {
+          "wire_key": "student",
+          "key_pcs": [
+            "0x4955f4"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": ""
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "stringify(value ?? \"\")",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "status",
+          "key_pcs": [
+            "0x495634"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        },
+        {
+          "wire_key": "archived",
+          "key_pcs": [
+            "0x495a14"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        }
+      ],
+      "coverage": {
+        "key_count": 11,
+        "resolved_field_count": 4
+      }
+    },
+    {
+      "name": "JustificationRecord.fromJson",
+      "source": "rodzic/models/justification_record.dart",
+      "entry_pc": "0x76cf38",
+      "source_sha256": "794765a2b6f6dad11154c0f580151bc0eb42e7b640a96304d526c83d3ccea53c",
+      "fields": [
+        {
+          "wire_key": "events",
+          "key_pcs": [
+            "0x76cf64",
+            "0x76d040"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        },
+        {
+          "wire_key": "id",
+          "key_pcs": [
+            "0x76d11c"
+          ],
+          "output_type": "int",
+          "missing_default": {
+            "status": "observed",
+            "value": 0
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "num? assertion; numeric toInt, null=>0; numeric strings are not accepted by this path",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "created_at",
+          "key_pcs": [
+            "0x76d1d0"
+          ],
+          "output_type": "DateTime",
+          "missing_default": {
+            "status": "observed",
+            "value": "DateTime.now()"
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "DateTime.tryParse textual source; fallback current local DateTime",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "message",
+          "key_pcs": [
+            "0x76d288"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": ""
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "stringify null as empty String",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "period_from",
+          "key_pcs": [
+            "0x76d2fc"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": ""
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "stringify null as empty String",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "period_to",
+          "key_pcs": [
+            "0x76d374"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": ""
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "stringify null as empty String",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "event_count",
+          "key_pcs": [
+            "0x76d3ec"
+          ],
+          "output_type": "int",
+          "missing_default": {
+            "status": "observed",
+            "value": 0
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "num? assertion; numeric toInt, null=>0; numeric strings are not accepted by this path",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "status",
+          "key_pcs": [
+            "0x76d4a0"
+          ],
+          "output_type": "int",
+          "missing_default": {
+            "status": "observed",
+            "value": 0
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "num? assertion; numeric toInt, null=>0; numeric strings are not accepted by this path",
+          "status": "static-derived-field-contract"
+        }
+      ],
+      "coverage": {
+        "key_count": 8,
+        "resolved_field_count": 7
+      }
+    },
+    {
+      "name": "JustifyEventRef.fromJson",
+      "source": "rodzic/models/justification_record.dart",
+      "entry_pc": "0x76d5f4",
+      "source_sha256": "794765a2b6f6dad11154c0f580151bc0eb42e7b640a96304d526c83d3ccea53c",
+      "fields": [
+        {
+          "wire_key": "event_id",
+          "key_pcs": [
+            "0x76d620"
+          ],
+          "output_type": "int",
+          "missing_default": {
+            "status": "observed",
+            "value": 0
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "num? -> toInt, null=>0",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "day",
+          "key_pcs": [
+            "0x76d6d8"
+          ],
+          "output_type": "String?",
+          "missing_default": {
+            "status": "observed",
+            "value": null
+          },
+          "nullable": true,
+          "aliases": [],
+          "conversion": "nullable stringified value; exact empty-string distinction requires fixture",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "subject",
+          "key_pcs": [
+            "0x76d730"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": ""
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "null=>empty String; stringify",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "time_from",
+          "key_pcs": [
+            "0x76d7a4"
+          ],
+          "output_type": "String?",
+          "missing_default": {
+            "status": "observed",
+            "value": null
+          },
+          "nullable": true,
+          "aliases": [],
+          "conversion": "nullable stringified value; exact empty-string distinction requires fixture",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "time_to",
+          "key_pcs": [
+            "0x76d7fc"
+          ],
+          "output_type": "String?",
+          "missing_default": {
+            "status": "observed",
+            "value": null
+          },
+          "nullable": true,
+          "aliases": [],
+          "conversion": "nullable stringified value; exact empty-string distinction requires fixture",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "attendance_type",
+          "key_pcs": [
+            "0x76d854"
+          ],
+          "output_type": "String?",
+          "missing_default": {
+            "status": "observed",
+            "value": null
+          },
+          "nullable": true,
+          "aliases": [],
+          "conversion": "nullable stringified value; exact empty-string distinction requires fixture",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "absence_code",
+          "key_pcs": [
+            "0x76d8ac"
+          ],
+          "output_type": "String?",
+          "missing_default": {
+            "status": "observed",
+            "value": null
+          },
+          "nullable": true,
+          "aliases": [],
+          "conversion": "nullable stringified value; exact empty-string distinction requires fixture",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "applied_status",
+          "key_pcs": [
+            "0x76d900"
+          ],
+          "output_type": "int?",
+          "missing_default": {
+            "status": "observed",
+            "value": null
+          },
+          "nullable": true,
+          "aliases": [],
+          "conversion": "num? assertion then nullable toInt",
+          "status": "static-derived-field-contract"
+        }
+      ],
+      "coverage": {
+        "key_count": 8,
+        "resolved_field_count": 8
+      }
+    },
+    {
+      "name": "JustifyEvent.fromJson",
+      "source": "rodzic/models/justify_event.dart",
+      "entry_pc": "0x7ba880",
+      "source_sha256": "c20b17c90549e9c1487047fe4d866fd6575d46ebc3432be93106341cce36862c",
+      "fields": [
+        {
+          "wire_key": "ab",
+          "key_pcs": [
+            "0x7ba8b4"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": ""
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "stringify(value ?? \"\")",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "st",
+          "key_pcs": [
+            "0x7ba928"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": ""
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "stringify(value ?? \"\")",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "end",
+          "key_pcs": [
+            "0x7ba9a0"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": ""
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "stringify(value ?? \"\")",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "sub",
+          "key_pcs": [
+            "0x7baa14"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": ""
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "stringify(value ?? \"\")",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "js",
+          "key_pcs": [
+            "0x7baa8c"
+          ],
+          "output_type": "int",
+          "missing_default": {
+            "status": "observed",
+            "value": 0
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "num? -> toInt, null=>0",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "attendance_type",
+          "key_pcs": [
+            "0x7bab40"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": "absent"
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "stringify(value ?? \"absent\")",
+          "status": "static-derived-field-contract"
+        }
+      ],
+      "coverage": {
+        "key_count": 6,
+        "resolved_field_count": 6
+      }
+    },
+    {
+      "name": "MailMessage.fromJson",
+      "source": "rodzic/models/mail_message.dart",
+      "entry_pc": "0x47df60",
+      "source_sha256": "690cc0f84403277fa8d4614ba68b7b95a9c153f09180ecc9be11da9db914ad90",
+      "fields": [
+        {
+          "wire_key": "id",
+          "key_pcs": [
+            "0x47df8c"
+          ],
+          "output_type": "int",
+          "missing_default": {
+            "status": "observed",
+            "value": 0
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "null => integer0; non-null int assertion, no String-ID coercion here",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "subject",
+          "key_pcs": [
+            "0x47dff8"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": ""
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "null => empty String; String assertion",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "content",
+          "key_pcs": [
+            "0x47e068"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": ""
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "null => empty String; String assertion",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "author",
+          "key_pcs": [
+            "0x47e0d8",
+            "0x47e100"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        },
+        {
+          "wire_key": "recipients",
+          "key_pcs": [
+            "0x47e154",
+            "0x47e220"
+          ],
+          "output_type": "List",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "List guard before typed element mapping; malformed-list fallback requires fixture verification",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "files",
+          "key_pcs": [
+            "0x47e304",
+            "0x47e3d0"
+          ],
+          "output_type": "List",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "List guard before typed element mapping; malformed-list fallback requires fixture verification",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "date",
+          "key_pcs": [
+            "0x47e4b4",
+            "0x47e4dc"
+          ],
+          "output_type": "DateTime",
+          "missing_default": {
+            "status": "observed",
+            "value": "DateTime.now()"
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "missing/null or DateTime.tryParse failure => source current local DateTime; Siberia recommendation preserve unknown original timestamp instead of fabricating history",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "read_at",
+          "key_pcs": [
+            "0x47e5b0",
+            "0x47e5d8"
+          ],
+          "output_type": "DateTime?",
+          "missing_default": {
+            "status": "observed",
+            "value": null
+          },
+          "nullable": true,
+          "aliases": [],
+          "conversion": "non-null String then DateTime.tryParse; absent/null=>null",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "stared",
+          "key_pcs": [
+            "0x47e648"
+          ],
+          "output_type": "bool",
+          "missing_default": {
+            "status": "observed",
+            "value": false
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "equality to literal boolean true; numeric1 and Stringtrue are not generalized to true",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "trashed",
+          "key_pcs": [
+            "0x47e698"
+          ],
+          "output_type": "bool",
+          "missing_default": {
+            "status": "observed",
+            "value": false
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "equality to literal boolean true; numeric1 and Stringtrue are not generalized to true",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "previous",
+          "key_pcs": [
+            "0x47e6e8",
+            "0x47e7b0"
+          ],
+          "output_type": "List",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "List guard before typed element mapping; malformed-list fallback requires fixture verification",
+          "status": "static-derived-field-contract"
+        }
+      ],
+      "coverage": {
+        "key_count": 11,
+        "resolved_field_count": 10
+      }
+    },
+    {
+      "name": "MailRecipientInfo.fromJson",
+      "source": "rodzic/models/mail_message.dart",
+      "entry_pc": "0x47f48c",
+      "source_sha256": "690cc0f84403277fa8d4614ba68b7b95a9c153f09180ecc9be11da9db914ad90",
+      "fields": [
+        {
+          "wire_key": "name",
+          "key_pcs": [
+            "0x47f4b8"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": ""
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "null=>empty String; String assertion",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "roleName",
+          "key_pcs": [
+            "0x47f528"
+          ],
+          "output_type": "String?",
+          "missing_default": {
+            "status": "observed",
+            "value": null
+          },
+          "nullable": true,
+          "aliases": [],
+          "conversion": "nullable String assertion",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "read_at",
+          "key_pcs": [
+            "0x47f578",
+            "0x47f59c"
+          ],
+          "output_type": "DateTime?",
+          "missing_default": {
+            "status": "observed",
+            "value": null
+          },
+          "nullable": true,
+          "aliases": [],
+          "conversion": "DateTime.tryParse of non-null String",
+          "status": "static-derived-field-contract"
+        }
+      ],
+      "coverage": {
+        "key_count": 3,
+        "resolved_field_count": 3
+      }
+    },
+    {
+      "name": "MailFile.fromJson",
+      "source": "rodzic/models/mail_message.dart",
+      "entry_pc": "0x47f16c",
+      "source_sha256": "690cc0f84403277fa8d4614ba68b7b95a9c153f09180ecc9be11da9db914ad90",
+      "fields": [
+        {
+          "wire_key": "id",
+          "key_pcs": [
+            "0x47f198"
+          ],
+          "output_type": "int",
+          "missing_default": {
+            "status": "observed",
+            "value": 0
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "int.tryParse(value.toString()) ?? 0",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "name",
+          "key_pcs": [
+            "0x47f214"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": ""
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "null => empty String; String assertion",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "size",
+          "key_pcs": [
+            "0x47f284"
+          ],
+          "output_type": "int",
+          "missing_default": {
+            "status": "observed",
+            "value": 0
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "int.tryParse(value.toString()) ?? 0",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "url",
+          "key_pcs": [
+            "0x47f300"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": ""
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "null => empty String; String assertion",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "extension",
+          "key_pcs": [
+            "0x47f36c"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": ""
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "null => empty String; String assertion",
+          "status": "static-derived-field-contract"
+        }
+      ],
+      "coverage": {
+        "key_count": 5,
+        "resolved_field_count": 5
+      }
+    },
+    {
+      "name": "MailAuthor.fromJson",
+      "source": "rodzic/models/mail_message.dart",
+      "entry_pc": "0x47ef04",
+      "source_sha256": "690cc0f84403277fa8d4614ba68b7b95a9c153f09180ecc9be11da9db914ad90",
+      "fields": [
+        {
+          "wire_key": "id",
+          "key_pcs": [
+            "0x47ef30"
+          ],
+          "output_type": "int",
+          "missing_default": {
+            "status": "observed",
+            "value": 0
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "null=>0; int assertion",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "name",
+          "key_pcs": [
+            "0x47ef9c"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": ""
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "null => empty String; String assertion",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "role",
+          "key_pcs": [
+            "0x47f008"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": ""
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "null => empty String; String assertion",
+          "status": "static-derived-field-contract"
+        }
+      ],
+      "coverage": {
+        "key_count": 3,
+        "resolved_field_count": 3
+      }
+    },
+    {
+      "name": "MailRecipient.fromJson",
+      "source": "rodzic/models/mail_recipient.dart",
+      "entry_pc": "0x776704",
+      "source_sha256": "f0c2a285df8b38b8584f8026b1e5b1098869c9dabf26c72864c10cad079b4a7d",
+      "fields": [
+        {
+          "wire_key": "id",
+          "key_pcs": [
+            "0x776730"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": ""
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "normalize: stringify; regex ^\\d+$ => prefix user_; nonnumeric ID retained",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "name",
+          "key_pcs": [
+            "0x7767b0"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": ""
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "null=>empty String; String assertion",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "role",
+          "key_pcs": [
+            "0x776824"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": ""
+          },
+          "nullable": false,
+          "aliases": [
+            "_type"
+          ],
+          "conversion": "first non-null role/_type then String assertion",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "_type",
+          "key_pcs": [
+            "0x776848"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed",
+          "alias_of": "role"
+        }
+      ],
+      "coverage": {
+        "key_count": 4,
+        "resolved_field_count": 3
+      }
+    },
+    {
+      "name": "Mark.fromApiJson",
+      "source": "rodzic/models/mark.dart",
+      "entry_pc": "0x48d574",
+      "source_sha256": "6612a880e8475b6047a99f880b53b29c910028a35862c50a3186a3e35e92deea",
+      "fields": [
+        {
+          "wire_key": "id",
+          "key_pcs": [
+            "0x48d5a0",
+            "0x48d5dc",
+            "0x48d604"
+          ],
+          "output_type": "int",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "integer accepted or String parsed with int.parse; malformed required ID can throw",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "subjectId",
+          "key_pcs": [
+            "0x48d6b0",
+            "0x48d6ec",
+            "0x48d714"
+          ],
+          "output_type": "int",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "integer accepted or String parsed with int.parse; malformed required ID can throw",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "value",
+          "key_pcs": [
+            "0x48d7c0"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": ""
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "null => empty String; other branch stringifies selected value",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "weight",
+          "key_pcs": [
+            "0x48d834",
+            "0x48d858",
+            "0x48d880",
+            "0x48d8bc",
+            "0x48d918"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        },
+        {
+          "wire_key": "date",
+          "key_pcs": [
+            "0x48d980"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": ""
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "null => empty String; other branch stringifies selected value",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "bgColor",
+          "key_pcs": [
+            "0x48d9f4"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": ""
+          },
+          "nullable": false,
+          "aliases": [
+            "color"
+          ],
+          "conversion": "first non-null bgColor/color, stringify",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "color",
+          "key_pcs": [
+            "0x48da1c"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed",
+          "alias_of": "bgColor"
+        },
+        {
+          "wire_key": "description",
+          "key_pcs": [
+            "0x48da80"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": ""
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "null => empty String; other branch stringifies selected value",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "kindLabel",
+          "key_pcs": [
+            "0x48daf4"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": ""
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "null => empty String; other branch stringifies selected value",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "comments",
+          "key_pcs": [
+            "0x48db68"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": ""
+          },
+          "nullable": false,
+          "aliases": [
+            "comment"
+          ],
+          "conversion": "first non-null comments/comment, stringify",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "comment",
+          "key_pcs": [
+            "0x48db90"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed",
+          "alias_of": "comments"
+        },
+        {
+          "wire_key": "count_to_avg",
+          "key_pcs": [
+            "0x48dbf4"
+          ],
+          "output_type": "int?",
+          "missing_default": {
+            "status": "observed",
+            "value": null
+          },
+          "nullable": true,
+          "aliases": [
+            "countToAvg"
+          ],
+          "conversion": "first non-null; nullable int assertion, no generic bool coercion",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "countToAvg",
+          "key_pcs": [
+            "0x48dc1c"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed",
+          "alias_of": "count_to_avg"
+        },
+        {
+          "wire_key": "teacher_id",
+          "key_pcs": [
+            "0x48dc80"
+          ],
+          "output_type": "int",
+          "missing_default": {
+            "status": "observed",
+            "value": 0
+          },
+          "nullable": false,
+          "aliases": [
+            "teacherId"
+          ],
+          "conversion": "first non-null teacher_id/teacherId; int assertion",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "teacherId",
+          "key_pcs": [
+            "0x48dca8"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed",
+          "alias_of": "teacher_id"
+        },
+        {
+          "wire_key": "subject_name",
+          "key_pcs": [
+            "0x48dd14"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": ""
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "null => empty String; String assertion",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "teacher_name",
+          "key_pcs": [
+            "0x48dd84"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": ""
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "null => empty String; String assertion",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "teacher_surname",
+          "key_pcs": [
+            "0x48ddf4"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": ""
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "null => empty String; String assertion",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "markGroupId",
+          "key_pcs": [
+            "0x48de64",
+            "0x48de9c",
+            "0x48dec0"
+          ],
+          "output_type": "int",
+          "missing_default": {
+            "status": "observed",
+            "value": 0
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "int or int.tryParse textual representation, fallback0",
+          "status": "static-derived-field-contract"
+        }
+      ],
+      "coverage": {
+        "key_count": 19,
+        "resolved_field_count": 14
+      }
+    },
+    {
+      "name": "NotificationSettings.fromJson",
+      "source": "rodzic/models/notification_settings.dart",
+      "entry_pc": "0x792e94",
+      "source_sha256": "05feaa73d880b3d581e885e869d933cf597be2e1ada4b65ed6ed9d4f69d411eb",
+      "fields": [
+        {
+          "wire_key": "marks",
+          "key_pcs": [
+            "0x792ee0"
+          ],
+          "output_type": "bool",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "helper b0x793304: bool unchanged; numeric nonzero true; String1 or case-insensitive true accepted; other input uses caller fallback",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "attendance",
+          "key_pcs": [
+            "0x792f28"
+          ],
+          "output_type": "int",
+          "missing_default": {
+            "status": "observed",
+            "value": 1
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "integer unchanged; number toInt; int.tryParse String else1; clamp0..3",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "exams",
+          "key_pcs": [
+            "0x793018"
+          ],
+          "output_type": "bool",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "helper b0x793304: bool unchanged; numeric nonzero true; String1 or case-insensitive true accepted; other input uses caller fallback",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "homeworks",
+          "key_pcs": [
+            "0x793060"
+          ],
+          "output_type": "bool",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "helper b0x793304: bool unchanged; numeric nonzero true; String1 or case-insensitive true accepted; other input uses caller fallback",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "reprimands",
+          "key_pcs": [
+            "0x7930a8"
+          ],
+          "output_type": "bool",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "helper b0x793304: bool unchanged; numeric nonzero true; String1 or case-insensitive true accepted; other input uses caller fallback",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "messages",
+          "key_pcs": [
+            "0x7930f0"
+          ],
+          "output_type": "bool",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "helper b0x793304: bool unchanged; numeric nonzero true; String1 or case-insensitive true accepted; other input uses caller fallback",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "announcements",
+          "key_pcs": [
+            "0x793138"
+          ],
+          "output_type": "bool",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "helper b0x793304: bool unchanged; numeric nonzero true; String1 or case-insensitive true accepted; other input uses caller fallback",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "planChanges",
+          "key_pcs": [
+            "0x7931b4"
+          ],
+          "output_type": "bool",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "helper b0x793304: bool unchanged; numeric nonzero true; String1 or case-insensitive true accepted; other input uses caller fallback",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "substitutions",
+          "key_pcs": [
+            "0x793200"
+          ],
+          "output_type": "bool",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "helper b0x793304: bool unchanged; numeric nonzero true; String1 or case-insensitive true accepted; other input uses caller fallback",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "cancellations",
+          "key_pcs": [
+            "0x793250"
+          ],
+          "output_type": "bool",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "helper b0x793304: bool unchanged; numeric nonzero true; String1 or case-insensitive true accepted; other input uses caller fallback",
+          "status": "static-derived-field-contract"
+        }
+      ],
+      "coverage": {
+        "key_count": 10,
+        "resolved_field_count": 10
+      }
+    },
+    {
+      "name": "Reprimand.fromJson",
+      "source": "rodzic/models/reprimand.dart",
+      "entry_pc": "0x49cbb8",
+      "source_sha256": "7fe1dacb1e6cd8aa231677473c7744afdeb4009fdcfe24ee0f0c5efae92269a7",
+      "fields": [
+        {
+          "wire_key": "id",
+          "key_pcs": [
+            "0x49cbdc",
+            "0x49cc20",
+            "0x49cc98"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        },
+        {
+          "wire_key": "pupilId",
+          "key_pcs": [
+            "0x49cd14",
+            "0x49cd58",
+            "0x49cdcc"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        },
+        {
+          "wire_key": "teacherId",
+          "key_pcs": [
+            "0x49ce20",
+            "0x49ce64",
+            "0x49ced8",
+            "0x49cf74"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        },
+        {
+          "wire_key": "teacherName",
+          "key_pcs": [
+            "0x49cf2c"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        },
+        {
+          "wire_key": "kind",
+          "key_pcs": [
+            "0x49d01c"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        },
+        {
+          "wire_key": "getDate",
+          "key_pcs": [
+            "0x49d0b0"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        },
+        {
+          "wire_key": "content",
+          "key_pcs": [
+            "0x49d108"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        },
+        {
+          "wire_key": "status",
+          "key_pcs": [
+            "0x49d188",
+            "0x49d1cc",
+            "0x49d248"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        }
+      ],
+      "coverage": {
+        "key_count": 8,
+        "resolved_field_count": 0
+      }
+    },
+    {
+      "name": "Subject.fromJson",
+      "source": "rodzic/models/subject.dart",
+      "entry_pc": "0x48e094",
+      "source_sha256": "42eb33af39156cd292f67d948e7a3d4177dff06442abf52303c95a247a0bd232",
+      "fields": [
+        {
+          "wire_key": "teachersIds",
+          "key_pcs": [
+            "0x48e0c0"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        },
+        {
+          "wire_key": "teacher_ids",
+          "key_pcs": [
+            "0x48e0e8"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        },
+        {
+          "wire_key": "id",
+          "key_pcs": [
+            "0x48e23c",
+            "0x48e278",
+            "0x48e2a0"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        },
+        {
+          "wire_key": "label",
+          "key_pcs": [
+            "0x48e388"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        },
+        {
+          "wire_key": "name",
+          "key_pcs": [
+            "0x48e3e8"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        }
+      ],
+      "coverage": {
+        "key_count": 5,
+        "resolved_field_count": 0
+      }
+    },
+    {
+      "name": "Term.fromJson",
+      "source": "rodzic/models/term.dart",
+      "entry_pc": "0x4913bc",
+      "source_sha256": "a5de6bcb41a60524edfda9c06a0eca7c334580e191f22823e8219d43290eb771",
+      "fields": [
+        {
+          "wire_key": "id",
+          "key_pcs": [
+            "0x4913e8",
+            "0x491424",
+            "0x49144c"
+          ],
+          "output_type": "int",
+          "missing_default": {
+            "status": "observed",
+            "value": 0
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "int unchanged; otherwise int.tryParse(value.toString()) ?? 0",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "parentId",
+          "key_pcs": [
+            "0x491514",
+            "0x491550",
+            "0x491574"
+          ],
+          "output_type": "int",
+          "missing_default": {
+            "status": "observed",
+            "value": 0
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "int unchanged; otherwise int.tryParse(value.toString()) ?? 0",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "label",
+          "key_pcs": [
+            "0x491650"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": ""
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "null => empty String",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "isYear",
+          "key_pcs": [
+            "0x4916c4",
+            "0x491718"
+          ],
+          "output_type": "bool",
+          "missing_default": {
+            "status": "observed",
+            "value": false
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "true for integer 1 or string \"1\"; preserve source check rather than generic truthiness",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "dateFrom",
+          "key_pcs": [
+            "0x491768"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": ""
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "null => empty String",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "dateTo",
+          "key_pcs": [
+            "0x4917d4"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": ""
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "null => empty String",
+          "status": "static-derived-field-contract"
+        }
+      ],
+      "coverage": {
+        "key_count": 6,
+        "resolved_field_count": 6
+      }
+    },
+    {
+      "name": "TermMark.fromApiJson",
+      "source": "rodzic/models/term_mark.dart",
+      "entry_pc": "0x48d14c",
+      "source_sha256": "dcf74397e43046af8217b72974e130e1c5e426abc6b74093a782b4e7652b71aa",
+      "fields": [
+        {
+          "wire_key": "isFinal",
+          "key_pcs": [
+            "0x48d178"
+          ],
+          "output_type": "bool",
+          "missing_default": {
+            "status": "observed",
+            "value": false
+          },
+          "nullable": false,
+          "aliases": [
+            "is_final"
+          ],
+          "conversion": "first non-null alias; recognizes true, numeric1 and string1 branches",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "is_final",
+          "key_pcs": [
+            "0x48d1a0"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed",
+          "alias_of": "isFinal"
+        },
+        {
+          "wire_key": "isProposal",
+          "key_pcs": [
+            "0x48d1d0"
+          ],
+          "output_type": "bool",
+          "missing_default": {
+            "status": "observed",
+            "value": false
+          },
+          "nullable": false,
+          "aliases": [
+            "is_proposal"
+          ],
+          "conversion": "first non-null alias; recognizes true, numeric1 and string1 branches",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "is_proposal",
+          "key_pcs": [
+            "0x48d1f8"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed",
+          "alias_of": "isProposal"
+        },
+        {
+          "wire_key": "value",
+          "key_pcs": [
+            "0x48d228"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": ""
+          },
+          "nullable": false,
+          "aliases": [
+            "val"
+          ],
+          "conversion": "first non-null value/val then stringifies",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "val",
+          "key_pcs": [
+            "0x48d28c"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed",
+          "alias_of": "value"
+        },
+        {
+          "wire_key": "mtTeacherId",
+          "key_pcs": [
+            "0x48d490"
+          ],
+          "output_type": "int",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": false,
+          "aliases": [
+            "teacherId"
+          ],
+          "conversion": "first non-null; int assertion",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "teacherId",
+          "key_pcs": [
+            "0x48d4b4"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed",
+          "alias_of": "mtTeacherId"
+        }
+      ],
+      "coverage": {
+        "key_count": 8,
+        "resolved_field_count": 4
+      }
+    },
+    {
+      "name": "TimetableEvent.fromJson",
+      "source": "rodzic/models/timetable_event.dart",
+      "entry_pc": "0x498740",
+      "source_sha256": "9b21e6fac3dc833d449329e32a6e0f8faf976f6deecf73239d0d498f01a59ada",
+      "fields": [
+        {
+          "wire_key": "tests",
+          "key_pcs": [
+            "0x49876c"
+          ],
+          "output_type": "List",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": true,
+          "aliases": [],
+          "conversion": "List? assertion before element mapping; do not flatten or infer element schema",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "teachers",
+          "key_pcs": [
+            "0x4987ec"
+          ],
+          "output_type": "List",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": true,
+          "aliases": [],
+          "conversion": "List? assertion before element mapping; do not flatten or infer element schema",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "bgColor",
+          "key_pcs": [
+            "0x49886c"
+          ],
+          "output_type": "String?",
+          "missing_default": {
+            "status": "observed",
+            "value": null
+          },
+          "nullable": true,
+          "aliases": [
+            "attendanceColor"
+          ],
+          "conversion": "first non-null aliases then nullable String assertion",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "attendanceColor",
+          "key_pcs": [
+            "0x498894"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed",
+          "alias_of": "bgColor"
+        },
+        {
+          "wire_key": "id",
+          "key_pcs": [
+            "0x4988fc",
+            "0x498938",
+            "0x4989bc"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        },
+        {
+          "wire_key": "dateTimeFrom",
+          "key_pcs": [
+            "0x498a18"
+          ],
+          "output_type": "DateTime",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": false,
+          "aliases": [
+            "startTime"
+          ],
+          "conversion": "first non-null then String assertion and DateTime.parse",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "startTime",
+          "key_pcs": [
+            "0x498a40"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed",
+          "alias_of": "dateTimeFrom"
+        },
+        {
+          "wire_key": "dateTimeTo",
+          "key_pcs": [
+            "0x498ab8"
+          ],
+          "output_type": "DateTime",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": false,
+          "aliases": [
+            "endTime"
+          ],
+          "conversion": "first non-null then String assertion and DateTime.parse",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "endTime",
+          "key_pcs": [
+            "0x498ae0"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed",
+          "alias_of": "dateTimeTo"
+        },
+        {
+          "wire_key": "subjectName",
+          "key_pcs": [
+            "0x498b58"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": "Brak nazwy"
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "null => literal Brak nazwy; String assertion",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "title",
+          "key_pcs": [
+            "0x498bc8"
+          ],
+          "output_type": "String?",
+          "missing_default": {
+            "status": "observed",
+            "value": null
+          },
+          "nullable": true,
+          "aliases": [
+            "content"
+          ],
+          "conversion": "first non-null aliases then nullable String assertion",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "content",
+          "key_pcs": [
+            "0x498bf0"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed",
+          "alias_of": "title"
+        },
+        {
+          "wire_key": "topic",
+          "key_pcs": [
+            "0x498c18"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        },
+        {
+          "wire_key": "room",
+          "key_pcs": [
+            "0x498c80"
+          ],
+          "output_type": "String?",
+          "missing_default": {
+            "status": "observed",
+            "value": null
+          },
+          "nullable": true,
+          "aliases": [
+            "roomName"
+          ],
+          "conversion": "first non-null aliases then nullable String assertion",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "roomName",
+          "key_pcs": [
+            "0x498ca8"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed",
+          "alias_of": "room"
+        },
+        {
+          "wire_key": "attendanceLabel",
+          "key_pcs": [
+            "0x498d88"
+          ],
+          "output_type": "String?",
+          "missing_default": {
+            "status": "observed",
+            "value": null
+          },
+          "nullable": true,
+          "aliases": [
+            "attendanceSymbol"
+          ],
+          "conversion": "first non-null aliases then nullable String assertion",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "attendanceSymbol",
+          "key_pcs": [
+            "0x498db0"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed",
+          "alias_of": "attendanceLabel"
+        },
+        {
+          "wire_key": "attendanceName",
+          "key_pcs": [
+            "0x498e18"
+          ],
+          "output_type": "String?",
+          "missing_default": {
+            "status": "observed",
+            "value": null
+          },
+          "nullable": true,
+          "aliases": [],
+          "conversion": "nullable String assertion",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "attendanceUnchecked",
+          "key_pcs": [
+            "0x498e80",
+            "0x498ed4",
+            "0x498f0c"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        },
+        {
+          "wire_key": "type",
+          "key_pcs": [
+            "0x498f70"
+          ],
+          "output_type": "String",
+          "missing_default": {
+            "status": "observed",
+            "value": "lekcja"
+          },
+          "nullable": false,
+          "aliases": [],
+          "conversion": "null => literal lekcja; String assertion",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "isLocked",
+          "key_pcs": [
+            "0x498fe0",
+            "0x49902c",
+            "0x499064"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        },
+        {
+          "wire_key": "isCanceled",
+          "key_pcs": [
+            "0x4990b0",
+            "0x499104",
+            "0x49913c"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        },
+        {
+          "wire_key": "substitution",
+          "key_pcs": [
+            "0x4991a0"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        },
+        {
+          "wire_key": "oldSubjectName",
+          "key_pcs": [
+            "0x499284"
+          ],
+          "output_type": "String?",
+          "missing_default": {
+            "status": "observed",
+            "value": null
+          },
+          "nullable": true,
+          "aliases": [],
+          "conversion": "nullable String assertion",
+          "status": "static-derived-field-contract"
+        },
+        {
+          "wire_key": "oldTeachers",
+          "key_pcs": [
+            "0x4992d8"
+          ],
+          "output_type": "List",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": true,
+          "aliases": [],
+          "conversion": "List? assertion before element mapping; do not flatten or infer element schema",
+          "status": "static-derived-field-contract"
+        }
+      ],
+      "coverage": {
+        "key_count": 25,
+        "resolved_field_count": 13
+      }
+    },
+    {
+      "name": "TimetableExam.fromJson",
+      "source": "rodzic/models/timetable_event.dart",
+      "entry_pc": "0x499718",
+      "source_sha256": "9b21e6fac3dc833d449329e32a6e0f8faf976f6deecf73239d0d498f01a59ada",
+      "fields": [
+        {
+          "wire_key": "testId",
+          "key_pcs": [
+            "0x499744"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        },
+        {
+          "wire_key": "testType",
+          "key_pcs": [
+            "0x4997cc"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        },
+        {
+          "wire_key": "testLabel",
+          "key_pcs": [
+            "0x49983c"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        },
+        {
+          "wire_key": "content",
+          "key_pcs": [
+            "0x499860"
+          ],
+          "output_type": "unresolved",
+          "missing_default": {
+            "status": "unresolved"
+          },
+          "nullable": "unresolved",
+          "aliases": [],
+          "conversion": "unresolved; preserve raw value until field-specific decoder is verified",
+          "status": "key-access-confirmed"
+        }
+      ],
+      "coverage": {
+        "key_count": 4,
+        "resolved_field_count": 0
+      }
+    }
+  ],
+  "decode_policy_recommendations": [
+    "Keep immutable raw payload alongside normalized fields for unsupported variants.",
+    "Separate missing field, explicit null, malformed required field and empty legitimate list.",
+    "Do not coerce every numeric String to int: constructors differ.",
+    "Return per-record decode issues and preserve previous valid cache; never turn a transport/protocol error into empty success.",
+    "Any unresolved field remains raw/unsupported until its gate is satisfied."
+  ]
+}

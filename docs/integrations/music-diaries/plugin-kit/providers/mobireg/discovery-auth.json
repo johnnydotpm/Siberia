@@ -1,0 +1,127 @@
+{
+  "schema_version": 1,
+  "qr": {
+    "raw_input": "URI String, trimmed before Uri.tryParse",
+    "scheme": "mobireg",
+    "host": "qrlogin",
+    "query": {
+      "school": {
+        "required": true,
+        "transform": "URI-decoded query value then trim; empty rejected"
+      },
+      "code": {
+        "required": true,
+        "transform": "URI-decoded query value then trim; empty rejected"
+      },
+      "addr": {
+        "required": false,
+        "transform": "URI-decoded query value then trim; empty/missing => mobireg.pl"
+      }
+    },
+    "output": "map<String,String> {addr,school,code}; settings passes values to AppState.performQrLogin",
+    "example": "mobireg://qrlogin?school=SYNTHETIC-SCHOOL&code=SYNTHETIC-CODE&addr=diary.example.invalid",
+    "evidence": {
+      "file": "rodzic/screens/qr_scan_screen.dart",
+      "entry_pc": "0x7864e0",
+      "trim_parse": [
+        "0x786500",
+        "0x786508"
+      ],
+      "scheme_compare": "0x78654c",
+      "host_compare": "0x786590",
+      "school_read": "0x7865f0",
+      "code_read": "0x786654",
+      "addr_read": "0x7866dc",
+      "default_address": "0x786718",
+      "settings_pass": "0x7926b8"
+    },
+    "getter_attribution": "Strong static inference from Uri dispatch slots cross-compared to URL launcher http/https guard (-0xf44), YouTube host whitelist (-0xed6), and route query map access (-0xec7); exact global dispatch table getter names not independently decoded.",
+    "unknowns": [
+      "Duplicate query-parameter choice follows Dart Uri.queryParameters semantics; do not invent first/last selection without matching SDK vector.",
+      "URI scheme/host normalization and odd path/fragment acceptance need SDK-equivalence vectors.",
+      "One-time code expiry/reuse is server policy, not established by parser."
+    ]
+  },
+  "users_operation": {
+    "id": "MA-USERS",
+    "selector": "users",
+    "transport": "MA-GATEWAY",
+    "requirePupil": false,
+    "extraParams": {},
+    "evidence": {
+      "entry_pc": "0x49ff14",
+      "call_pc": "0x49ff58",
+      "source": "rodzic/state/app_state.dart"
+    },
+    "root": "strict envelope.data map",
+    "fields": {
+      "id": "int.tryParse((value??0).toString())??0",
+      "role": "int.tryParse((value??0).toString())??0",
+      "firstname": "stringify(value??empty)",
+      "lastname": "stringify(value??empty)",
+      "pupils": "list -> callback0x49fd3c, requires int id, firstname/lastname stringify null to empty",
+      "messagingUrl": "stringify(value??empty)",
+      "homeworksUrl": "stringify(value??empty)",
+      "oldHomeworkModule": "int.tryParse((value??0).toString())??0",
+      "messagesToken": "optional value stringified and account-owned secure storage"
+    },
+    "persisted_account_aliases": {
+      "firstname": "firstName",
+      "lastname": "lastName",
+      "school": "account schoolCode"
+    },
+    "self_pupil": {
+      "source": "Account.pupilsOrSelf0x49fc38",
+      "when": "pupil list empty AND role==1 AND userId>0",
+      "values": "id=userId, names=account firstName/lastName, remaining context strings empty"
+    },
+    "async_guard": "source checks active account after await before applying context0x49e474..49e4ac"
+  },
+  "lifecycle": {
+    "owner_key": [
+      "provider=mobireg",
+      "canonical legitimate diary authority",
+      "schoolCode",
+      "login/account identity"
+    ],
+    "selected_data_key": [
+      "owner key",
+      "pupilId",
+      "term/year selection"
+    ],
+    "credentials": [
+      "original modern password OR QR refresh token",
+      "JWT",
+      "messagesToken"
+    ],
+    "independent_sessions": [
+      "mailboxCookie",
+      "homeworkCookie"
+    ],
+    "refresh_policy": "one serialized refresh flow per owner; source gateway401 itself never refreshes/retries",
+    "on_switch": "discard prior generation async results and replace module sessions/config",
+    "logout_policy": "local credential/cache cleanup is required design; remote logout/revocation contract not recovered; never claim server revocation."
+  },
+  "diary_homework_operation": {
+    "id": "HW-DIARY",
+    "method": "POST",
+    "selector": "homeworks",
+    "transport": "MA-GATEWAY",
+    "requirePupil": true,
+    "parameters": {
+      "pupilId": "selected pupil, string conversion performed by gateway"
+    },
+    "extraParams": {},
+    "caller": "HomeworksRepository.getDiaryHomeworks fetch closure",
+    "response": "strict envelope data map: teachers dictionary/items list; item decoder Homework.fromDiaryJson0x4943f4; list decoder0x493918",
+    "evidence": {
+      "source": "rodzic/repositories/homeworks_repository.dart",
+      "entry_pc": "0x494b64",
+      "selector_pc": "0x494ba8",
+      "pupil_descriptor_pc": "0x494bac",
+      "call_pc": "0x494bb0",
+      "target": "0x48ead4"
+    },
+    "runtime_verified": false
+  }
+}

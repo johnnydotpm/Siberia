@@ -1,0 +1,192 @@
+{
+  "build": "iOS1.1.7(build35)",
+  "original_image_sha256": "2c11d5a1be3f1f21d85c2b9c4deb8c59d2c3c33dfd9eebf0235657bcc6f7cca1",
+  "kind": "Curated static observations; no runtime/server claims",
+  "facts": [
+    {
+      "id": "folders",
+      "value": [
+        "inbox",
+        "sent",
+        "search",
+        "trash"
+      ],
+      "status": "static literal caller arguments",
+      "native_references": [
+        {
+          "pc": "0x301d50",
+          "original_instruction_hex": "423c40f9",
+          "raw_original_bytes_match": true,
+          "analysis_symbol_file": "sub_2f35d0.txt"
+        },
+        {
+          "pc": "0x303d4c",
+          "original_instruction_hex": "429447f9",
+          "raw_original_bytes_match": true,
+          "analysis_symbol_file": "sub_2f55cc.txt"
+        },
+        {
+          "pc": "0x304368",
+          "original_instruction_hex": "42d047f9",
+          "raw_original_bytes_match": true,
+          "analysis_symbol_file": "sub_2f5bd8.txt"
+        },
+        {
+          "pc": "0x304980",
+          "original_instruction_hex": "42b446f9",
+          "raw_original_bytes_match": true,
+          "analysis_symbol_file": "sub_2f6200.txt"
+        }
+      ]
+    },
+    {
+      "id": "minimum_search_characters",
+      "value": 3,
+      "status": "native shifted string length compared to3",
+      "native_references": [
+        {
+          "pc": "0x3ee5bc",
+          "original_instruction_hex": "3f0c00f1",
+          "raw_original_bytes_match": true,
+          "analysis_symbol_file": "_SearchMessagesPartialScreenState@1166036029/_onSearch@1166036029_3dfe44.txt"
+        }
+      ]
+    },
+    {
+      "id": "max_compose_attachments",
+      "value": 2,
+      "status": "native existing attachment list length compared to2; adding rejected at >=2",
+      "native_references": [
+        {
+          "pc": "0x3de4ec",
+          "original_instruction_hex": "1f0800f1",
+          "raw_original_bytes_match": true,
+          "analysis_symbol_file": "_MessageFormScreenState@1118287289/_addAttachment@1118287289_3cfd5c.txt"
+        }
+      ]
+    },
+    {
+      "id": "maximum_attachment_bytes_inclusive",
+      "value": 10000000,
+      "status": "native immediate0x00989680 and compare, BLE accepts <=; this client limit, not proven server limit",
+      "native_references": [
+        {
+          "pc": "0x3de604",
+          "original_instruction_hex": "11d092d2",
+          "raw_original_bytes_match": true,
+          "analysis_symbol_file": "_MessageFormScreenState@1118287289/_addAttachment@1118287289_3cfd5c.txt"
+        },
+        {
+          "pc": "0x3de60c",
+          "original_instruction_hex": "3f0011eb",
+          "raw_original_bytes_match": true,
+          "analysis_symbol_file": "_MessageFormScreenState@1118287289/_addAttachment@1118287289_3cfd5c.txt"
+        },
+        {
+          "pc": "0x3de610",
+          "original_instruction_hex": "cd000054",
+          "raw_original_bytes_match": true,
+          "analysis_symbol_file": "_MessageFormScreenState@1118287289/_addAttachment@1118287289_3cfd5c.txt"
+        }
+      ]
+    },
+    {
+      "id": "allowed_extensions",
+      "value": [
+        "pdf",
+        "jpg",
+        "jpeg",
+        "png",
+        "txt",
+        "doc",
+        "docx",
+        "odt",
+        "ppt",
+        "pptx",
+        "mp3",
+        "mp4",
+        "xls",
+        "xlsx",
+        "xps"
+      ],
+      "status": "static list initialization and same field passed to file picker",
+      "native_references": [
+        {
+          "pc": "0x441ff8",
+          "original_instruction_hex": "707b4091",
+          "raw_original_bytes_match": true,
+          "analysis_symbol_file": "_MessageFormScreenState@1118287289/_MessageFormScreenState@1118287289._433604.txt"
+        },
+        {
+          "pc": "0x4420c8",
+          "original_instruction_hex": "20f00af8",
+          "raw_original_bytes_match": true,
+          "analysis_symbol_file": "_MessageFormScreenState@1118287289/_MessageFormScreenState@1118287289._433604.txt"
+        },
+        {
+          "pc": "0x3de5a4",
+          "original_instruction_hex": "02f04af8",
+          "raw_original_bytes_match": true,
+          "analysis_symbol_file": "_MessageFormScreenState@1118287289/_addAttachment@1118287289_3cfd5c.txt"
+        }
+      ]
+    },
+    {
+      "id": "token_early_expiry_margin",
+      "value": 0,
+      "unit": "seconds",
+      "status": "DateTime.now directly followed by isAfter(expirationDate); no margin in this recovered method",
+      "native_references": [
+        {
+          "pc": "0x2a1db4",
+          "original_instruction_hex": "1c000094",
+          "raw_original_bytes_match": true,
+          "analysis_symbol_file": "JwtDecoder/isExpired_29365c.txt"
+        },
+        {
+          "pc": "0x2a1dd0",
+          "original_instruction_hex": "e18ef697",
+          "raw_original_bytes_match": true,
+          "analysis_symbol_file": "JwtDecoder/isExpired_29365c.txt"
+        },
+        {
+          "pc": "0x2a1df0",
+          "original_instruction_hex": "06000094",
+          "raw_original_bytes_match": true,
+          "analysis_symbol_file": "JwtDecoder/isExpired_29365c.txt"
+        }
+      ]
+    },
+    {
+      "id": "refresh_single_flight",
+      "value": true,
+      "status": "getAccessToken stores in-flight refresh Future in field23; cleared on success/error",
+      "native_references": [
+        {
+          "pc": "0x2a1794",
+          "original_instruction_hex": "fd79bfa9",
+          "raw_original_bytes_match": true,
+          "analysis_symbol_file": "TokenService/getAccessToken_293054.txt"
+        },
+        {
+          "pc": "0x2a1850",
+          "original_instruction_hex": "567001f8",
+          "raw_original_bytes_match": true,
+          "analysis_symbol_file": "TokenService/getAccessToken_293054.txt"
+        },
+        {
+          "pc": "0x2a1894",
+          "original_instruction_hex": "567001f8",
+          "raw_original_bytes_match": true,
+          "analysis_symbol_file": "TokenService/getAccessToken_293054.txt"
+        },
+        {
+          "pc": "0x2a1928",
+          "original_instruction_hex": "fd79bfa9",
+          "raw_original_bytes_match": true,
+          "analysis_symbol_file": "TokenService/_refreshAccessToken@1055282738_2931e8.txt"
+        }
+      ]
+    }
+  ]
+}

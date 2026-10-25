@@ -1,0 +1,287 @@
+[
+  {
+    "constructor": "_ AbsenceTypeChangeRequest.fromJson(/* No info */)",
+    "address": "0x61df44",
+    "source": "blutter-android/asm/fryderyk_mobile_v3/models/absence_type_change_request.dart",
+    "lookup_literals_in_constructor_order": [
+      "id",
+      "absence_type",
+      "absence_reason",
+      "start",
+      "end"
+    ],
+    "decoder_calls": [
+      "// 0x61e028: r0 = AbsenceType.fromTypeCode()",
+      "// 0x61e0f4: r0 = parse()",
+      "// 0x61e15c: r0 = parse()"
+    ],
+    "warning": "Literal ownership recovered within constructor; not all literals are keys, and types/nullability need full control-flow review."
+  },
+  {
+    "constructor": "_ AttendancesOverviewPeriod.fromJson(/* No info */)",
+    "address": "0x6219d8",
+    "source": "blutter-android/asm/fryderyk_mobile_v3/models/attendances_overview.dart",
+    "lookup_literals_in_constructor_order": [
+      "firstDayOfPeriod",
+      "lastDayOfPeriod",
+      "attendancePercentage",
+      "lessonsWithExplainedCount",
+      "lessonsWithExcusedCount",
+      "lessonsWithLateCount"
+    ],
+    "decoder_calls": [
+      "// 0x621a58: r0 = parse()",
+      "// 0x621ac8: r0 = parse()"
+    ],
+    "warning": "Literal ownership recovered within constructor; not all literals are keys, and types/nullability need full control-flow review."
+  },
+  {
+    "constructor": "_ AttendancesOverview.fromJson(/* No info */)",
+    "address": "0x62175c",
+    "source": "blutter-android/asm/fryderyk_mobile_v3/models/attendances_overview.dart",
+    "lookup_literals_in_constructor_order": [
+      "year",
+      "months"
+    ],
+    "decoder_calls": [
+      "// 0x6217c4: r0 = AttendancesOverviewPeriod.fromJson()"
+    ],
+    "warning": "Literal ownership recovered within constructor; not all literals are keys, and types/nullability need full control-flow review."
+  },
+  {
+    "constructor": "_ Grade.fromJson(/* No info */)",
+    "address": "0x623050",
+    "source": "blutter-android/asm/fryderyk_mobile_v3/models/grade.dart",
+    "lookup_literals_in_constructor_order": [
+      "text_value",
+      "numeric_value",
+      "weight",
+      "name",
+      "comment",
+      "created",
+      "subject_color",
+      "subject_name",
+      "subject_short_name"
+    ],
+    "decoder_calls": [
+      "// 0x6232b0: r0 = parse()",
+      "// 0x623358: r0 = parse()"
+    ],
+    "warning": "Literal ownership recovered within constructor; not all literals are keys, and types/nullability need full control-flow review."
+  },
+  {
+    "constructor": "_ GradesOverviewSubject.fromJson(/* No info */)",
+    "address": "0x622b00",
+    "source": "blutter-android/asm/fryderyk_mobile_v3/models/grades_overview.dart",
+    "lookup_literals_in_constructor_order": [
+      "name",
+      "short_name",
+      "color",
+      "predicted_grade",
+      "final_grade",
+      "grades"
+    ],
+    "decoder_calls": [
+      "// 0x622c48: r0 = parse()",
+      "// 0x622d78: r0 = Grade.fromJson()",
+      "// 0x622e04: r0 = Grade.fromJson()"
+    ],
+    "warning": "Literal ownership recovered within constructor; not all literals are keys, and types/nullability need full control-flow review."
+  },
+  {
+    "constructor": "_ GradesOverviewSemester.fromJson(/* No info */)",
+    "address": "0x62271c",
+    "source": "blutter-android/asm/fryderyk_mobile_v3/models/grades_overview.dart",
+    "lookup_literals_in_constructor_order": [
+      "name",
+      "start",
+      "end",
+      "subjects"
+    ],
+    "decoder_calls": [
+      "// 0x6227f8: r0 = parse()",
+      "// 0x622864: r0 = parse()"
+    ],
+    "warning": "Literal ownership recovered within constructor; not all literals are keys, and types/nullability need full control-flow review."
+  },
+  {
+    "constructor": "_ GradesOverview.fromJson(/* No info */)",
+    "address": "0x62249c",
+    "source": "blutter-android/asm/fryderyk_mobile_v3/models/grades_overview.dart",
+    "lookup_literals_in_constructor_order": [
+      "semesters"
+    ],
+    "decoder_calls": [],
+    "warning": "Literal ownership recovered within constructor; not all literals are keys, and types/nullability need full control-flow review."
+  },
+  {
+    "constructor": "_ HomeworkSubject.fromJson(/* No info */)",
+    "address": "0x624fd8",
+    "source": "blutter-android/asm/fryderyk_mobile_v3/models/homework.dart",
+    "lookup_literals_in_constructor_order": [
+      "name",
+      "short_name",
+      "color"
+    ],
+    "decoder_calls": [
+      "// 0x62511c: r0 = parse()"
+    ],
+    "warning": "Literal ownership recovered within constructor; not all literals are keys, and types/nullability need full control-flow review."
+  },
+  {
+    "constructor": "_ HomeworkAttachment.fromJson(/* No info */)",
+    "address": "0x625280",
+    "source": "blutter-android/asm/fryderyk_mobile_v3/models/homework.dart",
+    "lookup_literals_in_constructor_order": [
+      "name",
+      "url"
+    ],
+    "decoder_calls": [],
+    "warning": "Literal ownership recovered within constructor; not all literals are keys, and types/nullability need full control-flow review."
+  },
+  {
+    "constructor": "_ HomeworkTeacher.fromJson(/* No info */)",
+    "address": "0x624ee4",
+    "source": "blutter-android/asm/fryderyk_mobile_v3/models/homework.dart",
+    "lookup_literals_in_constructor_order": [
+      "id",
+      "full_name"
+    ],
+    "decoder_calls": [],
+    "warning": "Literal ownership recovered within constructor; not all literals are keys, and types/nullability need full control-flow review."
+  },
+  {
+    "constructor": "_ Homework.fromJson(/* No info */)",
+    "address": "0x624928",
+    "source": "blutter-android/asm/fryderyk_mobile_v3/models/homework.dart",
+    "lookup_literals_in_constructor_order": [
+      "id",
+      "subject",
+      "publish_date",
+      "finish_date",
+      "teacher",
+      "content",
+      "attachments"
+    ],
+    "decoder_calls": [
+      "// 0x6249fc: r0 = HomeworkSubject.fromJson()",
+      "// 0x624a70: r0 = parse()",
+      "// 0x624adc: r0 = parse()",
+      "// 0x624b38: r0 = HomeworkTeacher.fromJson()",
+      "// 0x624bac: r0 = parse()"
+    ],
+    "warning": "Literal ownership recovered within constructor; not all literals are keys, and types/nullability need full control-flow review."
+  },
+  {
+    "constructor": "_ LessonAccompaniment.fromJson(/* No info */)",
+    "address": "0x6270b8",
+    "source": "blutter-android/asm/fryderyk_mobile_v3/models/lesson.dart",
+    "lookup_literals_in_constructor_order": [
+      "subject",
+      "accompanist",
+      "start",
+      "end"
+    ],
+    "decoder_calls": [
+      "// 0x6271f4: r0 = parse()",
+      "// 0x62725c: r0 = parse()"
+    ],
+    "warning": "Literal ownership recovered within constructor; not all literals are keys, and types/nullability need full control-flow review."
+  },
+  {
+    "constructor": "_ LessonExam.fromJson(/* No info */)",
+    "address": "0x627318",
+    "source": "blutter-android/asm/fryderyk_mobile_v3/models/lesson.dart",
+    "lookup_literals_in_constructor_order": [
+      "description",
+      "start",
+      "end"
+    ],
+    "decoder_calls": [
+      "// 0x627398: r0 = parse()",
+      "// 0x627404: r0 = parse()",
+      "// 0x62746c: r0 = parse()"
+    ],
+    "warning": "Literal ownership recovered within constructor; not all literals are keys, and types/nullability need full control-flow review."
+  },
+  {
+    "constructor": "_ LessonTeacher.fromJson(/* No info */)",
+    "address": "0x627520",
+    "source": "blutter-android/asm/fryderyk_mobile_v3/models/lesson.dart",
+    "lookup_literals_in_constructor_order": [
+      "id",
+      "full_name"
+    ],
+    "decoder_calls": [],
+    "warning": "Literal ownership recovered within constructor; not all literals are keys, and types/nullability need full control-flow review."
+  },
+  {
+    "constructor": "_ Lesson.fromJson(/* No info */)",
+    "address": "0x625d40",
+    "source": "blutter-android/asm/fryderyk_mobile_v3/models/lesson.dart",
+    "lookup_literals_in_constructor_order": [
+      "name",
+      "short_name",
+      "original_name",
+      "original_short_name",
+      "primary_description",
+      "secondary_description",
+      "room",
+      "color",
+      "absence_type",
+      "is_substitution",
+      "substitution_type",
+      "is_remote",
+      "remote_link",
+      "teachers",
+      "exams",
+      "accompaniments",
+      "absence_type_change_request",
+      "start",
+      "end"
+    ],
+    "decoder_calls": [
+      "// 0x626058: r0 = parse()",
+      "// 0x6261c0: r0 = AbsenceType.fromTypeCode()",
+      "// 0x626a1c: r0 = AbsenceTypeChangeRequest.fromJson()",
+      "// 0x626a90: r0 = parse()",
+      "// 0x626af8: r0 = parse()"
+    ],
+    "warning": "Literal ownership recovered within constructor; not all literals are keys, and types/nullability need full control-flow review."
+  },
+  {
+    "constructor": "_ LessonWithAbsence.fromJson(/* No info */)",
+    "address": "0x620b04",
+    "source": "blutter-android/asm/fryderyk_mobile_v3/models/lesson_with_absence.dart",
+    "lookup_literals_in_constructor_order": [
+      "name",
+      "short_name",
+      "color",
+      "absence_type",
+      "absence_type_change_request",
+      "start",
+      "end"
+    ],
+    "decoder_calls": [
+      "// 0x620c4c: r0 = parse()",
+      "// 0x620e78: r0 = AbsenceTypeChangeRequest.fromJson()",
+      "// 0x620efc: r0 = parse()",
+      "// 0x620f64: r0 = parse()"
+    ],
+    "warning": "Literal ownership recovered within constructor; not all literals are keys, and types/nullability need full control-flow review."
+  },
+  {
+    "constructor": "_ User.fromJson(/* No info */)",
+    "address": "0x617fc0",
+    "source": "blutter-android/asm/fryderyk_mobile_v3/models/user.dart",
+    "lookup_literals_in_constructor_order": [
+      "id",
+      "role",
+      "first_name",
+      "last_name",
+      "students"
+    ],
+    "decoder_calls": [],
+    "warning": "Literal ownership recovered within constructor; not all literals are keys, and types/nullability need full control-flow review."
+  }
+]

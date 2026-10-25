@@ -1,0 +1,44 @@
+{
+  "repos": [
+    {
+      "source": "analysis/tools-deep/blutter",
+      "commit": "4a60ac648bf448c5a7596437243bcd0b9376fdf0"
+    },
+    {
+      "source": "analysis/tools-deep/blutter313",
+      "commit": "c1caafecd233ea17c3f4b6b5ff8847d59478b979"
+    },
+    {
+      "source": "analysis/fryderyk/deep/r2flutter",
+      "commit": "441d614937c8ada56e4d0c1175050667842c0971"
+    },
+    {
+      "source": "analysis/fryderyk/deep/unflutter",
+      "commit": "dbbc2c3c3d898d0726a29da875fb0cf084e21710"
+    }
+  ],
+  "build_logs": [
+    {
+      "path": "analysis/deep/blutter-fryderyk-build.log",
+      "sha256": "f36dd1366156338e093279e19a34f2d38480383ede727f5fff98932f023001f3",
+      "dump_completed": true,
+      "analysis_error_count": 0,
+      "analysis_errors": []
+    },
+    {
+      "path": "analysis/deep/blutter-mobireg-build.log",
+      "sha256": "20dcf71807f2e6618501f93f33ad551cf0b791d2ef1f13a7fdc17145227bb017",
+      "dump_completed": true,
+      "analysis_error_count": 1,
+      "analysis_errors": [
+        "Analysis error at line 1499 `void FunctionAnalyzer::handleOptionalNamedParameters(AsmIterator&, arm64_reg)`: nextParamAddr == 0 || insn.address() == nextParamAddr"
+      ]
+    }
+  ],
+  "host": "Ubuntu WSL2 existing installation; g++15.2, CMake4.2.3, Ninja1.13.2, ICU78.2, Capstone5.0.7",
+  "notes": [
+    "REA skill used for evidence scope and Android method decompilation; auxiliary Dart-aware tools recover semantics REA6.3 catalog does not provide.",
+    "Blutter loads snapshots in matching Dart runtime for metadata inspection; diary app entrypoints were not launched.",
+    "No new git commits or pushes for deep phase."
+  ]
+}

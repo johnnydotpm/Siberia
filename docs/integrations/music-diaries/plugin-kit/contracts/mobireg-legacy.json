@@ -1,0 +1,78 @@
+{
+  "evidence_type": "static caller-chain plus synthetic encoding vectors",
+  "artifact_sha256": "6cf44e486c7d8d6560aa5e5b1e946c46c1b86cbe545c6882db9bc7b70d4476e8",
+  "profile": "MobiReg Android2.1.79 only",
+  "parent_pass": {
+    "encoding": "lowercase32-digit MD5 hex over input bytes",
+    "charset_in_source": "String.getBytes() platform default; intended Android UTF-8",
+    "producer": "EditAccountActivity.onCreate focus-loss listener -> Tools.computeMd5 -> AccountModel.setPassword",
+    "owner": "tenant-qualified account; not individual pupil",
+    "destination": "SyncHelperEparent.getSyncParameters -> SyncParameters.addCredentials -> form parent_pass",
+    "applies_to": [
+      "ParentStudents discovery",
+      "Settings",
+      "full/delta njson sync",
+      "FCM token registration",
+      "messages.php action=read"
+    ],
+    "not_established_for": [
+      "Android3.1.7",
+      "iOS3.1.7"
+    ],
+    "canonical_evidence": [
+      "ev_279d652a06d44441fb0ffe1d37508fb1c53a5c22bac2d2b069a2abfd3adfda72",
+      "ev_fcfcc3509797c055ffd5a30da1ae233f1dcd80065dfb6f8f3e887b73e2e4ec66"
+    ]
+  },
+  "synthetic_vectors": [
+    {
+      "input": "",
+      "encoding": "UTF-8",
+      "md5_lower_hex": "d41d8cd98f00b204e9800998ecf8427e",
+      "authority": "analyst-generated synthetic fixture"
+    },
+    {
+      "input": "password",
+      "encoding": "UTF-8",
+      "md5_lower_hex": "5f4dcc3b5aa765d61d8327deb882cf99",
+      "authority": "analyst-generated synthetic fixture"
+    },
+    {
+      "input": "pässwörd",
+      "encoding": "UTF-8",
+      "md5_lower_hex": "12841e4ba5e37d2fbfc78458c6714ade",
+      "authority": "analyst-generated synthetic fixture"
+    },
+    {
+      "input": "Zażółć gęślą jaźń",
+      "encoding": "UTF-8",
+      "md5_lower_hex": "25af8716284fc8efbab13dbb3b517085",
+      "authority": "analyst-generated synthetic fixture"
+    },
+    {
+      "input": " leading and trailing ",
+      "encoding": "UTF-8",
+      "md5_lower_hex": "d6acf2c199a020b97e05874e03d9eea8",
+      "authority": "analyst-generated synthetic fixture"
+    }
+  ],
+  "response_date_format": "yyyy-MM-dd'T'HH:mm:ss",
+  "delta_cursor_request_format": "YYYY-MM-DD hh:mm:ss",
+  "cursor_owner": "server Settings.time; not client wall clock",
+  "FCM_fields": {
+    "view": "ParentStudents",
+    "token": "FCM token",
+    "pupil_id": "not sent"
+  },
+  "message_ack_fields": {
+    "action": "read",
+    "message_id": "server integer ID",
+    "pupil_id": "not sent"
+  },
+  "limitations": [
+    "Static analysis did not execute app UI or call vendor backend",
+    "Android UI focus event consequence inferred from explicit listener/focus instructions",
+    "Synthetic vectors are not recorded server fixtures",
+    "Modern profile auth transformation unresolved"
+  ]
+}

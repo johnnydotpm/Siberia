@@ -1,0 +1,2385 @@
+{
+  "evidence_id": "MR-A04",
+  "source": "pl.mobireg.mobireglib.sync.config.MappingConfig.<clinit>",
+  "source_sha256": "132955eb0326988d984db43be765a301af06c458987d8146ec04723c02cd1692",
+  "limitations": [
+    "Static decompiler-derived mapping, not a live server schema.",
+    "Export mappings occur in shared library; no teacher-write capability established in parent app."
+  ],
+  "import": {
+    "Teachers": [
+      {
+        "db": "_id",
+        "json": "id",
+        "type": "PrimaryKey",
+        "default": null,
+        "source_line": 24
+      },
+      {
+        "db": "users_edu_id",
+        "json": "users_edu_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 25
+      },
+      {
+        "db": "login",
+        "json": "login",
+        "type": "String",
+        "default": null,
+        "source_line": 26
+      },
+      {
+        "db": "name",
+        "json": "name",
+        "type": "String",
+        "default": null,
+        "source_line": 27
+      },
+      {
+        "db": "surname",
+        "json": "surname",
+        "type": "String",
+        "default": null,
+        "source_line": 28
+      },
+      {
+        "db": "phone",
+        "json": "phone",
+        "type": "String",
+        "default": null,
+        "source_line": 29
+      },
+      {
+        "db": "pin",
+        "json": "pin",
+        "type": "String",
+        "default": null,
+        "source_line": 30
+      },
+      {
+        "db": "user_type",
+        "json": "user_type",
+        "type": "Integer",
+        "default": null,
+        "source_line": 31
+      }
+    ],
+    "Students": [
+      {
+        "db": "_id",
+        "json": "id",
+        "type": "PrimaryKey",
+        "default": null,
+        "source_line": 34
+      },
+      {
+        "db": "users_edu_id",
+        "json": "users_edu_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 35
+      },
+      {
+        "db": "name",
+        "json": "name",
+        "type": "String",
+        "default": null,
+        "source_line": 36
+      },
+      {
+        "db": "surname",
+        "json": "surname",
+        "type": "String",
+        "default": null,
+        "source_line": 37
+      },
+      {
+        "db": "sex",
+        "json": "sex",
+        "type": "String",
+        "default": null,
+        "source_line": 38
+      }
+    ],
+    "Rooms": [
+      {
+        "db": "_id",
+        "json": "id",
+        "type": "PrimaryKey",
+        "default": null,
+        "source_line": 41
+      },
+      {
+        "db": "patrons_id",
+        "json": "patrons_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 42
+      },
+      {
+        "db": "name",
+        "json": "name",
+        "type": "String",
+        "default": null,
+        "source_line": 43
+      },
+      {
+        "db": "description",
+        "json": "description",
+        "type": "String",
+        "default": null,
+        "source_line": 44
+      }
+    ],
+    "Terms": [
+      {
+        "db": "_id",
+        "json": "id",
+        "type": "PrimaryKey",
+        "default": null,
+        "source_line": 47
+      },
+      {
+        "db": "parent_id",
+        "json": "parent_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 48
+      },
+      {
+        "db": "name",
+        "json": "name",
+        "type": "String",
+        "default": null,
+        "source_line": 49
+      },
+      {
+        "db": "type",
+        "json": "type",
+        "type": "String",
+        "default": null,
+        "source_line": 50
+      },
+      {
+        "db": "start_date",
+        "json": "start_date",
+        "type": "DateTime",
+        "default": null,
+        "source_line": 51
+      },
+      {
+        "db": "end_date",
+        "json": "end_date",
+        "type": "DateTime",
+        "default": null,
+        "source_line": 52
+      }
+    ],
+    "Subjects": [
+      {
+        "db": "_id",
+        "json": "id",
+        "type": "PrimaryKey",
+        "default": null,
+        "source_line": 55
+      },
+      {
+        "db": "subjects_edu_id",
+        "json": "subjects_edu_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 56
+      },
+      {
+        "db": "name",
+        "json": "name",
+        "type": "String",
+        "default": null,
+        "source_line": 57
+      },
+      {
+        "db": "abbr",
+        "json": "abbr",
+        "type": "String",
+        "default": null,
+        "source_line": 58
+      }
+    ],
+    "Groups": [
+      {
+        "db": "_id",
+        "json": "id",
+        "type": "PrimaryKey",
+        "default": null,
+        "source_line": 61
+      },
+      {
+        "db": "parent_id",
+        "json": "parent_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 62
+      },
+      {
+        "db": "groups_edu_id",
+        "json": "groups_edu_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 63
+      },
+      {
+        "db": "name",
+        "json": "name",
+        "type": "String",
+        "default": null,
+        "source_line": 64
+      },
+      {
+        "db": "type",
+        "json": "type",
+        "type": "String",
+        "default": null,
+        "source_line": 65
+      },
+      {
+        "db": "attr",
+        "json": "attr",
+        "type": "String",
+        "default": null,
+        "source_line": 66
+      }
+    ],
+    "EventTypes": [
+      {
+        "db": "_id",
+        "json": "id",
+        "type": "PrimaryKey",
+        "default": null,
+        "source_line": 69
+      },
+      {
+        "db": "subjects_id",
+        "json": "subjects_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 70
+      },
+      {
+        "db": "teaching_level",
+        "json": "teaching_level",
+        "type": "Integer",
+        "default": null,
+        "source_line": 71
+      },
+      {
+        "db": "substitution",
+        "json": "substitution",
+        "type": "Integer",
+        "default": null,
+        "source_line": 72
+      }
+    ],
+    "EventTypeTeachers": [
+      {
+        "db": "_id",
+        "json": "id",
+        "type": "PrimaryKey",
+        "default": null,
+        "source_line": 75
+      },
+      {
+        "db": "teachers_id",
+        "json": "teachers_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 76
+      },
+      {
+        "db": "event_types_id",
+        "json": "event_types_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 77
+      }
+    ],
+    "EventTypeGroups": [
+      {
+        "db": "_id",
+        "json": "id",
+        "type": "PrimaryKey",
+        "default": null,
+        "source_line": 80
+      },
+      {
+        "db": "groups_id",
+        "json": "groups_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 81
+      },
+      {
+        "db": "event_types_id",
+        "json": "event_types_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 82
+      }
+    ],
+    "EventTypeTerms": [
+      {
+        "db": "_id",
+        "json": "id",
+        "type": "PrimaryKey",
+        "default": null,
+        "source_line": 85
+      },
+      {
+        "db": "terms_id",
+        "json": "terms_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 86
+      },
+      {
+        "db": "event_types_id",
+        "json": "event_types_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 87
+      }
+    ],
+    "Events": [
+      {
+        "db": "_id",
+        "json": "id",
+        "type": "PrimaryKey",
+        "default": null,
+        "source_line": 90
+      },
+      {
+        "db": "name",
+        "json": "name",
+        "type": "String",
+        "default": null,
+        "source_line": 91
+      },
+      {
+        "db": "date",
+        "json": "date",
+        "type": "DateTime",
+        "default": null,
+        "source_line": 92
+      },
+      {
+        "db": "number",
+        "json": "number",
+        "type": "Integer",
+        "default": null,
+        "source_line": 93
+      },
+      {
+        "db": "start_time",
+        "json": "start_time",
+        "type": "DateTime",
+        "default": null,
+        "source_line": 94
+      },
+      {
+        "db": "end_time",
+        "json": "end_time",
+        "type": "DateTime",
+        "default": null,
+        "source_line": 95
+      },
+      {
+        "db": "rooms_id",
+        "json": "rooms_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 96
+      },
+      {
+        "db": "event_types_id",
+        "json": "event_types_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 97
+      },
+      {
+        "db": "status",
+        "json": "status",
+        "type": "Integer",
+        "default": null,
+        "source_line": 98
+      },
+      {
+        "db": "substitution",
+        "json": "substitution",
+        "type": "Integer",
+        "default": null,
+        "source_line": 99
+      },
+      {
+        "db": "type",
+        "json": "type",
+        "type": "Integer",
+        "default": null,
+        "source_line": 100
+      },
+      {
+        "db": "attr",
+        "json": "attr",
+        "type": "Integer",
+        "default": null,
+        "source_line": 101
+      },
+      {
+        "db": "terms_id",
+        "json": "terms_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 102
+      },
+      {
+        "db": "lesson_groups_id",
+        "json": "lesson_groups_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 103
+      },
+      {
+        "db": "locked",
+        "json": "locked",
+        "type": "Integer",
+        "default": null,
+        "source_line": 104
+      }
+    ],
+    "EventSubjects": [
+      {
+        "db": "_id",
+        "json": "id",
+        "type": "PrimaryKey",
+        "default": null,
+        "source_line": 107
+      },
+      {
+        "db": "events_id",
+        "json": "events_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 108
+      },
+      {
+        "db": "content",
+        "json": "content",
+        "type": "String",
+        "default": null,
+        "source_line": 109
+      },
+      {
+        "db": "add_time",
+        "json": "add_time",
+        "type": "DateTime",
+        "default": null,
+        "source_line": 110
+      }
+    ],
+    "EventIssues": [
+      {
+        "db": "_id",
+        "json": "id",
+        "type": "PrimaryKey",
+        "default": null,
+        "source_line": 113
+      },
+      {
+        "db": "events_id",
+        "json": "events_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 114
+      },
+      {
+        "db": "event_types_id",
+        "json": "event_types_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 115
+      },
+      {
+        "db": "issues_id",
+        "json": "issues_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 116
+      }
+    ],
+    "EventEvents": [
+      {
+        "db": "_id",
+        "json": "id",
+        "type": "PrimaryKey",
+        "default": null,
+        "source_line": 119
+      },
+      {
+        "db": "events1_id",
+        "json": "events1_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 120
+      },
+      {
+        "db": "events2_id",
+        "json": "events2_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 121
+      }
+    ],
+    "UserReprimands": [
+      {
+        "db": "_id",
+        "json": "id",
+        "type": "PrimaryKey",
+        "default": null,
+        "source_line": 124
+      },
+      {
+        "db": "students_id",
+        "json": "students_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 125
+      },
+      {
+        "db": "teachers_id",
+        "json": "teachers_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 126
+      },
+      {
+        "db": "kinds_id",
+        "json": "kinds_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 127
+      },
+      {
+        "db": "get_date",
+        "json": "getdate",
+        "type": "DateTime",
+        "default": null,
+        "source_line": 128
+      },
+      {
+        "db": "add_time",
+        "json": "addtime",
+        "type": "DateTime",
+        "default": null,
+        "source_line": 129
+      },
+      {
+        "db": "status",
+        "json": "status",
+        "type": "Integer",
+        "default": null,
+        "source_line": 130
+      },
+      {
+        "db": "content",
+        "json": "content",
+        "type": "String",
+        "default": null,
+        "source_line": 131
+      }
+    ],
+    "StudentGroups": [
+      {
+        "db": "_id",
+        "json": "id",
+        "type": "PrimaryKey",
+        "default": null,
+        "source_line": 134
+      },
+      {
+        "db": "students_id",
+        "json": "students_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 135
+      },
+      {
+        "db": "groups_id",
+        "json": "groups_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 136
+      },
+      {
+        "db": "number",
+        "json": "number",
+        "type": "Integer",
+        "default": null,
+        "source_line": 137
+      },
+      {
+        "db": "strike_off_time",
+        "json": "strike_off_time",
+        "type": "DateTime",
+        "default": null,
+        "source_line": 138
+      },
+      {
+        "db": "strike_off_reason",
+        "json": "strike_off_reason",
+        "type": "String",
+        "default": null,
+        "source_line": 139
+      }
+    ],
+    "EventTypeSchedules": [
+      {
+        "db": "_id",
+        "json": "id",
+        "type": "AutoPrimaryKey",
+        "default": null,
+        "source_line": 142
+      },
+      {
+        "db": "event_types_id",
+        "json": "event_types_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 143
+      },
+      {
+        "db": "schedules_id",
+        "json": "schedules_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 144
+      },
+      {
+        "db": "name",
+        "json": "name",
+        "type": "String",
+        "default": null,
+        "source_line": 145
+      },
+      {
+        "db": "number",
+        "json": "number",
+        "type": "String",
+        "default": null,
+        "source_line": 146
+      }
+    ],
+    "AttendanceTypes": [
+      {
+        "db": "_id",
+        "json": "id",
+        "type": "PrimaryKey",
+        "default": null,
+        "source_line": 149
+      },
+      {
+        "db": "name",
+        "json": "name",
+        "type": "String",
+        "default": null,
+        "source_line": 150
+      },
+      {
+        "db": "abbr",
+        "json": "abbr",
+        "type": "String",
+        "default": null,
+        "source_line": 151
+      },
+      {
+        "db": "style",
+        "json": "style",
+        "type": "String",
+        "default": null,
+        "source_line": 152
+      },
+      {
+        "db": "count_as",
+        "json": "count_as",
+        "type": "String",
+        "default": null,
+        "source_line": 153
+      },
+      {
+        "db": "type",
+        "json": "type",
+        "type": "String",
+        "default": null,
+        "source_line": 154
+      }
+    ],
+    "Attendances": [
+      {
+        "db": "_id",
+        "json": "id",
+        "type": "PrimaryKey",
+        "default": null,
+        "source_line": 157
+      },
+      {
+        "db": "events_id",
+        "json": "events_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 158
+      },
+      {
+        "db": "students_id",
+        "json": "students_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 159
+      },
+      {
+        "db": "students_id",
+        "json": "students_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 160
+      },
+      {
+        "db": "new",
+        "json": null,
+        "type": "Integer",
+        "default": 1,
+        "source_line": 161
+      },
+      {
+        "db": "attendance_types_id",
+        "json": "types_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 162
+      }
+    ],
+    "GroupEducators": [
+      {
+        "db": "_id",
+        "json": "id",
+        "type": "AutoPrimaryKey",
+        "default": null,
+        "source_line": 165
+      },
+      {
+        "db": "groups_id",
+        "json": "groups_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 166
+      },
+      {
+        "db": "teachers_educator_id",
+        "json": "teachers_educator_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 167
+      }
+    ],
+    "GroupTerms": [
+      {
+        "db": "_id",
+        "json": "id",
+        "type": "AutoPrimaryKey",
+        "default": null,
+        "source_line": 170
+      },
+      {
+        "db": "groups_id",
+        "json": "groups_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 171
+      },
+      {
+        "db": "terms_id",
+        "json": "terms_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 172
+      }
+    ],
+    "LessonGroups": [
+      {
+        "db": "_id",
+        "json": "id",
+        "type": "PrimaryKey",
+        "default": null,
+        "source_line": 175
+      },
+      {
+        "db": "name",
+        "json": "name",
+        "type": "String",
+        "default": null,
+        "source_line": 176
+      },
+      {
+        "db": "selected",
+        "json": "selected",
+        "type": "Integer",
+        "default": null,
+        "source_line": 177
+      }
+    ],
+    "Lessons": [
+      {
+        "db": "_id",
+        "json": "id",
+        "type": "PrimaryKey",
+        "default": null,
+        "source_line": 180
+      },
+      {
+        "db": "lesson_groups_id",
+        "json": "lesson_groups_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 181
+      },
+      {
+        "db": "lesson_number",
+        "json": "lesson_number",
+        "type": "Integer",
+        "default": null,
+        "source_line": 182
+      },
+      {
+        "db": "start_time",
+        "json": "start_time",
+        "type": "String",
+        "default": null,
+        "source_line": 183
+      },
+      {
+        "db": "end_time",
+        "json": "end_time",
+        "type": "String",
+        "default": null,
+        "source_line": 184
+      }
+    ],
+    "MarkScaleGroups": [
+      {
+        "db": "_id",
+        "json": "id",
+        "type": "PrimaryKey",
+        "default": null,
+        "source_line": 187
+      },
+      {
+        "db": "name",
+        "json": "name",
+        "type": "String",
+        "default": null,
+        "source_line": 188
+      },
+      {
+        "db": "public",
+        "json": "public",
+        "type": "Integer",
+        "default": null,
+        "source_line": 189
+      },
+      {
+        "db": "add_by_users_id",
+        "json": "add_by_users_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 190
+      },
+      {
+        "db": "mark_types",
+        "json": "mark_types",
+        "type": "String",
+        "default": null,
+        "source_line": 191
+      },
+      {
+        "db": "mark_scale_group_edu_id",
+        "json": "mark_scale_group_edu_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 192
+      },
+      {
+        "db": "is_system",
+        "json": "is_system",
+        "type": "Integer",
+        "default": null,
+        "source_line": 193
+      },
+      {
+        "db": "is_default",
+        "json": "is_default",
+        "type": "Integer",
+        "default": null,
+        "source_line": 194
+      }
+    ],
+    "MarkScales": [
+      {
+        "db": "_id",
+        "json": "id",
+        "type": "PrimaryKey",
+        "default": null,
+        "source_line": 197
+      },
+      {
+        "db": "mark_scale_groups_id",
+        "json": "mark_scale_groups_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 198
+      },
+      {
+        "db": "abbreviation",
+        "json": "abbreviation",
+        "type": "String",
+        "default": null,
+        "source_line": 199
+      },
+      {
+        "db": "name",
+        "json": "name",
+        "type": "String",
+        "default": null,
+        "source_line": 200
+      },
+      {
+        "db": "mark_value",
+        "json": "mark_value",
+        "type": "Double",
+        "default": null,
+        "source_line": 201
+      },
+      {
+        "db": "image",
+        "json": "image",
+        "type": "String",
+        "default": null,
+        "source_line": 202
+      },
+      {
+        "db": "classified",
+        "json": "classified",
+        "type": "Integer",
+        "default": null,
+        "source_line": 203
+      },
+      {
+        "db": "css_style",
+        "json": "css_style",
+        "type": "String",
+        "default": null,
+        "source_line": 204
+      },
+      {
+        "db": "mark_scale_edu_id",
+        "json": "mark_scale_edu_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 205
+      },
+      {
+        "db": "no_count_to_average",
+        "json": "no_count_to_average",
+        "type": "Integer",
+        "default": null,
+        "source_line": 206
+      }
+    ],
+    "MarkDivisionGroups": [
+      {
+        "db": "_id",
+        "json": "id",
+        "type": "PrimaryKey",
+        "default": null,
+        "source_line": 209
+      },
+      {
+        "db": "mark_scale_groups_id",
+        "json": "mark_scale_groups_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 210
+      },
+      {
+        "db": "name",
+        "json": "name",
+        "type": "String",
+        "default": null,
+        "source_line": 211
+      },
+      {
+        "db": "type",
+        "json": "type",
+        "type": "Integer",
+        "default": null,
+        "source_line": 212
+      },
+      {
+        "db": "public",
+        "json": "public",
+        "type": "Integer",
+        "default": null,
+        "source_line": 213
+      },
+      {
+        "db": "range_min",
+        "json": "range_min",
+        "type": "Double",
+        "default": null,
+        "source_line": 214
+      },
+      {
+        "db": "range_max",
+        "json": "range_max",
+        "type": "Double",
+        "default": null,
+        "source_line": 215
+      },
+      {
+        "db": "precision",
+        "json": "precision",
+        "type": "Double",
+        "default": null,
+        "source_line": 216
+      },
+      {
+        "db": "add_by_users_id",
+        "json": "add_by_users_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 217
+      },
+      {
+        "db": "mark_division_group_edu_id",
+        "json": "mark_division_group_edu_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 218
+      },
+      {
+        "db": "range_max_to_display",
+        "json": "range_max_to_display",
+        "type": "Double",
+        "default": null,
+        "source_line": 219
+      }
+    ],
+    "MarkKinds": [
+      {
+        "db": "_id",
+        "json": "id",
+        "type": "PrimaryKey",
+        "default": null,
+        "source_line": 222
+      },
+      {
+        "db": "name",
+        "json": "name",
+        "type": "String",
+        "default": null,
+        "source_line": 223
+      },
+      {
+        "db": "abbreviation",
+        "json": "abbreviation",
+        "type": "String",
+        "default": null,
+        "source_line": 224
+      },
+      {
+        "db": "subjects_id",
+        "json": "subjects_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 225
+      },
+      {
+        "db": "public",
+        "json": "public",
+        "type": "Integer",
+        "default": null,
+        "source_line": 226
+      },
+      {
+        "db": "add_by_users_id",
+        "json": "add_by_users_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 227
+      },
+      {
+        "db": "default_mark_type",
+        "json": "default_mark_type",
+        "type": "Integer",
+        "default": null,
+        "source_line": 228
+      },
+      {
+        "db": "default_mark_division_groups_id",
+        "json": "default_mark_division_groups_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 229
+      },
+      {
+        "db": "default_weigth",
+        "json": "default_weigth",
+        "type": "Integer",
+        "default": null,
+        "source_line": 230
+      },
+      {
+        "db": "position",
+        "json": "position",
+        "type": "Integer",
+        "default": null,
+        "source_line": 231
+      },
+      {
+        "db": "css_style",
+        "json": "css_style",
+        "type": "String",
+        "default": null,
+        "source_line": 232
+      },
+      {
+        "db": "parent_id",
+        "json": "parent_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 233
+      },
+      {
+        "db": "default_mark_scale_groups_id",
+        "json": "default_mark_scale_groups_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 234
+      }
+    ],
+    "MarkGroupGroups": [
+      {
+        "db": "_id",
+        "json": "id",
+        "type": "PrimaryKey",
+        "default": null,
+        "source_line": 237
+      },
+      {
+        "db": "mark_division_groups_id",
+        "json": "mark_division_groups_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 238
+      },
+      {
+        "db": "name",
+        "json": "name",
+        "type": "String",
+        "default": null,
+        "source_line": 239
+      },
+      {
+        "db": "parent_id",
+        "json": "parent_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 240
+      },
+      {
+        "db": "is_pattern",
+        "json": "is_pattern",
+        "type": "Integer",
+        "default": null,
+        "source_line": 241
+      },
+      {
+        "db": "position",
+        "json": "position",
+        "type": "Integer",
+        "default": null,
+        "source_line": 242
+      },
+      {
+        "db": "weight",
+        "json": "weight",
+        "type": "Integer",
+        "default": null,
+        "source_line": 243
+      }
+    ],
+    "MarkGroups": [
+      {
+        "db": "_id",
+        "json": "id",
+        "type": "PrimaryKey",
+        "default": null,
+        "source_line": 246
+      },
+      {
+        "db": "parent_id",
+        "json": "parent_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 247
+      },
+      {
+        "db": "parent_type",
+        "json": "parent_type",
+        "type": "Integer",
+        "default": null,
+        "source_line": 248
+      },
+      {
+        "db": "mark_group_groups_id",
+        "json": "mark_group_groups_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 249
+      },
+      {
+        "db": "is_pattern",
+        "json": "is_pattern",
+        "type": "Integer",
+        "default": null,
+        "source_line": 250
+      },
+      {
+        "db": "event_type_terms_id",
+        "json": "event_type_terms_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 251
+      },
+      {
+        "db": "mark_kinds_id",
+        "json": "mark_kinds_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 252
+      },
+      {
+        "db": "abbreviation",
+        "json": "abbreviation",
+        "type": "String",
+        "default": null,
+        "source_line": 253
+      },
+      {
+        "db": "description",
+        "json": "description",
+        "type": "String",
+        "default": null,
+        "source_line": 254
+      },
+      {
+        "db": "mark_type",
+        "json": "mark_type",
+        "type": "Integer",
+        "default": null,
+        "source_line": 255
+      },
+      {
+        "db": "mark_format",
+        "json": "mark_format",
+        "type": "String",
+        "default": null,
+        "source_line": 256
+      },
+      {
+        "db": "mark_division_groups_id",
+        "json": "mark_division_groups_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 257
+      },
+      {
+        "db": "mark_scale_groups_id",
+        "json": "mark_scale_groups_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 258
+      },
+      {
+        "db": "visibility",
+        "json": "visibility",
+        "type": "Integer",
+        "default": null,
+        "source_line": 259
+      },
+      {
+        "db": "css_style",
+        "json": "css_style",
+        "type": "String",
+        "default": null,
+        "source_line": 260
+      },
+      {
+        "db": "position",
+        "json": "position",
+        "type": "Integer",
+        "default": null,
+        "source_line": 261
+      },
+      {
+        "db": "weight",
+        "json": "weight",
+        "type": "Integer",
+        "default": null,
+        "source_line": 262
+      },
+      {
+        "db": "mark_value_range_min",
+        "json": "mark_value_range_min",
+        "type": "Double",
+        "default": null,
+        "source_line": 263
+      },
+      {
+        "db": "mark_value_range_max",
+        "json": "mark_value_range_max",
+        "type": "Double",
+        "default": null,
+        "source_line": 264
+      },
+      {
+        "db": "precision",
+        "json": "precision",
+        "type": "Double",
+        "default": null,
+        "source_line": 265
+      },
+      {
+        "db": "add_by_users_id",
+        "json": "add_by_users_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 266
+      }
+    ],
+    "MarkGroupIssues": [
+      {
+        "db": "_id",
+        "json": "id",
+        "type": "PrimaryKey",
+        "default": null,
+        "source_line": 269
+      },
+      {
+        "db": "mark_groups_id",
+        "json": "mark_groups_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 270
+      },
+      {
+        "db": "issues_id",
+        "json": "issues_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 271
+      }
+    ],
+    "Marks": [
+      {
+        "db": "_id",
+        "json": "id",
+        "type": "PrimaryKey",
+        "default": null,
+        "source_line": 274
+      },
+      {
+        "db": "pupil_users_id",
+        "json": "pupil_users_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 275
+      },
+      {
+        "db": "teacher_users_id",
+        "json": "teacher_users_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 276
+      },
+      {
+        "db": "mark_groups_id",
+        "json": "mark_groups_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 277
+      },
+      {
+        "db": "events_id",
+        "json": "events_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 278
+      },
+      {
+        "db": "mark_scales_id",
+        "json": "mark_scales_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 279
+      },
+      {
+        "db": "mark_value",
+        "json": "mark_value",
+        "type": "Double",
+        "default": null,
+        "source_line": 280
+      },
+      {
+        "db": "comments",
+        "json": "comments",
+        "type": "String",
+        "default": null,
+        "source_line": 281
+      },
+      {
+        "db": "weight",
+        "json": "weight",
+        "type": "Integer",
+        "default": null,
+        "source_line": 282
+      },
+      {
+        "db": "get_date",
+        "json": "get_date",
+        "type": "DateTime",
+        "default": null,
+        "source_line": 283
+      },
+      {
+        "db": "add_time",
+        "json": "add_time",
+        "type": "DateTime",
+        "default": null,
+        "source_line": 284
+      },
+      {
+        "db": "modified",
+        "json": "modified",
+        "type": "Integer",
+        "default": null,
+        "source_line": 285
+      }
+    ],
+    "Messages": [
+      {
+        "db": "_id",
+        "json": "id",
+        "type": "PrimaryKey",
+        "default": null,
+        "source_line": 288
+      },
+      {
+        "db": "send_time",
+        "json": "send_time",
+        "type": "DateTime",
+        "default": null,
+        "source_line": 289
+      },
+      {
+        "db": "title",
+        "json": "title",
+        "type": "String",
+        "default": null,
+        "source_line": 290
+      },
+      {
+        "db": "content",
+        "json": "content",
+        "type": "String",
+        "default": null,
+        "source_line": 291
+      },
+      {
+        "db": "read_time",
+        "json": "read_time",
+        "type": "DateTime",
+        "default": null,
+        "source_line": 292
+      },
+      {
+        "db": "sender_users_id",
+        "json": "sender_users_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 293
+      }
+    ],
+    "PermissionGroups": [
+      {
+        "db": "_id",
+        "json": "id",
+        "type": "PrimaryKey",
+        "default": null,
+        "source_line": 296
+      },
+      {
+        "db": "permission_groups_id",
+        "json": "permission_groups_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 297
+      },
+      {
+        "db": "parent_id",
+        "json": "parent_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 298
+      },
+      {
+        "db": "name",
+        "json": "name",
+        "type": "String",
+        "default": null,
+        "source_line": 299
+      },
+      {
+        "db": "description",
+        "json": "description",
+        "type": "String",
+        "default": null,
+        "source_line": 300
+      },
+      {
+        "db": "additional_description",
+        "json": "additional_description",
+        "type": "String",
+        "default": null,
+        "source_line": 301
+      },
+      {
+        "db": "image",
+        "json": "image",
+        "type": "String",
+        "default": null,
+        "source_line": 302
+      }
+    ],
+    "Permissions": [
+      {
+        "db": "_id",
+        "json": "id",
+        "type": "PrimaryKey",
+        "default": null,
+        "source_line": 305
+      },
+      {
+        "db": "permission_groups_id",
+        "json": "permission_groups_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 306
+      },
+      {
+        "db": "users_id",
+        "json": "users_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 307
+      },
+      {
+        "db": "edu_id",
+        "json": "edu_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 308
+      },
+      {
+        "db": "quantitative_limit",
+        "json": "quantitative_limit",
+        "type": "Integer",
+        "default": null,
+        "source_line": 309
+      },
+      {
+        "db": "grant_time",
+        "json": "grant_time",
+        "type": "DateTime",
+        "default": null,
+        "source_line": 310
+      },
+      {
+        "db": "expire_time",
+        "json": "expire_time",
+        "type": "DateTime",
+        "default": null,
+        "source_line": 311
+      },
+      {
+        "db": "source",
+        "json": "source",
+        "type": "Integer",
+        "default": null,
+        "source_line": 312
+      }
+    ]
+  },
+  "export": {
+    "EventTypes": [
+      {
+        "db": "subjects_id",
+        "json": "subjects_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 316
+      },
+      {
+        "db": "teaching_level",
+        "json": "teaching_level",
+        "type": "Integer",
+        "default": null,
+        "source_line": 317
+      },
+      {
+        "db": "substitution",
+        "json": "substitution",
+        "type": "Integer",
+        "default": null,
+        "source_line": 318
+      },
+      {
+        "db": "_id",
+        "json": "order",
+        "type": "Integer",
+        "source_locator": "MappingConfig.<clinit> exportTables.keySet postprocessing loop"
+      },
+      {
+        "db": "_id",
+        "json": "id",
+        "type": "Integer",
+        "source_locator": "MappingConfig.<clinit> exportTables.keySet postprocessing loop"
+      },
+      {
+        "db": "added",
+        "json": "timestamp",
+        "type": "String",
+        "source_locator": "MappingConfig.<clinit> exportTables.keySet postprocessing loop"
+      }
+    ],
+    "EventTypeTeachers": [
+      {
+        "db": "teachers_id",
+        "json": "teachers_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 321
+      },
+      {
+        "db": "event_types_id",
+        "json": "event_types_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 322
+      },
+      {
+        "db": "_id",
+        "json": "order",
+        "type": "Integer",
+        "source_locator": "MappingConfig.<clinit> exportTables.keySet postprocessing loop"
+      },
+      {
+        "db": "_id",
+        "json": "id",
+        "type": "Integer",
+        "source_locator": "MappingConfig.<clinit> exportTables.keySet postprocessing loop"
+      },
+      {
+        "db": "added",
+        "json": "timestamp",
+        "type": "String",
+        "source_locator": "MappingConfig.<clinit> exportTables.keySet postprocessing loop"
+      }
+    ],
+    "EventTypeGroups": [
+      {
+        "db": "groups_id",
+        "json": "groups_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 325
+      },
+      {
+        "db": "event_types_id",
+        "json": "event_types_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 326
+      },
+      {
+        "db": "_id",
+        "json": "order",
+        "type": "Integer",
+        "source_locator": "MappingConfig.<clinit> exportTables.keySet postprocessing loop"
+      },
+      {
+        "db": "_id",
+        "json": "id",
+        "type": "Integer",
+        "source_locator": "MappingConfig.<clinit> exportTables.keySet postprocessing loop"
+      },
+      {
+        "db": "added",
+        "json": "timestamp",
+        "type": "String",
+        "source_locator": "MappingConfig.<clinit> exportTables.keySet postprocessing loop"
+      }
+    ],
+    "EventTypeTerms": [
+      {
+        "db": "terms_id",
+        "json": "terms_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 329
+      },
+      {
+        "db": "event_types_id",
+        "json": "event_types_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 330
+      },
+      {
+        "db": "_id",
+        "json": "order",
+        "type": "Integer",
+        "source_locator": "MappingConfig.<clinit> exportTables.keySet postprocessing loop"
+      },
+      {
+        "db": "_id",
+        "json": "id",
+        "type": "Integer",
+        "source_locator": "MappingConfig.<clinit> exportTables.keySet postprocessing loop"
+      },
+      {
+        "db": "added",
+        "json": "timestamp",
+        "type": "String",
+        "source_locator": "MappingConfig.<clinit> exportTables.keySet postprocessing loop"
+      }
+    ],
+    "Events": [
+      {
+        "db": "name",
+        "json": "name",
+        "type": "String",
+        "default": null,
+        "source_line": 333
+      },
+      {
+        "db": "date",
+        "json": "date",
+        "type": "String",
+        "default": null,
+        "source_line": 334
+      },
+      {
+        "db": "number",
+        "json": "number",
+        "type": "Integer",
+        "default": null,
+        "source_line": 335
+      },
+      {
+        "db": "start_time",
+        "json": "start_time",
+        "type": "String",
+        "default": null,
+        "source_line": 336
+      },
+      {
+        "db": "end_time",
+        "json": "end_time",
+        "type": "String",
+        "default": null,
+        "source_line": 337
+      },
+      {
+        "db": "rooms_id",
+        "json": "rooms_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 338
+      },
+      {
+        "db": "event_types_id",
+        "json": "event_types_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 339
+      },
+      {
+        "db": "status",
+        "json": "status",
+        "type": "Integer",
+        "default": null,
+        "source_line": 340
+      },
+      {
+        "db": "substitution",
+        "json": "substitution",
+        "type": "Integer",
+        "default": null,
+        "source_line": 341
+      },
+      {
+        "db": "type",
+        "json": "type",
+        "type": "Integer",
+        "default": null,
+        "source_line": 342
+      },
+      {
+        "db": "attr",
+        "json": "attr",
+        "type": "Integer",
+        "default": null,
+        "source_line": 343
+      },
+      {
+        "db": "locked",
+        "json": "locked",
+        "type": "Integer",
+        "default": null,
+        "source_line": 344
+      },
+      {
+        "db": "_id",
+        "json": "order",
+        "type": "Integer",
+        "source_locator": "MappingConfig.<clinit> exportTables.keySet postprocessing loop"
+      },
+      {
+        "db": "_id",
+        "json": "id",
+        "type": "Integer",
+        "source_locator": "MappingConfig.<clinit> exportTables.keySet postprocessing loop"
+      },
+      {
+        "db": "added",
+        "json": "timestamp",
+        "type": "String",
+        "source_locator": "MappingConfig.<clinit> exportTables.keySet postprocessing loop"
+      }
+    ],
+    "EventEvents": [
+      {
+        "db": "events1_id",
+        "json": "events1_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 347
+      },
+      {
+        "db": "events2_id",
+        "json": "events2_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 348
+      },
+      {
+        "db": "_id",
+        "json": "order",
+        "type": "Integer",
+        "source_locator": "MappingConfig.<clinit> exportTables.keySet postprocessing loop"
+      },
+      {
+        "db": "_id",
+        "json": "id",
+        "type": "Integer",
+        "source_locator": "MappingConfig.<clinit> exportTables.keySet postprocessing loop"
+      },
+      {
+        "db": "added",
+        "json": "timestamp",
+        "type": "String",
+        "source_locator": "MappingConfig.<clinit> exportTables.keySet postprocessing loop"
+      }
+    ],
+    "Attendances": [
+      {
+        "db": "attendance_types_id",
+        "json": "types_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 351
+      },
+      {
+        "db": "events_id",
+        "json": "events_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 352
+      },
+      {
+        "db": "teachers_id",
+        "json": "teachers_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 353
+      },
+      {
+        "db": "students_id",
+        "json": "students_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 354
+      },
+      {
+        "db": "_id",
+        "json": "order",
+        "type": "Integer",
+        "source_locator": "MappingConfig.<clinit> exportTables.keySet postprocessing loop"
+      },
+      {
+        "db": "_id",
+        "json": "id",
+        "type": "Integer",
+        "source_locator": "MappingConfig.<clinit> exportTables.keySet postprocessing loop"
+      },
+      {
+        "db": "added",
+        "json": "timestamp",
+        "type": "String",
+        "source_locator": "MappingConfig.<clinit> exportTables.keySet postprocessing loop"
+      }
+    ],
+    "MarkGroups": [
+      {
+        "db": "parent_id",
+        "json": "parent_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 357
+      },
+      {
+        "db": "parent_type",
+        "json": "parent_type",
+        "type": "Integer",
+        "default": null,
+        "source_line": 358
+      },
+      {
+        "db": "mark_group_groups_id",
+        "json": "mark_group_groups_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 359
+      },
+      {
+        "db": "is_pattern",
+        "json": "is_pattern",
+        "type": "Integer",
+        "default": null,
+        "source_line": 360
+      },
+      {
+        "db": "event_type_terms_id",
+        "json": "event_type_terms_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 361
+      },
+      {
+        "db": "mark_kinds_id",
+        "json": "mark_kinds_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 362
+      },
+      {
+        "db": "abbreviation",
+        "json": "abbreviation",
+        "type": "String",
+        "default": null,
+        "source_line": 363
+      },
+      {
+        "db": "description",
+        "json": "description",
+        "type": "String",
+        "default": null,
+        "source_line": 364
+      },
+      {
+        "db": "mark_type",
+        "json": "mark_type",
+        "type": "Integer",
+        "default": null,
+        "source_line": 365
+      },
+      {
+        "db": "mark_format",
+        "json": "mark_format",
+        "type": "String",
+        "default": null,
+        "source_line": 366
+      },
+      {
+        "db": "mark_division_groups_id",
+        "json": "mark_division_groups_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 367
+      },
+      {
+        "db": "mark_scale_groups_id",
+        "json": "mark_scale_groups_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 368
+      },
+      {
+        "db": "visibility",
+        "json": "visibility",
+        "type": "Integer",
+        "default": null,
+        "source_line": 369
+      },
+      {
+        "db": "css_style",
+        "json": "css_style",
+        "type": "String",
+        "default": null,
+        "source_line": 370
+      },
+      {
+        "db": "position",
+        "json": "position",
+        "type": "Integer",
+        "default": null,
+        "source_line": 371
+      },
+      {
+        "db": "weight",
+        "json": "weight",
+        "type": "Integer",
+        "default": null,
+        "source_line": 372
+      },
+      {
+        "db": "mark_value_range_min",
+        "json": "mark_value_range_min",
+        "type": "Double",
+        "default": null,
+        "source_line": 373
+      },
+      {
+        "db": "mark_value_range_max",
+        "json": "mark_value_range_max",
+        "type": "Double",
+        "default": null,
+        "source_line": 374
+      },
+      {
+        "db": "precision",
+        "json": "precision",
+        "type": "Double",
+        "default": null,
+        "source_line": 375
+      },
+      {
+        "db": "add_by_users_id",
+        "json": "add_by_users_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 376
+      },
+      {
+        "db": "_id",
+        "json": "order",
+        "type": "Integer",
+        "source_locator": "MappingConfig.<clinit> exportTables.keySet postprocessing loop"
+      },
+      {
+        "db": "_id",
+        "json": "id",
+        "type": "Integer",
+        "source_locator": "MappingConfig.<clinit> exportTables.keySet postprocessing loop"
+      },
+      {
+        "db": "added",
+        "json": "timestamp",
+        "type": "String",
+        "source_locator": "MappingConfig.<clinit> exportTables.keySet postprocessing loop"
+      }
+    ],
+    "Marks": [
+      {
+        "db": "pupil_users_id",
+        "json": "pupil_users_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 379
+      },
+      {
+        "db": "teacher_users_id",
+        "json": "teacher_users_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 380
+      },
+      {
+        "db": "mark_groups_id",
+        "json": "mark_groups_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 381
+      },
+      {
+        "db": "events_id",
+        "json": "events_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 382
+      },
+      {
+        "db": "mark_scales_id",
+        "json": "mark_scales_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 383
+      },
+      {
+        "db": "mark_value",
+        "json": "mark_value",
+        "type": "Double",
+        "default": null,
+        "source_line": 384
+      },
+      {
+        "db": "comments",
+        "json": "comments",
+        "type": "String",
+        "default": null,
+        "source_line": 385
+      },
+      {
+        "db": "get_date",
+        "json": "get_date",
+        "type": "DateTime",
+        "default": null,
+        "source_line": 386
+      },
+      {
+        "db": "add_time",
+        "json": "add_time",
+        "type": "DateTime",
+        "default": null,
+        "source_line": 387
+      },
+      {
+        "db": "modified",
+        "json": "modified",
+        "type": "Integer",
+        "default": null,
+        "source_line": 388
+      },
+      {
+        "db": "_id",
+        "json": "order",
+        "type": "Integer",
+        "source_locator": "MappingConfig.<clinit> exportTables.keySet postprocessing loop"
+      },
+      {
+        "db": "_id",
+        "json": "id",
+        "type": "Integer",
+        "source_locator": "MappingConfig.<clinit> exportTables.keySet postprocessing loop"
+      },
+      {
+        "db": "added",
+        "json": "timestamp",
+        "type": "String",
+        "source_locator": "MappingConfig.<clinit> exportTables.keySet postprocessing loop"
+      }
+    ],
+    "UserReprimands": [
+      {
+        "db": "students_id",
+        "json": "students_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 391
+      },
+      {
+        "db": "teachers_id",
+        "json": "teachers_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 392
+      },
+      {
+        "db": "kinds_id",
+        "json": "kinds_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 393
+      },
+      {
+        "db": "get_date",
+        "json": "getdate",
+        "type": "DateTime",
+        "default": null,
+        "source_line": 394
+      },
+      {
+        "db": "content",
+        "json": "content",
+        "type": "String",
+        "default": null,
+        "source_line": 395
+      },
+      {
+        "db": "_id",
+        "json": "order",
+        "type": "Integer",
+        "source_locator": "MappingConfig.<clinit> exportTables.keySet postprocessing loop"
+      },
+      {
+        "db": "_id",
+        "json": "id",
+        "type": "Integer",
+        "source_locator": "MappingConfig.<clinit> exportTables.keySet postprocessing loop"
+      },
+      {
+        "db": "added",
+        "json": "timestamp",
+        "type": "String",
+        "source_locator": "MappingConfig.<clinit> exportTables.keySet postprocessing loop"
+      }
+    ],
+    "EventSubjects": [
+      {
+        "db": "events_id",
+        "json": "events_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 398
+      },
+      {
+        "db": "content",
+        "json": "content",
+        "type": "String",
+        "default": null,
+        "source_line": 399
+      },
+      {
+        "db": "add_time",
+        "json": "add_time",
+        "type": "DateTime",
+        "default": null,
+        "source_line": 400
+      },
+      {
+        "db": "_id",
+        "json": "order",
+        "type": "Integer",
+        "source_locator": "MappingConfig.<clinit> exportTables.keySet postprocessing loop"
+      },
+      {
+        "db": "_id",
+        "json": "id",
+        "type": "Integer",
+        "source_locator": "MappingConfig.<clinit> exportTables.keySet postprocessing loop"
+      },
+      {
+        "db": "added",
+        "json": "timestamp",
+        "type": "String",
+        "source_locator": "MappingConfig.<clinit> exportTables.keySet postprocessing loop"
+      }
+    ],
+    "EventIssues": [
+      {
+        "db": "events_id",
+        "json": "events_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 403
+      },
+      {
+        "db": "issues_id",
+        "json": "issues_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 404
+      },
+      {
+        "db": "_id",
+        "json": "order",
+        "type": "Integer",
+        "source_locator": "MappingConfig.<clinit> exportTables.keySet postprocessing loop"
+      },
+      {
+        "db": "_id",
+        "json": "id",
+        "type": "Integer",
+        "source_locator": "MappingConfig.<clinit> exportTables.keySet postprocessing loop"
+      },
+      {
+        "db": "added",
+        "json": "timestamp",
+        "type": "String",
+        "source_locator": "MappingConfig.<clinit> exportTables.keySet postprocessing loop"
+      }
+    ],
+    "UserLogs": [
+      {
+        "db": "teacher_id",
+        "json": "teacher_id",
+        "type": "Integer",
+        "default": null,
+        "source_line": 407
+      },
+      {
+        "db": "login_time",
+        "json": "login_time",
+        "type": "DateTime",
+        "default": null,
+        "source_line": 408
+      },
+      {
+        "db": "_id",
+        "json": "order",
+        "type": "Integer",
+        "source_locator": "MappingConfig.<clinit> exportTables.keySet postprocessing loop"
+      },
+      {
+        "db": "_id",
+        "json": "id",
+        "type": "Integer",
+        "source_locator": "MappingConfig.<clinit> exportTables.keySet postprocessing loop"
+      },
+      {
+        "db": "added",
+        "json": "timestamp",
+        "type": "String",
+        "source_locator": "MappingConfig.<clinit> exportTables.keySet postprocessing loop"
+      }
+    ]
+  }
+}

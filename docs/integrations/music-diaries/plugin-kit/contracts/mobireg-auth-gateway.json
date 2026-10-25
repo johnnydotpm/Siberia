@@ -1,0 +1,384 @@
+{
+  "schema_version": 1,
+  "scope": "MobiReg Android3.1.7 build116 revision6f4e7b8; these code PCs do not establish iOS implementation parity.",
+  "artifact_sha256": "22dd67993cd25ccb0a56fca7eef87ffc1d40cc1bffd9057b671c7268afc4d97a",
+  "evidence_type": "Named ARM64 builder map stores/calls from matched Blutter3.13.2; independent r2flutter entrypoints and raw ELF instruction validation. No runtime server calls.",
+  "entry_count": 8,
+  "operations": [
+    {
+      "id": "MA-PASSWORD",
+      "operation": "Password login",
+      "method": "POST",
+      "path_template": "https://{clean_address}/{trimmed_school}/modules/api/auth.php",
+      "encoding": "JSON",
+      "body": {
+        "login": "trimmed login",
+        "password": "selected original text, not trim result and not legacy MD5"
+      },
+      "evidence": {
+        "file": "rodzic/services/auth_service.dart",
+        "entry_pc": "0x7953f8",
+        "sha256": "2130fc0f474a39ea3ba937dfb21e09081909ec28e7347267f159884f2cba8374",
+        "code_pcs": {
+          "url_call": "0x7958ec",
+          "map_start": "0x795988",
+          "password_map_value": "0x79599c",
+          "json_encode": "0x7959c4",
+          "http_post": "0x7959e0",
+          "http_status_200": "0x795a04",
+          "status_OK_check": "0x795a24",
+          "token_read": "0x795a7c",
+          "set_jwt": "0x795c6c",
+          "set_password": "0x795c8c"
+        }
+      },
+      "runtime_verified": false,
+      "headers": {
+        "Content-Type": "application/json; charset=UTF-8",
+        "Accept": "application/json"
+      },
+      "credential_selection": [
+        "Supplied password is selected only when trim().isNotEmpty; the original string is used.",
+        "Otherwise use AccountsStore.password(account.id).",
+        "If no password, attempt stored refresh token via _refreshWithToken; otherwise return false."
+      ],
+      "success": {
+        "http_status": 200,
+        "json_status": "OK",
+        "token": "non-null String stored per account",
+        "refresh": "not read/stored in this success path"
+      },
+      "account_scope": "explicit accountId or current; existing match by school and login; page authority must also be part of Siberia identity",
+      "password_provenance": {
+        "settings_controller_pc": "0x794fc0",
+        "settings_call_pc": "0x7950dc",
+        "perform_login_entry": "0x795274",
+        "perform_login_call": "0x795340",
+        "store_set_password_entry": "0x4a4c34",
+        "secure_storage_write_pc": "0x4a4c9c",
+        "secure_storage_key": "acc.{accountId}.password",
+        "transform": "none on selected text in this recovered call chain"
+      }
+    },
+    {
+      "id": "MA-QR",
+      "operation": "Exchange QR code",
+      "method": "POST",
+      "path_template": "https://{clean_address}/{trimmed_school}/modules/api/qrlogin.php",
+      "encoding": "JSON",
+      "body": {
+        "code": "trimmed code"
+      },
+      "evidence": {
+        "file": "rodzic/services/auth_service.dart",
+        "entry_pc": "0x793ee0",
+        "sha256": "2130fc0f474a39ea3ba937dfb21e09081909ec28e7347267f159884f2cba8374",
+        "code_pcs": {
+          "map_start": "0x794048",
+          "json_encode": "0x794070",
+          "http_post": "0x794084",
+          "user_login_extract": "0x794140",
+          "find_existing": "0x7941f8",
+          "saved_password_branch": "0x794218",
+          "set_jwt_qr_branch": "0x7945a4",
+          "set_refresh_qr_branch": "0x794648",
+          "clear_password": "0x794660"
+        }
+      },
+      "runtime_verified": false,
+      "headers": {
+        "Content-Type": "application/json; charset=UTF-8",
+        "Accept": "application/json"
+      },
+      "success": {
+        "http_status": 200,
+        "json_status": "OK",
+        "required_fields": [
+          "token",
+          "user.login"
+        ],
+        "existing_password_account": "preserve password, update JWT and current account/address as needed",
+        "qr_account": "authType qr, store token and optional refresh, clear password"
+      },
+      "unknowns": [
+        "Upstream scanner QR payload grammar; endpoint receives code, not an assumed full QR URL."
+      ]
+    },
+    {
+      "id": "MA-REFRESH",
+      "operation": "Refresh account JWT",
+      "method": "POST",
+      "path_template": "https://{account.address}/{account.schoolCode}/modules/api/refresh.php",
+      "encoding": "JSON",
+      "body": {
+        "refresh": "account-owned stored refresh token"
+      },
+      "evidence": {
+        "file": "rodzic/services/auth_service.dart",
+        "entry_pc": "0x795e48",
+        "sha256": "2130fc0f474a39ea3ba937dfb21e09081909ec28e7347267f159884f2cba8374",
+        "code_pcs": {
+          "map_start": "0x795f58",
+          "json_encode": "0x795f7c",
+          "http_post": "0x795f90",
+          "set_jwt": "0x7960bc",
+          "replacement_refresh": "0x7960d0",
+          "make_current": "0x79617c"
+        }
+      },
+      "runtime_verified": false,
+      "headers": {
+        "Content-Type": "application/json; charset=UTF-8",
+        "Accept": "application/json"
+      },
+      "success": {
+        "http_status": 200,
+        "json_status": "OK",
+        "token": "required non-null; stored account JWT",
+        "refresh": "if supplied, store replacement",
+        "makeCurrent": "controls current account selection"
+      },
+      "unknowns": [
+        "Expiry, server revocation and refresh reuse/rotation rules."
+      ]
+    },
+    {
+      "id": "MA-GATEWAY",
+      "operation": "Main view gateway",
+      "method": "POST",
+      "path_template": "https://{page_address}/{school}/modules/api/app.php",
+      "encoding": "application/x-www-form-urlencoded",
+      "body": {
+        "view": "operation selector",
+        "format": "json",
+        "token": "account JWT before extraParams merge",
+        "JWTToken": "same account JWT before extraParams merge",
+        "pupilId": "only if non-null/nonzero; converted to String"
+      },
+      "evidence": {
+        "file": "rodzic/services/api/app_api.dart",
+        "entry_pc": "0x48ead4",
+        "sha256": "6447077dc578ed5bb8c5dc5dc402c7a3a01daf871edc746d3802fcf702c6cc15",
+        "code_pcs": {
+          "endpoint": "0x48ec50",
+          "token": "0x48ec80",
+          "defaults_start": "0x48ed08",
+          "defaults_end": "0x48ed50",
+          "pupil_string": "0x48ed60",
+          "extras_addAll": "0x48edcc",
+          "headers_start": "0x48edf4",
+          "http_post": "0x48ee4c",
+          "http_401": "0x48eee4",
+          "unauthorized_guard": "0x48f100",
+          "envelope_parse": "0x48f250"
+        }
+      },
+      "runtime_verified": false,
+      "headers": {
+        "User-Agent": "MobiReg/3.1.7 (6f4e7b8)"
+      },
+      "timeout_seconds": 15,
+      "account_scope": "Explicit accountId supported; otherwise current account.",
+      "options": {
+        "requirePupil": "default true; rejects missing/zero pupil",
+        "pupilId": "data subject, not credential owner",
+        "extraParams": "merged after defaults; duplicate keys override defaults"
+      },
+      "success": {
+        "http_status": 200,
+        "body": "nonblank, strict ApiEnvelope.parse v1"
+      },
+      "error_behavior": {
+        "http_401": "one-shot unauthorized callback then error; no refresh or retry in this function",
+        "other_http": "typed HTTP/bad response errors",
+        "reset_unauthorized_entry": "0x49ff70"
+      }
+    },
+    {
+      "id": "MA-FCM-REGISTER",
+      "operation": "Register push token",
+      "method": "POST",
+      "path_template": "gateway view register-fcm",
+      "encoding": "application/x-www-form-urlencoded",
+      "body": {
+        "view": "register-fcm",
+        "format": "json",
+        "token": "FCM token overriding gateway JWT token field",
+        "JWTToken": "account JWT",
+        "keepLogins": "optional list joined with comma"
+      },
+      "evidence": {
+        "file": "rodzic/services/auth_service.dart",
+        "entry_pc": "0x793b00",
+        "sha256": "2130fc0f474a39ea3ba937dfb21e09081909ec28e7347267f159884f2cba8374",
+        "code_pcs": {
+          "fcm_token_map": "0x793bb0",
+          "join_keep_logins": "0x793bc8",
+          "view_literal": "0x793c08",
+          "request_view": "0x793c18"
+        }
+      },
+      "runtime_verified": false,
+      "requirePupil": false,
+      "depends_on": "MA-GATEWAY",
+      "unknowns": [
+        "Backend acceptance of tokens from Siberia Firebase project."
+      ]
+    },
+    {
+      "id": "MA-FCM-UNREGISTER",
+      "operation": "Unregister push token",
+      "method": "POST",
+      "path_template": "gateway view unregister-fcm",
+      "encoding": "application/x-www-form-urlencoded",
+      "body": {
+        "view": "unregister-fcm",
+        "format": "json",
+        "token": "FCM token overriding gateway JWT token field",
+        "JWTToken": "account JWT"
+      },
+      "evidence": {
+        "file": "rodzic/services/auth_service.dart",
+        "entry_pc": "0x78de30",
+        "sha256": "2130fc0f474a39ea3ba937dfb21e09081909ec28e7347267f159884f2cba8374",
+        "code_pcs": {
+          "request_view": "0x78dec4"
+        }
+      },
+      "runtime_verified": false,
+      "requirePupil": false,
+      "depends_on": "MA-GATEWAY"
+    },
+    {
+      "id": "MA-REST-GET",
+      "operation": "Generic REST read",
+      "method": "GET",
+      "path_template": "https://{page_address}/{school}/api{caller_path}",
+      "encoding": "none",
+      "body": null,
+      "evidence": {
+        "file": "rodzic/services/api/app_api.dart",
+        "entry_pc": "0x76da44",
+        "sha256": "6447077dc578ed5bb8c5dc5dc402c7a3a01daf871edc746d3802fcf702c6cc15",
+        "code_pcs": {
+          "http_get": "0x76dc60",
+          "parse_or_fallback": "0x76dcec"
+        }
+      },
+      "runtime_verified": false,
+      "headers": {
+        "Authorization": "Bearer {current-account JWT}",
+        "Content-Type": "application/json",
+        "User-Agent": "MobiReg/3.1.7 (6f4e7b8)"
+      },
+      "timeout_seconds": 15,
+      "account_scope": "Current account; no explicit accountId parameter recovered.",
+      "success": {
+        "http_status": 200,
+        "parser": "ApiEnvelope.parseOrFallback"
+      }
+    },
+    {
+      "id": "MA-REST-MUTATE",
+      "operation": "Generic REST mutation",
+      "method": "POST|PUT|DELETE",
+      "path_template": "https://{page_address}/{school}/api{caller_path}",
+      "encoding": "JSON for non-null POST/PUT body",
+      "body": {
+        "POST": "JSON encode caller body if non-null",
+        "PUT": "JSON encode caller body if non-null",
+        "DELETE": "no body passed by this helper"
+      },
+      "evidence": {
+        "file": "rodzic/services/api/app_api.dart",
+        "entry_pc": "0x76bcc4",
+        "sha256": "6447077dc578ed5bb8c5dc5dc402c7a3a01daf871edc746d3802fcf702c6cc15",
+        "code_pcs": {
+          "json_encode": "0x76bf48",
+          "post": "0x76bf74",
+          "put": "0x76bfbc",
+          "delete": "0x76c000"
+        }
+      },
+      "runtime_verified": false,
+      "headers": {
+        "Authorization": "Bearer {current-account JWT}",
+        "Content-Type": "application/json",
+        "User-Agent": "MobiReg/3.1.7 (6f4e7b8)"
+      },
+      "timeout_seconds": 15,
+      "account_scope": "Current account; no explicit accountId parameter recovered.",
+      "success": {
+        "http_status": "200 <= status < 300",
+        "empty_trimmed_body": null,
+        "nonempty_body": "direct jsonDecode, not envelope parser"
+      },
+      "error_behavior": "Unsupported verb raises ArgumentError; no automatic refresh/retry."
+    }
+  ],
+  "helpers": [
+    {
+      "id": "MA-TOKEN-LOOKUP",
+      "operation": "Read JWT from account secure storage",
+      "evidence": {
+        "file": "rodzic/services/auth_service.dart",
+        "entry_pc": "0x48f9ec",
+        "sha256": "2130fc0f474a39ea3ba937dfb21e09081909ec28e7347267f159884f2cba8374",
+        "code_pcs": {}
+      },
+      "account_scope": "Explicit accountId else current; does not check expiry or refresh."
+    },
+    {
+      "id": "MA-ENVELOPE",
+      "operation": "Strict gateway envelope parser",
+      "evidence": {
+        "file": "rodzic/services/api/api_envelope.dart",
+        "entry_pc": "0x48f364",
+        "sha256": "57586e400382e82b708fafc3f742d45a31dd5c6e06f0eb0bbd546b66e16b8c65",
+        "code_pcs": {
+          "tagged_version_compare": "0x48f540",
+          "parse_server_time": "0x48f670",
+          "default_ttl_fresh": "0x48f708",
+          "default_ttl_retain": "0x48f7d8"
+        }
+      },
+      "required_root_fields": [
+        "v non-null",
+        "data key present"
+      ],
+      "supported_version": 1,
+      "version_parse": "int or int.tryParse String; ARM64 raw Smi2 represents Dart1",
+      "ttlFresh_default_seconds": 60,
+      "ttlRetain_default_seconds": 1209600,
+      "ttl_input": "numeric seconds -> toInt -> Duration microseconds",
+      "data_error": "map containing errno throws API error with errno and optional message",
+      "serverTime": "DateTime.tryParse called but result not retained by observed constructor path; cache-clock use unproven."
+    },
+    {
+      "id": "MA-ENVELOPE-FALLBACK",
+      "operation": "REST envelope-or-raw decoder",
+      "evidence": {
+        "file": "rodzic/services/api/api_envelope.dart",
+        "entry_pc": "0x76dda8",
+        "sha256": "57586e400382e82b708fafc3f742d45a31dd5c6e06f0eb0bbd546b66e16b8c65",
+        "code_pcs": {}
+      },
+      "behavior": "Envelope root with v/data uses strict parser; otherwise wraps decoded payload with protocol0 and TTL defaults; gateway does not use fallback."
+    }
+  ],
+  "independent_entrypoint_checks": 11,
+  "security_ownership": [
+    "Credentials and refresh tokens belong to school account, not pupil.",
+    "Use explicit immutable account context for requests; do not duplicate refresh tokens per child.",
+    "Preserve gateway extras merge order: FCM overwrites token while JWTToken remains JWT.",
+    "Keep three transports distinct: auth JSON, gateway form JWT aliases, REST Bearer; mailbox/homework use separate cookie sessions."
+  ],
+  "remaining_gaps": [
+    "Authorized runtime response fixtures and role-specific error/permission behavior.",
+    "Actual token expiry/revocation/refresh rotation rules.",
+    "Upstream QR payload grammar.",
+    "Backend push-token compatibility with Siberia Firebase project.",
+    "Independent iOS caller-path verification.",
+    "Full module-specific view schemas are separately inventoried; no fabricated response models."
+  ]
+}

@@ -1,0 +1,2937 @@
+{
+  "schema_version": 1,
+  "prepared_on": "2026-10-25",
+  "purpose": "documentation-only full feature-to-host task/UI assignment; dispositions do not claim implementation",
+  "source_coverage": "../../coverage.json",
+  "feature_count": 94,
+  "disposition_counts": {
+    "implement_recovered_surface": 88,
+    "blocked_unrecovered_write": 2,
+    "partial_local_notifications_remote_push_unverified": 1,
+    "remote_push_integration_gate": 1,
+    "vendor_development_surface_record_only": 1,
+    "library_only_not_mobile_write_support": 1
+  },
+  "features": [
+    {
+      "feature_id": "FRY-001",
+      "provider": "fryderyk",
+      "feature": "Intro and login options",
+      "source_module": "auth",
+      "source_version_scope": "Both",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "AUTH-FRY",
+        "UI-01"
+      ],
+      "screen_id": "account",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/account.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/FRYDERYK-RECOVERY.md"
+      ],
+      "notes": [
+        "/login is deep-link host app path; c is Base64 UTF8 username:password. Not HTTPlogin."
+      ],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "FRY-002",
+      "provider": "fryderyk",
+      "feature": "Current user/profile",
+      "source_module": "auth",
+      "source_version_scope": "Both",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "AUTH-FRY",
+        "UI-01"
+      ],
+      "screen_id": "account",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/account.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/FRYDERYK-RECOVERY.md"
+      ],
+      "notes": [
+        "Recovered Fry TokenService logout is local key/cache deletion; server revocation unestablished."
+      ],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "FRY-003",
+      "provider": "fryderyk",
+      "feature": "Homepage summary",
+      "source_module": "app",
+      "source_version_scope": "Both",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "UI-01",
+        "PLAT-01"
+      ],
+      "screen_id": "today/settings",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/settings.dart",
+        "syberia/lib/src/ui/shell/today.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/FRYDERYK-RECOVERY.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "FRY-004",
+      "provider": "fryderyk",
+      "feature": "School-day progression",
+      "source_module": "lessons",
+      "source_version_scope": "Both",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "READ-FRY",
+        "UI-02"
+      ],
+      "screen_id": "timetable",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/timetable.dart",
+        "syberia/lib/src/ui/shell/timetable_views.dart",
+        "syberia/lib/src/ui/shell/today.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/FRYDERYK-RECOVERY.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "FRY-005",
+      "provider": "fryderyk",
+      "feature": "Timetable by day",
+      "source_module": "lessons",
+      "source_version_scope": "Both",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "READ-FRY",
+        "UI-02"
+      ],
+      "screen_id": "timetable",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/timetable.dart",
+        "syberia/lib/src/ui/shell/timetable_views.dart",
+        "syberia/lib/src/ui/shell/today.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/FRYDERYK-RECOVERY.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "FRY-006",
+      "provider": "fryderyk",
+      "feature": "Lesson details",
+      "source_module": "lessons",
+      "source_version_scope": "Both",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "READ-FRY",
+        "UI-02"
+      ],
+      "screen_id": "timetable",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/timetable.dart",
+        "syberia/lib/src/ui/shell/timetable_views.dart",
+        "syberia/lib/src/ui/shell/today.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/FRYDERYK-RECOVERY.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "FRY-007",
+      "provider": "fryderyk",
+      "feature": "Music-school lesson structure",
+      "source_module": "lessons",
+      "source_version_scope": "Both",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "READ-FRY",
+        "UI-02"
+      ],
+      "screen_id": "timetable",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/timetable.dart",
+        "syberia/lib/src/ui/shell/timetable_views.dart",
+        "syberia/lib/src/ui/shell/today.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/FRYDERYK-RECOVERY.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "FRY-008",
+      "provider": "fryderyk",
+      "feature": "Substitutions",
+      "source_module": "lessons",
+      "source_version_scope": "Both",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "READ-FRY",
+        "UI-02"
+      ],
+      "screen_id": "timetable",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/timetable.dart",
+        "syberia/lib/src/ui/shell/timetable_views.dart",
+        "syberia/lib/src/ui/shell/today.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/FRYDERYK-RECOVERY.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "FRY-009",
+      "provider": "fryderyk",
+      "feature": "Grades list and recent grades",
+      "source_module": "grades",
+      "source_version_scope": "Both",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "READ-FRY",
+        "UI-02"
+      ],
+      "screen_id": "grades",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/grades.dart",
+        "syberia/lib/src/ui/shell/grade_calculator_sheet.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/FRYDERYK-RECOVERY.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "FRY-010",
+      "provider": "fryderyk",
+      "feature": "Grade overview by semester/subject",
+      "source_module": "grades",
+      "source_version_scope": "Both",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "READ-FRY",
+        "UI-02"
+      ],
+      "screen_id": "grades",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/grades.dart",
+        "syberia/lib/src/ui/shell/grade_calculator_sheet.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/FRYDERYK-RECOVERY.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "FRY-011",
+      "provider": "fryderyk",
+      "feature": "Attendance totals",
+      "source_module": "attendance",
+      "source_version_scope": "Both",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "READ-FRY",
+        "UI-02"
+      ],
+      "screen_id": "attendance",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/attendance.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/FRYDERYK-RECOVERY.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "FRY-012",
+      "provider": "fryderyk",
+      "feature": "Attendance per lesson",
+      "source_module": "attendance",
+      "source_version_scope": "Both",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "READ-FRY",
+        "UI-02"
+      ],
+      "screen_id": "attendance",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/attendance.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/FRYDERYK-RECOVERY.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "FRY-013",
+      "provider": "fryderyk",
+      "feature": "Attendance status fidelity",
+      "source_module": "attendance",
+      "source_version_scope": "Both",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "READ-FRY",
+        "UI-02"
+      ],
+      "screen_id": "attendance",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/attendance.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/FRYDERYK-RECOVERY.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "FRY-014",
+      "provider": "fryderyk",
+      "feature": "Absence change requests",
+      "source_module": "attendance",
+      "source_version_scope": "Both",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "WRITE-01",
+        "UI-03"
+      ],
+      "screen_id": "justifications",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/attendance.dart",
+        "syberia/lib/src/ui/shell/justifications.dart (new)"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/FRYDERYK-RECOVERY.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "FRY-015",
+      "provider": "fryderyk",
+      "feature": "Absence request constraints",
+      "source_module": "attendance",
+      "source_version_scope": "Both",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "WRITE-01",
+        "UI-03"
+      ],
+      "screen_id": "justifications",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/attendance.dart",
+        "syberia/lib/src/ui/shell/justifications.dart (new)"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/FRYDERYK-RECOVERY.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "FRY-016",
+      "provider": "fryderyk",
+      "feature": "Homework list and recent homework",
+      "source_module": "homework",
+      "source_version_scope": "Both",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "READ-FRY",
+        "UI-03"
+      ],
+      "screen_id": "homework",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/events_homework.dart",
+        "syberia/lib/src/ui/shell/homework_detail.dart (new)"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/FRYDERYK-RECOVERY.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "FRY-017",
+      "provider": "fryderyk",
+      "feature": "Homework rich content and files",
+      "source_module": "homework",
+      "source_version_scope": "Both",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "READ-FRY",
+        "UI-03"
+      ],
+      "screen_id": "homework",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/events_homework.dart",
+        "syberia/lib/src/ui/shell/homework_detail.dart (new)"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/FRYDERYK-RECOVERY.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "FRY-018",
+      "provider": "fryderyk",
+      "feature": "Homework submission status",
+      "source_module": "homework",
+      "source_version_scope": "Both",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "READ-FRY",
+        "UI-03"
+      ],
+      "screen_id": "homework",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/events_homework.dart",
+        "syberia/lib/src/ui/shell/homework_detail.dart (new)"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/FRYDERYK-RECOVERY.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "FRY-019",
+      "provider": "fryderyk",
+      "feature": "Homework submission/upload",
+      "source_module": "homework",
+      "source_version_scope": "Unresolved",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "READ-FRY",
+        "UI-03"
+      ],
+      "screen_id": "homework",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/events_homework.dart",
+        "syberia/lib/src/ui/shell/homework_detail.dart (new)"
+      ],
+      "disposition": "blocked_unrecovered_write",
+      "enablement_gate": "No Fry homework submission contract recovered. Keep disabled; status display FRY-018 remains implementable.",
+      "contract_reading": [
+        "../evidence/FRYDERYK-RECOVERY.md"
+      ],
+      "notes": [
+        "Never borrow MobiReg write or Fry message upload route."
+      ],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "FRY-020",
+      "provider": "fryderyk",
+      "feature": "Messages inbox/sent/trash",
+      "source_module": "messages",
+      "source_version_scope": "iOS 1.1.7",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "MAIL-FRY",
+        "UI-04"
+      ],
+      "screen_id": "messages",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/messages.dart",
+        "syberia/lib/src/ui/shell/message_compose.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/FRYDERYK-RECOVERY.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "FRY-021",
+      "provider": "fryderyk",
+      "feature": "Message search",
+      "source_module": "messages",
+      "source_version_scope": "iOS 1.1.7",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "MAIL-FRY",
+        "UI-04"
+      ],
+      "screen_id": "messages",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/messages.dart",
+        "syberia/lib/src/ui/shell/message_compose.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/FRYDERYK-RECOVERY.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "FRY-022",
+      "provider": "fryderyk",
+      "feature": "Message detail and mark read",
+      "source_module": "messages",
+      "source_version_scope": "iOS 1.1.7",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "MAIL-FRY",
+        "UI-04"
+      ],
+      "screen_id": "messages",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/messages.dart",
+        "syberia/lib/src/ui/shell/message_compose.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/FRYDERYK-RECOVERY.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "FRY-023",
+      "provider": "fryderyk",
+      "feature": "Compose message",
+      "source_module": "messages",
+      "source_version_scope": "iOS 1.1.7",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "MAIL-FRY",
+        "UI-04"
+      ],
+      "screen_id": "messages",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/messages.dart",
+        "syberia/lib/src/ui/shell/message_compose.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/FRYDERYK-RECOVERY.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "FRY-024",
+      "provider": "fryderyk",
+      "feature": "CC/BCC",
+      "source_module": "messages",
+      "source_version_scope": "iOS 1.1.7",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "MAIL-FRY",
+        "UI-04"
+      ],
+      "screen_id": "messages",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/messages.dart",
+        "syberia/lib/src/ui/shell/message_compose.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/FRYDERYK-RECOVERY.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "FRY-025",
+      "provider": "fryderyk",
+      "feature": "Reply/reply all/forward",
+      "source_module": "messages",
+      "source_version_scope": "iOS 1.1.7",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "MAIL-FRY",
+        "UI-04"
+      ],
+      "screen_id": "messages",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/messages.dart",
+        "syberia/lib/src/ui/shell/message_compose.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/FRYDERYK-RECOVERY.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "FRY-026",
+      "provider": "fryderyk",
+      "feature": "Message attachment add/upload",
+      "source_module": "messages",
+      "source_version_scope": "iOS 1.1.7",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "MAIL-FRY",
+        "UI-04"
+      ],
+      "screen_id": "messages",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/messages.dart",
+        "syberia/lib/src/ui/shell/message_compose.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/FRYDERYK-RECOVERY.md"
+      ],
+      "notes": [
+        "Fry attachment upload precedes create; uploadedIDs in attachment_ids. Policy limits unresolved."
+      ],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "FRY-027",
+      "provider": "fryderyk",
+      "feature": "Message attachment removal",
+      "source_module": "messages",
+      "source_version_scope": "iOS 1.1.7",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "MAIL-FRY",
+        "UI-04"
+      ],
+      "screen_id": "messages",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/messages.dart",
+        "syberia/lib/src/ui/shell/message_compose.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/FRYDERYK-RECOVERY.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "FRY-028",
+      "provider": "fryderyk",
+      "feature": "Message deletion",
+      "source_module": "messages",
+      "source_version_scope": "iOS 1.1.7",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "MAIL-FRY",
+        "UI-04"
+      ],
+      "screen_id": "messages",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/messages.dart",
+        "syberia/lib/src/ui/shell/message_compose.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/FRYDERYK-RECOVERY.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "FRY-029",
+      "provider": "fryderyk",
+      "feature": "Message restore/permanent delete",
+      "source_module": "messages",
+      "source_version_scope": "Unresolved",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "MAIL-FRY",
+        "UI-04"
+      ],
+      "screen_id": "messages",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/messages.dart",
+        "syberia/lib/src/ui/shell/message_compose.dart"
+      ],
+      "disposition": "blocked_unrecovered_write",
+      "enablement_gate": "Trash folder/delete flag does not establish restore or permanent delete. Keep unavailable until contract.",
+      "contract_reading": [
+        "../evidence/FRYDERYK-RECOVERY.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "FRY-030",
+      "provider": "fryderyk",
+      "feature": "Theme/language/preferences",
+      "source_module": "app",
+      "source_version_scope": "Both",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "UI-01",
+        "PLAT-01"
+      ],
+      "screen_id": "today/settings",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/settings.dart",
+        "syberia/lib/src/ui/shell/today.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/FRYDERYK-RECOVERY.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "FRY-031",
+      "provider": "fryderyk",
+      "feature": "Offline/cache/connectivity",
+      "source_module": "app",
+      "source_version_scope": "Both",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "UI-01",
+        "PLAT-01"
+      ],
+      "screen_id": "today/settings",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/settings.dart",
+        "syberia/lib/src/ui/shell/today.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/FRYDERYK-RECOVERY.md"
+      ],
+      "notes": [
+        "Recovered Fry TokenService logout is local key/cache deletion; server revocation unestablished."
+      ],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "FRY-032",
+      "provider": "fryderyk",
+      "feature": "Minimum version/update required",
+      "source_module": "app",
+      "source_version_scope": "Both",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "UI-01",
+        "PLAT-01"
+      ],
+      "screen_id": "today/settings",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/settings.dart",
+        "syberia/lib/src/ui/shell/today.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/FRYDERYK-RECOVERY.md"
+      ],
+      "notes": [
+        "VersionService POST VERSION_API_URL/validate; this is not token validation."
+      ],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "FRY-033",
+      "provider": "fryderyk",
+      "feature": "Notification delivery",
+      "source_module": "app",
+      "source_version_scope": "Partial/unresolved",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "UI-01",
+        "PLAT-01"
+      ],
+      "screen_id": "today/settings",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/settings.dart",
+        "syberia/lib/src/ui/shell/today.dart"
+      ],
+      "disposition": "partial_local_notifications_remote_push_unverified",
+      "enablement_gate": "Use local polling/diff only for verified reads; no claim of vendor push registration/delivery.",
+      "contract_reading": [
+        "../evidence/FRYDERYK-RECOVERY.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "MR-F001",
+      "provider": "mobireg",
+      "feature": "Add/edit/remove multiple school accounts and choose child",
+      "source_module": "accounts",
+      "source_version_scope": "Android 2.1.79 / Android 3.1.7 / iOS 3.1.7",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "AUTH-MR",
+        "UI-01"
+      ],
+      "screen_id": "account",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/account.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/MOBIREG-AUTH-RECOVERY.md",
+        "../evidence/MOBIREG-MODULE-RECOVERY.md",
+        "../evidence/MOBIREG-ACADEMIC-RECOVERY.md",
+        "../evidence/MOBIREG-LEGACY-CORRECTIONS.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "MR-F002",
+      "provider": "mobireg",
+      "feature": "School diary URL / school-code normalization",
+      "source_module": "accounts",
+      "source_version_scope": "Android 2.1.79 / Android 3.1.7 / iOS 3.1.7",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "AUTH-MR",
+        "UI-01"
+      ],
+      "screen_id": "account",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/account.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/MOBIREG-AUTH-RECOVERY.md",
+        "../evidence/MOBIREG-MODULE-RECOVERY.md",
+        "../evidence/MOBIREG-ACADEMIC-RECOVERY.md",
+        "../evidence/MOBIREG-LEGACY-CORRECTIONS.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "MR-F003",
+      "provider": "mobireg",
+      "feature": "Credential validation and ParentStudents discovery",
+      "source_module": "accounts",
+      "source_version_scope": "Android 2.1.79",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "AUTH-MR",
+        "UI-01"
+      ],
+      "screen_id": "account",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/account.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/MOBIREG-AUTH-RECOVERY.md",
+        "../evidence/MOBIREG-MODULE-RECOVERY.md",
+        "../evidence/MOBIREG-ACADEMIC-RECOVERY.md",
+        "../evidence/MOBIREG-LEGACY-CORRECTIONS.md"
+      ],
+      "notes": [
+        "Legacy parent_pass is one-time MD5 hex credential; modern password JSON is raw selected text. Never combine."
+      ],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "MR-F004",
+      "provider": "mobireg",
+      "feature": "Password login storing JWT in secure storage",
+      "source_module": "accounts",
+      "source_version_scope": "Android 3.1.7 / iOS 3.1.7",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "AUTH-MR",
+        "UI-01"
+      ],
+      "screen_id": "account",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/account.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/MOBIREG-AUTH-RECOVERY.md",
+        "../evidence/MOBIREG-MODULE-RECOVERY.md",
+        "../evidence/MOBIREG-ACADEMIC-RECOVERY.md",
+        "../evidence/MOBIREG-LEGACY-CORRECTIONS.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "MR-F005",
+      "provider": "mobireg",
+      "feature": "QR-code login using code from web app",
+      "source_module": "accounts",
+      "source_version_scope": "Android 3.1.7 / iOS 3.1.7",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "AUTH-MR",
+        "UI-01"
+      ],
+      "screen_id": "account",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/account.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/MOBIREG-AUTH-RECOVERY.md",
+        "../evidence/MOBIREG-MODULE-RECOVERY.md",
+        "../evidence/MOBIREG-ACADEMIC-RECOVERY.md",
+        "../evidence/MOBIREG-LEGACY-CORRECTIONS.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "MR-F006",
+      "provider": "mobireg",
+      "feature": "QR access+refresh sessions without saved password",
+      "source_module": "accounts",
+      "source_version_scope": "Android 3.1.7 / iOS 3.1.7",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "AUTH-MR",
+        "UI-01"
+      ],
+      "screen_id": "account",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/account.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/MOBIREG-AUTH-RECOVERY.md",
+        "../evidence/MOBIREG-MODULE-RECOVERY.md",
+        "../evidence/MOBIREG-ACADEMIC-RECOVERY.md",
+        "../evidence/MOBIREG-LEGACY-CORRECTIONS.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "MR-F007",
+      "provider": "mobireg",
+      "feature": "Silent refresh, unauthorized recovery and logout",
+      "source_module": "accounts",
+      "source_version_scope": "Android 3.1.7 / iOS 3.1.7",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "AUTH-MR",
+        "UI-01"
+      ],
+      "screen_id": "account",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/account.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/MOBIREG-AUTH-RECOVERY.md",
+        "../evidence/MOBIREG-MODULE-RECOVERY.md",
+        "../evidence/MOBIREG-ACADEMIC-RECOVERY.md",
+        "../evidence/MOBIREG-LEGACY-CORRECTIONS.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "MR-F008",
+      "provider": "mobireg",
+      "feature": "Remove account locally with its children, credentials and cache",
+      "source_module": "accounts",
+      "source_version_scope": "Android 3.1.7 / iOS 3.1.7",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "AUTH-MR",
+        "UI-01"
+      ],
+      "screen_id": "account",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/account.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/MOBIREG-AUTH-RECOVERY.md",
+        "../evidence/MOBIREG-MODULE-RECOVERY.md",
+        "../evidence/MOBIREG-ACADEMIC-RECOVERY.md",
+        "../evidence/MOBIREG-LEGACY-CORRECTIONS.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "MR-F009",
+      "provider": "mobireg",
+      "feature": "Student login includes self as pupil; rebuild pupil lists",
+      "source_module": "accounts",
+      "source_version_scope": "Android 3.1.7 / iOS 3.1.7",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "AUTH-MR",
+        "UI-01"
+      ],
+      "screen_id": "account",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/account.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/MOBIREG-AUTH-RECOVERY.md",
+        "../evidence/MOBIREG-MODULE-RECOVERY.md",
+        "../evidence/MOBIREG-ACADEMIC-RECOVERY.md",
+        "../evidence/MOBIREG-LEGACY-CORRECTIONS.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "MR-F010",
+      "provider": "mobireg",
+      "feature": "Mixed dated feed of grades/exams/homework/reprimands/announcements/absences",
+      "source_module": "dashboard",
+      "source_version_scope": "Android 3.1.7 / iOS 3.1.7",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "READ-MR",
+        "UI-02"
+      ],
+      "screen_id": "today",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/today.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/MOBIREG-AUTH-RECOVERY.md",
+        "../evidence/MOBIREG-MODULE-RECOVERY.md",
+        "../evidence/MOBIREG-ACADEMIC-RECOVERY.md",
+        "../evidence/MOBIREG-LEGACY-CORRECTIONS.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "MR-F011",
+      "provider": "mobireg",
+      "feature": "New/unread counters for grades, absences, reprimands and messages",
+      "source_module": "dashboard",
+      "source_version_scope": "Android 2.1.79",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "READ-MR",
+        "UI-02"
+      ],
+      "screen_id": "today",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/today.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/MOBIREG-AUTH-RECOVERY.md",
+        "../evidence/MOBIREG-MODULE-RECOVERY.md",
+        "../evidence/MOBIREG-ACADEMIC-RECOVERY.md",
+        "../evidence/MOBIREG-LEGACY-CORRECTIONS.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "MR-F012",
+      "provider": "mobireg",
+      "feature": "Subjects, term selection and grade details",
+      "source_module": "grades",
+      "source_version_scope": "Android 2.1.79 / Android 3.1.7 / iOS 3.1.7",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "READ-MR",
+        "UI-02"
+      ],
+      "screen_id": "grades",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/grades.dart",
+        "syberia/lib/src/ui/shell/grade_calculator_sheet.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/MOBIREG-AUTH-RECOVERY.md",
+        "../evidence/MOBIREG-MODULE-RECOVERY.md",
+        "../evidence/MOBIREG-ACADEMIC-RECOVERY.md",
+        "../evidence/MOBIREG-LEGACY-CORRECTIONS.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "MR-F013",
+      "provider": "mobireg",
+      "feature": "Current grades versus term/year/proposed/final grades",
+      "source_module": "grades",
+      "source_version_scope": "Android 3.1.7 / iOS 3.1.7",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "READ-MR",
+        "UI-02"
+      ],
+      "screen_id": "grades",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/grades.dart",
+        "syberia/lib/src/ui/shell/grade_calculator_sheet.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/MOBIREG-AUTH-RECOVERY.md",
+        "../evidence/MOBIREG-MODULE-RECOVERY.md",
+        "../evidence/MOBIREG-ACADEMIC-RECOVERY.md",
+        "../evidence/MOBIREG-LEGACY-CORRECTIONS.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "MR-F014",
+      "provider": "mobireg",
+      "feature": "Scale, numeric points, percentages and descriptive grading",
+      "source_module": "grades",
+      "source_version_scope": "Android 2.1.79",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "READ-MR",
+        "UI-02"
+      ],
+      "screen_id": "grades",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/grades.dart",
+        "syberia/lib/src/ui/shell/grade_calculator_sheet.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/MOBIREG-AUTH-RECOVERY.md",
+        "../evidence/MOBIREG-MODULE-RECOVERY.md",
+        "../evidence/MOBIREG-ACADEMIC-RECOVERY.md",
+        "../evidence/MOBIREG-LEGACY-CORRECTIONS.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "MR-F015",
+      "provider": "mobireg",
+      "feature": "Grade categories, weights, comments, teacher, dates and styles",
+      "source_module": "grades",
+      "source_version_scope": "Android 2.1.79 / Android 3.1.7 / iOS 3.1.7",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "READ-MR",
+        "UI-02"
+      ],
+      "screen_id": "grades",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/grades.dart",
+        "syberia/lib/src/ui/shell/grade_calculator_sheet.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/MOBIREG-AUTH-RECOVERY.md",
+        "../evidence/MOBIREG-MODULE-RECOVERY.md",
+        "../evidence/MOBIREG-ACADEMIC-RECOVERY.md",
+        "../evidence/MOBIREG-LEGACY-CORRECTIONS.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "MR-F016",
+      "provider": "mobireg",
+      "feature": "Grade parent/child correction chains and role visibility",
+      "source_module": "grades",
+      "source_version_scope": "Android 2.1.79",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "READ-MR",
+        "UI-02"
+      ],
+      "screen_id": "grades",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/grades.dart",
+        "syberia/lib/src/ui/shell/grade_calculator_sheet.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/MOBIREG-AUTH-RECOVERY.md",
+        "../evidence/MOBIREG-MODULE-RECOVERY.md",
+        "../evidence/MOBIREG-ACADEMIC-RECOVERY.md",
+        "../evidence/MOBIREG-LEGACY-CORRECTIONS.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "MR-F017",
+      "provider": "mobireg",
+      "feature": "Average-count exclusions and configurable numeric scales",
+      "source_module": "grades",
+      "source_version_scope": "Android 2.1.79",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "READ-MR",
+        "UI-02"
+      ],
+      "screen_id": "grades",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/grades.dart",
+        "syberia/lib/src/ui/shell/grade_calculator_sheet.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/MOBIREG-AUTH-RECOVERY.md",
+        "../evidence/MOBIREG-MODULE-RECOVERY.md",
+        "../evidence/MOBIREG-ACADEMIC-RECOVERY.md",
+        "../evidence/MOBIREG-LEGACY-CORRECTIONS.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "MR-F018",
+      "provider": "mobireg",
+      "feature": "Local new-grade indicator cleared by opening details",
+      "source_module": "grades",
+      "source_version_scope": "Android 2.1.79",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "READ-MR",
+        "UI-02"
+      ],
+      "screen_id": "grades",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/grades.dart",
+        "syberia/lib/src/ui/shell/grade_calculator_sheet.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/MOBIREG-AUTH-RECOVERY.md",
+        "../evidence/MOBIREG-MODULE-RECOVERY.md",
+        "../evidence/MOBIREG-ACADEMIC-RECOVERY.md",
+        "../evidence/MOBIREG-LEGACY-CORRECTIONS.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "MR-F019",
+      "provider": "mobireg",
+      "feature": "Calendar/day list and per-event attendance details",
+      "source_module": "attendance",
+      "source_version_scope": "Android 2.1.79 / Android 3.1.7 / iOS 3.1.7",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "READ-MR",
+        "UI-02"
+      ],
+      "screen_id": "attendance",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/attendance.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/MOBIREG-AUTH-RECOVERY.md",
+        "../evidence/MOBIREG-MODULE-RECOVERY.md",
+        "../evidence/MOBIREG-ACADEMIC-RECOVERY.md",
+        "../evidence/MOBIREG-LEGACY-CORRECTIONS.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "MR-F020",
+      "provider": "mobireg",
+      "feature": "Present/absent/late/custom classifications and statistics",
+      "source_module": "attendance",
+      "source_version_scope": "Android 2.1.79 / Android 3.1.7 / iOS 3.1.7",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "READ-MR",
+        "UI-02"
+      ],
+      "screen_id": "attendance",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/attendance.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/MOBIREG-AUTH-RECOVERY.md",
+        "../evidence/MOBIREG-MODULE-RECOVERY.md",
+        "../evidence/MOBIREG-ACADEMIC-RECOVERY.md",
+        "../evidence/MOBIREG-LEGACY-CORRECTIONS.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "MR-F021",
+      "provider": "mobireg",
+      "feature": "Filter absence-only or absence+late feed",
+      "source_module": "attendance",
+      "source_version_scope": "Android 3.1.7 / iOS 3.1.7",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "READ-MR",
+        "UI-02"
+      ],
+      "screen_id": "attendance",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/attendance.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/MOBIREG-AUTH-RECOVERY.md",
+        "../evidence/MOBIREG-MODULE-RECOVERY.md",
+        "../evidence/MOBIREG-ACADEMIC-RECOVERY.md",
+        "../evidence/MOBIREG-LEGACY-CORRECTIONS.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "MR-F022",
+      "provider": "mobireg",
+      "feature": "Browse records and eligible events by week",
+      "source_module": "justifications",
+      "source_version_scope": "Android 3.1.7 / iOS 3.1.7",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "WRITE-01",
+        "UI-03"
+      ],
+      "screen_id": "justifications",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/attendance.dart",
+        "syberia/lib/src/ui/shell/justifications.dart (new)"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/MOBIREG-AUTH-RECOVERY.md",
+        "../evidence/MOBIREG-MODULE-RECOVERY.md",
+        "../evidence/MOBIREG-ACADEMIC-RECOVERY.md",
+        "../evidence/MOBIREG-LEGACY-CORRECTIONS.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "MR-F023",
+      "provider": "mobireg",
+      "feature": "Create/update/delete justification with event selection and reason",
+      "source_module": "justifications",
+      "source_version_scope": "Android 3.1.7 / iOS 3.1.7",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "WRITE-01",
+        "UI-03"
+      ],
+      "screen_id": "justifications",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/attendance.dart",
+        "syberia/lib/src/ui/shell/justifications.dart (new)"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/MOBIREG-AUTH-RECOVERY.md",
+        "../evidence/MOBIREG-MODULE-RECOVERY.md",
+        "../evidence/MOBIREG-ACADEMIC-RECOVERY.md",
+        "../evidence/MOBIREG-LEGACY-CORRECTIONS.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "MR-F024",
+      "provider": "mobireg",
+      "feature": "Day/calendar navigation across school-year range",
+      "source_module": "timetable",
+      "source_version_scope": "Android 2.1.79 / Android 3.1.7 / iOS 3.1.7",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "READ-MR",
+        "UI-02"
+      ],
+      "screen_id": "timetable",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/timetable.dart",
+        "syberia/lib/src/ui/shell/timetable_views.dart",
+        "syberia/lib/src/ui/shell/today.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/MOBIREG-AUTH-RECOVERY.md",
+        "../evidence/MOBIREG-MODULE-RECOVERY.md",
+        "../evidence/MOBIREG-ACADEMIC-RECOVERY.md",
+        "../evidence/MOBIREG-LEGACY-CORRECTIONS.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "MR-F025",
+      "provider": "mobireg",
+      "feature": "Lesson time, number, subject, teachers, groups, rooms and topic details",
+      "source_module": "timetable",
+      "source_version_scope": "Android 2.1.79 / Android 3.1.7 / iOS 3.1.7",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "READ-MR",
+        "UI-02"
+      ],
+      "screen_id": "timetable",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/timetable.dart",
+        "syberia/lib/src/ui/shell/timetable_views.dart",
+        "syberia/lib/src/ui/shell/today.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/MOBIREG-AUTH-RECOVERY.md",
+        "../evidence/MOBIREG-MODULE-RECOVERY.md",
+        "../evidence/MOBIREG-ACADEMIC-RECOVERY.md",
+        "../evidence/MOBIREG-LEGACY-CORRECTIONS.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "MR-F026",
+      "provider": "mobireg",
+      "feature": "Substitution/original lesson relationship and changed plan",
+      "source_module": "timetable",
+      "source_version_scope": "Android 2.1.79 / Android 3.1.7 / iOS 3.1.7",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "READ-MR",
+        "UI-02"
+      ],
+      "screen_id": "timetable",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/timetable.dart",
+        "syberia/lib/src/ui/shell/timetable_views.dart",
+        "syberia/lib/src/ui/shell/today.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/MOBIREG-AUTH-RECOVERY.md",
+        "../evidence/MOBIREG-MODULE-RECOVERY.md",
+        "../evidence/MOBIREG-ACADEMIC-RECOVERY.md",
+        "../evidence/MOBIREG-LEGACY-CORRECTIONS.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "MR-F027",
+      "provider": "mobireg",
+      "feature": "Timetable event and embedded exam details",
+      "source_module": "timetable",
+      "source_version_scope": "Android 3.1.7 / iOS 3.1.7",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "READ-MR",
+        "UI-02"
+      ],
+      "screen_id": "timetable",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/timetable.dart",
+        "syberia/lib/src/ui/shell/timetable_views.dart",
+        "syberia/lib/src/ui/shell/today.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/MOBIREG-AUTH-RECOVERY.md",
+        "../evidence/MOBIREG-MODULE-RECOVERY.md",
+        "../evidence/MOBIREG-ACADEMIC-RECOVERY.md",
+        "../evidence/MOBIREG-LEGACY-CORRECTIONS.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "MR-F028",
+      "provider": "mobireg",
+      "feature": "Exam list and detail with dates, subject and teacher",
+      "source_module": "exams",
+      "source_version_scope": "Android 3.1.7 / iOS 3.1.7",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "READ-MR",
+        "UI-02"
+      ],
+      "screen_id": "exams/events",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/events_homework.dart",
+        "syberia/lib/src/ui/shell/exams.dart (new)"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/MOBIREG-AUTH-RECOVERY.md",
+        "../evidence/MOBIREG-MODULE-RECOVERY.md",
+        "../evidence/MOBIREG-ACADEMIC-RECOVERY.md",
+        "../evidence/MOBIREG-LEGACY-CORRECTIONS.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "MR-F029",
+      "provider": "mobireg",
+      "feature": "Diary and module homework source compatibility",
+      "source_module": "homework",
+      "source_version_scope": "Android 3.1.7 / iOS 3.1.7",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "READ-MR",
+        "UI-03"
+      ],
+      "screen_id": "homework",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/events_homework.dart",
+        "syberia/lib/src/ui/shell/homework_detail.dart (new)"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/MOBIREG-AUTH-RECOVERY.md",
+        "../evidence/MOBIREG-MODULE-RECOVERY.md",
+        "../evidence/MOBIREG-ACADEMIC-RECOVERY.md",
+        "../evidence/MOBIREG-LEGACY-CORRECTIONS.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "MR-F030",
+      "provider": "mobireg",
+      "feature": "Homework list/detail/status/deadline and teacher comments",
+      "source_module": "homework",
+      "source_version_scope": "Android 3.1.7 / iOS 3.1.7",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "READ-MR",
+        "UI-03"
+      ],
+      "screen_id": "homework",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/events_homework.dart",
+        "syberia/lib/src/ui/shell/homework_detail.dart (new)"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/MOBIREG-AUTH-RECOVERY.md",
+        "../evidence/MOBIREG-MODULE-RECOVERY.md",
+        "../evidence/MOBIREG-ACADEMIC-RECOVERY.md",
+        "../evidence/MOBIREG-LEGACY-CORRECTIONS.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "MR-F031",
+      "provider": "mobireg",
+      "feature": "Homework solution text and file submission",
+      "source_module": "homework",
+      "source_version_scope": "Android 3.1.7 / iOS 3.1.7",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "WRITE-01",
+        "UI-03"
+      ],
+      "screen_id": "homework",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/events_homework.dart",
+        "syberia/lib/src/ui/shell/homework_detail.dart (new)"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/MOBIREG-AUTH-RECOVERY.md",
+        "../evidence/MOBIREG-MODULE-RECOVERY.md",
+        "../evidence/MOBIREG-ACADEMIC-RECOVERY.md",
+        "../evidence/MOBIREG-LEGACY-CORRECTIONS.md"
+      ],
+      "notes": [
+        "Module solution files JSON schema/file limits and archive-toggle retry need explicit guards."
+      ],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "MR-F032",
+      "provider": "mobireg",
+      "feature": "Archive homework and restore archived homework",
+      "source_module": "homework",
+      "source_version_scope": "Android 3.1.7 / iOS 3.1.7",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "WRITE-01",
+        "UI-03"
+      ],
+      "screen_id": "homework",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/events_homework.dart",
+        "syberia/lib/src/ui/shell/homework_detail.dart (new)"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/MOBIREG-AUTH-RECOVERY.md",
+        "../evidence/MOBIREG-MODULE-RECOVERY.md",
+        "../evidence/MOBIREG-ACADEMIC-RECOVERY.md",
+        "../evidence/MOBIREG-LEGACY-CORRECTIONS.md"
+      ],
+      "notes": [
+        "Module solution files JSON schema/file limits and archive-toggle retry need explicit guards."
+      ],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "MR-F033",
+      "provider": "mobireg",
+      "feature": "List/detail and delayed full-body fetch",
+      "source_module": "announcements",
+      "source_version_scope": "Android 3.1.7 / iOS 3.1.7",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "READ-MR",
+        "WRITE-01",
+        "UI-03"
+      ],
+      "screen_id": "announcements",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/announcements_notices.dart",
+        "syberia/lib/src/ui/shell/announcement_detail.dart (new)"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/MOBIREG-AUTH-RECOVERY.md",
+        "../evidence/MOBIREG-MODULE-RECOVERY.md",
+        "../evidence/MOBIREG-ACADEMIC-RECOVERY.md",
+        "../evidence/MOBIREG-LEGACY-CORRECTIONS.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "MR-F034",
+      "provider": "mobireg",
+      "feature": "Voting/answer submission and existing-answer state",
+      "source_module": "announcements",
+      "source_version_scope": "Android 3.1.7 / iOS 3.1.7",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "READ-MR",
+        "WRITE-01",
+        "UI-03"
+      ],
+      "screen_id": "announcements",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/announcements_notices.dart",
+        "syberia/lib/src/ui/shell/announcement_detail.dart (new)"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/MOBIREG-AUTH-RECOVERY.md",
+        "../evidence/MOBIREG-MODULE-RECOVERY.md",
+        "../evidence/MOBIREG-ACADEMIC-RECOVERY.md",
+        "../evidence/MOBIREG-LEGACY-CORRECTIONS.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "MR-F035",
+      "provider": "mobireg",
+      "feature": "Pending poll gate and post-answer navigation",
+      "source_module": "announcements",
+      "source_version_scope": "Android 3.1.7 / iOS 3.1.7",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "READ-MR",
+        "WRITE-01",
+        "UI-03"
+      ],
+      "screen_id": "announcements",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/announcements_notices.dart",
+        "syberia/lib/src/ui/shell/announcement_detail.dart (new)"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/MOBIREG-AUTH-RECOVERY.md",
+        "../evidence/MOBIREG-MODULE-RECOVERY.md",
+        "../evidence/MOBIREG-ACADEMIC-RECOVERY.md",
+        "../evidence/MOBIREG-LEGACY-CORRECTIONS.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "MR-F036",
+      "provider": "mobireg",
+      "feature": "Reprimands/praise list and detail with teacher/date/content",
+      "source_module": "reprimands",
+      "source_version_scope": "Android 2.1.79 / Android 3.1.7 / iOS 3.1.7",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "READ-MR",
+        "UI-02"
+      ],
+      "screen_id": "notices",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/announcements_notices.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/MOBIREG-AUTH-RECOVERY.md",
+        "../evidence/MOBIREG-MODULE-RECOVERY.md",
+        "../evidence/MOBIREG-ACADEMIC-RECOVERY.md",
+        "../evidence/MOBIREG-LEGACY-CORRECTIONS.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "MR-F037",
+      "provider": "mobireg",
+      "feature": "Message inbox/detail and local/server read acknowledgement",
+      "source_module": "mail",
+      "source_version_scope": "Android 2.1.79 / Android 3.1.7 / iOS 3.1.7",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "MAIL-MR",
+        "UI-04"
+      ],
+      "screen_id": "messages",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/messages.dart",
+        "syberia/lib/src/ui/shell/message_compose.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/MOBIREG-AUTH-RECOVERY.md",
+        "../evidence/MOBIREG-MODULE-RECOVERY.md",
+        "../evidence/MOBIREG-ACADEMIC-RECOVERY.md",
+        "../evidence/MOBIREG-LEGACY-CORRECTIONS.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "MR-F038",
+      "provider": "mobireg",
+      "feature": "Inbox/sent/important/trash folders and message search",
+      "source_module": "mail",
+      "source_version_scope": "Android 3.1.7 / iOS 3.1.7",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "MAIL-MR",
+        "UI-04"
+      ],
+      "screen_id": "messages",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/messages.dart",
+        "syberia/lib/src/ui/shell/message_compose.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/MOBIREG-AUTH-RECOVERY.md",
+        "../evidence/MOBIREG-MODULE-RECOVERY.md",
+        "../evidence/MOBIREG-ACADEMIC-RECOVERY.md",
+        "../evidence/MOBIREG-LEGACY-CORRECTIONS.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "MR-F039",
+      "provider": "mobireg",
+      "feature": "Compose/reply with recipient directory and search",
+      "source_module": "mail",
+      "source_version_scope": "Android 3.1.7 / iOS 3.1.7",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "MAIL-MR",
+        "UI-04"
+      ],
+      "screen_id": "messages",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/messages.dart",
+        "syberia/lib/src/ui/shell/message_compose.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/MOBIREG-AUTH-RECOVERY.md",
+        "../evidence/MOBIREG-MODULE-RECOVERY.md",
+        "../evidence/MOBIREG-ACADEMIC-RECOVERY.md",
+        "../evidence/MOBIREG-LEGACY-CORRECTIONS.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "MR-F040",
+      "provider": "mobireg",
+      "feature": "Star/important state, move to trash and restore",
+      "source_module": "mail",
+      "source_version_scope": "Android 3.1.7 / iOS 3.1.7",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "MAIL-MR",
+        "UI-04"
+      ],
+      "screen_id": "messages",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/messages.dart",
+        "syberia/lib/src/ui/shell/message_compose.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/MOBIREG-AUTH-RECOVERY.md",
+        "../evidence/MOBIREG-MODULE-RECOVERY.md",
+        "../evidence/MOBIREG-ACADEMIC-RECOVERY.md",
+        "../evidence/MOBIREG-LEGACY-CORRECTIONS.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "MR-F041",
+      "provider": "mobireg",
+      "feature": "Message attachments and upload partial-success reporting",
+      "source_module": "mail",
+      "source_version_scope": "Android 3.1.7 / iOS 3.1.7",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "MAIL-MR",
+        "UI-04"
+      ],
+      "screen_id": "messages",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/messages.dart",
+        "syberia/lib/src/ui/shell/message_compose.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/MOBIREG-AUTH-RECOVERY.md",
+        "../evidence/MOBIREG-MODULE-RECOVERY.md",
+        "../evidence/MOBIREG-ACADEMIC-RECOVERY.md",
+        "../evidence/MOBIREG-LEGACY-CORRECTIONS.md"
+      ],
+      "notes": [
+        "MobiReg body is sent before per-message file upload; preserve partial success and messageID."
+      ],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "MR-F042",
+      "provider": "mobireg",
+      "feature": "Mail SSO and separate module/homework cookie sessions",
+      "source_module": "sessions",
+      "source_version_scope": "Android 3.1.7 / iOS 3.1.7",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "AUTH-MR",
+        "MAIL-MR"
+      ],
+      "screen_id": "account/session-recovery",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/account.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/MOBIREG-AUTH-RECOVERY.md",
+        "../evidence/MOBIREG-MODULE-RECOVERY.md",
+        "../evidence/MOBIREG-ACADEMIC-RECOVERY.md",
+        "../evidence/MOBIREG-LEGACY-CORRECTIONS.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "MR-F043",
+      "provider": "mobireg",
+      "feature": "Pick attachments from files, camera and gallery",
+      "source_module": "media",
+      "source_version_scope": "Android 3.1.7 / iOS 3.1.7",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "UI-04",
+        "UI-03"
+      ],
+      "screen_id": "attachment/content action",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/messages.dart",
+        "syberia/lib/src/ui/shell/events_homework.dart",
+        "syberia/lib/src/ui/shell/message_compose.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/MOBIREG-AUTH-RECOVERY.md",
+        "../evidence/MOBIREG-MODULE-RECOVERY.md",
+        "../evidence/MOBIREG-ACADEMIC-RECOVERY.md",
+        "../evidence/MOBIREG-LEGACY-CORRECTIONS.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "MR-F044",
+      "provider": "mobireg",
+      "feature": "Open/download/share attachments; renew expired homework URLs",
+      "source_module": "media",
+      "source_version_scope": "Android 3.1.7 / iOS 3.1.7",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "UI-04",
+        "UI-03"
+      ],
+      "screen_id": "attachment/content action",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/messages.dart",
+        "syberia/lib/src/ui/shell/events_homework.dart",
+        "syberia/lib/src/ui/shell/message_compose.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/MOBIREG-AUTH-RECOVERY.md",
+        "../evidence/MOBIREG-MODULE-RECOVERY.md",
+        "../evidence/MOBIREG-ACADEMIC-RECOVERY.md",
+        "../evidence/MOBIREG-LEGACY-CORRECTIONS.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "MR-F045",
+      "provider": "mobireg",
+      "feature": "Render HTML, links, images, video/audio and YouTube embeds",
+      "source_module": "media",
+      "source_version_scope": "Android 3.1.7 / iOS 3.1.7",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "UI-04",
+        "UI-03"
+      ],
+      "screen_id": "attachment/content action",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/messages.dart",
+        "syberia/lib/src/ui/shell/events_homework.dart",
+        "syberia/lib/src/ui/shell/message_compose.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/MOBIREG-AUTH-RECOVERY.md",
+        "../evidence/MOBIREG-MODULE-RECOVERY.md",
+        "../evidence/MOBIREG-ACADEMIC-RECOVERY.md",
+        "../evidence/MOBIREG-LEGACY-CORRECTIONS.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "MR-F046",
+      "provider": "mobireg",
+      "feature": "FCM register/token refresh and per-account token registration",
+      "source_module": "notifications",
+      "source_version_scope": "Android 2.1.79 / Android 3.1.7 / iOS 3.1.7",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "PLAT-01"
+      ],
+      "screen_id": "notification-settings/deeplink",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/notification_settings.dart"
+      ],
+      "disposition": "remote_push_integration_gate",
+      "enablement_gate": "Recovered registration behavior does not establish Siberia Firebase compatibility. Use own deployment/polling; verify auth/registration before enabling.",
+      "contract_reading": [
+        "../evidence/MOBIREG-AUTH-RECOVERY.md",
+        "../evidence/MOBIREG-MODULE-RECOVERY.md",
+        "../evidence/MOBIREG-ACADEMIC-RECOVERY.md",
+        "../evidence/MOBIREG-LEGACY-CORRECTIONS.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "MR-F047",
+      "provider": "mobireg",
+      "feature": "Message/grade/absence/reprimand/timetable notification kinds",
+      "source_module": "notifications",
+      "source_version_scope": "Android 2.1.79 / Android 3.1.7 / iOS 3.1.7",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "PLAT-01"
+      ],
+      "screen_id": "notification-settings/deeplink",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/notification_settings.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/MOBIREG-AUTH-RECOVERY.md",
+        "../evidence/MOBIREG-MODULE-RECOVERY.md",
+        "../evidence/MOBIREG-ACADEMIC-RECOVERY.md",
+        "../evidence/MOBIREG-LEGACY-CORRECTIONS.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "MR-F048",
+      "provider": "mobireg",
+      "feature": "Deep-link into correct account/child and invalidate relevant cache",
+      "source_module": "notifications",
+      "source_version_scope": "Android 2.1.79 / Android 3.1.7 / iOS 3.1.7",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "PLAT-01"
+      ],
+      "screen_id": "notification-settings/deeplink",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/notification_settings.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/MOBIREG-AUTH-RECOVERY.md",
+        "../evidence/MOBIREG-MODULE-RECOVERY.md",
+        "../evidence/MOBIREG-ACADEMIC-RECOVERY.md",
+        "../evidence/MOBIREG-LEGACY-CORRECTIONS.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "MR-F049",
+      "provider": "mobireg",
+      "feature": "Notification center/preferences and server preference sync",
+      "source_module": "notifications",
+      "source_version_scope": "Android 3.1.7 / iOS 3.1.7",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "PLAT-01"
+      ],
+      "screen_id": "notification-settings/deeplink",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/notification_settings.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/MOBIREG-AUTH-RECOVERY.md",
+        "../evidence/MOBIREG-MODULE-RECOVERY.md",
+        "../evidence/MOBIREG-ACADEMIC-RECOVERY.md",
+        "../evidence/MOBIREG-LEGACY-CORRECTIONS.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "MR-F050",
+      "provider": "mobireg",
+      "feature": "Full/delta njson synchronization with rollback and server cursor",
+      "source_module": "sync",
+      "source_version_scope": "Android 2.1.79",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "FND-02",
+        "READ-MR"
+      ],
+      "screen_id": "offline-status/settings",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/settings.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/MOBIREG-AUTH-RECOVERY.md",
+        "../evidence/MOBIREG-MODULE-RECOVERY.md",
+        "../evidence/MOBIREG-ACADEMIC-RECOVERY.md",
+        "../evidence/MOBIREG-LEGACY-CORRECTIONS.md"
+      ],
+      "notes": [
+        "Legacy parent_pass is one-time MD5 hex credential; modern password JSON is raw selected text. Never combine."
+      ],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "MR-F051",
+      "provider": "mobireg",
+      "feature": "Per-child offline cache with freshness/retention/protocol metadata",
+      "source_module": "cache",
+      "source_version_scope": "Android 3.1.7 / iOS 3.1.7",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "FND-02",
+        "READ-MR"
+      ],
+      "screen_id": "offline-status/settings",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/settings.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/MOBIREG-AUTH-RECOVERY.md",
+        "../evidence/MOBIREG-MODULE-RECOVERY.md",
+        "../evidence/MOBIREG-ACADEMIC-RECOVERY.md",
+        "../evidence/MOBIREG-LEGACY-CORRECTIONS.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "MR-F052",
+      "provider": "mobireg",
+      "feature": "Manual clear cache and account-removal cleanup",
+      "source_module": "cache",
+      "source_version_scope": "Android 2.1.79 / Android 3.1.7 / iOS 3.1.7",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "FND-02",
+        "READ-MR"
+      ],
+      "screen_id": "offline-status/settings",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/settings.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/MOBIREG-AUTH-RECOVERY.md",
+        "../evidence/MOBIREG-MODULE-RECOVERY.md",
+        "../evidence/MOBIREG-ACADEMIC-RECOVERY.md",
+        "../evidence/MOBIREG-LEGACY-CORRECTIONS.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "MR-F053",
+      "provider": "mobireg",
+      "feature": "Server subscription/license expiry and sync-limit status",
+      "source_module": "entitlements",
+      "source_version_scope": "Android 2.1.79",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "UI-01",
+        "QA-01"
+      ],
+      "screen_id": "settings/status",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/settings.dart",
+        "syberia/lib/src/ui/shell/account.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/MOBIREG-AUTH-RECOVERY.md",
+        "../evidence/MOBIREG-MODULE-RECOVERY.md",
+        "../evidence/MOBIREG-ACADEMIC-RECOVERY.md",
+        "../evidence/MOBIREG-LEGACY-CORRECTIONS.md"
+      ],
+      "notes": [
+        "Show actual server entitlement/limit/error and vendor help destination only when evidenced; do not recreate vendor billing or bypass subscription."
+      ],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "MR-F054",
+      "provider": "mobireg",
+      "feature": "App help/onboarding, support contact, version and store update",
+      "source_module": "settings",
+      "source_version_scope": "Android 2.1.79 / Android 3.1.7 / iOS 3.1.7",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "UI-01",
+        "QA-01"
+      ],
+      "screen_id": "settings/status",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/settings.dart",
+        "syberia/lib/src/ui/shell/account.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/MOBIREG-AUTH-RECOVERY.md",
+        "../evidence/MOBIREG-MODULE-RECOVERY.md",
+        "../evidence/MOBIREG-ACADEMIC-RECOVERY.md",
+        "../evidence/MOBIREG-LEGACY-CORRECTIONS.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "MR-F055",
+      "provider": "mobireg",
+      "feature": "Rotation and OS Wi-Fi/notification settings links",
+      "source_module": "settings",
+      "source_version_scope": "Android 2.1.79",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "UI-01",
+        "QA-01"
+      ],
+      "screen_id": "settings/status",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/settings.dart",
+        "syberia/lib/src/ui/shell/account.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/MOBIREG-AUTH-RECOVERY.md",
+        "../evidence/MOBIREG-MODULE-RECOVERY.md",
+        "../evidence/MOBIREG-ACADEMIC-RECOVERY.md",
+        "../evidence/MOBIREG-LEGACY-CORRECTIONS.md"
+      ],
+      "notes": [
+        "Use platform-supported system settings deep links; desktop fallback. No forced rotation or global OS setting change."
+      ],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "MR-F056",
+      "provider": "mobireg",
+      "feature": "Color skins, font size and high-contrast/WCAG mode",
+      "source_module": "settings",
+      "source_version_scope": "Android 3.1.7 / iOS 3.1.7",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "UI-01",
+        "QA-01"
+      ],
+      "screen_id": "settings/status",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/settings.dart",
+        "syberia/lib/src/ui/shell/account.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/MOBIREG-AUTH-RECOVERY.md",
+        "../evidence/MOBIREG-MODULE-RECOVERY.md",
+        "../evidence/MOBIREG-ACADEMIC-RECOVERY.md",
+        "../evidence/MOBIREG-LEGACY-CORRECTIONS.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "MR-F057",
+      "provider": "mobireg",
+      "feature": "Dashboard lookback weeks and attendance display preference",
+      "source_module": "settings",
+      "source_version_scope": "Android 3.1.7 / iOS 3.1.7",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "UI-01",
+        "QA-01"
+      ],
+      "screen_id": "settings/status",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/settings.dart",
+        "syberia/lib/src/ui/shell/account.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/MOBIREG-AUTH-RECOVERY.md",
+        "../evidence/MOBIREG-MODULE-RECOVERY.md",
+        "../evidence/MOBIREG-ACADEMIC-RECOVERY.md",
+        "../evidence/MOBIREG-LEGACY-CORRECTIONS.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "MR-F058",
+      "provider": "mobireg",
+      "feature": "Required app update on unsupported API protocol",
+      "source_module": "compatibility",
+      "source_version_scope": "Android 3.1.7 / iOS 3.1.7",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "UI-01",
+        "QA-01"
+      ],
+      "screen_id": "settings/status",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/settings.dart",
+        "syberia/lib/src/ui/shell/account.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/MOBIREG-AUTH-RECOVERY.md",
+        "../evidence/MOBIREG-MODULE-RECOVERY.md",
+        "../evidence/MOBIREG-ACADEMIC-RECOVERY.md",
+        "../evidence/MOBIREG-LEGACY-CORRECTIONS.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "MR-F059",
+      "provider": "mobireg",
+      "feature": "Legacy banner/help and subscription-limit explanation screens",
+      "source_module": "support",
+      "source_version_scope": "Android 2.1.79",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "UI-01",
+        "QA-01"
+      ],
+      "screen_id": "settings/status",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/settings.dart",
+        "syberia/lib/src/ui/shell/account.dart"
+      ],
+      "disposition": "implement_recovered_surface",
+      "enablement_gate": "synthetic contract+mapping tests, then authorized role/server fixture",
+      "contract_reading": [
+        "../evidence/MOBIREG-AUTH-RECOVERY.md",
+        "../evidence/MOBIREG-MODULE-RECOVERY.md",
+        "../evidence/MOBIREG-ACADEMIC-RECOVERY.md",
+        "../evidence/MOBIREG-LEGACY-CORRECTIONS.md"
+      ],
+      "notes": [
+        "Show actual server entitlement/limit/error and vendor help destination only when evidenced; do not recreate vendor billing or bypass subscription."
+      ],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "MR-F060",
+      "provider": "mobireg",
+      "feature": "Developer-mode cache TTL controls and diagnostic build stamp",
+      "source_module": "development",
+      "source_version_scope": "Android 3.1.7 / iOS 3.1.7",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "UI-01",
+        "QA-01"
+      ],
+      "screen_id": "settings/status",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/settings.dart",
+        "syberia/lib/src/ui/shell/account.dart"
+      ],
+      "disposition": "vendor_development_surface_record_only",
+      "enablement_gate": "Developer controls reachability not established. Retain record and provide Siberia-appropriate diagnostics; no mandatory vendor debug UI clone.",
+      "contract_reading": [
+        "../evidence/MOBIREG-AUTH-RECOVERY.md",
+        "../evidence/MOBIREG-MODULE-RECOVERY.md",
+        "../evidence/MOBIREG-ACADEMIC-RECOVERY.md",
+        "../evidence/MOBIREG-LEGACY-CORRECTIONS.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    },
+    {
+      "feature_id": "MR-F061",
+      "provider": "mobireg",
+      "feature": "Teacher-oriented grade/attendance/event export classes",
+      "source_module": "library-only",
+      "source_version_scope": "Android 2.1.79",
+      "foundation_dependencies": [
+        "FND-01",
+        "FND-02",
+        "FND-03"
+      ],
+      "implementation_tasks": [
+        "UI-01",
+        "QA-01"
+      ],
+      "screen_id": "settings/status",
+      "existing_or_proposed_ui_files": [
+        "syberia/lib/src/ui/shell/settings.dart",
+        "syberia/lib/src/ui/shell/account.dart"
+      ],
+      "disposition": "library_only_not_mobile_write_support",
+      "enablement_gate": "Shared-library teacher export mappings are not student/parent write capability. Keep excluded from enabled plugin operations.",
+      "contract_reading": [
+        "../evidence/MOBIREG-AUTH-RECOVERY.md",
+        "../evidence/MOBIREG-MODULE-RECOVERY.md",
+        "../evidence/MOBIREG-ACADEMIC-RECOVERY.md",
+        "../evidence/MOBIREG-LEGACY-CORRECTIONS.md"
+      ],
+      "notes": [],
+      "implementation_status": "not_implemented",
+      "runtime_test_status": "not_performed"
+    }
+  ]
+}

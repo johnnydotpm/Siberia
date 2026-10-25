@@ -1,0 +1,453 @@
+{
+  "schema_version": 1,
+  "artifact_sha256": "22dd67993cd25ccb0a56fca7eef87ffc1d40cc1bffd9057b671c7268afc4d97a",
+  "scope": "Modern MobiReg Android3.1.7 build116 source revision6f4e7b8 only; iOS requires its own caller verification",
+  "tool": "Blutter patched PR213 commitc1caafecd233ea17c3f4b6b5ff8847d59478b979 + matched Dart3.13.2 runtime",
+  "entry_count": 21,
+  "operations": [
+    {
+      "id": "MM-INBOX",
+      "operation": "list inbox",
+      "method": "POST",
+      "path_template": "{messaging_url}/api/messages/inbox",
+      "body": {
+        "limit": 20,
+        "skip": "caller-provided offset",
+        "query": "optional nonempty search string"
+      },
+      "encoding": "JSON",
+      "evidence": {
+        "file": "rodzic/services/api/mail_api.dart",
+        "entry_pc": "0x481844",
+        "sha256": "edf00cd2082fd130b395241e2a15d1a8d9e727c3c4cca3e9d7702f0ab3b3be30"
+      },
+      "evidence_type": "derived from named ARM64 request construction and HTTP helper calls",
+      "runtime_verified": false,
+      "notes": [
+        "ARM64 mov x3,#0x28 is tagged Smi40 => Dart integer20; do not report wire limit40.",
+        "Auth comes from mailbox session Cookie, not automatic reuse of main API JWT.",
+        "JSON object returned to repository; folder response/pagination envelope must be decoded separately."
+      ]
+    },
+    {
+      "id": "MM-SENT",
+      "operation": "list sent",
+      "method": "POST",
+      "path_template": "{messaging_url}/api/messages/sent",
+      "body": {
+        "limit": 20,
+        "skip": "caller-provided offset",
+        "query": "optional nonempty search string"
+      },
+      "encoding": "JSON",
+      "evidence": {
+        "file": "rodzic/services/api/mail_api.dart",
+        "entry_pc": "0x481650",
+        "sha256": "edf00cd2082fd130b395241e2a15d1a8d9e727c3c4cca3e9d7702f0ab3b3be30"
+      },
+      "evidence_type": "derived from named ARM64 request construction and HTTP helper calls",
+      "runtime_verified": false,
+      "notes": [
+        "ARM64 mov x3,#0x28 is tagged Smi40 => Dart integer20; do not report wire limit40.",
+        "Auth comes from mailbox session Cookie, not automatic reuse of main API JWT.",
+        "JSON object returned to repository; folder response/pagination envelope must be decoded separately."
+      ]
+    },
+    {
+      "id": "MM-IMPORTANT",
+      "operation": "list important",
+      "method": "POST",
+      "path_template": "{messaging_url}/api/messages/important",
+      "body": {
+        "limit": 20,
+        "skip": "caller-provided offset",
+        "query": "optional nonempty search string"
+      },
+      "encoding": "JSON",
+      "evidence": {
+        "file": "rodzic/services/api/mail_api.dart",
+        "entry_pc": "0x48145c",
+        "sha256": "edf00cd2082fd130b395241e2a15d1a8d9e727c3c4cca3e9d7702f0ab3b3be30"
+      },
+      "evidence_type": "derived from named ARM64 request construction and HTTP helper calls",
+      "runtime_verified": false,
+      "notes": [
+        "ARM64 mov x3,#0x28 is tagged Smi40 => Dart integer20; do not report wire limit40.",
+        "Auth comes from mailbox session Cookie, not automatic reuse of main API JWT.",
+        "JSON object returned to repository; folder response/pagination envelope must be decoded separately."
+      ]
+    },
+    {
+      "id": "MM-TRASH",
+      "operation": "list trash",
+      "method": "POST",
+      "path_template": "{messaging_url}/api/messages/trash",
+      "body": {
+        "limit": 20,
+        "skip": "caller-provided offset",
+        "query": "optional nonempty search string"
+      },
+      "encoding": "JSON",
+      "evidence": {
+        "file": "rodzic/services/api/mail_api.dart",
+        "entry_pc": "0x480bd8",
+        "sha256": "edf00cd2082fd130b395241e2a15d1a8d9e727c3c4cca3e9d7702f0ab3b3be30"
+      },
+      "evidence_type": "derived from named ARM64 request construction and HTTP helper calls",
+      "runtime_verified": false,
+      "notes": [
+        "ARM64 mov x3,#0x28 is tagged Smi40 => Dart integer20; do not report wire limit40.",
+        "Auth comes from mailbox session Cookie, not automatic reuse of main API JWT.",
+        "JSON object returned to repository; folder response/pagination envelope must be decoded separately."
+      ]
+    },
+    {
+      "id": "MM-UNREAD",
+      "operation": "unread count",
+      "method": "POST",
+      "path_template": "{messaging_url}/api/unreadMessages",
+      "body": {
+        "school": "school code",
+        "messagesToken": "module messages token"
+      },
+      "encoding": "JSON",
+      "evidence": {
+        "file": "rodzic/services/api/mail_api.dart",
+        "entry_pc": "0x45ae84",
+        "sha256": "edf00cd2082fd130b395241e2a15d1a8d9e727c3c4cca3e9d7702f0ab3b3be30"
+      },
+      "evidence_type": "derived from named ARM64 request construction and HTTP helper calls",
+      "runtime_verified": false,
+      "notes": [
+        "Body is parsed as trimmed integer text; failed integer parse defaults to0 in source.",
+        "Direct request uses JSON headers+User-Agent and is separate from cookie mailbox helpers."
+      ]
+    },
+    {
+      "id": "MM-READ",
+      "operation": "read and retrieve message",
+      "method": "GET",
+      "path_template": "{messaging_url}/api/messages/read/{message_id}",
+      "body": null,
+      "encoding": null,
+      "evidence": {
+        "file": "rodzic/services/api/mail_api.dart",
+        "entry_pc": "0x481e78",
+        "sha256": "edf00cd2082fd130b395241e2a15d1a8d9e727c3c4cca3e9d7702f0ab3b3be30"
+      },
+      "evidence_type": "derived from named ARM64 request construction and HTTP helper calls",
+      "runtime_verified": false,
+      "notes": [
+        "This GET is a read-state mutation; no separate guessed detail endpoint."
+      ]
+    },
+    {
+      "id": "MM-SEND",
+      "operation": "send or reply",
+      "method": "PUT",
+      "path_template": "{messaging_url}/api/messages",
+      "body": {
+        "title": "subject string",
+        "content": "body string",
+        "odbiorcy": "list of string recipient IDs",
+        "previousMessageId": "optional non-null parent ID"
+      },
+      "encoding": "JSON",
+      "evidence": {
+        "file": "rodzic/services/api/mail_api.dart",
+        "entry_pc": "0x773aa4",
+        "sha256": "edf00cd2082fd130b395241e2a15d1a8d9e727c3c4cca3e9d7702f0ab3b3be30"
+      },
+      "evidence_type": "derived from named ARM64 request construction and HTTP helper calls",
+      "runtime_verified": false,
+      "notes": [
+        "sendMessage0x773938 expects response Map<String,dynamic> and integer-or-null id.",
+        "Message is created first, then attachments uploaded using returned ID; partial success must be represented.",
+        "Recipient normalization handles numeric ids with user_ prefix (MailRecipient helper0x7768f0); verify each receiver type."
+      ]
+    },
+    {
+      "id": "MM-UPLOAD",
+      "operation": "attach file to existing message",
+      "method": "POST",
+      "path_template": "{messaging_url}/api/messages/{message_id}/files",
+      "body": {
+        "files": "one multipart binary file; filename is a separate caller argument"
+      },
+      "encoding": "multipart/form-data",
+      "evidence": {
+        "file": "rodzic/services/api/mail_api.dart",
+        "entry_pc": "0x774034",
+        "sha256": "edf00cd2082fd130b395241e2a15d1a8d9e727c3c4cca3e9d7702f0ab3b3be30"
+      },
+      "evidence_type": "derived from named ARM64 request construction and HTTP helper calls",
+      "runtime_verified": false,
+      "notes": [
+        "MultipartRequest constructor0x766c10 specializes methodPOST; MultipartFile constructor0x766894 specializes fieldfiles.",
+        "Uses mailbox cookie headers and accepts exactly HTTP200; source returnsfalse on exception.",
+        "No client-side file-size policy established here."
+      ]
+    },
+    {
+      "id": "MM-SEARCH-RECIPIENTS",
+      "operation": "search recipients",
+      "method": "POST",
+      "path_template": "{messaging_url}/api/messages/receivers/search",
+      "body": {
+        "query": "search string",
+        "ids": "caller-supplied recipient IDs"
+      },
+      "encoding": "JSON",
+      "evidence": {
+        "file": "rodzic/services/api/mail_api.dart",
+        "entry_pc": "0x776998",
+        "sha256": "edf00cd2082fd130b395241e2a15d1a8d9e727c3c4cca3e9d7702f0ab3b3be30"
+      },
+      "evidence_type": "derived from named ARM64 request construction and HTTP helper calls",
+      "runtime_verified": false,
+      "notes": []
+    },
+    {
+      "id": "MM-RECIPIENT-TYPE",
+      "operation": "recipients for type",
+      "method": "POST",
+      "path_template": "{messaging_url}/api/messages/receivers",
+      "body": {
+        "type": "caller-supplied category"
+      },
+      "encoding": "JSON",
+      "evidence": {
+        "file": "rodzic/services/api/mail_api.dart",
+        "entry_pc": "0x7782d8",
+        "sha256": "edf00cd2082fd130b395241e2a15d1a8d9e727c3c4cca3e9d7702f0ab3b3be30"
+      },
+      "evidence_type": "derived from named ARM64 request construction and HTTP helper calls",
+      "runtime_verified": false,
+      "notes": [
+        "Response accepts a list or Map.users list; MailRecipient.fromJson constructsid,name,role/_type."
+      ]
+    },
+    {
+      "id": "MM-RECIPIENTS",
+      "operation": "recipient categories/directory",
+      "method": "POST",
+      "path_template": "{messaging_url}/api/messages/receivers",
+      "body": {},
+      "encoding": "JSON",
+      "evidence": {
+        "file": "rodzic/services/api/mail_api.dart",
+        "entry_pc": "0x7bc014",
+        "sha256": "edf00cd2082fd130b395241e2a15d1a8d9e727c3c4cca3e9d7702f0ab3b3be30"
+      },
+      "evidence_type": "derived from named ARM64 request construction and HTTP helper calls",
+      "runtime_verified": false,
+      "notes": []
+    },
+    {
+      "id": "MM-DELETE",
+      "operation": "delete/trash message",
+      "method": "DELETE",
+      "path_template": "{messaging_url}/api/messages/{message_id}",
+      "body": null,
+      "encoding": null,
+      "evidence": {
+        "file": "rodzic/services/api/mail_api.dart",
+        "entry_pc": "0x77a8b8",
+        "sha256": "edf00cd2082fd130b395241e2a15d1a8d9e727c3c4cca3e9d7702f0ab3b3be30"
+      },
+      "evidence_type": "derived from named ARM64 request construction and HTTP helper calls",
+      "runtime_verified": false,
+      "notes": [
+        "Caller action nameddelete; server soft/hard-delete semantics still need runtime confirmation."
+      ]
+    },
+    {
+      "id": "MM-STAR",
+      "operation": "toggle important/star",
+      "method": "POST",
+      "path_template": "{messaging_url}/api/messages/{message_id}/stared",
+      "body": {},
+      "encoding": "JSON",
+      "evidence": {
+        "file": "rodzic/services/api/mail_api.dart",
+        "entry_pc": "0x77ae98",
+        "sha256": "edf00cd2082fd130b395241e2a15d1a8d9e727c3c4cca3e9d7702f0ab3b3be30"
+      },
+      "evidence_type": "derived from named ARM64 request construction and HTTP helper calls",
+      "runtime_verified": false,
+      "notes": [
+        "The shipped suffix spelling is stared, not starred."
+      ]
+    },
+    {
+      "id": "MM-RESTORE",
+      "operation": "restore message",
+      "method": "POST",
+      "path_template": "{messaging_url}/api/messages/{message_id}/restore",
+      "body": {},
+      "encoding": "JSON",
+      "evidence": {
+        "file": "rodzic/services/api/mail_api.dart",
+        "entry_pc": "0x7fa078",
+        "sha256": "edf00cd2082fd130b395241e2a15d1a8d9e727c3c4cca3e9d7702f0ab3b3be30"
+      },
+      "evidence_type": "derived from named ARM64 request construction and HTTP helper calls",
+      "runtime_verified": false,
+      "notes": [
+        "Restoration path and POST are established by caller; tested server result remains unknown."
+      ]
+    },
+    {
+      "id": "HW-LIST",
+      "operation": "module homework table",
+      "method": "POST",
+      "path_template": "{homework_base}/api/homeworks/datatable",
+      "body": {
+        "listFilter": "active or archive",
+        "sortInfo": {
+          "prop": "deadline_at",
+          "order": "ascending"
+        }
+      },
+      "encoding": "JSON",
+      "evidence": {
+        "file": "rodzic/services/api/homeworks_api.dart",
+        "entry_pc": "0x496d80",
+        "sha256": "65c59bdaf9daa6a4c5d65c3c857520a203691920174d1ade8a855eed746b35d5"
+      },
+      "evidence_type": "derived from named ARM64 request construction and HTTP helper calls",
+      "runtime_verified": false,
+      "notes": [
+        "Uses homework module Cookie session, independently authenticated from mail.",
+        "No limit/skip field is constructed by this caller."
+      ]
+    },
+    {
+      "id": "HW-SHOW",
+      "operation": "module homework detail",
+      "method": "GET",
+      "path_template": "{homework_base}/api/homeworks/{homework_id}?student={pupil_id}",
+      "body": null,
+      "encoding": null,
+      "evidence": {
+        "file": "rodzic/services/api/homeworks_api.dart",
+        "entry_pc": "0x764544",
+        "sha256": "65c59bdaf9daa6a4c5d65c3c857520a203691920174d1ade8a855eed746b35d5"
+      },
+      "evidence_type": "derived from named ARM64 request construction and HTTP helper calls",
+      "runtime_verified": false,
+      "notes": [
+        "Query suffix built in show0x7643c0; ID and student remain distinct."
+      ]
+    },
+    {
+      "id": "HW-SOLUTION",
+      "operation": "save homework solution",
+      "method": "PATCH",
+      "path_template": "{homework_base}/api/homeworks/{homework_id}",
+      "body": {
+        "content": "solution text",
+        "files": "caller-provided solution files structure",
+        "student": "pupil ID"
+      },
+      "encoding": "JSON",
+      "evidence": {
+        "file": "rodzic/services/api/homeworks_api.dart",
+        "entry_pc": "0x7656e0",
+        "sha256": "65c59bdaf9daa6a4c5d65c3c857520a203691920174d1ade8a855eed746b35d5"
+      },
+      "evidence_type": "derived from named ARM64 request construction and HTTP helper calls",
+      "runtime_verified": false,
+      "notes": []
+    },
+    {
+      "id": "HW-UPLOAD",
+      "operation": "upload homework solution file",
+      "method": "POST",
+      "path_template": "{homework_base}/api/homeworks/{homework_id}/files",
+      "body": {
+        "files": "multipart binary file",
+        "student": "pupil ID converted to string"
+      },
+      "encoding": "multipart/form-data",
+      "evidence": {
+        "file": "rodzic/services/api/homeworks_api.dart",
+        "entry_pc": "0x765eac",
+        "sha256": "65c59bdaf9daa6a4c5d65c3c857520a203691920174d1ade8a855eed746b35d5"
+      },
+      "evidence_type": "derived from named ARM64 request construction and HTTP helper calls",
+      "runtime_verified": false,
+      "notes": [
+        "Binary part namefiles comes from specialized MultipartFile constructor0x766894.",
+        "HTTP401 or419 returnsnull to session retry; exactly200 returnstrue, other statuses raise module error."
+      ]
+    },
+    {
+      "id": "HW-ARCHIVE",
+      "operation": "toggle homework archive",
+      "method": "PATCH",
+      "path_template": "{homework_base}/api/homeworks/{homework_id}/archive",
+      "body": {},
+      "encoding": "JSON",
+      "evidence": {
+        "file": "rodzic/services/api/homeworks_api.dart",
+        "entry_pc": "0x768ddc",
+        "sha256": "65c59bdaf9daa6a4c5d65c3c857520a203691920174d1ade8a855eed746b35d5"
+      },
+      "evidence_type": "derived from named ARM64 request construction and HTTP helper calls",
+      "runtime_verified": false,
+      "notes": [
+        "Caller passesnull payload, _send substitutes empty map before JSON encoding; no archived=true field.",
+        "No explicit separate restore route: source toggles this action."
+      ]
+    },
+    {
+      "id": "MM-DOWNLOAD",
+      "operation": "download message attachment",
+      "method": "GET",
+      "path_template": "{MailAttachment.url}",
+      "body": null,
+      "encoding": null,
+      "evidence": {
+        "file": "rodzic/screens/mail_detail_screen.dart",
+        "entry_pc": "0x781144",
+        "sha256": "836f04dd4db07fffc0e37746831d462ee5290c29c230a4ec130a24c08d3db6dd"
+      },
+      "evidence_type": "derived from named ARM64 request construction and HTTP helper calls",
+      "runtime_verified": false,
+      "notes": [
+        "Uses MailSession.ensureAuthenticated and Cookie headers; HTTP200 bytes saved to temporary file.",
+        "Dynamic response URL, not a newly invented static endpoint; review approved host/redirect handling."
+      ]
+    },
+    {
+      "id": "HW-DOWNLOAD",
+      "operation": "download homework attachment",
+      "method": "GET",
+      "path_template": "{HomeworkFile.url}",
+      "body": null,
+      "encoding": null,
+      "evidence": {
+        "file": "rodzic/widgets/homework_detail_card.dart",
+        "entry_pc": "0x79acf0",
+        "sha256": "94f265e33f2c004b0cf1519866382d65a5e4265209a57166d4aca9aeb6e709b0"
+      },
+      "evidence_type": "derived from named ARM64 request construction and HTTP helper calls",
+      "runtime_verified": false,
+      "notes": [
+        "Calls HTTPget with no explicit header map; URL appears to carry its own access authorization.",
+        "HTTP401/403 triggers parent detail refresh callback and asks user to retry with renewed URL; no blind cookie forwarding.",
+        "HTTP200 bytes saved to temporary file then opened with platform file opener."
+      ]
+    }
+  ],
+  "origin_rules": {
+    "mail_api_base": "MailRepository._server0x45ac98 removes exact trailing /sso from configured messaging_url; SSO uses raw configured URL",
+    "homework_base": "Module-specific resolved origin; do not infer from mailbox URL"
+  },
+  "limitations": [
+    "Static request-builder recovery; no authenticated backend invocation.",
+    "Blutter has a known optional-named-parameter analysis error at0x418668 in dependency code and limited closure inference; verify critical instructions independently.",
+    "Do not reuse these authenticated origin templates with untrusted user-provided arbitrary hosts."
+  ]
+}

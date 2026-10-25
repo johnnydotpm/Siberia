@@ -1,0 +1,1270 @@
+{
+  "carrier": "MobiReg Android3.1.7 ARM64 libapp.so",
+  "snapshot_hash": "0451907c2eaa8467e848c0067bfe8ed4",
+  "engine_version": "Dart3.13.2",
+  "evidence_kind": "Dart VM deserialized named ARM64 assembly and object-pool annotations from Blutter; independent r2flutter all843 clusters parsed",
+  "no_runtime_or_backend_test": true,
+  "operations": [
+    {
+      "id": "MRA-01",
+      "module": "grades",
+      "action": "list grade grid",
+      "status": "recovered-static-request-builder",
+      "runtime_tested": false,
+      "transport": "POST form via AppApi.requestView0x48ead4/http.post0x48ee4c; shared form includes view,format=json,token,JWTToken; compose exact shared auth/envelope from auth-gateway report",
+      "call_pc": "0x48eabc",
+      "path": null,
+      "selector": "marks",
+      "parameters": {
+        "pupilId": "selected pupil argument",
+        "extraParams": {
+          "termId": "selected term.toString()"
+        }
+      },
+      "response_reader": {
+        "fields": [
+          "subjects",
+          "teachers",
+          "markGroups",
+          "grades"
+        ],
+        "grouping_fields": [
+          "id",
+          "parentMarkGroupId",
+          "subjectId"
+        ],
+        "averages": [
+          "avg1",
+          "avg2"
+        ]
+      },
+      "source": "repositories/marks_repository.dart:0x48e9d4-0x48ead0",
+      "notes": [
+        "termId is a string map value, not a URL suffix; t is cache param, not wire param."
+      ]
+    },
+    {
+      "id": "MRA-02",
+      "module": "periods",
+      "action": "list terms",
+      "status": "recovered-static-request-builder",
+      "runtime_tested": false,
+      "transport": "POST form via AppApi.requestView0x48ead4/http.post0x48ee4c; shared form includes view,format=json,token,JWTToken; compose exact shared auth/envelope from auth-gateway report",
+      "call_pc": "0x4918ec",
+      "path": null,
+      "selector": "terms",
+      "parameters": {
+        "pupilId": "selected pupil"
+      },
+      "response_reader": "list of Term.fromJson; id,parentId,label,isYear,dateFrom,dateTo",
+      "source": "repositories/marks_repository.dart:0x4918a0-0x491904",
+      "notes": []
+    },
+    {
+      "id": "MRA-03",
+      "module": "exams",
+      "action": "list tests",
+      "status": "recovered-static-request-builder",
+      "runtime_tested": false,
+      "transport": "POST form via AppApi.requestView0x48ead4/http.post0x48ee4c; shared form includes view,format=json,token,JWTToken; compose exact shared auth/envelope from auth-gateway report",
+      "call_pc": "0x493274",
+      "path": null,
+      "selector": "tests",
+      "parameters": {
+        "pupilId": "selected pupil"
+      },
+      "response_reader": {
+        "fields": [
+          "teachers",
+          "items"
+        ],
+        "mapper": "Exam.fromJson; teacher fn/sn normalized from first_name/surname"
+      },
+      "source": "repositories/exams_repository.dart:0x493228-0x49328c",
+      "notes": []
+    },
+    {
+      "id": "MRA-04",
+      "module": "attendance",
+      "action": "records and summary",
+      "status": "recovered-static-request-builder",
+      "runtime_tested": false,
+      "transport": "POST form via AppApi.requestView0x48ead4/http.post0x48ee4c; shared form includes view,format=json,token,JWTToken; compose exact shared auth/envelope from auth-gateway report",
+      "call_pc": "0x4a1f78",
+      "path": null,
+      "selector": "attendance-stats",
+      "parameters": {
+        "pupilId": "selected pupil"
+      },
+      "response_reader": {
+        "fields": [
+          "records",
+          "subjects",
+          "terms"
+        ],
+        "record_fields": [
+          "ca",
+          "d",
+          "sid",
+          "ab",
+          "tn"
+        ],
+        "term_fields": [
+          "id",
+          "isYear",
+          "label",
+          "dateFrom",
+          "dateTo"
+        ]
+      },
+      "source": "repositories/attendance_repository.dart:0x4a1f2c-0x4a1f90",
+      "notes": []
+    },
+    {
+      "id": "MRA-05",
+      "module": "remarks",
+      "action": "list reprimands/praise",
+      "status": "recovered-static-request-builder",
+      "runtime_tested": false,
+      "transport": "POST form via AppApi.requestView0x48ead4/http.post0x48ee4c; shared form includes view,format=json,token,JWTToken; compose exact shared auth/envelope from auth-gateway report",
+      "call_pc": "0x49d3ac",
+      "path": null,
+      "selector": "reprimands",
+      "parameters": {
+        "pupilId": "selected pupil",
+        "extraParams": {
+          "limit": "100"
+        }
+      },
+      "response_reader": {
+        "fields": [
+          "items"
+        ],
+        "mapper": "Reprimand.fromJson with repository compatibility rewrites"
+      },
+      "source": "repositories/reprimands_repository.dart:0x49d328-0x49d3c4",
+      "notes": [
+        "limit is literal string100, not integer; no offset/pagination cursor in this caller."
+      ]
+    },
+    {
+      "id": "MRA-06",
+      "module": "timetable",
+      "action": "list events in range",
+      "status": "recovered-static-request-builder",
+      "runtime_tested": false,
+      "transport": "POST form via AppApi.requestView0x48ead4/http.post0x48ee4c; shared form includes view,format=json,token,JWTToken; compose exact shared auth/envelope from auth-gateway report",
+      "call_pc": "0x499aec",
+      "path": null,
+      "selector": "timetable-events",
+      "parameters": {
+        "pupilId": "selected pupil",
+        "extraParams": {
+          "dateFrom": "DateHelper.toIso(from)",
+          "dateTo": "DateHelper.toIso(to)"
+        }
+      },
+      "response_reader": "accepts list or map.data; TimetableEvent.fromJson",
+      "source": "repositories/timetable_repository.dart:0x499a50-0x499b00",
+      "notes": [
+        "cache params from/to differ from wire dateFrom/dateTo; DateHelper.toIso creates Y-M-D parts, no UTC conversion in helper."
+      ]
+    },
+    {
+      "id": "MRA-07",
+      "module": "dashboard",
+      "action": "feed",
+      "status": "recovered-static-request-builder",
+      "runtime_tested": false,
+      "transport": "POST form via AppApi.requestView0x48ead4/http.post0x48ee4c; shared form includes view,format=json,token,JWTToken; compose exact shared auth/envelope from auth-gateway report",
+      "call_pc": "0x75d558",
+      "path": null,
+      "selector": "dashboard",
+      "parameters": {
+        "pupilId": "selected pupil",
+        "extraParams": {
+          "weeks": "weeks.toString()",
+          "attMode": "attendanceMode.toString()"
+        }
+      },
+      "response_reader": "List<DashboardElement>; type/date/label/data; type dispatch mark/exam/reprimand/announcement/attendance",
+      "source": "repositories/dashboard_repository.dart:0x75d3fc-0x75d570",
+      "notes": [
+        "cache keys w/a differ from wire weeks/attMode."
+      ]
+    },
+    {
+      "id": "MRA-08",
+      "module": "announcements",
+      "action": "list announcements",
+      "status": "recovered-static-request-builder",
+      "runtime_tested": false,
+      "transport": "POST form via AppApi.requestView0x48ead4/http.post0x48ee4c; shared form includes view,format=json,token,JWTToken; compose exact shared auth/envelope from auth-gateway report",
+      "call_pc": "0x49be00",
+      "path": null,
+      "selector": "announcements",
+      "parameters": {
+        "pupilId": "selected pupil"
+      },
+      "response_reader": "list or map.data plus optional pendingCount; mapped items preserve read/xread",
+      "source": "repositories/announcements_repository.dart:0x49bdb4-0x49be18",
+      "notes": []
+    },
+    {
+      "id": "MRA-09",
+      "module": "announcements",
+      "action": "load detail / confirm view",
+      "status": "recovered-static-request-builder",
+      "runtime_tested": false,
+      "transport": "POST form via AppApi.requestView0x48ead4/http.post0x48ee4c; shared form includes view,format=json,token,JWTToken; compose exact shared auth/envelope from auth-gateway report",
+      "call_pc": "0x6b4b54",
+      "path": null,
+      "selector": "announcement",
+      "parameters": {
+        "pupilId": "selected pupil",
+        "extraParams": {
+          "id": "announcement.id.toString()"
+        }
+      },
+      "response_reader": "Announcement.fromJson detail map",
+      "source": "repositories/announcements_repository.dart:0x6b4a50-0x6b4b6c",
+      "notes": [
+        "Method fetchAndConfirmDetail refreshes announcement/dashboard cache. Treat as possibly read-state-changing despite its data-fetching purpose; gateway transport is POST; no live server side effects tested."
+      ]
+    },
+    {
+      "id": "MRA-10",
+      "module": "announcements",
+      "action": "pending summary",
+      "status": "recovered-static-request-builder",
+      "runtime_tested": false,
+      "transport": "POST form via AppApi.requestView0x48ead4/http.post0x48ee4c; shared form includes view,format=json,token,JWTToken; compose exact shared auth/envelope from auth-gateway report",
+      "call_pc": "0x4a60c8",
+      "path": null,
+      "selector": "announcements-pending",
+      "parameters": {
+        "pupilId": "selected pupil"
+      },
+      "response_reader": "map.data or list and pendingCount; computes pending item IDs",
+      "source": "repositories/announcements_repository.dart:0x4a6068-0x4a6484",
+      "notes": []
+    },
+    {
+      "id": "MRA-11",
+      "module": "announcements",
+      "action": "submit poll answer",
+      "status": "recovered-static-request-builder",
+      "runtime_tested": false,
+      "transport": "POST form via AppApi.requestView0x48ead4/http.post0x48ee4c; shared form includes view,format=json,token,JWTToken; compose exact shared auth/envelope from auth-gateway report",
+      "call_pc": "0x79d0bc",
+      "path": null,
+      "selector": "announcement-answer",
+      "parameters": {
+        "pupilId": "selected pupil",
+        "extraParams": {
+          "id": "announcementId.toString()",
+          "answer": "selected answer string"
+        }
+      },
+      "response_reader": {
+        "required_success": "data is Map and data.success == true",
+        "optional": [
+          "userAnswer",
+          "declined",
+          "pendingCount"
+        ],
+        "failure": "data.error logged; failed AnswerResult"
+      },
+      "source": "repositories/announcements_repository.dart:0x79d6a4-0x79d724 (postAnswer), 0x79cfe0-0x79d0d4 (request), 0x79cc04-0x79cfc8 (result)",
+      "notes": [
+        "Mutation via shared requestView, uses recovered shared POST form; use exact gateway transport. No automatic retry after ambiguous failure."
+      ]
+    },
+    {
+      "id": "MRA-12",
+      "module": "announcements",
+      "action": "decline poll",
+      "status": "recovered-static-request-builder",
+      "runtime_tested": false,
+      "transport": "POST form via AppApi.requestView0x48ead4/http.post0x48ee4c; shared form includes view,format=json,token,JWTToken; compose exact shared auth/envelope from auth-gateway report",
+      "call_pc": "0x79d0bc",
+      "path": null,
+      "selector": "announcement-answer",
+      "parameters": {
+        "pupilId": "selected pupil",
+        "extraParams": {
+          "id": "announcementId.toString()",
+          "decline": "1"
+        }
+      },
+      "response_reader": "same AnswerResult contract as poll answer",
+      "source": "repositories/announcements_repository.dart:0x79c9bc-0x79ca38, 0x79cfe0-0x79d0d4",
+      "notes": [
+        "decline is the string1, not boolean or answer text."
+      ]
+    },
+    {
+      "id": "MRA-13",
+      "module": "justifications",
+      "action": "eligible lesson events",
+      "status": "recovered-static-request-builder",
+      "runtime_tested": false,
+      "transport": "POST form via AppApi.requestView0x48ead4/http.post0x48ee4c; shared form includes view,format=json,token,JWTToken; compose exact shared auth/envelope from auth-gateway report",
+      "call_pc": "0x7bacc4",
+      "path": null,
+      "selector": "justification-events",
+      "parameters": {
+        "pupilId": "selected pupil",
+        "extraParams": {
+          "dateFrom": "DateHelper.toIso(from)",
+          "dateTo": "DateHelper.toIso(to)"
+        }
+      },
+      "response_reader": "map.data -> date string -> event-ID string -> JustifyEvent.fromJson; event key parsed to int",
+      "source": "repositories/justifications_repository.dart:0x7bac20-0x7bacdc",
+      "notes": [
+        "Cache params from/to differ from wire dateFrom/dateTo."
+      ]
+    },
+    {
+      "id": "MRA-14",
+      "module": "justifications",
+      "action": "list records",
+      "status": "recovered-static-request-builder",
+      "runtime_tested": false,
+      "transport": "GET",
+      "call_pc": "0x76da2c",
+      "path": "{apiBase}/justifications?pupil_id={selectedPupil}",
+      "selector": null,
+      "parameters": {},
+      "response_reader": "AppApi.restGet envelope data expected List; each JustificationRecord.fromJson",
+      "source": "repositories/justifications_repository.dart:0x76d9b8-0x76da44",
+      "notes": [
+        "AppApi._apiBase = https:// + scheme/trailing-slash-stripped pageAddress + / + schoolCode + /api; Authorization: Bearer token; Content-Type: application/json"
+      ],
+      "api_base": "https://{normalizedPageAddress}/{schoolCode}/api"
+    },
+    {
+      "id": "MRA-15",
+      "module": "justifications",
+      "action": "record detail",
+      "status": "recovered-static-request-builder",
+      "runtime_tested": false,
+      "transport": "GET",
+      "call_pc": "0x7bb5a0",
+      "path": "{apiBase}/justifications/{recordId}",
+      "selector": null,
+      "parameters": {},
+      "response_reader": "restGet envelope data Map -> JustificationRecord.fromJson; otherwise null",
+      "source": "repositories/justifications_repository.dart:0x7bb52c-0x7bb5b8",
+      "notes": [
+        "AppApi._apiBase = https:// + scheme/trailing-slash-stripped pageAddress + / + schoolCode + /api; Authorization: Bearer token; Content-Type: application/json"
+      ],
+      "api_base": "https://{normalizedPageAddress}/{schoolCode}/api"
+    },
+    {
+      "id": "MRA-16",
+      "module": "justifications",
+      "action": "create request",
+      "status": "recovered-static-request-builder",
+      "runtime_tested": false,
+      "transport": "POST",
+      "call_pc": "0x76e588",
+      "path": "{apiBase}/justifications",
+      "selector": null,
+      "parameters": {
+        "body": {
+          "pupil_id": "selected pupil numeric value",
+          "message": "reason text",
+          "event_ids": "selected event ID list"
+        }
+      },
+      "response_reader": "JSON Map.id as num? converted to int; otherwise null",
+      "source": "repositories/justifications_repository.dart:0x76e4d0-0x76e5a0; result0x76e338-0x76e484",
+      "notes": [
+        "AppApi._apiBase = https:// + scheme/trailing-slash-stripped pageAddress + / + schoolCode + /api; Authorization: Bearer token; Content-Type: application/json",
+        "restMutate JSON-encodes non-null body; no evidence of direct official attendance edit."
+      ],
+      "api_base": "https://{normalizedPageAddress}/{schoolCode}/api"
+    },
+    {
+      "id": "MRA-17",
+      "module": "justifications",
+      "action": "update request",
+      "status": "recovered-static-request-builder",
+      "runtime_tested": false,
+      "transport": "PUT",
+      "call_pc": "0x76e184",
+      "path": "{apiBase}/justifications/{recordId}",
+      "selector": null,
+      "parameters": {
+        "body": {
+          "message": "reason text",
+          "event_ids": "selected event ID list"
+        }
+      },
+      "response_reader": "true when awaited mutation completes; caught exception => false; does not test response.success",
+      "source": "repositories/justifications_repository.dart:0x76e0ac-0x76e19c; wrapper0x76df5c-0x76e0ac",
+      "notes": [
+        "AppApi._apiBase = https:// + scheme/trailing-slash-stripped pageAddress + / + schoolCode + /api; Authorization: Bearer token; Content-Type: application/json",
+        "pupil_id not in update body."
+      ],
+      "api_base": "https://{normalizedPageAddress}/{schoolCode}/api"
+    },
+    {
+      "id": "MRA-18",
+      "module": "justifications",
+      "action": "delete request",
+      "status": "recovered-static-request-builder",
+      "runtime_tested": false,
+      "transport": "DELETE",
+      "call_pc": "0x76bcac",
+      "path": "{apiBase}/justifications/{recordId}",
+      "selector": null,
+      "parameters": {},
+      "response_reader": "true when awaited mutation completes; caught exception => false; no body supplied",
+      "source": "repositories/justifications_repository.dart:0x76bc2c-0x76bcc4; wrapper0x76b9d4-0x76bb14",
+      "notes": [
+        "AppApi._apiBase = https:// + scheme/trailing-slash-stripped pageAddress + / + schoolCode + /api; Authorization: Bearer token; Content-Type: application/json"
+      ],
+      "api_base": "https://{normalizedPageAddress}/{schoolCode}/api"
+    }
+  ],
+  "model_consumers": {
+    "models/justification_record.dart": {
+      "consumer_key_accesses": [
+        {
+          "key": "events",
+          "pc": "0x76cf64"
+        },
+        {
+          "key": "events",
+          "pc": "0x76d040"
+        },
+        {
+          "key": "id",
+          "pc": "0x76d11c"
+        },
+        {
+          "key": "created_at",
+          "pc": "0x76d1d0"
+        },
+        {
+          "key": "message",
+          "pc": "0x76d288"
+        },
+        {
+          "key": "period_from",
+          "pc": "0x76d2fc"
+        },
+        {
+          "key": "period_to",
+          "pc": "0x76d374"
+        },
+        {
+          "key": "event_count",
+          "pc": "0x76d3ec"
+        },
+        {
+          "key": "status",
+          "pc": "0x76d4a0"
+        },
+        {
+          "key": "event_id",
+          "pc": "0x76d620"
+        },
+        {
+          "key": "day",
+          "pc": "0x76d6d8"
+        },
+        {
+          "key": "subject",
+          "pc": "0x76d730"
+        },
+        {
+          "key": "time_from",
+          "pc": "0x76d7a4"
+        },
+        {
+          "key": "time_to",
+          "pc": "0x76d7fc"
+        },
+        {
+          "key": "attendance_type",
+          "pc": "0x76d854"
+        },
+        {
+          "key": "absence_code",
+          "pc": "0x76d8ac"
+        },
+        {
+          "key": "applied_status",
+          "pc": "0x76d900"
+        }
+      ],
+      "limitation": "Keys are read in named model constructor/method; aliases/defaults/type branches require the corresponding local ASM. Not a live response fixture."
+    },
+    "models/justify_event.dart": {
+      "consumer_key_accesses": [
+        {
+          "key": "ab",
+          "pc": "0x7ba8b4"
+        },
+        {
+          "key": "st",
+          "pc": "0x7ba928"
+        },
+        {
+          "key": "end",
+          "pc": "0x7ba9a0"
+        },
+        {
+          "key": "sub",
+          "pc": "0x7baa14"
+        },
+        {
+          "key": "js",
+          "pc": "0x7baa8c"
+        },
+        {
+          "key": "attendance_type",
+          "pc": "0x7bab40"
+        }
+      ],
+      "limitation": "Keys are read in named model constructor/method; aliases/defaults/type branches require the corresponding local ASM. Not a live response fixture."
+    },
+    "models/announcement.dart": {
+      "consumer_key_accesses": [
+        {
+          "key": "read",
+          "pc": "0x49b218"
+        },
+        {
+          "key": "xread",
+          "pc": "0x49b240"
+        },
+        {
+          "key": "answers",
+          "pc": "0x49b308"
+        },
+        {
+          "key": "userAnswer",
+          "pc": "0x49b570"
+        },
+        {
+          "key": "valid",
+          "pc": "0x49b5ec"
+        },
+        {
+          "key": "id",
+          "pc": "0x49b694"
+        },
+        {
+          "key": "id",
+          "pc": "0x49b6d0"
+        },
+        {
+          "key": "id",
+          "pc": "0x49b754"
+        },
+        {
+          "key": "type",
+          "pc": "0x49b7b0"
+        },
+        {
+          "key": "type",
+          "pc": "0x49b7d8"
+        },
+        {
+          "key": "kind",
+          "pc": "0x49b840"
+        },
+        {
+          "key": "kind",
+          "pc": "0x49b868"
+        },
+        {
+          "key": "title",
+          "pc": "0x49b8f0"
+        },
+        {
+          "key": "dateTime",
+          "pc": "0x49b960"
+        },
+        {
+          "key": "author",
+          "pc": "0x49b9bc"
+        },
+        {
+          "key": "login",
+          "pc": "0x49ba2c"
+        },
+        {
+          "key": "content",
+          "pc": "0x49ba9c"
+        },
+        {
+          "key": "declined",
+          "pc": "0x49bb0c"
+        },
+        {
+          "key": "pollOpen",
+          "pc": "0x49bb3c"
+        },
+        {
+          "key": "pollOpen",
+          "pc": "0x49bb60"
+        },
+        {
+          "key": "pending",
+          "pc": "0x49bbc8"
+        }
+      ],
+      "limitation": "Keys are read in named model constructor/method; aliases/defaults/type branches require the corresponding local ASM. Not a live response fixture."
+    },
+    "models/timetable_event.dart": {
+      "consumer_key_accesses": [
+        {
+          "key": "tests",
+          "pc": "0x49876c"
+        },
+        {
+          "key": "teachers",
+          "pc": "0x4987ec"
+        },
+        {
+          "key": "bgColor",
+          "pc": "0x49886c"
+        },
+        {
+          "key": "attendanceColor",
+          "pc": "0x498894"
+        },
+        {
+          "key": "id",
+          "pc": "0x4988fc"
+        },
+        {
+          "key": "id",
+          "pc": "0x498938"
+        },
+        {
+          "key": "id",
+          "pc": "0x4989bc"
+        },
+        {
+          "key": "dateTimeFrom",
+          "pc": "0x498a18"
+        },
+        {
+          "key": "startTime",
+          "pc": "0x498a40"
+        },
+        {
+          "key": "dateTimeTo",
+          "pc": "0x498ab8"
+        },
+        {
+          "key": "endTime",
+          "pc": "0x498ae0"
+        },
+        {
+          "key": "subjectName",
+          "pc": "0x498b58"
+        },
+        {
+          "key": "title",
+          "pc": "0x498bc8"
+        },
+        {
+          "key": "content",
+          "pc": "0x498bf0"
+        },
+        {
+          "key": "topic",
+          "pc": "0x498c18"
+        },
+        {
+          "key": "room",
+          "pc": "0x498c80"
+        },
+        {
+          "key": "roomName",
+          "pc": "0x498ca8"
+        },
+        {
+          "key": "attendanceLabel",
+          "pc": "0x498d88"
+        },
+        {
+          "key": "attendanceSymbol",
+          "pc": "0x498db0"
+        },
+        {
+          "key": "attendanceName",
+          "pc": "0x498e18"
+        },
+        {
+          "key": "attendanceUnchecked",
+          "pc": "0x498e80"
+        },
+        {
+          "key": "attendanceUnchecked",
+          "pc": "0x498ed4"
+        },
+        {
+          "key": "attendanceUnchecked",
+          "pc": "0x498f0c"
+        },
+        {
+          "key": "type",
+          "pc": "0x498f70"
+        },
+        {
+          "key": "isLocked",
+          "pc": "0x498fe0"
+        },
+        {
+          "key": "isLocked",
+          "pc": "0x49902c"
+        },
+        {
+          "key": "isLocked",
+          "pc": "0x499064"
+        },
+        {
+          "key": "isCanceled",
+          "pc": "0x4990b0"
+        },
+        {
+          "key": "isCanceled",
+          "pc": "0x499104"
+        },
+        {
+          "key": "isCanceled",
+          "pc": "0x49913c"
+        },
+        {
+          "key": "substitution",
+          "pc": "0x4991a0"
+        },
+        {
+          "key": "oldSubjectName",
+          "pc": "0x499284"
+        },
+        {
+          "key": "oldTeachers",
+          "pc": "0x4992d8"
+        },
+        {
+          "key": "name",
+          "pc": "0x4999c8"
+        },
+        {
+          "key": "testId",
+          "pc": "0x499744"
+        },
+        {
+          "key": "testType",
+          "pc": "0x4997cc"
+        },
+        {
+          "key": "testLabel",
+          "pc": "0x49983c"
+        },
+        {
+          "key": "content",
+          "pc": "0x499860"
+        }
+      ],
+      "limitation": "Keys are read in named model constructor/method; aliases/defaults/type branches require the corresponding local ASM. Not a live response fixture."
+    },
+    "models/attendance_data.dart": {
+      "consumer_key_accesses": [
+        {
+          "key": "id",
+          "pc": "0x4a197c"
+        },
+        {
+          "key": "isYear",
+          "pc": "0x4a19d0"
+        },
+        {
+          "key": "label",
+          "pc": "0x4a1a3c"
+        },
+        {
+          "key": "dateFrom",
+          "pc": "0x4a1a94"
+        },
+        {
+          "key": "dateTo",
+          "pc": "0x4a1ae8"
+        },
+        {
+          "key": "ca",
+          "pc": "0x4a1cd8"
+        },
+        {
+          "key": "d",
+          "pc": "0x4a1d3c"
+        },
+        {
+          "key": "sid",
+          "pc": "0x4a1d94"
+        },
+        {
+          "key": "ab",
+          "pc": "0x4a1de8"
+        },
+        {
+          "key": "tn",
+          "pc": "0x4a1e60"
+        }
+      ],
+      "limitation": "Keys are read in named model constructor/method; aliases/defaults/type branches require the corresponding local ASM. Not a live response fixture."
+    },
+    "models/term.dart": {
+      "consumer_key_accesses": [
+        {
+          "key": "id",
+          "pc": "0x4913e8"
+        },
+        {
+          "key": "id",
+          "pc": "0x491424"
+        },
+        {
+          "key": "id",
+          "pc": "0x49144c"
+        },
+        {
+          "key": "parentId",
+          "pc": "0x491514"
+        },
+        {
+          "key": "parentId",
+          "pc": "0x491550"
+        },
+        {
+          "key": "parentId",
+          "pc": "0x491574"
+        },
+        {
+          "key": "label",
+          "pc": "0x491650"
+        },
+        {
+          "key": "isYear",
+          "pc": "0x4916c4"
+        },
+        {
+          "key": "isYear",
+          "pc": "0x491718"
+        },
+        {
+          "key": "dateFrom",
+          "pc": "0x491768"
+        },
+        {
+          "key": "dateTo",
+          "pc": "0x4917d4"
+        }
+      ],
+      "limitation": "Keys are read in named model constructor/method; aliases/defaults/type branches require the corresponding local ASM. Not a live response fixture."
+    },
+    "models/mark.dart": {
+      "consumer_key_accesses": [
+        {
+          "key": "id",
+          "pc": "0x48d5a0"
+        },
+        {
+          "key": "id",
+          "pc": "0x48d5dc"
+        },
+        {
+          "key": "id",
+          "pc": "0x48d604"
+        },
+        {
+          "key": "subjectId",
+          "pc": "0x48d6b0"
+        },
+        {
+          "key": "subjectId",
+          "pc": "0x48d6ec"
+        },
+        {
+          "key": "subjectId",
+          "pc": "0x48d714"
+        },
+        {
+          "key": "value",
+          "pc": "0x48d7c0"
+        },
+        {
+          "key": "weight",
+          "pc": "0x48d834"
+        },
+        {
+          "key": "weight",
+          "pc": "0x48d858"
+        },
+        {
+          "key": "weight",
+          "pc": "0x48d880"
+        },
+        {
+          "key": "weight",
+          "pc": "0x48d8bc"
+        },
+        {
+          "key": "weight",
+          "pc": "0x48d918"
+        },
+        {
+          "key": "date",
+          "pc": "0x48d980"
+        },
+        {
+          "key": "bgColor",
+          "pc": "0x48d9f4"
+        },
+        {
+          "key": "color",
+          "pc": "0x48da1c"
+        },
+        {
+          "key": "description",
+          "pc": "0x48da80"
+        },
+        {
+          "key": "kindLabel",
+          "pc": "0x48daf4"
+        },
+        {
+          "key": "comments",
+          "pc": "0x48db68"
+        },
+        {
+          "key": "comment",
+          "pc": "0x48db90"
+        },
+        {
+          "key": "count_to_avg",
+          "pc": "0x48dbf4"
+        },
+        {
+          "key": "countToAvg",
+          "pc": "0x48dc1c"
+        },
+        {
+          "key": "teacher_id",
+          "pc": "0x48dc80"
+        },
+        {
+          "key": "teacherId",
+          "pc": "0x48dca8"
+        },
+        {
+          "key": "subject_name",
+          "pc": "0x48dd14"
+        },
+        {
+          "key": "teacher_name",
+          "pc": "0x48dd84"
+        },
+        {
+          "key": "teacher_surname",
+          "pc": "0x48ddf4"
+        },
+        {
+          "key": "markGroupId",
+          "pc": "0x48de64"
+        },
+        {
+          "key": "markGroupId",
+          "pc": "0x48de9c"
+        },
+        {
+          "key": "markGroupId",
+          "pc": "0x48dec0"
+        },
+        {
+          "key": "propozycja",
+          "pc": "0x81265c"
+        },
+        {
+          "key": "przewidywana",
+          "pc": "0x81268c"
+        }
+      ],
+      "limitation": "Keys are read in named model constructor/method; aliases/defaults/type branches require the corresponding local ASM. Not a live response fixture."
+    },
+    "models/term_mark.dart": {
+      "consumer_key_accesses": [
+        {
+          "key": "isFinal",
+          "pc": "0x48d178"
+        },
+        {
+          "key": "is_final",
+          "pc": "0x48d1a0"
+        },
+        {
+          "key": "isProposal",
+          "pc": "0x48d1d0"
+        },
+        {
+          "key": "is_proposal",
+          "pc": "0x48d1f8"
+        },
+        {
+          "key": "value",
+          "pc": "0x48d228"
+        },
+        {
+          "key": "val",
+          "pc": "0x48d28c"
+        },
+        {
+          "key": "mtTeacherId",
+          "pc": "0x48d490"
+        },
+        {
+          "key": "teacherId",
+          "pc": "0x48d4b4"
+        }
+      ],
+      "limitation": "Keys are read in named model constructor/method; aliases/defaults/type branches require the corresponding local ASM. Not a live response fixture."
+    },
+    "models/exam.dart": {
+      "consumer_key_accesses": [
+        {
+          "key": "dateTime",
+          "pc": "0x492784"
+        },
+        {
+          "key": "date",
+          "pc": "0x4927ac"
+        },
+        {
+          "key": "addedTime",
+          "pc": "0x492810"
+        },
+        {
+          "key": "added_date",
+          "pc": "0x492838"
+        },
+        {
+          "key": "id",
+          "pc": "0x49289c"
+        },
+        {
+          "key": "pupil_id",
+          "pc": "0x492924"
+        },
+        {
+          "key": "teacherId",
+          "pc": "0x4929ac"
+        },
+        {
+          "key": "teacher_id",
+          "pc": "0x4929d4"
+        },
+        {
+          "key": "title",
+          "pc": "0x492a5c"
+        },
+        {
+          "key": "name",
+          "pc": "0x492a84"
+        },
+        {
+          "key": "description",
+          "pc": "0x492ae8"
+        },
+        {
+          "key": "content",
+          "pc": "0x492b10"
+        },
+        {
+          "key": "test_type",
+          "pc": "0x492b74"
+        },
+        {
+          "key": "subjectName",
+          "pc": "0x492c70"
+        },
+        {
+          "key": "subject_name",
+          "pc": "0x492c98"
+        },
+        {
+          "key": "teacher_name",
+          "pc": "0x492cfc"
+        },
+        {
+          "key": "teacher_surname",
+          "pc": "0x492d60"
+        },
+        {
+          "key": "startTime",
+          "pc": "0x492dc4"
+        },
+        {
+          "key": "start_time",
+          "pc": "0x492e28"
+        },
+        {
+          "key": "endTime",
+          "pc": "0x492e94"
+        },
+        {
+          "key": "end_time",
+          "pc": "0x492ef4"
+        }
+      ],
+      "limitation": "Keys are read in named model constructor/method; aliases/defaults/type branches require the corresponding local ASM. Not a live response fixture."
+    },
+    "models/dashboard_element.dart": {
+      "consumer_key_accesses": [
+        {
+          "key": "type",
+          "pc": "0x75c870"
+        },
+        {
+          "key": "date",
+          "pc": "0x75c8f4"
+        },
+        {
+          "key": "label",
+          "pc": "0x75c9ac"
+        },
+        {
+          "key": "data",
+          "pc": "0x75ca14"
+        },
+        {
+          "key": "type",
+          "pc": "0x75d1a4"
+        },
+        {
+          "key": "kind",
+          "pc": "0x75d1e4"
+        },
+        {
+          "key": "date",
+          "pc": "0x75d1f0"
+        },
+        {
+          "key": "getDate",
+          "pc": "0x75d220"
+        },
+        {
+          "key": "pupilId",
+          "pc": "0x75d234"
+        },
+        {
+          "key": "status",
+          "pc": "0x75d240"
+        },
+        {
+          "key": "status",
+          "pc": "0x75d27c"
+        },
+        {
+          "key": "teacherId",
+          "pc": "0x75d288"
+        },
+        {
+          "key": "teacherId",
+          "pc": "0x75d2cc"
+        }
+      ],
+      "limitation": "Keys are read in named model constructor/method; aliases/defaults/type branches require the corresponding local ASM. Not a live response fixture."
+    },
+    "models/reprimand.dart": {
+      "consumer_key_accesses": [
+        {
+          "key": "id",
+          "pc": "0x49cbdc"
+        },
+        {
+          "key": "id",
+          "pc": "0x49cc20"
+        },
+        {
+          "key": "id",
+          "pc": "0x49cc98"
+        },
+        {
+          "key": "pupilId",
+          "pc": "0x49cd14"
+        },
+        {
+          "key": "pupilId",
+          "pc": "0x49cd58"
+        },
+        {
+          "key": "pupilId",
+          "pc": "0x49cdcc"
+        },
+        {
+          "key": "teacherId",
+          "pc": "0x49ce20"
+        },
+        {
+          "key": "teacherId",
+          "pc": "0x49ce64"
+        },
+        {
+          "key": "teacherId",
+          "pc": "0x49ced8"
+        },
+        {
+          "key": "teacherName",
+          "pc": "0x49cf2c"
+        },
+        {
+          "key": "teacherId",
+          "pc": "0x49cf74"
+        },
+        {
+          "key": "kind",
+          "pc": "0x49d01c"
+        },
+        {
+          "key": "getDate",
+          "pc": "0x49d0b0"
+        },
+        {
+          "key": "content",
+          "pc": "0x49d108"
+        },
+        {
+          "key": "status",
+          "pc": "0x49d188"
+        },
+        {
+          "key": "status",
+          "pc": "0x49d1cc"
+        },
+        {
+          "key": "status",
+          "pc": "0x49d248"
+        }
+      ],
+      "limitation": "Keys are read in named model constructor/method; aliases/defaults/type branches require the corresponding local ASM. Not a live response fixture."
+    }
+  },
+  "limitations": [
+    "Production auth/policy/permissions/server rollout untested.",
+    "Only modern Android3.1.7 PCs apply; iOS/legacy offsets differ.",
+    "Gateway method/envelope compose with auth agent report; request selectors here traced at caller, not guessed from strings.",
+    "No numeric status-code meanings invented.",
+    "Date range inclusivity requires server fixture."
+  ],
+  "carrier_sha256": "22dd67993cd25ccb0a56fca7eef87ffc1d40cc1bffd9057b671c7268afc4d97a"
+}

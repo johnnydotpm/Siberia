@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "provider": "mobireg",
+  "documentation_only": true,
+  "android_modern_artifact_sha256": "22dd67993cd25ccb0a56fca7eef87ffc1d40cc1bffd9057b671c7268afc4d97a",
+  "static_source_ledgers": [
+    {
+      "path": "analysis/mobireg/features.json",
+      "sha256": "b5c8064d93b760debfff2a933bc87bcaa1bac0ecb7e186654bd0f4474e97e39a"
+    },
+    {
+      "path": "analysis/mobireg/android-field-mapping.json",
+      "sha256": "df91f69f3be10351c57dff7f0aff24f938290a0fa618f08d17f7f080caf9f4c0"
+    },
+    {
+      "path": "analysis/mobireg/deep/modern-auth-gateway.json",
+      "sha256": "08f7c7f76578ffcff60e4d6eac1008a9ec795cf2c40c0040aaa14d93e981d4ea"
+    },
+    {
+      "path": "analysis/mobireg/deep/modern-module-contracts.json",
+      "sha256": "878867a7b7b9a9a8e922397c4c65eca6ff71f694cfc642b47e7aded40d292efe"
+    },
+    {
+      "path": "analysis/mobireg/deep/academic-contracts.json",
+      "sha256": "d29af66437ebf233ed67e9543c808be165daeb002adf8c580393fa36c798202b"
+    },
+    {
+      "path": "analysis/mobireg/deep/legacy-contract-details.json",
+      "sha256": "08a375e875295eb9649a580fce3759215b155105f436a1c4f04d4168bed645d5"
+    }
+  ],
+  "not_included": [
+    "original binaries",
+    "full decompiled source",
+    "raw string dumps",
+    "credentials",
+    "real student data"
+  ],
+  "authored_examples": "synthetic, static-derived; see individual fixture scope",
+  "validation": {
+    "status": "passed",
+    "constructor_entrypoints": 28,
+    "key_pc_assertions": 295,
+    "wire_field_rows": 244,
+    "manually_described_field_contracts": 157,
+    "features": 61,
+    "legacy_import_tables": 34,
+    "synthetic_cases": 41,
+    "recipes": 14,
+    "validation_scope": "JSON structural consistency, source hash and key-PC exact match, independent r2 constructor entrypoint membership, original ELF executable segment coverage. No provider implementation/runtime/network test."
+  }
+}

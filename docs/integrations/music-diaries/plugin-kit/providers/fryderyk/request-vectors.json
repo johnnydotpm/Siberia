@@ -1,0 +1,556 @@
+{
+  "notice": "Documentation only. Synthetic .invalid URLs and identifiers; no captured payloads, credentials or runnable network commands.",
+  "vectors": [
+    {
+      "id": "identify",
+      "kind": "synthetic documentation example; never captured; .invalid hosts",
+      "request": {
+        "method": "POST",
+        "url": "https://bootstrap.invalid/api/tokens/identify",
+        "headers": {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "App-Version": "0.0.0-spec"
+        },
+        "body_kind": "json",
+        "body": {
+          "username": "m.synthetic",
+          "password": "SYNTHETIC_PASSWORD",
+          "device": "Siberia documentation example"
+        }
+      },
+      "expected": {
+        "note": "Exact shape based on static client caller; no real response asserted"
+      }
+    },
+    {
+      "id": "refresh",
+      "kind": "synthetic documentation example; never captured; .invalid hosts",
+      "request": {
+        "method": "POST",
+        "url": "https://bootstrap.invalid/api/tokens/reIdentify",
+        "headers": {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "App-Version": "0.0.0-spec"
+        },
+        "body_kind": "json",
+        "body": {
+          "u": "m.synthetic",
+          "t": "SYNTHETIC_REFRESH_TOKEN"
+        }
+      },
+      "expected": {
+        "note": "Exact shape based on static client caller; no real response asserted"
+      }
+    },
+    {
+      "id": "validate",
+      "kind": "synthetic documentation example; never captured; .invalid hosts",
+      "request": {
+        "method": "POST",
+        "url": "https://bootstrap.invalid/api/version/validate",
+        "headers": {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "App-Version": "0.0.0-spec"
+        },
+        "body_kind": "omitted",
+        "body": null
+      },
+      "expected": {
+        "note": "Exact shape based on static client caller; no real response asserted"
+      }
+    },
+    {
+      "id": "users-getCurrent",
+      "kind": "synthetic documentation example; never captured; .invalid hosts",
+      "request": {
+        "method": "GET",
+        "url": "https://school.invalid/api/users/getCurrent",
+        "headers": {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "App-Version": "0.0.0-spec",
+          "Authorization": "Bearer SYNTHETIC_TOKEN_DO_NOT_USE"
+        },
+        "body_kind": "omitted",
+        "body": null
+      },
+      "expected": {
+        "note": "Exact shape based on static client caller; no real response asserted"
+      }
+    },
+    {
+      "id": "grades-getOverview",
+      "kind": "synthetic documentation example; never captured; .invalid hosts",
+      "request": {
+        "method": "GET",
+        "url": "https://school.invalid/api/grades/getOverview/123",
+        "headers": {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "App-Version": "0.0.0-spec",
+          "Authorization": "Bearer SYNTHETIC_TOKEN_DO_NOT_USE"
+        },
+        "body_kind": "omitted",
+        "body": null
+      },
+      "expected": {
+        "note": "Exact shape based on static client caller; no real response asserted"
+      }
+    },
+    {
+      "id": "grades-list",
+      "kind": "synthetic documentation example; never captured; .invalid hosts",
+      "request": {
+        "method": "GET",
+        "url": "https://school.invalid/api/grades/list/123/10",
+        "headers": {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "App-Version": "0.0.0-spec",
+          "Authorization": "Bearer SYNTHETIC_TOKEN_DO_NOT_USE"
+        },
+        "body_kind": "omitted",
+        "body": null
+      },
+      "expected": {
+        "note": "Exact shape based on static client caller; no real response asserted"
+      }
+    },
+    {
+      "id": "attendances-getOverview",
+      "kind": "synthetic documentation example; never captured; .invalid hosts",
+      "request": {
+        "method": "GET",
+        "url": "https://school.invalid/api/attendances/getOverview/123",
+        "headers": {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "App-Version": "0.0.0-spec",
+          "Authorization": "Bearer SYNTHETIC_TOKEN_DO_NOT_USE"
+        },
+        "body_kind": "omitted",
+        "body": null
+      },
+      "expected": {
+        "note": "Exact shape based on static client caller; no real response asserted"
+      }
+    },
+    {
+      "id": "attendances-listAbsenceTypeChangeRequests",
+      "kind": "synthetic documentation example; never captured; .invalid hosts",
+      "request": {
+        "method": "GET",
+        "url": "https://school.invalid/api/attendances/listAbsenceTypeChangeRequests/123",
+        "headers": {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "App-Version": "0.0.0-spec",
+          "Authorization": "Bearer SYNTHETIC_TOKEN_DO_NOT_USE"
+        },
+        "body_kind": "omitted",
+        "body": null
+      },
+      "expected": {
+        "note": "Exact shape based on static client caller; no real response asserted"
+      }
+    },
+    {
+      "id": "lessons-listAtDay",
+      "kind": "synthetic documentation example; never captured; .invalid hosts",
+      "request": {
+        "method": "GET",
+        "url": "https://school.invalid/api/lessons/listAtDay/123/2026-10-25",
+        "headers": {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "App-Version": "0.0.0-spec",
+          "Authorization": "Bearer SYNTHETIC_TOKEN_DO_NOT_USE"
+        },
+        "body_kind": "omitted",
+        "body": null
+      },
+      "expected": {
+        "note": "Exact shape based on static client caller; no real response asserted"
+      }
+    },
+    {
+      "id": "lessons-listWithAbsence",
+      "kind": "synthetic documentation example; never captured; .invalid hosts",
+      "request": {
+        "method": "GET",
+        "url": "https://school.invalid/api/lessons/listWithAbsence/123/0",
+        "headers": {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "App-Version": "0.0.0-spec",
+          "Authorization": "Bearer SYNTHETIC_TOKEN_DO_NOT_USE"
+        },
+        "body_kind": "omitted",
+        "body": null
+      },
+      "expected": {
+        "note": "Exact shape based on static client caller; no real response asserted"
+      }
+    },
+    {
+      "id": "homeworks-list",
+      "kind": "synthetic documentation example; never captured; .invalid hosts",
+      "request": {
+        "method": "GET",
+        "url": "https://school.invalid/api/homeworks/list/123/0",
+        "headers": {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "App-Version": "0.0.0-spec",
+          "Authorization": "Bearer SYNTHETIC_TOKEN_DO_NOT_USE"
+        },
+        "body_kind": "omitted",
+        "body": null
+      },
+      "expected": {
+        "note": "Exact shape based on static client caller; no real response asserted"
+      }
+    },
+    {
+      "id": "attendances-requestAbsenceTypeChange",
+      "kind": "synthetic documentation example; never captured; .invalid hosts",
+      "request": {
+        "method": "POST",
+        "url": "https://school.invalid/api/attendances/requestAbsenceTypeChange",
+        "headers": {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "App-Version": "0.0.0-spec",
+          "Authorization": "Bearer SYNTHETIC_TOKEN_DO_NOT_USE"
+        },
+        "body_kind": "json",
+        "body": {
+          "id": null,
+          "student_id": 123,
+          "start": "2026-10-25 10:00:00",
+          "end": "2026-10-25 10:45:00",
+          "absence_type": 3,
+          "absence_reason": "Synthetic example"
+        }
+      },
+      "expected": {
+        "note": "Exact shape based on static client caller; no real response asserted"
+      }
+    },
+    {
+      "id": "messages-inbox",
+      "kind": "synthetic documentation example; never captured; .invalid hosts",
+      "request": {
+        "method": "GET",
+        "url": "https://school.invalid/api/messages/list/inbox/1/8",
+        "headers": {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "App-Version": "0.0.0-spec",
+          "Authorization": "Bearer SYNTHETIC_TOKEN_DO_NOT_USE"
+        },
+        "body_kind": "omitted",
+        "body": null
+      },
+      "expected": {
+        "note": "Page1 is illustrative input; original first-page callback origin not fully proved. Folder value and limit8 proved."
+      }
+    },
+    {
+      "id": "messages-sent",
+      "kind": "synthetic documentation example; never captured; .invalid hosts",
+      "request": {
+        "method": "GET",
+        "url": "https://school.invalid/api/messages/list/sent/1/8",
+        "headers": {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "App-Version": "0.0.0-spec",
+          "Authorization": "Bearer SYNTHETIC_TOKEN_DO_NOT_USE"
+        },
+        "body_kind": "omitted",
+        "body": null
+      },
+      "expected": {
+        "note": "Page1 is illustrative input; original first-page callback origin not fully proved. Folder value and limit8 proved."
+      }
+    },
+    {
+      "id": "messages-trash",
+      "kind": "synthetic documentation example; never captured; .invalid hosts",
+      "request": {
+        "method": "GET",
+        "url": "https://school.invalid/api/messages/list/trash/1/8",
+        "headers": {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "App-Version": "0.0.0-spec",
+          "Authorization": "Bearer SYNTHETIC_TOKEN_DO_NOT_USE"
+        },
+        "body_kind": "omitted",
+        "body": null
+      },
+      "expected": {
+        "note": "Page1 is illustrative input; original first-page callback origin not fully proved. Folder value and limit8 proved."
+      }
+    },
+    {
+      "id": "messages-search",
+      "kind": "synthetic documentation example; never captured; .invalid hosts",
+      "request": {
+        "method": "GET",
+        "url": "https://school.invalid/api/messages/list/search/1/8?query=piano%20%26%20duet",
+        "headers": {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "App-Version": "0.0.0-spec",
+          "Authorization": "Bearer SYNTHETIC_TOKEN_DO_NOT_USE"
+        },
+        "body_kind": "omitted",
+        "body": null
+      },
+      "expected": {
+        "note": "Percent-encoding is recommended Siberia behavior; original client interpolates raw query. Input length>=3. Page1 illustrative pending origin proof."
+      }
+    },
+    {
+      "id": "messages-countUnread",
+      "kind": "synthetic documentation example; never captured; .invalid hosts",
+      "request": {
+        "method": "POST",
+        "url": "https://school.invalid/api/messages/countUnread",
+        "headers": {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "App-Version": "0.0.0-spec",
+          "Authorization": "Bearer SYNTHETIC_TOKEN_DO_NOT_USE"
+        },
+        "body_kind": "json-null",
+        "body": null
+      },
+      "expected": {
+        "note": "Expected body bytes are UTF8 null (6e756c6c), not omitted and not empty object; post wrapper jsonEncodes defaultnull."
+      }
+    },
+    {
+      "id": "messages-markAsRead-901",
+      "kind": "synthetic documentation example; never captured; .invalid hosts",
+      "request": {
+        "method": "POST",
+        "url": "https://school.invalid/api/messages/markAsRead/901",
+        "headers": {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "App-Version": "0.0.0-spec",
+          "Authorization": "Bearer SYNTHETIC_TOKEN_DO_NOT_USE"
+        },
+        "body_kind": "json-null",
+        "body": null
+      },
+      "expected": {
+        "note": "Expected body bytes are UTF8 null (6e756c6c), not omitted and not empty object; post wrapper jsonEncodes defaultnull."
+      }
+    },
+    {
+      "id": "messages-delete-901",
+      "kind": "synthetic documentation example; never captured; .invalid hosts",
+      "request": {
+        "method": "POST",
+        "url": "https://school.invalid/api/messages/delete/901",
+        "headers": {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "App-Version": "0.0.0-spec",
+          "Authorization": "Bearer SYNTHETIC_TOKEN_DO_NOT_USE"
+        },
+        "body_kind": "json-null",
+        "body": null
+      },
+      "expected": {
+        "note": "Expected body bytes are UTF8 null (6e756c6c), not omitted and not empty object; post wrapper jsonEncodes defaultnull."
+      }
+    },
+    {
+      "id": "messages-removeAttachment-701",
+      "kind": "synthetic documentation example; never captured; .invalid hosts",
+      "request": {
+        "method": "POST",
+        "url": "https://school.invalid/api/messages/removeAttachment/701",
+        "headers": {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "App-Version": "0.0.0-spec",
+          "Authorization": "Bearer SYNTHETIC_TOKEN_DO_NOT_USE"
+        },
+        "body_kind": "json-null",
+        "body": null
+      },
+      "expected": {
+        "note": "Expected body bytes are UTF8 null (6e756c6c), not omitted and not empty object; post wrapper jsonEncodes defaultnull."
+      }
+    },
+    {
+      "id": "message-create",
+      "kind": "synthetic documentation example; never captured; .invalid hosts",
+      "request": {
+        "method": "POST",
+        "url": "https://school.invalid/api/messages/create",
+        "headers": {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "App-Version": "0.0.0-spec",
+          "Authorization": "Bearer SYNTHETIC_TOKEN_DO_NOT_USE"
+        },
+        "body_kind": "json",
+        "body": {
+          "recipients": [
+            "teacher-key-synthetic"
+          ],
+          "cc_recipients": [],
+          "bcc_recipients": [],
+          "subject": "Synthetic duet",
+          "content": "<p>Synthetic content.</p>",
+          "attachment_ids": [
+            701
+          ]
+        }
+      },
+      "expected": {
+        "note": "Exact shape based on static client caller; no real response asserted"
+      }
+    },
+    {
+      "id": "message-reply-suffix",
+      "kind": "synthetic documentation example; never captured; .invalid hosts",
+      "request": {
+        "method": "POST",
+        "url": "https://school.invalid/api/messages/create/901/reply",
+        "headers": {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "App-Version": "0.0.0-spec",
+          "Authorization": "Bearer SYNTHETIC_TOKEN_DO_NOT_USE"
+        },
+        "body_kind": "json",
+        "body": {
+          "recipients": [
+            "sender-key-synthetic"
+          ],
+          "cc_recipients": [],
+          "bcc_recipients": [],
+          "subject": "Re: Synthetic duet",
+          "content": "<p>Synthetic reply.</p>",
+          "attachment_ids": []
+        }
+      },
+      "expected": {
+        "note": "Original message ID and exact enum-name suffix proved statically. Corresponding alternatives are /901/replyAll and /901/forward. Controlled test send remains needed for current server acceptance and recipient-key semantics.",
+        "other_confirmed_suffix_paths": [
+          "/api/messages/create/901/replyAll",
+          "/api/messages/create/901/forward"
+        ]
+      }
+    },
+    {
+      "id": "message-upload",
+      "kind": "synthetic documentation example; never captured; .invalid hosts",
+      "request": {
+        "method": "POST",
+        "url": "https://school.invalid/api/messages/uploadAttachment",
+        "headers": {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "App-Version": "0.0.0-spec",
+          "Authorization": "Bearer SYNTHETIC_TOKEN_DO_NOT_USE"
+        },
+        "body_kind": "multipart",
+        "body": {
+          "parts": [
+            {
+              "field_name": "file",
+              "filename": "example.pdf",
+              "content_type": "application/octet-stream",
+              "bytes": "SYNTHETIC_BYTES"
+            }
+          ]
+        }
+      },
+      "expected": {
+        "note": "Let HTTP library generate boundary and content length. Max2files per draft and each<=10000000bytes in iOS1.1.7; not server guarantee. Expected successful data is integerattachmentID."
+      }
+    },
+    {
+      "id": "deep-link-grammar",
+      "kind": "synthetic documentation example",
+      "input": "fryderyk://app/login?c=bS5zeW50aGV0aWM6U1lOVEhFVElDX1BBU1NXT1JE",
+      "expected": {
+        "decoded_username": "m.synthetic",
+        "decoded_password": "SYNTHETIC_PASSWORD",
+        "sequence": "Base64 -> UTF8 -> split colon -> first two components -> identify request",
+        "http_endpoint": false
+      }
+    },
+    {
+      "id": "attachment-bounds",
+      "kind": "synthetic local validation examples",
+      "cases": [
+        {
+          "existing_attachments": 1,
+          "new_file_bytes": 10000000,
+          "expected": "size/count gate accepts; extension and picker checks still apply"
+        },
+        {
+          "existing_attachments": 2,
+          "new_file_bytes": 1,
+          "expected": "reject count before picker"
+        },
+        {
+          "existing_attachments": 0,
+          "new_file_bytes": 10000001,
+          "expected": "reject size"
+        }
+      ]
+    },
+    {
+      "id": "response-envelope",
+      "kind": "synthetic shape examples; not real captured fixtures",
+      "cases": [
+        {
+          "input": {
+            "success": true,
+            "data": {
+              "id": 123
+            }
+          },
+          "expected": "return data"
+        },
+        {
+          "input": {
+            "success": false,
+            "error": {
+              "code": "synthetic",
+              "message": "Synthetic error"
+            }
+          },
+          "http_status": 401,
+          "expected": "UnauthorizedException with server message"
+        },
+        {
+          "input": {
+            "success": false,
+            "error": {}
+          },
+          "http_status": 426,
+          "expected": "UnsupportedException with localized legacy-version fallback"
+        },
+        {
+          "input": "<html>synthetic maintenance</html>",
+          "expected": "JSON parse failure; treat as protocol/transport error, do not report empty diary"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "method": "non-executed ELF envelope around original Mach-O bytes for parser input only",
+  "original_sha256": "2c11d5a1be3f1f21d85c2b9c4deb8c59d2c3c33dfd9eebf0235657bcc6f7cca1",
+  "carrier_sha256": "af8817959ddc9e4548e463673268f258d968c99ac52627f78b18ab6e2f6cae2c",
+  "carrier_original_offset": 4096,
+  "virtual_address_delta": 0,
+  "snapshot_symbols": [
+    {
+      "name": "_kDartVmSnapshotData",
+      "va": 6014016,
+      "bound": 36672
+    },
+    {
+      "name": "_kDartVmSnapshotInstructions",
+      "va": 16384,
+      "bound": 42816
+    },
+    {
+      "name": "_kDartIsolateSnapshotData",
+      "va": 6050688,
+      "bound": 5378896
+    },
+    {
+      "name": "_kDartIsolateSnapshotInstructions",
+      "va": 59200,
+      "bound": 5954816
+    }
+  ],
+  "warning": "Carrier ABI is ELF but underlying snapshot feature remains arm64 ios no-compressed-pointers. Metadata recovery must validate actual profile, not carrier platform."
+}
