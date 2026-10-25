@@ -659,7 +659,7 @@ class _AppearanceStep extends StatelessWidget {
 /// Signing in to Librus. Once signed in, as when run again from Settings or
 /// come back to with the back button, it lists the profiles and offers to add
 /// one.
-class _AccountStep extends StatelessWidget {
+class _AccountStep extends StatefulWidget {
   const _AccountStep({
     required this.controller,
     required this.motion,
@@ -674,17 +674,37 @@ class _AccountStep extends StatelessWidget {
   final VoidCallback onSignedIn;
 
   @override
+  State<_AccountStep> createState() => _AccountStepState();
+}
+
+class _AccountStepState extends State<_AccountStep> {
+  /// Whether signing in is on screen: it stays, the students added
+  /// included, rather than giving way to the list of profiles.
+  bool _flowing = false;
+
+  @override
+  void didUpdateWidget(_AccountStep old) {
+    super.didUpdateWidget(old);
+    // Come back to, the step lists the profiles signed in to.
+    if (widget.motion.active && !old.motion.active) _flowing = false;
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final controller = widget.controller;
     final profiles = controller.profiles;
-    final listed = profiles.isNotEmpty;
+    final listed = profiles.isNotEmpty && !_flowing;
     return _SetupPage(
       key: const ValueKey('onboarding-account'),
-      motion: motion,
+      motion: widget.motion,
       icon: Icons.school_rounded,
       badge: _BadgeMotion.cap,
       title: context.tr(listed ? 'profiles' : 'onboardingAccount'),
       text: listed ? context.tr('onboardingProfilesText') : null,
-      actions: [if (listed || onNext != null) _setupNext(context, onNext)],
+      actions: [
+        if (listed || (widget.onNext != null && !_flowing))
+          _setupNext(context, widget.onNext),
+      ],
       children: [
         if (listed) ...[
           for (final profile in profiles)
@@ -702,7 +722,11 @@ class _AccountStep extends StatelessWidget {
             label: Text(context.tr('addProfile')),
           ),
         ] else
-          _Login(controller, onSignedIn: onSignedIn),
+          _SignInFlow(
+            controller: controller,
+            onFlowing: (flowing) => setState(() => _flowing = flowing),
+            onDone: widget.onSignedIn,
+          ),
       ],
     );
   }

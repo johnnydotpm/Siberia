@@ -763,13 +763,16 @@ class _ChooseStudentsState extends State<_ChooseStudents> {
 }
 
 class _Login extends StatefulWidget {
-  const _Login(this.controller, {this.onSignedIn});
+  const _Login(this.controller, {this.onStarted, this.onFinished});
   final AppController controller;
 
+  /// Called as signing in starts, on a page of the first setup.
+  final VoidCallback? onStarted;
+
   /// Set when the form sits on a page of the first setup rather than in a
-  /// sheet: it then has no title of its own, and signing in calls this
-  /// instead of closing.
-  final VoidCallback? onSignedIn;
+  /// sheet: it then has no title of its own, and the end of signing in, and
+  /// whether it worked, comes here instead of closing.
+  final ValueChanged<bool>? onFinished;
   @override
   State<_Login> createState() => _LoginState();
 }
@@ -790,14 +793,16 @@ class _LoginState extends State<_Login> {
     if (!form.currentState!.validate()) {
       return;
     }
+    widget.onStarted?.call();
     final ok = await widget.controller.loginLibrus(
       username: email.text,
       password: password.text,
       choose: (students) => _chooseStudents(context, students),
     );
-    final embedded = widget.onSignedIn;
-    if (mounted && ok && embedded != null) {
-      embedded();
+    final embedded = widget.onFinished;
+    if (mounted && embedded != null) {
+      embedded(ok);
+      if (!ok) setState(() {});
     } else if (mounted && ok) {
       final navigator = Navigator.of(context);
       navigator.pop();
@@ -813,7 +818,7 @@ class _LoginState extends State<_Login> {
   @override
   Widget build(BuildContext context) {
     final fields = _fields(context);
-    if (widget.onSignedIn != null) {
+    if (widget.onFinished != null) {
       return Form(
         key: form,
         child: Column(

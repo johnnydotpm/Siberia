@@ -15,6 +15,18 @@ import '../l10n/app_localizations.dart';
 import '../school_notifications.dart';
 import '../test_reminders.dart';
 
+/// The parts of signing in to Librus, in the order they happen.
+enum SignInStage {
+  /// Librus checks the e-mail and the password.
+  checking,
+
+  /// The user picks the students to add.
+  choosing,
+
+  /// The first student's data loads.
+  loading,
+}
+
 class AppController extends ChangeNotifier {
   AppController(
     this._repository, {
@@ -38,6 +50,7 @@ class AppController extends ChangeNotifier {
   bool _signingIn = false;
   bool _onboardingDone = true;
   Duration? _intro;
+  SignInStage? _signInStage;
   bool _markingMessagesRead = false;
   bool _loadingSentMessages = false;
   AppError? _sentMessagesError;
@@ -938,6 +951,7 @@ class AppController extends ChangeNotifier {
   }) async {
     if (_signingIn || _markingMessagesRead) return false;
     _signingIn = true;
+    _signInStage = SignInStage.checking;
     _error = null;
     notifyListeners();
     try {
@@ -956,6 +970,8 @@ class AppController extends ChangeNotifier {
       if (fresh.isEmpty) {
         chosen = const [];
       } else if (choose != null && fresh.length > 1) {
+        _signInStage = SignInStage.choosing;
+        notifyListeners();
         chosen = await choose(fresh) ?? const [];
         if (chosen.isEmpty) {
           await _repository.discardLogin(found.account);
@@ -970,6 +986,8 @@ class AppController extends ChangeNotifier {
           ),
         ];
       }
+      _signInStage = SignInStage.loading;
+      notifyListeners();
       final added = await _addAndOpen(chosen, found.account);
       unawaited(_syncInTurn(added.skip(1).toList()));
       unawaited(configureBackground());
@@ -980,10 +998,14 @@ class AppController extends ChangeNotifier {
       return false;
     } finally {
       _signingIn = false;
+      _signInStage = null;
       _profiles = _repository.profiles;
       notifyListeners();
     }
   }
+
+  /// What signing in is doing, while it runs.
+  SignInStage? get signInStage => _signInStage;
 
   /// Adds profiles for [students] of the login [account] and opens the
   /// first, synced while the user waits. Signing in again to a login whose

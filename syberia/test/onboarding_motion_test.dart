@@ -241,6 +241,57 @@ List<String> _haptics(WidgetTester tester) {
   return calls;
 }
 
+/// A new install on the account step, signing in to the fake Librus.
+Future<AppController> _onAccount(
+  WidgetTester tester,
+  FakeLibrusWorld world,
+) async {
+  SharedPreferences.setMockInitialValues({
+    'app_design_v1': 'classic',
+    'app_locale_v1': 'en',
+  });
+  tester.view.physicalSize = const Size(400, 900);
+  tester.view.devicePixelRatio = 1;
+  addTearDown(tester.view.reset);
+  final controller = AppController(
+    world.repository(),
+    updatesEnabled: false,
+    notifications: SchoolNotificationService(_Presenter()),
+  );
+  await controller.bootstrap();
+  await tester.pumpWidget(SyberiaApp(controller: controller));
+  await tester.pumpAndSettle();
+  await tester.tap(_nextOn('onboarding-welcome'));
+  await tester.pumpAndSettle();
+  await tester.tap(_nextOn('onboarding-appearance'));
+  await tester.pumpAndSettle();
+  return controller;
+}
+
+Future<void> _submit(
+  WidgetTester tester,
+  String email, {
+  bool fromKeyboard = false,
+}) async {
+  await tester.enterText(find.byType(TextFormField).first, email);
+  await tester.enterText(find.byType(TextFormField).last, 'secret');
+  if (fromKeyboard) {
+    await tester.testTextInput.receiveAction(TextInputAction.done);
+  } else {
+    await tester.tap(find.text('Sign in and sync'));
+  }
+  await tester.pump();
+}
+
+/// Whether the part of signing in [stage] is shown, and still under way.
+bool _underWay(String stage) => find
+    .descendant(
+      of: find.byKey(ValueKey('sign-in-stage-$stage')),
+      matching: find.byType(CircularProgressIndicator),
+    )
+    .evaluate()
+    .isNotEmpty;
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -508,6 +559,117 @@ void main() {
       await tester.tap(find.byKey(const ValueKey('onboarding-skip')));
       await tester.pumpAndSettle();
       expect(haptics.last, 'HapticFeedbackType.mediumImpact');
+      await tester.pumpWidget(const SizedBox.shrink());
+    });
+  });
+
+  group('signing in', () {
+    testWidgets('shows its real parts in turn, each for half a second at '
+        'least, then the students added', (tester) async {
+      final world = FakeLibrusWorld();
+      final controller = await _onAccount(tester, world);
+      final stages = <SignInStage>[];
+      controller.addListener(() {
+        final stage = controller.signInStage;
+        if (stage != null && (stages.isEmpty || stages.last != stage)) {
+          stages.add(stage);
+        }
+      });
+      final regular = world.holds['kid-regular'] = Completer<void>();
+      final music = world.holds['kid-music'] = Completer<void>();
+
+      await _submit(tester, familyEmail, fromKeyboard: true);
+      // The form gives way at once, and the keyboard goes with it.
+      expect(find.byKey(const ValueKey('sign-in-progress')), findsOneWidget);
+      expect(
+        FocusManager.instance.primaryFocus?.context
+            ?.findAncestorWidgetOfExactType<EditableText>(),
+        isNull,
+        reason: 'no text field keeps the focus',
+      );
+      expect(_underWay('checking'), isTrue);
+      await _advance(tester, const Duration(milliseconds: 200));
+      // Librus answered and asks which students, but the first part is
+      // still shown under way.
+      expect(controller.signInStage, SignInStage.choosing);
+      expect(_underWay('checking'), isTrue);
+      expect(
+        find.byKey(const ValueKey('sign-in-stage-choosing')),
+        findsNothing,
+      );
+      await _advance(tester, const Duration(milliseconds: 400));
+      expect(_underWay('checking'), isFalse, reason: 'ticked off');
+      expect(_underWay('choosing'), isTrue);
+
+      await tester.tap(find.byKey(const ValueKey('choose-students-add')));
+      // Long after its half second, loading shows under way for as long as
+      // Librus really loads.
+      await _advance(tester, const Duration(milliseconds: 1600));
+      expect(controller.signInStage, SignInStage.loading);
+      expect(_underWay('choosing'), isFalse);
+      expect(_underWay('loading'), isTrue, reason: 'Librus still loading');
+
+      regular.complete();
+      music.complete();
+      await _advance(tester, const Duration(milliseconds: 700));
+      expect(find.byKey(const ValueKey('sign-in-done')), findsOneWidget);
+      for (final profile in controller.profiles) {
+        expect(
+          find.byKey(ValueKey('sign-in-added-${profile.id}')),
+          findsOneWidget,
+        );
+      }
+      expect(controller.profiles, hasLength(2));
+      expect(
+        find.byKey(const ValueKey('onboarding-notifications')),
+        findsNothing,
+        reason: 'the students are shown for a moment first',
+      );
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('onboarding-notifications')),
+        findsOneWidget,
+      );
+      expect(stages, [
+        SignInStage.checking,
+        SignInStage.choosing,
+        SignInStage.loading,
+      ]);
+      await tester.pumpWidget(const SizedBox.shrink());
+    });
+
+    testWidgets('a failed sign-in brings the form back with its error', (
+      tester,
+    ) async {
+      final controller = await _onAccount(tester, FakeLibrusWorld());
+      await _submit(tester, 'nobody@example.com');
+      await tester.pumpAndSettle();
+      expect(controller.error, isNotNull);
+      expect(find.byKey(const ValueKey('sign-in-progress')), findsNothing);
+      expect(find.byType(TextFormField), findsNWidgets(2));
+      expect(find.text('nobody@example.com'), findsOneWidget, reason: 'kept');
+      await tester.pumpWidget(const SizedBox.shrink());
+    });
+
+    testWidgets('with less motion the parts are not held back', (tester) async {
+      tester.platformDispatcher.accessibilityFeaturesTestValue =
+          const FakeAccessibilityFeatures(disableAnimations: true);
+      addTearDown(
+        tester.platformDispatcher.clearAccessibilityFeaturesTestValue,
+      );
+      await _onAccount(tester, FakeLibrusWorld());
+      await _submit(tester, familyEmail);
+      await tester.pump();
+      expect(_underWay('checking'), isFalse);
+      expect(_underWay('choosing'), isTrue);
+      // The sheet asking which students comes up.
+      await tester.pump(const Duration(seconds: 1));
+      await tester.tap(find.byKey(const ValueKey('choose-students-add')));
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('onboarding-notifications')),
+        findsOneWidget,
+      );
       await tester.pumpWidget(const SizedBox.shrink());
     });
   });
