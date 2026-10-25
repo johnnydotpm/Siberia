@@ -251,7 +251,12 @@ class _Settings extends StatelessWidget {
                 leading: const _SettingsIcon(Icons.restart_alt_rounded),
                 title: Text(context.tr('onboardingAgain')),
                 trailing: const _Chevron(),
-                onTap: controller.restartOnboarding,
+                // The settings move back and the setup comes forward.
+                onTap: () => ScreenTransitions.run(
+                  context,
+                  ScreenChange.zoom,
+                  controller.restartOnboarding,
+                ),
               ),
             ListTile(
               key: const ValueKey('settings-whats-new'),
@@ -506,10 +511,15 @@ Future<void> _showLanguageSheet(
                       color: Theme.of(sheetContext).colorScheme.primary,
                     )
                   : null,
-              onTap: () {
-                controller.setLocale(code == null ? null : Locale(code));
-                Navigator.pop(sheetContext);
-              },
+              // The texts dissolve into the new language as the sheet goes.
+              onTap: () => ScreenTransitions.run(
+                sheetContext,
+                ScreenChange.dissolve,
+                () {
+                  controller.setLocale(code == null ? null : Locale(code));
+                  Navigator.pop(sheetContext);
+                },
+              ),
             ),
         ],
       ),

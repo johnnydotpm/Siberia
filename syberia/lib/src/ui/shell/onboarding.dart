@@ -52,11 +52,18 @@ class _OnboardingState extends State<_Onboarding> {
       _go(_SetupStep.values[_step.index - 1]);
     } else if (_again) {
       // Run from Settings: going back from the first step leaves it.
-      _controller.completeOnboarding();
+      _finish();
     }
   }
 
   void _next() => _go(_SetupStep.values[_step.index + 1]);
+
+  /// Out of the setup: it moves back and the app comes forward.
+  void _finish() => ScreenTransitions.run(
+    context,
+    ScreenChange.zoom,
+    _controller.completeOnboarding,
+  );
 
   /// Asks for the permission once notifications are explained, if they are
   /// on, and goes on whatever the answer.
@@ -121,7 +128,7 @@ class _OnboardingState extends State<_Onboarding> {
                     ),
                     _DoneStep(
                       permissionRefused: _permissionRefused,
-                      onStart: _controller.completeOnboarding,
+                      onStart: _finish,
                     ),
                   ],
                 ),
@@ -393,8 +400,18 @@ class _WelcomeStepState extends State<_WelcomeStep> {
                       ? Icon(Icons.check_rounded, color: colors.primary)
                       : null,
                   selected: chosen == code,
-                  onTap: () =>
-                      controller.setLocale(code == null ? null : Locale(code)),
+                  onTap: () {
+                    if (chosen == code) return;
+                    HapticFeedback.selectionClick();
+                    // The texts dissolve into the new language.
+                    ScreenTransitions.run(
+                      context,
+                      ScreenChange.dissolve,
+                      () => controller.setLocale(
+                        code == null ? null : Locale(code),
+                      ),
+                    );
+                  },
                 ),
             ],
           ),

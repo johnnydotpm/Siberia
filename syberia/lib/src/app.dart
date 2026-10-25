@@ -10,6 +10,7 @@ import 'state/app_controller.dart';
 import 'theme/app_theme.dart';
 import 'ui/app_shell.dart';
 import 'ui/glass/glass_platform.dart';
+import 'ui/screen_transitions.dart';
 
 class SyberiaApp extends StatefulWidget {
   const SyberiaApp({required this.controller, super.key});
@@ -23,6 +24,10 @@ class SyberiaApp extends StatefulWidget {
 class _SyberiaAppState extends State<SyberiaApp> with WidgetsBindingObserver {
   bool _wasBackgrounded = false;
 
+  /// True while a new theme spreads in a circle: the theme then changes at
+  /// once beneath it rather than fading on its own.
+  final _revealing = ValueNotifier(false);
+
   @override
   void initState() {
     super.initState();
@@ -32,6 +37,7 @@ class _SyberiaAppState extends State<SyberiaApp> with WidgetsBindingObserver {
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    _revealing.dispose();
     super.dispose();
   }
 
@@ -58,30 +64,42 @@ class _SyberiaAppState extends State<SyberiaApp> with WidgetsBindingObserver {
       // Where Flutter draws the glass, the design is a copy of the iPhone's
       // and brings the iPhone's look and manners with it.
       final likeIos = glass && GlassPlatform.backend == GlassBackend.rendered;
-      return MaterialApp(
-        title: 'SiberiaGB',
-        debugShowCheckedModeBanner: false,
-        theme: AppTheme.light(likeIos: likeIos),
-        darkTheme: widget.controller.colorMode == AppColorMode.amoled
-            ? AppTheme.amoled(likeIos: likeIos)
-            : AppTheme.dark(likeIos: likeIos),
-        themeMode: switch (widget.controller.colorMode) {
-          AppColorMode.system => ThemeMode.system,
-          AppColorMode.light => ThemeMode.light,
-          AppColorMode.dark || AppColorMode.amoled => ThemeMode.dark,
-        },
-        locale: widget.controller.locale,
-        supportedLocales: AppLocalizations.supportedLocales,
-        localizationsDelegates: const [
-          AppLocalizations.delegate,
-          GlobalMaterialLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-        ],
-        // Above the navigator, so sheets and dialogs follow the design too.
-        builder: (context, child) => GlassStyle(enabled: glass, child: child!),
-        home: _SystemNavigationStyle(
-          child: AppShell(controller: widget.controller),
+      return ValueListenableBuilder(
+        valueListenable: _revealing,
+        builder: (context, revealing, _) => MaterialApp(
+          title: 'SiberiaGB',
+          debugShowCheckedModeBanner: false,
+          theme: AppTheme.light(likeIos: likeIos),
+          darkTheme: widget.controller.colorMode == AppColorMode.amoled
+              ? AppTheme.amoled(likeIos: likeIos)
+              : AppTheme.dark(likeIos: likeIos),
+          themeAnimationDuration: revealing
+              ? Duration.zero
+              : kThemeAnimationDuration,
+          themeMode: switch (widget.controller.colorMode) {
+            AppColorMode.system => ThemeMode.system,
+            AppColorMode.light => ThemeMode.light,
+            AppColorMode.dark || AppColorMode.amoled => ThemeMode.dark,
+          },
+          locale: widget.controller.locale,
+          supportedLocales: AppLocalizations.supportedLocales,
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+          ],
+          // Above the navigator, so sheets and dialogs follow the design too,
+          // and a change of the whole screen covers them as well. UIKit's own
+          // glass views would be missing from a picture of the screen.
+          builder: (context, child) => ScreenTransitions(
+            enabled: !(glass && GlassPlatform.backend == GlassBackend.uikit),
+            revealing: _revealing,
+            child: GlassStyle(enabled: glass, child: child!),
+          ),
+          home: _SystemNavigationStyle(
+            child: AppShell(controller: widget.controller),
+          ),
         ),
       );
     },
