@@ -714,6 +714,10 @@ void main() {
     tester,
   ) async {
     final now = DateTime.now();
+    // The app opens on the term under way, the second from February to
+    // August; the other one is a tap away.
+    final term = now.month >= 2 && now.month <= 8 ? 2 : 1;
+    final other = 3 - term;
     final snapshot = AppSnapshot(
       profile: const StudentProfile(
         id: '1',
@@ -730,7 +734,7 @@ void main() {
           description: 'Rozdział 1',
           date: now,
           weight: 2,
-          semester: 1,
+          semester: term,
           category: 'Sprawdzian',
           previousGrades: [
             Grade(
@@ -740,7 +744,7 @@ void main() {
               description: 'Najstarszy wpis',
               date: now.subtract(const Duration(days: 14)),
               weight: 1,
-              semester: 1,
+              semester: term,
               category: 'Sprawdzian',
             ),
             Grade(
@@ -750,7 +754,7 @@ void main() {
               description: 'Pośredni wpis',
               date: now.subtract(const Duration(days: 7)),
               weight: 2,
-              semester: 1,
+              semester: term,
               category: 'Sprawdzian',
             ),
           ],
@@ -762,7 +766,7 @@ void main() {
           description: '',
           date: now,
           weight: 1,
-          semester: 1,
+          semester: term,
           category: 'Kartkówka',
         ),
         Grade(
@@ -772,7 +776,7 @@ void main() {
           description: 'Drugi okres',
           date: now,
           weight: 1,
-          semester: 2,
+          semester: other,
           category: 'Odpowiedź',
         ),
       ],
@@ -850,7 +854,7 @@ void main() {
     ).pop();
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Semester 2'));
+    await tester.tap(find.text('Semester $other'));
     await tester.pumpAndSettle();
     expect(find.byKey(const ValueKey('grade-chip-g3')), findsOneWidget);
     expect(find.byKey(const ValueKey('grade-chip-g1')), findsNothing);
