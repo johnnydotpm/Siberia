@@ -96,7 +96,7 @@ void main() {
   testWidgets('asks for Librus login instead of showing demo school', (
     tester,
   ) async {
-    SharedPreferences.setMockInitialValues({});
+    SharedPreferences.setMockInitialValues({'onboarding_done_v1': true});
     final controller = AppController(AppRepository(), updatesEnabled: false);
     await controller.bootstrap();
     await tester.pumpWidget(SyberiaApp(controller: controller));

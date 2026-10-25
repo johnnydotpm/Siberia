@@ -244,6 +244,15 @@ class _Settings extends StatelessWidget {
               ),
             ),
             _CheckUpdatesRow(controller),
+            // The demo leaves the setup until it ends.
+            if (!controller.isDemo)
+              ListTile(
+                key: const ValueKey('settings-onboarding'),
+                leading: const _SettingsIcon(Icons.restart_alt_rounded),
+                title: Text(context.tr('onboardingAgain')),
+                trailing: const _Chevron(),
+                onTap: controller.restartOnboarding,
+              ),
             ListTile(
               key: const ValueKey('settings-whats-new'),
               leading: const _SettingsIcon(Icons.new_releases_rounded),

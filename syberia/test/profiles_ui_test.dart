@@ -216,7 +216,10 @@ void main() {
 
   testWidgets('signing in to a login with a parent and a student account asks '
       'who to add, the student\'s own account checked', (tester) async {
-    SharedPreferences.setMockInitialValues({'app_design_v1': 'classic'});
+    SharedPreferences.setMockInitialValues({
+      'app_design_v1': 'classic',
+      'onboarding_done_v1': true,
+    });
     final world = FakeLibrusWorld();
     final controller = AppController(world.repository(), updatesEnabled: false);
     await controller.bootstrap();

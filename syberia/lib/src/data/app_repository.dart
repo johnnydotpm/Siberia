@@ -96,6 +96,10 @@ class AppRepository {
 
   /// The profile the widgets show, unless an Android widget has its own.
   static const _widgetProfileKey = 'widget_profile_id_v1';
+
+  /// Whether the first setup is done. It outlives signing out and resetting
+  /// the settings: after either the app opens on signing in, not the setup.
+  static const _onboardingKey = 'onboarding_done_v1';
   static const _latestReleaseUrl =
       'https://api.github.com/repos/johnnydotpm/Siberia/releases/latest';
 
@@ -1110,6 +1114,12 @@ class AppRepository {
     await preferences.setDouble(_ownKey(_gradeMinusKey), settings.minus);
     await preferences.setBool(_ownKey(_gradeWeightedKey), settings.weighted);
   }
+
+  Future<bool> loadOnboardingDone() async =>
+      (await _preferences).getBool(_onboardingKey) ?? false;
+
+  Future<void> saveOnboardingDone() async =>
+      (await _preferences).setBool(_onboardingKey, true);
 
   /// The profile the widgets show: the one the user chose, while the phone
   /// has it, or else the first. Null without profiles.

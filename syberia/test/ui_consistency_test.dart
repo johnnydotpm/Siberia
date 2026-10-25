@@ -113,7 +113,11 @@ Future<(AppController, _Repository)> _pump(
   AppSnapshot? data,
   double height = 2400,
 }) async {
-  SharedPreferences.setMockInitialValues({'app_design_v1': 'classic'});
+  SharedPreferences.setMockInitialValues({
+    'app_design_v1': 'classic',
+    // Past the first setup, which has tests of its own.
+    'onboarding_done_v1': true,
+  });
   tester.view.physicalSize = Size(400, height);
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);

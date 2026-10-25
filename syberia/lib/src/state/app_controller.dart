@@ -36,6 +36,7 @@ class AppController extends ChangeNotifier {
   /// The profiles a sync runs for; '' stands for none, as in demo mode.
   final _syncingProfiles = <String>{};
   bool _signingIn = false;
+  bool _onboardingDone = true;
   bool _markingMessagesRead = false;
   bool _loadingSentMessages = false;
   AppError? _sentMessagesError;
@@ -84,6 +85,28 @@ class AppController extends ChangeNotifier {
     _tabIndex = 0;
     notifyListeners();
     _updateHomeWidget();
+  }
+
+  /// Whether the first setup has been gone through. Until then it is what
+  /// the app shows, and nothing asks for the notification permission
+  /// before the setup's own step explains it.
+  bool get onboardingDone => _onboardingDone;
+
+  bool get _signedIn =>
+      isDemo || snapshot.profile.provider == 'Librus Synergia';
+
+  /// Ends the setup and opens the app.
+  Future<void> completeOnboarding() async {
+    _onboardingDone = true;
+    notifyListeners();
+    await _repository.saveOnboardingDone();
+    await configureBackground();
+  }
+
+  /// Goes through the setup again, from the settings.
+  void restartOnboarding() {
+    _onboardingDone = false;
+    notifyListeners();
   }
 
   /// Whether the open profile is syncing, or an account is being added.
@@ -172,6 +195,12 @@ class AppController extends ChangeNotifier {
     _profiles = _repository.profiles;
     _profileNews = await _repository.loadProfileNews();
     _widgetProfileId = await _repository.loadWidgetProfile();
+    _onboardingDone = await _repository.loadOnboardingDone();
+    if (!_onboardingDone && _signedIn) {
+      // In use before the setup existed: it is not shown to them.
+      _onboardingDone = true;
+      await _repository.saveOnboardingDone();
+    }
     await _recordNotifications();
     _updateHomeWidget();
     if (updatesEnabled) unawaited(checkForUpdate());
@@ -395,6 +424,15 @@ class AppController extends ChangeNotifier {
   }
 
   Future<bool> requestNotificationPermissionIfEnabled() async {
+    // During the first setup its notifications step asks, saying why.
+    if (!_onboardingDone) return true;
+    return askNotificationPermission();
+  }
+
+  /// Asks the system for the notification permission when notifications
+  /// are on: the setup's notifications step, and every change that turns
+  /// one on. True when allowed, or when nothing needs it.
+  Future<bool> askNotificationPermission() async {
     if (!_notificationSettings.needsBackgroundCheck ||
         snapshot.profile.provider != 'Librus Synergia') {
       return true;

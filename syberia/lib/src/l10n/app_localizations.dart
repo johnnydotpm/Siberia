@@ -134,6 +134,26 @@ class AppLocalizations {
       'notification_notices': 'Nowe uwagi',
       'notification_attendance': 'Nowe wpisy frekwencji',
       'notification_events': 'Nowe wydarzenia',
+      'onboardingLanguage': 'Wybierz język',
+      'onboardingAppearanceText':
+          'Możesz to zmienić w każdej chwili w ustawieniach.',
+      'onboardingAccount': 'Logowanie do Librusa',
+      'onboardingProfilesText':
+          'Profile na tym telefonie. Możesz dodać kolejny.',
+      'onboardingNotificationsText': 'Nowe oceny, wiadomości i zmiany w planie przyjdą jako powiadomienia, a o sprawdzianach przypomnimy wcześniej. System raz zapyta o zgodę.',
+      'onboardingNext': 'Dalej',
+      'onboardingSkip': 'Pomiń',
+      'onboardingDoneTitle': 'Gotowe',
+      'onboardingStart': 'Zaczynamy',
+      'onboardingTipWidget':
+          'Dodaj widżet „Następna lekcja” do ekranu głównego.',
+      'onboardingTipProfiles':
+          'Drugi uczeń albo szkoła: przycisk profilu w prawym górnym rogu.',
+      'onboardingTipShortNames':
+          'Długim nazwom przedmiotów możesz nadać krótkie w ustawieniach.',
+      'onboardingTipPermission': 'Powiadomienia są wyłączone w systemie. Włączysz je w ustawieniach telefonu.',
+      'onboardingAgain': 'Przejdź konfigurację od nowa',
+      'onboardingStep': 'Krok {n} z {total}',
       'widgetProfile': 'Profil na widżecie',
       'profileNotificationsOn': 'Powiadomienia dla profilu {name} są włączone. Zmienisz to w: Ustawienia → Powiadomienia.',
       'notificationProfilesHelp':
@@ -515,6 +535,25 @@ class AppLocalizations {
       'notification_notices': 'New remarks',
       'notification_attendance': 'New attendance entries',
       'notification_events': 'New events',
+      'onboardingLanguage': 'Choose your language',
+      'onboardingAppearanceText': 'You can change this any time in Settings.',
+      'onboardingAccount': 'Sign in to Librus',
+      'onboardingProfilesText':
+          'The profiles on this phone. You can add another.',
+      'onboardingNotificationsText': 'New grades, messages and timetable changes come as notifications, and tests are reminded of ahead. The system asks for permission once.',
+      'onboardingNext': 'Next',
+      'onboardingSkip': 'Skip',
+      'onboardingDoneTitle': 'All set',
+      'onboardingStart': 'Get started',
+      'onboardingTipWidget':
+          'Add the “Next lesson” widget to your home screen.',
+      'onboardingTipProfiles':
+          'Another student or school: the profile button at the top right.',
+      'onboardingTipShortNames':
+          'Long subject names can get short ones in Settings.',
+      'onboardingTipPermission': 'Notifications are off in the system. You can turn them on in the phone\'s settings.',
+      'onboardingAgain': 'Run the setup again',
+      'onboardingStep': 'Step {n} of {total}',
       'widgetProfile': 'Profile on the widget',
       'profileNotificationsOn': 'Notifications for {name} are on. Change it in Settings → Notifications.',
       'notificationProfilesHelp':
@@ -899,6 +938,26 @@ class AppLocalizations {
       'notification_notices': 'Новые замечания',
       'notification_attendance': 'Новые записи посещаемости',
       'notification_events': 'Новые события',
+      'onboardingLanguage': 'Выберите язык',
+      'onboardingAppearanceText':
+          'Это можно поменять в любой момент в настройках.',
+      'onboardingAccount': 'Вход в Librus',
+      'onboardingProfilesText':
+          'Профили на этом телефоне. Можно добавить ещё один.',
+      'onboardingNotificationsText': 'Новые оценки, сообщения и изменения в расписании придут уведомлением, а о контрольных напомним заранее. Система один раз спросит разрешение.',
+      'onboardingNext': 'Далее',
+      'onboardingSkip': 'Пропустить',
+      'onboardingDoneTitle': 'Всё готово',
+      'onboardingStart': 'Начать',
+      'onboardingTipWidget':
+          'Добавьте виджет «Следующий урок» на главный экран.',
+      'onboardingTipProfiles':
+          'Второй ученик или школа — кнопка профиля вверху справа.',
+      'onboardingTipShortNames':
+          'Длинным названиям предметов можно дать короткие в настройках.',
+      'onboardingTipPermission': 'Уведомления выключены в системе. Включить их можно в настройках телефона.',
+      'onboardingAgain': 'Пройти настройку заново',
+      'onboardingStep': 'Шаг {n} из {total}',
       'widgetProfile': 'Профиль на виджете',
       'profileNotificationsOn': 'Уведомления для профиля {name} включены. Изменить — в Настройки → Уведомления.',
       'notificationProfilesHelp':
@@ -1212,7 +1271,7 @@ class AppLocalizations {
       'allMessagesRead': 'Alle Nachrichten sind gelesen.',
       'markAllReadFailed': 'Einige Nachrichten konnten nicht als gelesen markiert werden. Bitte erneut versuchen.',
       'colorMode': 'Designmodus',
-      'colorMode_system': 'Geräteeinstellung',
+      'colorMode_system': 'Wie Gerät',
       'colorMode_light': 'Hell',
       'colorMode_dark': 'Dunkel',
       'colorMode_amoled': 'AMOLED',
@@ -1281,6 +1340,25 @@ class AppLocalizations {
       'notification_notices': 'Neue Bemerkungen',
       'notification_attendance': 'Neue Anwesenheitseinträge',
       'notification_events': 'Neue Termine',
+      'onboardingLanguage': 'Wähle deine Sprache',
+      'onboardingAppearanceText':
+          'Das kannst du jederzeit in den Einstellungen ändern.',
+      'onboardingAccount': 'Bei Librus anmelden',
+      'onboardingProfilesText':
+          'Die Profile auf diesem Telefon. Du kannst ein weiteres hinzufügen.',
+      'onboardingNotificationsText': 'Neue Noten, Nachrichten und Stundenplanänderungen kommen als Benachrichtigung, und an Tests wird vorher erinnert. Das System fragt einmal nach der Erlaubnis.',
+      'onboardingNext': 'Weiter',
+      'onboardingSkip': 'Überspringen',
+      'onboardingDoneTitle': 'Alles bereit',
+      'onboardingStart': 'Los geht\'s',
+      'onboardingTipWidget':
+          'Füge das Widget „Nächste Stunde“ zum Startbildschirm hinzu.',
+      'onboardingTipProfiles': 'Ein weiteres Kind oder eine weitere Schule: über die Profiltaste oben rechts.',
+      'onboardingTipShortNames':
+          'Langen Fachnamen kannst du in den Einstellungen kurze geben.',
+      'onboardingTipPermission': 'Benachrichtigungen sind im System aus. Du kannst sie in den Telefoneinstellungen einschalten.',
+      'onboardingAgain': 'Einrichtung erneut durchlaufen',
+      'onboardingStep': 'Schritt {n} von {total}',
       'widgetProfile': 'Profil im Widget',
       'profileNotificationsOn': 'Benachrichtigungen für {name} sind an. Ändern unter Einstellungen → Benachrichtigungen.',
       'notificationProfilesHelp':
@@ -1673,6 +1751,25 @@ class AppLocalizations {
       'notification_notices': 'Нові зауваження',
       'notification_attendance': 'Нові записи відвідуваності',
       'notification_events': 'Нові події',
+      'onboardingLanguage': 'Оберіть мову',
+      'onboardingAppearanceText': 'Це можна змінити будь-коли в налаштуваннях.',
+      'onboardingAccount': 'Вхід у Librus',
+      'onboardingProfilesText':
+          'Профілі на цьому телефоні. Можна додати ще один.',
+      'onboardingNotificationsText': 'Нові оцінки, повідомлення й зміни в розкладі прийдуть сповіщенням, а про контрольні нагадаємо заздалегідь. Система один раз запитає дозвіл.',
+      'onboardingNext': 'Далі',
+      'onboardingSkip': 'Пропустити',
+      'onboardingDoneTitle': 'Усе готово',
+      'onboardingStart': 'Почати',
+      'onboardingTipWidget':
+          'Додайте віджет «Наступний урок» на головний екран.',
+      'onboardingTipProfiles':
+          'Другий учень чи школа — кнопка профілю вгорі праворуч.',
+      'onboardingTipShortNames':
+          'Довгим назвам предметів можна дати короткі в налаштуваннях.',
+      'onboardingTipPermission': 'Сповіщення вимкнено в системі. Увімкнути їх можна в налаштуваннях телефона.',
+      'onboardingAgain': 'Пройти налаштування знову',
+      'onboardingStep': 'Крок {n} з {total}',
       'widgetProfile': 'Профіль на віджеті',
       'profileNotificationsOn': 'Сповіщення для профілю {name} увімкнено. Змінити — у Налаштування → Сповіщення.',
       'notificationProfilesHelp':

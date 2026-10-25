@@ -21,7 +21,10 @@ void main() {
       ..addFont(rootBundle.load('assets/fonts/Unbounded.ttf'));
     await font.load();
   });
-  setUp(() => SharedPreferences.setMockInitialValues({}));
+  // Past the first setup, which has tests of its own.
+  setUp(
+    () => SharedPreferences.setMockInitialValues({'onboarding_done_v1': true}),
+  );
 
   Future<void> capture(WidgetTester tester, String name) async {
     final context = tester.element(find.byType(AppLogo));

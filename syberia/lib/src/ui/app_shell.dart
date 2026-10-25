@@ -50,6 +50,7 @@ part 'shell/settings.dart';
 part 'shell/settings_previews.dart';
 part 'shell/notification_settings.dart';
 part 'shell/account.dart';
+part 'shell/onboarding.dart';
 part 'shell/free_days.dart';
 part 'shell/motion.dart';
 part 'shell/sync_news.dart';
@@ -152,6 +153,12 @@ class _AppShellState extends State<AppShell> {
     listenable: controller,
     builder: (context, _) => LayoutBuilder(
       builder: (context, constraints) {
+        // The first setup comes before anything else; the demo, started
+        // from its logo, leaves it for the time being.
+        if (!controller.onboardingDone && !controller.isDemo) {
+          _pages.clear();
+          return _Onboarding(controller: controller);
+        }
         if (!controller.isDemo &&
             controller.snapshot.profile.provider != 'Librus Synergia') {
           _pages.clear();

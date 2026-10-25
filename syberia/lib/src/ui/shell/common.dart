@@ -614,3 +614,66 @@ Future<void> _showItemActions(
     ),
   );
 }
+
+/// Text that wraps between words rather than inside one. When a single word
+/// is wider than the space, as long German words are with large text, the
+/// font shrinks until that word fits, but not below 70%: past that a break
+/// inside the word reads better than tiny text.
+class _WholeWords extends StatelessWidget {
+  const _WholeWords(this.text, {this.style, this.textAlign, this.maxLines});
+
+  final String text;
+  final TextStyle? style;
+  final TextAlign? textAlign;
+  final int? maxLines;
+
+  @override
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (context, constraints) => Text(
+      text,
+      textAlign: textAlign,
+      maxLines: maxLines,
+      style: _fitWords(context, text, style, constraints.maxWidth),
+    ),
+  );
+}
+
+TextStyle? _fitWords(
+  BuildContext context,
+  String text,
+  TextStyle? style,
+  double width,
+) {
+  if (!width.isFinite) return style;
+  final scaler = MediaQuery.textScalerOf(context);
+  final direction = Directionality.of(context);
+  final words = text.split(RegExp(r'\s+'));
+  double widest(TextStyle style) {
+    var result = 0.0;
+    for (final word in words) {
+      final painter = TextPainter(
+        text: TextSpan(text: word, style: style),
+        textDirection: direction,
+        textScaler: scaler,
+        maxLines: 1,
+      )..layout();
+      result = math.max(result, painter.width);
+      painter.dispose();
+    }
+    return result;
+  }
+
+  final base = DefaultTextStyle.of(context).style.merge(style);
+  final smallest = (base.fontSize ?? 14) * 0.7;
+  var fitted = base;
+  // Large text can scale non-linearly, so check again after each step.
+  for (var step = 0; step < 4; step++) {
+    final needed = widest(fitted);
+    final size = fitted.fontSize ?? 14;
+    if (needed <= width || size <= smallest) break;
+    fitted = fitted.copyWith(
+      fontSize: math.max(smallest, size * width / needed * 0.98),
+    );
+  }
+  return identical(fitted, base) ? style : fitted;
+}

@@ -763,8 +763,13 @@ class _ChooseStudentsState extends State<_ChooseStudents> {
 }
 
 class _Login extends StatefulWidget {
-  const _Login(this.controller);
+  const _Login(this.controller, {this.onSignedIn});
   final AppController controller;
+
+  /// Set when the form sits on a page of the first setup rather than in a
+  /// sheet: it then has no title of its own, and signing in calls this
+  /// instead of closing.
+  final VoidCallback? onSignedIn;
   @override
   State<_Login> createState() => _LoginState();
 }
@@ -790,7 +795,10 @@ class _LoginState extends State<_Login> {
       password: password.text,
       choose: (students) => _chooseStudents(context, students),
     );
-    if (mounted && ok) {
+    final embedded = widget.onSignedIn;
+    if (mounted && ok && embedded != null) {
+      embedded();
+    } else if (mounted && ok) {
       final navigator = Navigator.of(context);
       navigator.pop();
       // The sheet is gone; the screen under it tells about notifications.
@@ -803,101 +811,115 @@ class _LoginState extends State<_Login> {
   }
 
   @override
-  Widget build(BuildContext context) => AnimatedPadding(
-    duration: const Duration(milliseconds: 180),
-    padding: EdgeInsets.fromLTRB(
-      _Space.sheet,
-      0,
-      _Space.sheet,
-      // The list below already keeps clear of the system buttons.
-      24 + MediaQuery.viewInsetsOf(context).bottom,
-    ),
-    child: Form(
-      key: form,
-      child: ListView(
-        shrinkWrap: true,
-        // Scrolls only when the form does not fit, as with the keyboard up.
-        primary: false,
-        children: [
-          Text(context.tr('account'), style: _sheetTitleStyle(context)),
-          const SizedBox(height: 8),
-          Text(context.tr('loginHelp')),
-          const SizedBox(height: 12),
-          Card(
-            color: Theme.of(context).colorScheme.secondaryContainer,
-            child: Padding(
-              padding: const EdgeInsets.all(12),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Icon(
-                    Icons.vpn_lock_rounded,
-                    color: Theme.of(context).colorScheme.onSecondaryContainer,
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(child: Text(context.tr('vpnWarning'))),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 20),
-          TextFormField(
-            controller: email,
-            keyboardType: TextInputType.emailAddress,
-            autofillHints: const [AutofillHints.email],
-            decoration: InputDecoration(
-              labelText: context.tr('email'),
-              prefixIcon: const Icon(Icons.alternate_email_rounded),
-            ),
-            validator: (value) => value == null || value.trim().isEmpty
-                ? context.tr('requiredEmail')
-                : null,
-          ),
-          const SizedBox(height: 12),
-          TextFormField(
-            controller: password,
-            obscureText: obscure,
-            autofillHints: const [AutofillHints.password],
-            onFieldSubmitted: (_) => submit(),
-            decoration: InputDecoration(
-              labelText: context.tr('password'),
-              prefixIcon: const Icon(Icons.lock_outline_rounded),
-              suffixIcon: IconButton(
-                onPressed: () => setState(() => obscure = !obscure),
-                icon: Icon(
-                  obscure
-                      ? Icons.visibility_rounded
-                      : Icons.visibility_off_rounded,
-                ),
-              ),
-            ),
-            validator: (value) => value == null || value.isEmpty
-                ? context.tr('requiredPassword')
-                : null,
-          ),
-          if (widget.controller.error != null) ...[
-            const SizedBox(height: 12),
-            Text(
-              context.trError(widget.controller.error!),
-              style: TextStyle(color: Theme.of(context).colorScheme.error),
-            ),
+  Widget build(BuildContext context) {
+    final fields = _fields(context);
+    if (widget.onSignedIn != null) {
+      return Form(
+        key: form,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: fields,
+        ),
+      );
+    }
+    return AnimatedPadding(
+      duration: const Duration(milliseconds: 180),
+      padding: EdgeInsets.fromLTRB(
+        _Space.sheet,
+        0,
+        _Space.sheet,
+        // The list below already keeps clear of the system buttons.
+        24 + MediaQuery.viewInsetsOf(context).bottom,
+      ),
+      child: Form(
+        key: form,
+        child: ListView(
+          shrinkWrap: true,
+          // Scrolls only when the form does not fit, as with the keyboard up.
+          primary: false,
+          children: [
+            Text(context.tr('account'), style: _sheetTitleStyle(context)),
+            const SizedBox(height: 8),
+            ...fields,
           ],
-          const SizedBox(height: 20),
-          ListenableBuilder(
-            listenable: widget.controller,
-            builder: (context, _) => FilledButton(
-              style: _wideButton,
-              onPressed: widget.controller.syncing ? null : submit,
-              child: widget.controller.syncing
-                  ? const SizedBox.square(
-                      dimension: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : Text(context.tr('login')),
+        ),
+      ),
+    );
+  }
+
+  List<Widget> _fields(BuildContext context) => [
+    Text(context.tr('loginHelp')),
+    const SizedBox(height: 12),
+    Card(
+      color: Theme.of(context).colorScheme.secondaryContainer,
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(
+              Icons.vpn_lock_rounded,
+              color: Theme.of(context).colorScheme.onSecondaryContainer,
             ),
-          ),
-        ],
+            const SizedBox(width: 12),
+            Expanded(child: Text(context.tr('vpnWarning'))),
+          ],
+        ),
       ),
     ),
-  );
+    const SizedBox(height: 20),
+    TextFormField(
+      controller: email,
+      keyboardType: TextInputType.emailAddress,
+      autofillHints: const [AutofillHints.email],
+      decoration: InputDecoration(
+        labelText: context.tr('email'),
+        prefixIcon: const Icon(Icons.alternate_email_rounded),
+      ),
+      validator: (value) => value == null || value.trim().isEmpty
+          ? context.tr('requiredEmail')
+          : null,
+    ),
+    const SizedBox(height: 12),
+    TextFormField(
+      controller: password,
+      obscureText: obscure,
+      autofillHints: const [AutofillHints.password],
+      onFieldSubmitted: (_) => submit(),
+      decoration: InputDecoration(
+        labelText: context.tr('password'),
+        prefixIcon: const Icon(Icons.lock_outline_rounded),
+        suffixIcon: IconButton(
+          onPressed: () => setState(() => obscure = !obscure),
+          icon: Icon(
+            obscure ? Icons.visibility_rounded : Icons.visibility_off_rounded,
+          ),
+        ),
+      ),
+      validator: (value) => value == null || value.isEmpty
+          ? context.tr('requiredPassword')
+          : null,
+    ),
+    if (widget.controller.error != null) ...[
+      const SizedBox(height: 12),
+      Text(
+        context.trError(widget.controller.error!),
+        style: TextStyle(color: Theme.of(context).colorScheme.error),
+      ),
+    ],
+    const SizedBox(height: 20),
+    ListenableBuilder(
+      listenable: widget.controller,
+      builder: (context, _) => FilledButton(
+        style: _wideButton,
+        onPressed: widget.controller.syncing ? null : submit,
+        child: widget.controller.syncing
+            ? const SizedBox.square(
+                dimension: 20,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              )
+            : Text(context.tr('login')),
+      ),
+    ),
+  ];
 }

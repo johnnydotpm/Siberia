@@ -69,7 +69,7 @@ class _PreviewChoice<T> extends StatelessWidget {
                                 ),
                               ),
                               const SizedBox(height: 6),
-                              Text(
+                              _WholeWords(
                                 option.label,
                                 textAlign: TextAlign.center,
                                 maxLines: 2,

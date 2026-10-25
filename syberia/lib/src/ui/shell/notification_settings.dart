@@ -40,7 +40,6 @@ Future<void> _showNotificationSettings(
     builder: (sheetContext) => ListenableBuilder(
       listenable: controller,
       builder: (sheetContext, _) {
-        final settings = controller.notificationSettings;
         return SafeArea(
           child: ConstrainedBox(
             constraints: BoxConstraints(
@@ -50,94 +49,17 @@ Future<void> _showNotificationSettings(
               key: const ValueKey('notification-settings-sheet'),
               // The rows' own 16 makes the sheet's 20.
               padding: const EdgeInsets.fromLTRB(4, 0, 4, 16),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  SwitchListTile.adaptive(
-                    key: const ValueKey('notifications-master'),
-                    secondary: const _SettingsIcon(
-                      Icons.notifications_active_rounded,
-                    ),
-                    title: Text(
-                      sheetContext.tr('notifications'),
-                      style: const TextStyle(fontWeight: FontWeight.w800),
-                    ),
-                    subtitle: Text(sheetContext.tr('notificationsDescription')),
-                    value: settings.enabled,
-                    onChanged: (value) async =>
-                        denied(await controller.setNotificationsEnabled(value)),
-                  ),
-                  ValueListenableBuilder(
-                    valueListenable: permissionDenied,
-                    builder: (context, shown, _) => shown
-                        ? _PermissionDeniedNotice(
-                            key: const ValueKey(
-                              'notification-permission-denied',
-                            ),
-                          )
-                        : const SizedBox.shrink(),
-                  ),
-                  if (controller.profiles.length > 1) ...[
-                    const Divider(height: 1, indent: 16, endIndent: 16),
-                    _NotificationProfiles(controller),
-                  ],
-                  const Divider(height: 1, indent: 16, endIndent: 16),
-                  for (final category in SchoolNotificationCategory.values)
-                    switch (category) {
-                      SchoolNotificationCategory.attendance =>
-                        _NotificationKindsTile<AttendanceKind>(
-                          controller: controller,
-                          category: category,
-                          onPermission: denied,
-                          // The ones that matter most first.
-                          options: const [
-                            AttendanceKind.absent,
-                            AttendanceKind.absentExcused,
-                            AttendanceKind.late,
-                            AttendanceKind.lateExcused,
-                            AttendanceKind.released,
-                            AttendanceKind.present,
-                            AttendanceKind.other,
-                          ],
-                          label: (kind) => kind == AttendanceKind.other
-                              ? 'otherAttendance'
-                              : kind.name,
-                          chosen: settings.attendanceKinds,
-                          onChosen: (kinds) => controller.setNotificationKinds(
-                            attendance: kinds,
-                          ),
-                        ),
-                      SchoolNotificationCategory.timetable =>
-                        _NotificationKindsTile<TimetableChange>(
-                          controller: controller,
-                          category: category,
-                          onPermission: denied,
-                          options: TimetableChange.values,
-                          label: (change) => change.label,
-                          chosen: settings.timetableChanges,
-                          onChosen: (changes) => controller
-                              .setNotificationKinds(timetable: changes),
-                        ),
-                      _ => SwitchListTile.adaptive(
-                        key: ValueKey('notification-${category.name}'),
-                        secondary: _SettingsIcon(_notificationIcon(category)),
-                        title: Text(
-                          sheetContext.tr('notification_${category.name}'),
-                        ),
-                        value: settings.categories[category] ?? true,
-                        onChanged: settings.enabled
-                            ? (value) async => denied(
-                                await controller.setNotificationCategoryEnabled(
-                                  category,
-                                  value,
-                                ),
-                              )
-                            : null,
-                      ),
-                    },
-                  const Divider(height: 24, indent: 16, endIndent: 16),
-                  _ReminderSettings(controller, onPermission: denied),
-                ],
+              child: _NotificationSettingsBody(
+                controller,
+                onPermission: denied,
+                afterMaster: ValueListenableBuilder(
+                  valueListenable: permissionDenied,
+                  builder: (context, shown, _) => shown
+                      ? _PermissionDeniedNotice(
+                          key: const ValueKey('notification-permission-denied'),
+                        )
+                      : const SizedBox.shrink(),
+                ),
               ),
             ),
           ),
@@ -148,6 +70,102 @@ Future<void> _showNotificationSettings(
     open = false;
     permissionDenied.dispose();
   });
+}
+
+/// What notifications come and when: the master switch, the profiles, the
+/// kinds of news and the test reminders. The settings sheet and the first
+/// setup show it alike. [onPermission] gets what the system answered when a
+/// change had to ask; [afterMaster] goes under the master switch.
+class _NotificationSettingsBody extends StatelessWidget {
+  const _NotificationSettingsBody(
+    this.controller, {
+    required this.onPermission,
+    this.afterMaster,
+  });
+  final AppController controller;
+  final void Function(bool? granted) onPermission;
+  final Widget? afterMaster;
+
+  @override
+  Widget build(BuildContext context) {
+    final settings = controller.notificationSettings;
+    final denied = onPermission;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SwitchListTile.adaptive(
+          key: const ValueKey('notifications-master'),
+          secondary: const _SettingsIcon(Icons.notifications_active_rounded),
+          title: _WholeWords(
+            context.tr('notifications'),
+            style: const TextStyle(fontWeight: FontWeight.w800),
+          ),
+          subtitle: Text(context.tr('notificationsDescription')),
+          value: settings.enabled,
+          onChanged: (value) async =>
+              denied(await controller.setNotificationsEnabled(value)),
+        ),
+        ?afterMaster,
+        if (controller.profiles.length > 1) ...[
+          const Divider(height: 1, indent: 16, endIndent: 16),
+          _NotificationProfiles(controller),
+        ],
+        const Divider(height: 1, indent: 16, endIndent: 16),
+        for (final category in SchoolNotificationCategory.values)
+          switch (category) {
+            SchoolNotificationCategory.attendance =>
+              _NotificationKindsTile<AttendanceKind>(
+                controller: controller,
+                category: category,
+                onPermission: denied,
+                // The ones that matter most first.
+                options: const [
+                  AttendanceKind.absent,
+                  AttendanceKind.absentExcused,
+                  AttendanceKind.late,
+                  AttendanceKind.lateExcused,
+                  AttendanceKind.released,
+                  AttendanceKind.present,
+                  AttendanceKind.other,
+                ],
+                label: (kind) => kind == AttendanceKind.other
+                    ? 'otherAttendance'
+                    : kind.name,
+                chosen: settings.attendanceKinds,
+                onChosen: (kinds) =>
+                    controller.setNotificationKinds(attendance: kinds),
+              ),
+            SchoolNotificationCategory.timetable =>
+              _NotificationKindsTile<TimetableChange>(
+                controller: controller,
+                category: category,
+                onPermission: denied,
+                options: TimetableChange.values,
+                label: (change) => change.label,
+                chosen: settings.timetableChanges,
+                onChosen: (changes) =>
+                    controller.setNotificationKinds(timetable: changes),
+              ),
+            _ => SwitchListTile.adaptive(
+              key: ValueKey('notification-${category.name}'),
+              secondary: _SettingsIcon(_notificationIcon(category)),
+              title: Text(context.tr('notification_${category.name}')),
+              value: settings.categories[category] ?? true,
+              onChanged: settings.enabled
+                  ? (value) async => denied(
+                      await controller.setNotificationCategoryEnabled(
+                        category,
+                        value,
+                      ),
+                    )
+                  : null,
+            ),
+          },
+        const Divider(height: 24, indent: 16, endIndent: 16),
+        _ReminderSettings(controller, onPermission: denied),
+      ],
+    );
+  }
 }
 
 /// A switch for each profile: whether its news and reminders come. What
