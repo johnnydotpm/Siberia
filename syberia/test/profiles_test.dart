@@ -14,6 +14,13 @@ import 'package:syberia/src/homework_done.dart';
 
 import 'support/profile_fakes.dart';
 
+/// Homework due tomorrow: marks for work long past are dropped on saving,
+/// so a fixed date would stop being kept once it is two months old.
+DateTime _dueTomorrow() {
+  final now = DateTime.now();
+  return DateTime(now.year, now.month, now.day + 1);
+}
+
 /// A secure storage that fails to read while [failing].
 class _FlakyStorage extends TestFlutterSecureStoragePlatform {
   _FlakyStorage(super.data);
@@ -221,7 +228,7 @@ void main() {
       );
 
       await repository.saveSubjectShortNames({'Matematyka': 'Mat'});
-      await repository.saveDoneHomework({'hw-1': DateTime(2026, 10, 21)});
+      await repository.saveDoneHomework({'hw-1': _dueTomorrow()});
       await repository.saveGradeAverageSettings(
         const GradeAverageSettings(plus: 0.25, weighted: false),
       );
@@ -355,7 +362,7 @@ void main() {
         familyAccount,
         const LibrusLogin(email: familyEmail, password: 'x'),
       );
-      await repository.saveDoneHomework({'hw-1': DateTime(2026, 10, 21)});
+      await repository.saveDoneHomework({'hw-1': _dueTomorrow()});
       final signedOut = await repository.logout();
       expect(signedOut.profile.provider, 'Signed out');
       expect(world.forgotten.toSet(), {regular.id, music.id});
