@@ -123,7 +123,12 @@ class _Settings extends StatelessWidget {
               key: const ValueKey('settings-short-names'),
               leading: const _SettingsIcon(Icons.short_text_rounded),
               title: Text(context.tr('shortSubjectNames')),
-              subtitle: Text(context.tr('shortSubjectNamesDescription')),
+              subtitle: Text(
+                [
+                  context.tr('shortSubjectNamesDescription'),
+                  if (controller.together) context.tr('togetherSettingsNote'),
+                ].join('\n'),
+              ),
               trailing: const _Chevron(),
               onTap: () => showAppSheet<void>(
                 context: context,
@@ -158,6 +163,16 @@ class _Settings extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Each profile keeps its own; a change here is all of
+                  // theirs.
+                  if (controller.together) ...[
+                    Text(
+                      context.tr('togetherSettingsNote'),
+                      key: const ValueKey('settings-together-note'),
+                      style: _metaStyle(context),
+                    ),
+                    const SizedBox(height: 12),
+                  ],
                   for (final (sign, key, value) in [
                     ('+', 'grade-plus', settings.plus),
                     ('-', 'grade-minus', settings.minus),
@@ -355,7 +370,6 @@ class _SettingsProfile extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final muted = theme.colorScheme.onSurfaceVariant;
-    final profile = controller.profileLook;
     final several = controller.profiles.length > 1;
     return Card(
       key: const ValueKey('settings-profile'),
@@ -366,9 +380,8 @@ class _SettingsProfile extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(16, 16, 8, 16),
           child: Row(
             children: [
-              ProfileAvatar(
-                name: profile.name,
-                color: profile.color,
+              _OpenProfileSign(
+                controller,
                 radius: 28,
                 news: controller.otherProfilesHaveNews,
               ),
@@ -388,16 +401,17 @@ class _SettingsProfile extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      profile.name,
+                      _openProfileName(context, controller),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w800,
                       ),
                     ),
-                    if (profile.school.isNotEmpty)
+                    if (_openProfileDetail(context, controller)
+                        case final detail when detail.isNotEmpty)
                       Text(
-                        profile.school,
+                        detail,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: theme.textTheme.bodyMedium?.copyWith(

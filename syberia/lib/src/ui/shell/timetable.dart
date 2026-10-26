@@ -542,7 +542,7 @@ class _TimetableState extends State<_Timetable> {
           (event) => event.kind == EventKind.exam && _sameDay(event.date, day),
         )
         .toList(growable: false);
-    final dayOff = _freeDayOn(controller.snapshot.freeDays, day);
+    final daysOff = _freeDaysOn(controller.snapshot.freeDays, day);
     final mergeLessons = controller.mergeTimetableLessons;
     final showBreaks = controller.showTimetableBreaks;
     final placed = _placeTests(
@@ -577,7 +577,7 @@ class _TimetableState extends State<_Timetable> {
                   const _LessonsSkeleton(key: ValueKey('timetable-loading'))
                 else ...[
                   // A holiday says so, instead of "No data".
-                  if (dayOff != null) ...[
+                  for (final dayOff in daysOff) ...[
                     _FreeDayCard(dayOff),
                     const SizedBox(height: 8),
                   ],
@@ -585,7 +585,7 @@ class _TimetableState extends State<_Timetable> {
                     _EventTile(event),
                     const SizedBox(height: 8),
                   ],
-                  if (dayEvents.isEmpty && dayOff == null)
+                  if (dayEvents.isEmpty && daysOff.isEmpty)
                     _Empty(
                       context.tr('emptyDay'),
                       icon: Icons.free_breakfast_rounded,
@@ -597,7 +597,7 @@ class _TimetableState extends State<_Timetable> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 // Some lessons off for the class.
-                if (dayOff != null)
+                for (final dayOff in daysOff)
                   Padding(
                     padding: const EdgeInsets.only(left: 4, bottom: 8),
                     child: _FreeDayCard(dayOff),
@@ -767,17 +767,19 @@ _placeTests(List<_LessonBlock> blocks, Iterable<SchoolEvent> tests) {
   final byLesson = <String, List<SchoolEvent>>{};
   final unplaced = <SchoolEvent>[];
   for (final test in tests) {
+    // In the view together, only a lesson of the test's own profile.
+    final own = blocks.where((block) => block.lesson.source == test.source);
     bool sameNumber(_LessonBlock block) =>
         test.lessonNumber != null &&
         block.lessons.any((lesson) => lesson.lessonNumber == test.lessonNumber);
     bool sameSubject(_LessonBlock block) =>
         normal(block.lesson.subject) == normal(test.subject);
     final block =
-        blocks
+        own
             .where((block) => sameNumber(block) && sameSubject(block))
             .firstOrNull ??
-        blocks.where(sameSubject).firstOrNull ??
-        blocks.where(sameNumber).firstOrNull;
+        own.where(sameSubject).firstOrNull ??
+        own.where(sameNumber).firstOrNull;
     if (block == null) {
       unplaced.add(test);
     } else {
@@ -860,8 +862,11 @@ List<_LessonBlock> _lessonBlocks(
 }) {
   final sorted = [...lessons]..sort((a, b) => a.start.compareTo(b.start));
   final groups = <List<Lesson>>[];
+  // In the view together the lessons of two schools come between each
+  // other; a lesson goes on only one of its own profile's.
+  final lastOf = <String?, List<Lesson>>{};
   for (final lesson in sorted) {
-    final last = groups.isEmpty ? null : groups.last.last;
+    final last = lastOf[lesson.source]?.last;
     if (merge &&
         last != null &&
         !last.cancelled &&
@@ -872,9 +877,11 @@ List<_LessonBlock> _lessonBlocks(
         _sameDay(last.start, lesson.start) &&
         !lesson.start.isBefore(last.end) &&
         lesson.start.difference(last.end).inMinutes <= 15) {
-      groups.last.add(lesson);
+      lastOf[lesson.source]!.add(lesson);
     } else {
-      groups.add([lesson]);
+      final group = [lesson];
+      groups.add(group);
+      lastOf[lesson.source] = group;
     }
   }
   return [

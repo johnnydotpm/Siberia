@@ -172,8 +172,11 @@ class _Slot extends StatelessWidget {
                   : button.avatar != null
                   ? Opacity(
                       opacity: enabled ? 1 : 0.3,
-                      child: SizedBox.square(
-                        dimension: 32,
+                      // A round sign is 32 high; signs side by side may
+                      // take the button's width.
+                      child: SizedBox(
+                        width: GlassBarButton.size,
+                        height: 32,
                         child: FittedBox(child: button.avatar),
                       ),
                     )

@@ -27,10 +27,35 @@ class _ComposeMessageSheetState extends State<_ComposeMessageSheet> {
   bool sending = false;
   String? validationError;
 
+  /// In the view together, the profile the message goes from: the one
+  /// opened last, until another one is picked.
+  String? from;
+
   @override
   void initState() {
     super.initState();
-    recipients = widget.controller.fetchMessageRecipients();
+    final controller = widget.controller;
+    if (controller.together) {
+      final included = controller.togetherProfiles;
+      final last = controller.activeProfile?.id;
+      from = included.any((profile) => profile.id == last)
+          ? last
+          : included.firstOrNull?.id;
+    }
+    recipients = controller.fetchMessageRecipients(profileId: from);
+  }
+
+  /// Writes from the profile [profileId]: its school's teachers are others,
+  /// so the recipients picked so far go.
+  void pickFrom(String profileId) {
+    if (profileId == from) return;
+    setState(() {
+      from = profileId;
+      selectedRecipients.clear();
+      recipientSearchController?.clear();
+      validationError = null;
+      recipients = widget.controller.fetchMessageRecipients(profileId: from);
+    });
   }
 
   @override
@@ -43,7 +68,7 @@ class _ComposeMessageSheetState extends State<_ComposeMessageSheet> {
   void retryRecipients() {
     setState(() {
       validationError = null;
-      recipients = widget.controller.fetchMessageRecipients();
+      recipients = widget.controller.fetchMessageRecipients(profileId: from);
     });
   }
 
@@ -69,6 +94,7 @@ class _ComposeMessageSheetState extends State<_ComposeMessageSheet> {
         recipients: selectedRecipients.toList(),
         subject: subject,
         body: body,
+        from: from,
       );
       if (!mounted) return;
       final messenger = ScaffoldMessenger.of(context);
@@ -117,6 +143,14 @@ class _ComposeMessageSheetState extends State<_ComposeMessageSheet> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  if (from != null) ...[
+                    _ComposeFrom(
+                      controller: widget.controller,
+                      from: from!,
+                      onPicked: sending ? null : pickFrom,
+                    ),
+                    const Divider(height: 28),
+                  ],
                   FutureBuilder<List<MessageRecipient>>(
                     future: recipients,
                     builder: (context, snapshot) {
@@ -341,4 +375,68 @@ class _RecipientError extends StatelessWidget {
       ),
     ),
   );
+}
+
+/// Which profile a message of the view together goes from: one chip per
+/// profile in it, and the school whose teachers it can go to.
+class _ComposeFrom extends StatelessWidget {
+  const _ComposeFrom({
+    required this.controller,
+    required this.from,
+    required this.onPicked,
+  });
+  final AppController controller;
+  final String from;
+  final ValueChanged<String>? onPicked;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final school = controller.profileOf(from)?.school ?? '';
+    return Column(
+      key: const ValueKey('compose-from'),
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          context.tr('composeFrom'),
+          style: theme.textTheme.labelLarge?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            for (final profile in controller.togetherProfiles)
+              ChoiceChip(
+                key: ValueKey('compose-from-${profile.id}'),
+                avatar: ProfileAvatar(
+                  name: profile.displayName,
+                  color: profile.color,
+                  radius: 12,
+                ),
+                label: Text(
+                  controller.profileMark(profile.id)?.name ??
+                      profile.displayName,
+                ),
+                selected: profile.id == from,
+                showCheckmark: false,
+                onSelected: onPicked == null
+                    ? null
+                    : (_) => onPicked!(profile.id),
+              ),
+          ],
+        ),
+        if (school.isNotEmpty) ...[
+          const SizedBox(height: 6),
+          Text(
+            context.trArgs('composeRecipientsOf', {'school': school}),
+            style: _metaStyle(context),
+          ),
+        ],
+      ],
+    );
+  }
 }

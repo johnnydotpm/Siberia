@@ -489,6 +489,13 @@ class _EventTile extends StatelessWidget {
                               style: _rowTitleStyle(context),
                             ),
                           ),
+                          if (_ControllerScope.maybeOf(context)
+                                  ?.profileMark(item.source) !=
+                              null) ...[
+                            const SizedBox(width: 6),
+                            // Gives way with the title before the kind does.
+                            Flexible(child: _ProfileMark(item.source)),
+                          ],
                           // "Wycieczka do Krakowa" needs no "Wycieczka" next to it.
                           if (label != null &&
                               !_plainPolish(title)
@@ -585,16 +592,19 @@ class _HomeworkCard extends StatelessWidget {
         Row(
           children: [
             Expanded(
-              child: Text(
-                item.subject.isEmpty
-                    ? context.tr('homeworkItem')
-                    : _SubjectScope.of(context, item.subject),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: theme.textTheme.labelLarge?.copyWith(
-                  color: palette.accent,
-                  fontWeight: FontWeight.w800,
+              child: _MarkedTitle(
+                Text(
+                  item.subject.isEmpty
+                      ? context.tr('homeworkItem')
+                      : _SubjectScope.of(context, item.subject),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.labelLarge?.copyWith(
+                    color: palette.accent,
+                    fontWeight: FontWeight.w800,
+                  ),
                 ),
+                item.source,
               ),
             ),
             const SizedBox(width: 8),
@@ -873,6 +883,8 @@ void _showHomeworkDetails(BuildContext context, SchoolEvent item) {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              if (controller != null)
+                _SheetProfileMark(controller, item.source),
               if (item.subject.isNotEmpty)
                 Text(
                   displaySubject(item.subject, const {}),

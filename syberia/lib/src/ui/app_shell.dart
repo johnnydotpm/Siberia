@@ -68,6 +68,7 @@ part 'shell/free_days.dart';
 part 'shell/motion.dart';
 part 'shell/sync_news.dart';
 part 'shell/debug_menu.dart';
+part 'shell/together.dart';
 
 class AppShell extends StatefulWidget {
   const AppShell({required this.controller, super.key});
@@ -345,9 +346,8 @@ class _AppShellState extends State<AppShell> {
                 key: const ValueKey('profile-button'),
                 tooltip: context.tr('profiles'),
                 onPressed: () => _showProfiles(context, controller),
-                icon: ProfileAvatar(
-                  name: controller.profileLook.name,
-                  color: controller.profileLook.color,
+                icon: _OpenProfileSign(
+                  controller,
                   radius: 15,
                   news: controller.otherProfilesHaveNews,
                 ),
@@ -553,18 +553,17 @@ class _SideNavigation extends StatelessWidget {
               padding: const EdgeInsets.all(14),
               child: ListTile(
                 key: const ValueKey('drawer-profile'),
-                leading: ProfileAvatar(
-                  name: controller.profileLook.name,
-                  color: controller.profileLook.color,
+                leading: _OpenProfileSign(
+                  controller,
                   news: controller.otherProfilesHaveNews,
                 ),
                 title: Text(
-                  controller.profileLook.name,
+                  _openProfileName(context, controller),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
                 subtitle: Text(
-                  controller.profileLook.school,
+                  _openProfileDetail(context, controller),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),

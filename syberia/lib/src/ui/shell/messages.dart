@@ -442,18 +442,21 @@ class _MessageTile extends StatelessWidget {
                 Row(
                   children: [
                     Expanded(
-                      child: item.sent
-                          ? _RecipientsLine(item.recipients)
-                          : Text(
-                              item.sender.isEmpty ? '—' : item.sender,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: theme.textTheme.titleSmall?.copyWith(
-                                fontWeight: unread
-                                    ? FontWeight.w800
-                                    : FontWeight.w600,
+                      child: _MarkedTitle(
+                        item.sent
+                            ? _RecipientsLine(item.recipients)
+                            : Text(
+                                item.sender.isEmpty ? '—' : item.sender,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: theme.textTheme.titleSmall?.copyWith(
+                                  fontWeight: unread
+                                      ? FontWeight.w800
+                                      : FontWeight.w600,
+                                ),
                               ),
-                            ),
+                        item.source,
+                      ),
                     ),
                     if (item.hasAttachments)
                       Padding(
@@ -800,6 +803,7 @@ class _MessageDetailSheetState extends State<_MessageDetailSheet> {
       primary: false,
       padding: const EdgeInsets.all(20),
       children: [
+        _SheetProfileMark(widget.controller, message.source),
         Text(
           message.subject,
           style: Theme.of(context).textTheme.headlineSmall
@@ -897,6 +901,7 @@ class _MessageDetailSheetState extends State<_MessageDetailSheet> {
                   20 + _systemButtonsRoom(context),
                 ),
                 children: [
+                  _SheetProfileMark(widget.controller, widget.message.source),
                   Text(
                     message.subject,
                     style: Theme.of(context).textTheme.headlineSmall

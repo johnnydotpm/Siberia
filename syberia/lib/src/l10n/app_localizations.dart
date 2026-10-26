@@ -134,6 +134,15 @@ class AppLocalizations {
       'notification_notices': 'Nowe uwagi',
       'notification_attendance': 'Nowe wpisy frekwencji',
       'notification_events': 'Nowe wydarzenia',
+      'composeFrom': 'Od',
+      'composeRecipientsOf': 'Adresaci: {school}',
+      'togetherSettingsNote':
+          'We «Wszystkie razem» zmiana dotyczy wszystkich profili w widoku',
+      'together': 'Wszystkie razem',
+      'togetherNeedsTwo': 'Potrzeba co najmniej dwóch profili razem — włączysz je przez ⋯ przy profilu',
+      'profileTogether': 'Pokazuj we «Wszystkie razem»',
+      'profileTogetherHint':
+          'Jego lekcje, oceny i wiadomości są w widoku razem',
       'vpnOnSignIn': 'Masz włączony VPN. Librus czasem blokuje połączenia przez VPN – jeśli logowanie się nie uda, wyłącz go.',
       'vpnOnError':
           'Masz włączony VPN, a Librus czasem go blokuje. Spróbuj go wyłączyć.',
@@ -554,6 +563,15 @@ class AppLocalizations {
       'notification_notices': 'New remarks',
       'notification_attendance': 'New attendance entries',
       'notification_events': 'New events',
+      'composeFrom': 'From',
+      'composeRecipientsOf': 'Recipients: {school}',
+      'togetherSettingsNote':
+          'In “All together” a change applies to every profile in the view',
+      'together': 'All together',
+      'togetherNeedsTwo': 'Needs at least two profiles together — turn them on with ⋯ next to a profile',
+      'profileTogether': 'Show in “All together”',
+      'profileTogetherHint':
+          'Its lessons, grades and messages are in the shared view',
       'vpnOnSignIn': 'A VPN is on. Librus sometimes blocks VPNs, so if signing in fails, turn it off.',
       'vpnOnError':
           'A VPN is on, and Librus sometimes blocks VPNs. Try turning it off.',
@@ -976,6 +994,16 @@ class AppLocalizations {
       'notification_notices': 'Новые замечания',
       'notification_attendance': 'Новые записи посещаемости',
       'notification_events': 'Новые события',
+      'composeFrom': 'От',
+      'composeRecipientsOf': 'Получатели: {school}',
+      'togetherSettingsNote':
+          'В «Все вместе» изменение применяется ко всем профилям режима',
+      'together': 'Все вместе',
+      'togetherNeedsTwo':
+          'Нужно хотя бы два профиля вместе — включите их через ⋯ у профиля',
+      'profileTogether': 'Показывать в «Все вместе»',
+      'profileTogetherHint':
+          'Его уроки, оценки и сообщения видны в общем режиме',
       'vpnOnSignIn': 'Включён VPN. Librus иногда блокирует VPN: если войти не получится, выключите его.',
       'vpnOnError': 'Включён VPN, а Librus иногда его блокирует. Попробуйте выключить VPN.',
       'onboardingSummary': 'Ваши настройки',
@@ -1396,6 +1424,14 @@ class AppLocalizations {
       'notification_notices': 'Neue Bemerkungen',
       'notification_attendance': 'Neue Anwesenheitseinträge',
       'notification_events': 'Neue Termine',
+      'composeFrom': 'Von',
+      'composeRecipientsOf': 'Empfänger: {school}',
+      'togetherSettingsNote':
+          'In „Alle zusammen“ gilt eine Änderung für alle Profile der Ansicht',
+      'together': 'Alle zusammen',
+      'togetherNeedsTwo': 'Mindestens zwei Profile nötig – über ⋯ neben einem Profil einschalten',
+      'profileTogether': 'In „Alle zusammen“ zeigen',
+      'profileTogetherHint': 'Seine Stunden, Noten und Nachrichten erscheinen in der gemeinsamen Ansicht',
       'vpnOnSignIn': 'Ein VPN ist aktiv. Librus blockiert VPNs manchmal – falls die Anmeldung fehlschlägt, schalte es aus.',
       'vpnOnError': 'Ein VPN ist aktiv, und Librus blockiert VPNs manchmal. Schalte es testweise aus.',
       'onboardingSummary': 'Deine Einstellungen',
@@ -1825,6 +1861,15 @@ class AppLocalizations {
       'notification_notices': 'Нові зауваження',
       'notification_attendance': 'Нові записи відвідуваності',
       'notification_events': 'Нові події',
+      'composeFrom': 'Від',
+      'composeRecipientsOf': 'Одержувачі: {school}',
+      'togetherSettingsNote':
+          'В «Усі разом» зміна стосується всіх профілів режиму',
+      'together': 'Усі разом',
+      'togetherNeedsTwo': 'Потрібно щонайменше два профілі разом — увімкніть їх через ⋯ біля профілю',
+      'profileTogether': 'Показувати в «Усі разом»',
+      'profileTogetherHint':
+          'Його уроки, оцінки й повідомлення видно в спільному режимі',
       'vpnOnSignIn': 'Увімкнено VPN. Librus іноді блокує VPN: якщо не вдасться ввійти, вимкніть його.',
       'vpnOnError':
           'Увімкнено VPN, а Librus іноді його блокує. Спробуйте вимкнути VPN.',

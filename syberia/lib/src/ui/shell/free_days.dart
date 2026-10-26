@@ -26,14 +26,21 @@ FreeDay? _nextFreeDays(List<FreeDay> days, DateTime now) {
       .firstOrNull;
 }
 
-/// The school's or the class's day off on [day], the school's first.
-FreeDay? _freeDayOn(List<FreeDay> days, DateTime day) =>
-    (days
-            .where((item) => item.kind != FreeDayKind.teacher)
-            .where((item) => item.covers(day))
-            .toList()
-          ..sort((a, b) => a.kind.index.compareTo(b.kind.index)))
-        .firstOrNull;
+/// The school's or the class's day off on [day], the school's first; in
+/// the view together, one of each profile that has one.
+List<FreeDay> _freeDaysOn(List<FreeDay> days, DateTime day) {
+  final covering =
+      days
+          .where((item) => item.kind != FreeDayKind.teacher)
+          .where((item) => item.covers(day))
+          .toList()
+        ..sort((a, b) => a.kind.index.compareTo(b.kind.index));
+  final profiles = <String?>{};
+  return [
+    for (final item in covering)
+      if (profiles.add(item.source)) item,
+  ];
+}
 
 /// "Za 12 dni", "Jutro", "Jeszcze 3 dni", "Ostatni dzień".
 String _freeDaysCountdown(BuildContext context, FreeDay day, DateTime now) {
@@ -103,7 +110,10 @@ class _FreeDayCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(name, maxLines: 2, style: _rowTitleStyle(context)),
+                  _MarkedTitle(
+                    Text(name, maxLines: 2, style: _rowTitleStyle(context)),
+                    day.source,
+                  ),
                   const SizedBox(height: 2),
                   Text(
                     [dates, ?lessons].join(' · '),

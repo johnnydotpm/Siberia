@@ -98,17 +98,17 @@ class FakeProfileClient extends LibrusClient {
     if (hold != null) await hold.future;
     if (world.offline) throw StateError('offline');
     if (world.failing.contains(login)) {
-      throw const LibrusException(LibrusErrorCode.networkTimeout);
+      throw LibrusException(world.failingWith);
     }
     final student = world.students[login];
-    return student == null
-        ? null
-        : studentSnapshot(
-            student.$1,
-            '${student.$1}-$number',
-            school: student.$2,
-            lastSync: world.syncedAt?.call(),
-          ).copyWith(lessons: [upcomingLesson(student.$1)]);
+    if (student == null) return null;
+    final fetched = studentSnapshot(
+      student.$1,
+      '${student.$1}-$number',
+      school: student.$2,
+      lastSync: world.syncedAt?.call(),
+    ).copyWith(lessons: [upcomingLesson(student.$1)]);
+    return world.changes[login]?.call(fetched) ?? fetched;
   }
 
   @override
@@ -203,8 +203,12 @@ class FakeLibrusWorld {
   final holds = <String, Completer<void>>{};
   bool offline = false;
 
-  /// Logins whose fetches fail as when Librus does not answer.
+  /// Logins whose fetches fail, by default as when Librus does not answer.
   final failing = <String>{};
+  LibrusErrorCode failingWith = LibrusErrorCode.networkTimeout;
+
+  /// Login → what to make of its fetched data, for data of a test's own.
+  final changes = <String, AppSnapshot Function(AppSnapshot data)>{};
   Future<void> sending = Future.value();
 
   /// When fetched data says it was synced; a fixed day by default.

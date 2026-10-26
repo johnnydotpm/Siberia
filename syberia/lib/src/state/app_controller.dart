@@ -195,6 +195,27 @@ class AppController extends ChangeNotifier {
       ? null
       : _profiles.where((profile) => profile.id == source).firstOrNull;
 
+  /// How an item of the view together shows the profile [source] it comes
+  /// from: by the profile's name on its colour, or by its school when
+  /// another profile in the view has the same name, as one child at two
+  /// schools does. Nothing outside the view together.
+  ({String name, int color})? profileMark(String? source) {
+    if (!_together) return null;
+    final profile = profileOf(source);
+    if (profile == null) return null;
+    return (name: togetherName(profile), color: profile.color);
+  }
+
+  /// The name [profile] goes by beside the others in the view together:
+  /// its own, or its school when another one in it has the same name.
+  String togetherName(SchoolProfile profile) {
+    final name = profile.displayName;
+    final shared = togetherProfiles.any(
+      (other) => other.id != profile.id && other.displayName == name,
+    );
+    return shared && profile.school.isNotEmpty ? profile.school : name;
+  }
+
   /// The profile the last error came from, in the view together.
   SchoolProfile? get errorProfile =>
       _together && _error != null ? profileOf(_errorSource) : null;

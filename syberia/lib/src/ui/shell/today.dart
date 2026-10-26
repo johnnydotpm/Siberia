@@ -133,7 +133,7 @@ class _TodayState extends State<_Today> {
                   padding: const EdgeInsets.only(bottom: _Space.card),
                   child: _InfoCard(
                     icon: Icons.error_outline_rounded,
-                    text: context.trError(controller.error!),
+                    text: _errorText(context, controller),
                     color: Theme.of(context).colorScheme.error,
                   ),
                 ),
@@ -504,6 +504,14 @@ class _NowCard extends StatelessWidget {
                       ),
                     ),
                   ),
+                  if (controller.profileMark(lesson.source) != null)
+                    Padding(
+                      padding: const EdgeInsetsDirectional.only(
+                        start: 8,
+                        top: 6,
+                      ),
+                      child: _ProfileMark(lesson.source),
+                    ),
                   if (lesson.substitution)
                     Padding(
                       padding: const EdgeInsets.only(left: 8, top: 4),
@@ -616,8 +624,34 @@ class _RecentGrades extends StatelessWidget {
                             showNew: false,
                           ),
                           const SizedBox(height: 6),
-                          Text(
-                            _SubjectScope.of(context, grade.subject),
+                          // In the view together, a dot of its profile's
+                          // colour: no room for its name.
+                          Text.rich(
+                            TextSpan(
+                              children: [
+                                if (_ControllerScope.maybeOf(context)
+                                        ?.profileMark(grade.source) !=
+                                    null)
+                                  WidgetSpan(
+                                    alignment: PlaceholderAlignment.middle,
+                                    child: Padding(
+                                      padding: const EdgeInsetsDirectional.only(
+                                        end: 4,
+                                      ),
+                                      child: _ProfileMark(
+                                        grade.source,
+                                        dot: true,
+                                      ),
+                                    ),
+                                  ),
+                                TextSpan(
+                                  text: _SubjectScope.of(
+                                    context,
+                                    grade.subject,
+                                  ),
+                                ),
+                              ],
+                            ),
                             maxLines: 2,
                             textAlign: TextAlign.center,
                             overflow: TextOverflow.ellipsis,
@@ -893,6 +927,7 @@ class _Summary extends StatelessWidget {
   final AppController controller;
   @override
   Widget build(BuildContext context) {
+    if (controller.together) return _TogetherSummary(controller);
     final data = controller.snapshot;
     final semester = _preferredSemester(data.grades);
     final average = controller.gradeAverage.average(
@@ -989,4 +1024,157 @@ class _Metric extends StatelessWidget {
       ),
     ),
   );
+}
+
+/// In the view together, each profile's average and attendance on a row of
+/// its own, and every unread message under them.
+class _TogetherSummary extends StatelessWidget {
+  const _TogetherSummary(this.controller);
+  final AppController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    final data = controller.snapshot;
+    final semester = _preferredSemester(data.grades);
+    final valueStyle = theme.textTheme.titleMedium?.copyWith(
+      fontWeight: FontWeight.w800,
+      fontFeatures: _tabular,
+      color: colors.onPrimaryContainer,
+    );
+    final labelStyle = theme.textTheme.labelSmall?.copyWith(
+      color: colors.onPrimaryContainer.withValues(alpha: 0.75),
+    );
+    Widget figure(String value, String label, {required double width}) =>
+        SizedBox(
+          width: width,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(value, maxLines: 1, style: valueStyle),
+              Text(
+                label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.end,
+                style: labelStyle,
+              ),
+            ],
+          ),
+        );
+    final width = MediaQuery.textScalerOf(context).scale(72).clamp(72.0, 110.0);
+    return Card(
+      key: const ValueKey('today-together-summary'),
+      color: colors.primaryContainer,
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        children: [
+          for (final profile in controller.togetherProfiles)
+            InkWell(
+              key: ValueKey('summary-profile-${profile.id}'),
+              onTap: () => controller.selectTab(2),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(14, 10, 14, 10),
+                child: Row(
+                  children: [
+                    ProfileAvatar(
+                      name: profile.displayName,
+                      color: profile.color,
+                      radius: 15,
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        controller.profileMark(profile.id)?.name ??
+                            profile.displayName,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w700,
+                          color: colors.onPrimaryContainer,
+                        ),
+                      ),
+                    ),
+                    figure(
+                      switch (controller
+                          .gradeAverageFor(profile.id)
+                          .average(
+                            data.grades.where(
+                              (grade) =>
+                                  grade.source == profile.id &&
+                                  grade.semester == semester,
+                            ),
+                          )) {
+                        final average? => _decimal(context, average),
+                        null => '—',
+                      },
+                      context.tr('averageGrade'),
+                      width: width,
+                    ),
+                    const SizedBox(width: 8),
+                    figure(
+                      switch (data.attendance
+                          .where((item) => item.source == profile.id)
+                          .toList()) {
+                        final own when own.isNotEmpty => _percent(
+                          context,
+                          own
+                                  .where((item) => item.kind.countsAsPresence)
+                                  .length /
+                              own.length *
+                              100,
+                        ),
+                        _ => '—',
+                      },
+                      context.tr('attendanceRate'),
+                      width: width,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          Divider(
+            height: 1,
+            indent: 14,
+            endIndent: 14,
+            color: colors.onPrimaryContainer.withValues(alpha: 0.15),
+          ),
+          InkWell(
+            key: const ValueKey('summary-messages'),
+            onTap: () => controller.selectTab(5),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
+              child: Row(
+                children: [
+                  Icon(Icons.mail_rounded, size: 20, color: colors.primary),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      '${context.tr('messagesUnread')}: ${data.unreadMessages}',
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: colors.onPrimaryContainer,
+                      ),
+                    ),
+                  ),
+                  const _Chevron(),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// The last error, begun with the name of the profile it came from in the
+/// view together.
+String _errorText(BuildContext context, AppController controller) {
+  final text = context.trError(controller.error!);
+  final profile = controller.errorProfile;
+  if (profile == null) return text;
+  final name = controller.profileMark(profile.id)?.name ?? profile.displayName;
+  return '$name: $text';
 }

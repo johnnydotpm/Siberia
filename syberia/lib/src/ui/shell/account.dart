@@ -81,14 +81,20 @@ GlassBarButton _profileBarButton(
 ) {
   final look = controller.profileLook;
   final news = controller.otherProfilesHaveNews;
+  final together = controller.together;
+  final name = _openProfileName(context, controller);
   return GlassBarButton(
     id: 'account',
-    symbol: look.name.trim().isEmpty
+    symbol: together
+        ? GlassSymbol.together
+        : look.name.trim().isEmpty
         ? GlassSymbol.account
         : GlassSymbol.profile(look.name),
-    label: context.trArgs('profileButton', {'name': look.name}),
-    avatar: ProfileAvatar(name: look.name, color: look.color, news: news),
-    tint: SubjectColors.colors(look.color, Theme.of(context).brightness).accent,
+    label: context.trArgs('profileButton', {'name': name}),
+    avatar: _OpenProfileSign(controller, news: news),
+    tint: together
+        ? null
+        : SubjectColors.colors(look.color, Theme.of(context).brightness).accent,
     badge: news,
     onPressed: () => _showProfiles(context, controller),
   );
@@ -122,7 +128,9 @@ class _ProfilesSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final profiles = controller.profiles;
-    final active = controller.activeProfile;
+    final together = controller.together;
+    // In the view together no single profile is open.
+    final active = together ? null : controller.activeProfile;
     final look = controller.profileLook;
     final several = profiles.length > 1;
     return ListView(
@@ -141,6 +149,16 @@ class _ProfilesSheet extends StatelessWidget {
           style: _sheetTitleStyle(context),
         ),
         const SizedBox(height: 12),
+        if (several) ...[
+          _TogetherRow(
+            controller: controller,
+            onTap: () {
+              Navigator.pop(context);
+              controller.openTogether();
+            },
+          ),
+          const Divider(height: 17),
+        ],
         if (profiles.isEmpty)
           _ProfileRow(
             name: look.name,
@@ -293,6 +311,116 @@ class _ProfileRow extends StatelessWidget {
   }
 }
 
+/// The first row of the profiles: every profile in the view together at
+/// once, with their signs and names, and a check while it is open. With
+/// fewer than two profiles in it, it says how to put them there.
+class _TogetherRow extends StatelessWidget {
+  const _TogetherRow({required this.controller, required this.onTap});
+  final AppController controller;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final open = controller.together;
+    final possible = controller.canBeTogether;
+    final included = controller.togetherProfiles;
+    final selected = theme.colorScheme.secondaryContainer.withValues(
+      alpha: 0.6,
+    );
+    return Semantics(
+      selected: open,
+      child: Material(
+        type: MaterialType.transparency,
+        child: InkWell(
+          key: const ValueKey('profiles-together'),
+          borderRadius: BorderRadius.circular(16),
+          onTap: open || !possible ? null : onTap,
+          child: Ink(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            decoration: BoxDecoration(
+              color: open ? selected : null,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Opacity(
+              opacity: possible ? 1 : 0.6,
+              child: Row(
+                children: [
+                  _ProfileStack(
+                    included.length >= 2 ? included : controller.profiles,
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          context.tr('together'),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: _rowTitleStyle(context),
+                        ),
+                        Text(
+                          possible
+                              ? [
+                                  for (final profile in included)
+                                    controller.togetherName(profile),
+                                ].join(' · ')
+                              : context.tr('togetherNeedsTwo'),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: _metaStyle(context),
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (open)
+                    Padding(
+                      padding: const EdgeInsetsDirectional.only(start: 8),
+                      child: Icon(
+                        Icons.check_rounded,
+                        color: theme.colorScheme.primary,
+                        semanticLabel: context.tr('profileOpen'),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Whether [profile] is in the view together, as a switch that follows the
+/// app.
+class _ProfileTogetherSwitch extends StatelessWidget {
+  const _ProfileTogetherSwitch({
+    required this.controller,
+    required this.profile,
+  });
+  final AppController controller;
+  final SchoolProfile profile;
+
+  @override
+  Widget build(BuildContext context) => ListenableBuilder(
+    listenable: controller,
+    builder: (context, _) {
+      final current =
+          controller.profileOf(profile.id)?.together ?? profile.together;
+      return SwitchListTile(
+        key: const ValueKey('profile-together'),
+        secondary: const Icon(Icons.layers_outlined),
+        title: Text(context.tr('profileTogether')),
+        subtitle: Text(context.tr('profileTogetherHint')),
+        value: current,
+        onChanged: (value) => controller.setProfileTogether(profile.id, value),
+      );
+    },
+  );
+}
+
 /// Renaming, recolouring and removing one profile.
 Future<void> _showProfileActions(
   BuildContext context,
@@ -351,6 +479,8 @@ Future<void> _showProfileActions(
             _showProfileColors(context, controller, profile);
           },
         ),
+        if (controller.profiles.length > 1)
+          _ProfileTogetherSwitch(controller: controller, profile: profile),
         if (!controller.isDemo)
           ListTile(
             key: const ValueKey('profile-remove'),

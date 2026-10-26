@@ -77,6 +77,12 @@ class GlassSymbol {
     CupertinoIcons.person_crop_circle,
   );
 
+  /// Every profile together, where UIKit draws the bar.
+  static const together = GlassSymbol(
+    'person.2.circle.fill',
+    CupertinoIcons.person_2_fill,
+  );
+
   /// A profile's sign where UIKit draws the bar: the first letter of [name]
   /// in a circle. SF Symbols has the letters A to Z, so a Polish letter
   /// stands as its plain form, and any other one as a person.
