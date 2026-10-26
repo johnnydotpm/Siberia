@@ -409,8 +409,9 @@ class _Repository extends AppRepository {
 
   @override
   Future<SchoolMessageContent> fetchMessageContent(
-    SchoolMessage message,
-  ) async {
+    SchoolMessage message, {
+    String? profileId,
+  }) async {
     opened.add(message.id);
     return SchoolMessageContent(
       id: message.id,
@@ -423,5 +424,8 @@ class _Repository extends AppRepository {
 
   // The real one would reach Librus; the Today look-ahead asks for weeks.
   @override
-  Future<List<Lesson>> fetchTimetableWeek(DateTime day) async => const [];
+  Future<List<Lesson>> fetchTimetableWeek(
+    DateTime day, {
+    String? profileId,
+  }) async => const [];
 }

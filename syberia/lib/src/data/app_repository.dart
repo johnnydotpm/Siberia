@@ -101,6 +101,9 @@ class AppRepository {
   /// the settings: after either the app opens on signing in, not the setup.
   static const _onboardingKey = 'onboarding_done_v1';
 
+  /// Whether the app shows every profile together.
+  static const _togetherKey = 'profiles_together_v1';
+
   /// Which event's logo to show at every launch, set in the debug menu.
   static const _brandEventKey = 'debug_brand_event_v1';
   static const _latestReleaseUrl =
@@ -254,6 +257,18 @@ class AppRepository {
     final id = _activeId;
     return id == null ? base : ProfileStore.key(base, id);
   }
+
+  /// The key of [base] for the profile [profileId], or the open one.
+  String _keyOf(String base, String? profileId) =>
+      profileId == null ? _ownKey(base) : ProfileStore.key(base, profileId);
+
+  /// The profile [profileId], or the open one, for what needs an account.
+  SchoolProfile _accountOf(String? profileId) =>
+      profileId == null ? _requireActive() : _profile(profileId);
+
+  /// The demo data of [profileId], or the open demo's.
+  DemoData _demoOf(String? profileId) =>
+      (profileId == null ? null : _demoData[profileId]) ?? _demo!;
 
   /// A version before profiles kept one student: it becomes the first
   /// profile, with its login, its data and its own settings. Each step can
@@ -545,6 +560,18 @@ class AppRepository {
   Future<void> setProfileNotify(String profileId, bool notify) =>
       _changeProfile(profileId, (saved) => saved.copyWith(notify: notify));
 
+  /// Whether the profile [profileId] is in the view of every profile
+  /// together.
+  Future<void> setProfileTogether(String profileId, bool together) =>
+      _changeProfile(profileId, (saved) => saved.copyWith(together: together));
+
+  /// Whether the app showed every profile together when it was left.
+  Future<bool> loadTogether() async =>
+      (await _preferences).getBool(_togetherKey) ?? false;
+
+  Future<void> saveTogether(bool together) async =>
+      (await _preferences).setBool(_togetherKey, together);
+
   /// Changes one profile as it is saved now. The background check may have
   /// changed the profiles meanwhile, and none of that is lost.
   Future<void> _changeProfile(
@@ -662,6 +689,10 @@ class AppRepository {
 
   /// Syncs the profile [profileId], open or not, from its saved data.
   Future<AppSnapshot> syncProfile(String profileId) async {
+    final demo = _demo == null ? null : _demoData[profileId];
+    if (demo != null) {
+      return demo.snapshot = demo.snapshot.copyWith(lastSync: DateTime.now());
+    }
     await _ensureReady();
     final profile = _profile(profileId);
     return _sync(profile, await _storeFor(profile.id).read());
@@ -995,7 +1026,10 @@ class AppRepository {
   Future<void> saveColorMode(AppColorMode mode) async =>
       (await _preferences).setString(_colorModeKey, mode.name);
 
-  Future<GradeAverageSettings> loadGradeAverageSettings() async {
+  /// The grade average settings of the profile [profileId], or the open one.
+  Future<GradeAverageSettings> loadGradeAverageSettings({
+    String? profileId,
+  }) async {
     await _ensureReady();
     final preferences = await _preferences;
     const defaults = GradeAverageSettings();
@@ -1007,10 +1041,11 @@ class AppRepository {
     }
 
     return GradeAverageSettings(
-      plus: modifier(_ownKey(_gradePlusKey), defaults.plus),
-      minus: modifier(_ownKey(_gradeMinusKey), defaults.minus),
+      plus: modifier(_keyOf(_gradePlusKey, profileId), defaults.plus),
+      minus: modifier(_keyOf(_gradeMinusKey, profileId), defaults.minus),
       weighted:
-          preferences.getBool(_ownKey(_gradeWeightedKey)) ?? defaults.weighted,
+          preferences.getBool(_keyOf(_gradeWeightedKey, profileId)) ??
+          defaults.weighted,
     );
   }
 
@@ -1059,24 +1094,36 @@ class AppRepository {
   Future<void> saveGradesView(GradesView view) async =>
       (await _preferences).setString(_gradesViewKey, view.name);
 
-  Future<Map<String, DateTime>> loadDoneHomework() async {
-    if (_demo != null) return _demo!.doneHomework;
+  /// The homework marked done in the profile [profileId], or the open one.
+  Future<Map<String, DateTime>> loadDoneHomework({String? profileId}) async {
+    if (_demo != null) return _demoOf(profileId).doneHomework;
     await _ensureReady();
-    return HomeworkDoneStore.read(await _preferences, key: _homeworkKey);
+    return HomeworkDoneStore.read(
+      await _preferences,
+      key: _homeworkKey(profileId),
+    );
   }
 
-  Future<void> saveDoneHomework(Map<String, DateTime> marks) async {
+  Future<void> saveDoneHomework(
+    Map<String, DateTime> marks, {
+    String? profileId,
+  }) async {
     if (_demo != null) {
-      _demo!.doneHomework = Map.of(marks);
+      _demoOf(profileId).doneHomework = Map.of(marks);
       return;
     }
     await _ensureReady();
-    await HomeworkDoneStore.write(await _preferences, marks, key: _homeworkKey);
+    await HomeworkDoneStore.write(
+      await _preferences,
+      marks,
+      key: _homeworkKey(profileId),
+    );
   }
 
-  /// The open profile's homework marks; signed out, the base key.
-  String get _homeworkKey {
-    final id = _activeId;
+  /// The homework marks of [profileId], or the open profile's; signed out,
+  /// the base key.
+  String _homeworkKey(String? profileId) {
+    final id = profileId ?? _activeId;
     return id == null ? HomeworkDoneStore.key : HomeworkDoneStore.keyFor(id);
   }
 
@@ -1115,20 +1162,35 @@ class AppRepository {
     }
   }
 
-  Future<void> saveSubjectShortNames(Map<String, String> names) async {
+  Future<void> saveSubjectShortNames(
+    Map<String, String> names, {
+    String? profileId,
+  }) async {
     await _ensureReady();
     await (await _preferences).setString(
-      _ownKey(_subjectShortNamesKey),
+      _keyOf(_subjectShortNamesKey, profileId),
       jsonEncode(names),
     );
   }
 
-  Future<void> saveGradeAverageSettings(GradeAverageSettings settings) async {
+  Future<void> saveGradeAverageSettings(
+    GradeAverageSettings settings, {
+    String? profileId,
+  }) async {
     await _ensureReady();
     final preferences = await _preferences;
-    await preferences.setDouble(_ownKey(_gradePlusKey), settings.plus);
-    await preferences.setDouble(_ownKey(_gradeMinusKey), settings.minus);
-    await preferences.setBool(_ownKey(_gradeWeightedKey), settings.weighted);
+    await preferences.setDouble(
+      _keyOf(_gradePlusKey, profileId),
+      settings.plus,
+    );
+    await preferences.setDouble(
+      _keyOf(_gradeMinusKey, profileId),
+      settings.minus,
+    );
+    await preferences.setBool(
+      _keyOf(_gradeWeightedKey, profileId),
+      settings.weighted,
+    );
   }
 
   Future<bool> loadOnboardingDone() async =>
@@ -1212,27 +1274,29 @@ class AppRepository {
     await (await _preferences).setString(_dismissedUpdateKey, version);
   }
 
-  Future<List<MessageRecipient>> fetchMessageRecipients() async {
+  /// Who the profile [profileId], or the open one, can write to.
+  Future<List<MessageRecipient>> fetchMessageRecipients({
+    String? profileId,
+  }) async {
     if (_demo != null) return DemoData.recipients;
     await _ensureReady();
-    return _clientFor(_requireActive()).fetchMessageRecipients();
+    return _clientFor(_accountOf(profileId)).fetchMessageRecipients();
   }
 
-  /// Sends a message and puts it at the top of the saved Sent folder.
+  /// Sends a message from the profile [profileId], or the open one, and
+  /// puts it at the top of its saved Sent folder.
   Future<SchoolMessage> sendMessage({
     required List<MessageRecipient> recipients,
     required String subject,
     required String body,
+    String? profileId,
   }) async {
     if (_demo != null) {
-      return _demo!.sendMessage(
-        recipients: recipients,
-        subject: subject,
-        body: body,
-      );
+      return _demoOf(profileId)
+          .sendMessage(recipients: recipients, subject: subject, body: body);
     }
     await _ensureReady();
-    final profile = _requireActive();
+    final profile = _accountOf(profileId);
     final names = {
       for (final recipient in recipients) recipient.id: recipient.name,
     };
@@ -1255,10 +1319,11 @@ class AppRepository {
     return message;
   }
 
-  Future<List<SchoolMessage>> fetchSentMessages() async {
-    if (_demo != null) return _demo!.snapshot.sentMessages;
+  /// The Sent folder of the profile [profileId], or the open one.
+  Future<List<SchoolMessage>> fetchSentMessages({String? profileId}) async {
+    if (_demo != null) return _demoOf(profileId).snapshot.sentMessages;
     await _ensureReady();
-    final profile = _requireActive();
+    final profile = _accountOf(profileId);
     final sent = await _clientFor(profile).fetchSentMessages();
     await _updateCached(
       profile.id,
@@ -1267,12 +1332,14 @@ class AppRepository {
     return sent;
   }
 
+  /// Opens [message] of the profile [profileId], or the open one.
   Future<SchoolMessageContent> fetchMessageContent(
-    SchoolMessage message,
-  ) async {
-    if (_demo != null) return _demo!.openMessage(message);
+    SchoolMessage message, {
+    String? profileId,
+  }) async {
+    if (_demo != null) return _demoOf(profileId).openMessage(message);
     await _ensureReady();
-    final profile = _requireActive();
+    final profile = _accountOf(profileId);
     final content = await _clientFor(profile).fetchMessageContent(message);
     await _updateCached(
       profile.id,
@@ -1297,22 +1364,27 @@ class AppRepository {
   Future<Uri> fetchMessageAttachmentUrl({
     required String messageId,
     required String attachmentId,
+    String? profileId,
   }) async {
     if (_demo != null) {
       throw UnsupportedError('Demo messages have no attachments.');
     }
     await _ensureReady();
-    return _clientFor(_requireActive()).fetchMessageAttachmentUrl(
+    return _clientFor(_accountOf(profileId)).fetchMessageAttachmentUrl(
       messageId: messageId,
       attachmentId: attachmentId,
     );
   }
 
-  Future<List<Lesson>> fetchTimetableWeek(DateTime day) async {
-    final demo = _demo?.timetableWeek(day);
-    if (demo != null) return demo;
+  /// The lessons of the week of [day] of the profile [profileId], or the
+  /// open one.
+  Future<List<Lesson>> fetchTimetableWeek(
+    DateTime day, {
+    String? profileId,
+  }) async {
+    if (_demo != null) return _demoOf(profileId).timetableWeek(day);
     await _ensureReady();
-    return _clientFor(_requireActive()).fetchTimetableWeek(day);
+    return _clientFor(_accountOf(profileId)).fetchTimetableWeek(day);
   }
 
   AppSnapshot _emptySnapshot(StudentProfile profile) => AppSnapshot(

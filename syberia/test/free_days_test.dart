@@ -204,5 +204,8 @@ class _Repository extends AppRepository {
   Future<AppSnapshot> load() async => data;
 
   @override
-  Future<List<Lesson>> fetchTimetableWeek(DateTime day) async => data.lessons;
+  Future<List<Lesson>> fetchTimetableWeek(
+    DateTime day, {
+    String? profileId,
+  }) async => data.lessons;
 }

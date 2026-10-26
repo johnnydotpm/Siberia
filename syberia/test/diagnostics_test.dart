@@ -37,8 +37,9 @@ class _Adapter implements HttpClientAdapter {
 /// reached.
 class _Unreachable extends AppRepository {
   @override
-  Future<List<MessageRecipient>> fetchMessageRecipients() async =>
-      throw const LibrusException(LibrusErrorCode.networkTimeout);
+  Future<List<MessageRecipient>> fetchMessageRecipients({
+    String? profileId,
+  }) async => throw const LibrusException(LibrusErrorCode.networkTimeout);
 }
 
 void main() {

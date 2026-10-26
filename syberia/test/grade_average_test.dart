@@ -140,5 +140,8 @@ class _SignedInRepository extends AppRepository {
 
   // The real one would reach Librus; the Today look-ahead asks for weeks.
   @override
-  Future<List<Lesson>> fetchTimetableWeek(DateTime day) async => const [];
+  Future<List<Lesson>> fetchTimetableWeek(
+    DateTime day, {
+    String? profileId,
+  }) async => const [];
 }

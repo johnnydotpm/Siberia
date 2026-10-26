@@ -20,6 +20,7 @@ class SchoolProfile {
     this.notify = true,
     this.studentId,
     this.parent = false,
+    this.together = true,
   });
 
   /// Names the profile's own data on the phone. It never changes.
@@ -56,6 +57,9 @@ class SchoolProfile {
   /// Whether it is a parent's account rather than the student's own.
   final bool parent;
 
+  /// Whether it is in the view of every profile together.
+  final bool together;
+
   /// The name to show: the user's own, or the student's.
   String get displayName {
     final own = label?.trim() ?? '';
@@ -80,6 +84,7 @@ class SchoolProfile {
     bool? notify,
     String? studentId,
     bool? parent,
+    bool? together,
   }) => SchoolProfile(
     id: id,
     account: account,
@@ -92,6 +97,7 @@ class SchoolProfile {
     notify: notify ?? this.notify,
     studentId: studentId ?? this.studentId,
     parent: parent ?? this.parent,
+    together: together ?? this.together,
   );
 
   Map<String, Object?> toJson() => {
@@ -106,6 +112,7 @@ class SchoolProfile {
     'notify': notify,
     'studentId': studentId,
     'parent': parent,
+    'together': together,
   };
 
   /// Null for anything that is not a saved profile.
@@ -128,6 +135,7 @@ class SchoolProfile {
       notify: json['notify'] != false,
       studentId: text(json['studentId']),
       parent: json['parent'] == true,
+      together: json['together'] != false,
     );
   }
 
@@ -144,7 +152,8 @@ class SchoolProfile {
       other.slot == slot &&
       other.notify == notify &&
       other.studentId == studentId &&
-      other.parent == parent;
+      other.parent == parent &&
+      other.together == together;
 
   @override
   int get hashCode => Object.hash(
@@ -159,6 +168,7 @@ class SchoolProfile {
     notify,
     studentId,
     parent,
+    together,
   );
 
   @override

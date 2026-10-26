@@ -318,5 +318,8 @@ class _Repository extends AppRepository {
   }
 
   @override
-  Future<List<Lesson>> fetchTimetableWeek(DateTime day) async => const [];
+  Future<List<Lesson>> fetchTimetableWeek(
+    DateTime day, {
+    String? profileId,
+  }) async => const [];
 }

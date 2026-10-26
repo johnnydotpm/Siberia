@@ -206,7 +206,10 @@ class _Repository extends AppRepository {
   Future<AppSnapshot> load() async => data;
 
   @override
-  Future<List<Lesson>> fetchTimetableWeek(DateTime day) async => const [];
+  Future<List<Lesson>> fetchTimetableWeek(
+    DateTime day, {
+    String? profileId,
+  }) async => const [];
 }
 
 class _Presenter implements SchoolNotificationPresenter {

@@ -137,7 +137,30 @@ class FakeProfileClient extends LibrusClient {
   }
 
   @override
-  Future<List<Lesson>> fetchTimetableWeek(DateTime day) async => const [];
+  Future<List<Lesson>> fetchTimetableWeek(DateTime day) async {
+    world.weeks.add(profile!.synergiaLogin ?? '');
+    return const [];
+  }
+
+  @override
+  Future<List<MessageRecipient>> fetchMessageRecipients() async {
+    final login = profile!.synergiaLogin ?? '';
+    return [MessageRecipient(id: 1, name: 'Nauczyciel $login', group: '')];
+  }
+
+  @override
+  Future<SchoolMessageContent> fetchMessageContent(
+    SchoolMessage message,
+  ) async {
+    world.opened.add('${profile!.synergiaLogin}:${message.id}');
+    return SchoolMessageContent(
+      id: message.id,
+      sender: message.sender,
+      subject: message.subject,
+      body: 'Treść',
+      receivedAt: message.receivedAt,
+    );
+  }
 }
 
 class FakeLibrusWorld {
@@ -160,6 +183,12 @@ class FakeLibrusWorld {
     ],
   };
   final fetches = <String>[];
+
+  /// The logins whose timetable weeks were asked for, in turn.
+  final weeks = <String>[];
+
+  /// The messages opened, as "login:message id".
+  final opened = <String>[];
 
   /// Every fetch so far, so each one's data differs.
   var fetchCount = 0;

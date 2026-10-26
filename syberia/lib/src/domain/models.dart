@@ -81,6 +81,7 @@ class Lesson {
     this.originalRoom = '',
     this.movedTo,
     this.lessonNumber,
+    this.source,
   });
   final String id;
   final String subject;
@@ -98,21 +99,30 @@ class Lesson {
   /// The lesson's number in the school day ("3. lekcja"), when Librus gives it.
   final int? lessonNumber;
 
-  Lesson copyWith({DateTime? end}) => Lesson(
-    id: id,
-    subject: subject,
-    teacher: teacher,
-    room: room,
-    start: start,
-    end: end ?? this.end,
-    cancelled: cancelled,
-    substitution: substitution,
-    originalSubject: originalSubject,
-    originalTeacher: originalTeacher,
-    originalRoom: originalRoom,
-    movedTo: movedTo,
-    lessonNumber: lessonNumber,
-  );
+  /// The profile it comes from when every profile is shown together, its
+  /// id then begun with that profile's; null in a single profile's view.
+  final String? source;
+
+  Lesson copyWith({DateTime? end}) => withSource(source, id: id, end: end);
+
+  /// This lesson as [source]'s, under [id].
+  Lesson withSource(String? source, {required String id, DateTime? end}) =>
+      Lesson(
+        id: id,
+        subject: subject,
+        teacher: teacher,
+        room: room,
+        start: start,
+        end: end ?? this.end,
+        cancelled: cancelled,
+        substitution: substitution,
+        originalSubject: originalSubject,
+        originalTeacher: originalTeacher,
+        originalRoom: originalRoom,
+        movedTo: movedTo,
+        lessonNumber: lessonNumber,
+        source: source,
+      );
 }
 
 class Grade {
@@ -126,6 +136,7 @@ class Grade {
     required this.semester,
     this.category = '',
     this.previousGrades = const [],
+    this.source,
   });
   final String id;
   final String subject;
@@ -145,7 +156,19 @@ class Grade {
 
   bool get wasChanged => previousGrades.isNotEmpty;
 
-  Grade copyWith({List<Grade>? previousGrades}) => Grade(
+  /// The profile it comes from when every profile is shown together, its
+  /// id then begun with that profile's; null in a single profile's view.
+  final String? source;
+
+  Grade copyWith({List<Grade>? previousGrades}) =>
+      withSource(source, id: id, previousGrades: previousGrades);
+
+  /// This grade as [source]'s, under [id].
+  Grade withSource(
+    String? source, {
+    required String id,
+    List<Grade>? previousGrades,
+  }) => Grade(
     id: id,
     subject: subject,
     value: value,
@@ -155,6 +178,7 @@ class Grade {
     semester: semester,
     category: category,
     previousGrades: previousGrades ?? this.previousGrades,
+    source: source,
   );
 }
 
@@ -168,6 +192,7 @@ class SchoolEvent {
     this.description = '',
     this.typeLabel = '',
     this.lessonNumber,
+    this.source,
   });
   final String id;
   final String title;
@@ -179,6 +204,23 @@ class SchoolEvent {
 
   /// The lesson of the day a test is written in, when Librus says.
   final int? lessonNumber;
+
+  /// The profile it comes from when every profile is shown together, its
+  /// id then begun with that profile's; null in a single profile's view.
+  final String? source;
+
+  /// This event as [source]'s, under [id].
+  SchoolEvent withSource(String? source, {required String id}) => SchoolEvent(
+    id: id,
+    title: title,
+    subject: subject,
+    date: date,
+    kind: kind,
+    description: description,
+    typeLabel: typeLabel,
+    lessonNumber: lessonNumber,
+    source: source,
+  );
 }
 
 class SchoolMessage {
@@ -193,6 +235,7 @@ class SchoolMessage {
     this.sent = false,
     this.recipients = const [],
     this.recipientRead,
+    this.source,
   });
   final String id;
   final String sender;
@@ -212,6 +255,10 @@ class SchoolMessage {
   /// does not say.
   final bool? recipientRead;
 
+  /// The profile it comes from when every profile is shown together, its
+  /// id then begun with that profile's; null in a single profile's view.
+  final String? source;
+
   SchoolMessage copyWith({
     bool? unread,
     List<String>? recipients,
@@ -227,7 +274,24 @@ class SchoolMessage {
     sent: sent,
     recipients: recipients ?? this.recipients,
     recipientRead: recipientRead ?? this.recipientRead,
+    source: source,
   );
+
+  /// This message as [source]'s, under [id].
+  SchoolMessage withSource(String? source, {required String id}) =>
+      SchoolMessage(
+        id: id,
+        sender: sender,
+        subject: subject,
+        preview: preview,
+        receivedAt: receivedAt,
+        unread: unread,
+        hasAttachments: hasAttachments,
+        sent: sent,
+        recipients: recipients,
+        recipientRead: recipientRead,
+        source: source,
+      );
 }
 
 class SchoolMessageContent {
@@ -496,6 +560,7 @@ class AttendanceRecord {
     required this.symbol,
     required this.kind,
     this.semester = 1,
+    this.source,
   });
   final String id;
   final DateTime date;
@@ -505,8 +570,27 @@ class AttendanceRecord {
   final String symbol;
   final AttendanceKind kind;
   final int semester;
+
+  /// The profile it comes from when every profile is shown together, its
+  /// id then begun with that profile's; null in a single profile's view.
+  final String? source;
+
   bool get isPresence => kind.countsAsPresence;
   bool get isExcused => kind.isExcused;
+
+  /// This record as [source]'s, under [id].
+  AttendanceRecord withSource(String? source, {required String id}) =>
+      AttendanceRecord(
+        id: id,
+        date: date,
+        lessonNumber: lessonNumber,
+        subject: subject,
+        type: type,
+        symbol: symbol,
+        kind: kind,
+        semester: semester,
+        source: source,
+      );
 }
 
 /// What gives a day off.
@@ -535,6 +619,7 @@ class FreeDay {
     this.lessonTo,
     this.timeFrom,
     this.timeTo,
+    this.source,
   });
 
   final String id;
@@ -559,6 +644,25 @@ class FreeDay {
   final int? timeFrom;
   final int? timeTo;
 
+  /// The profile it comes from when every profile is shown together, its
+  /// id then begun with that profile's; null in a single profile's view.
+  final String? source;
+
+  /// These days as [source]'s, under [id].
+  FreeDay withSource(String? source, {required String id}) => FreeDay(
+    id: id,
+    kind: kind,
+    name: name,
+    from: from,
+    to: to,
+    teacher: teacher,
+    lessonFrom: lessonFrom,
+    lessonTo: lessonTo,
+    timeFrom: timeFrom,
+    timeTo: timeTo,
+    source: source,
+  );
+
   /// Whether [day] is one of these days.
   bool covers(DateTime day) {
     final date = DateTime(day.year, day.month, day.day);
@@ -570,9 +674,11 @@ class FreeDay {
   bool get wholeDays =>
       kind != FreeDayKind.teacher && lessonFrom == null && lessonTo == null;
 
-  /// Whether this is [lesson]'s teacher being absent while it is on.
+  /// Whether this is [lesson]'s teacher being absent while it is on. A
+  /// teacher of another profile's school is someone else.
   bool absentFor(Lesson lesson) {
     if (kind != FreeDayKind.teacher ||
+        lesson.source != source ||
         teacher.isEmpty ||
         lesson.teacher != teacher ||
         !covers(lesson.start)) {
@@ -594,6 +700,7 @@ class SchoolAnnouncement {
     required this.createdAt,
     required this.validUntil,
     required this.read,
+    this.source,
   });
   final String id;
   final String title;
@@ -602,6 +709,23 @@ class SchoolAnnouncement {
   final DateTime createdAt;
   final DateTime? validUntil;
   final bool read;
+
+  /// The profile it comes from when every profile is shown together, its
+  /// id then begun with that profile's; null in a single profile's view.
+  final String? source;
+
+  /// This announcement as [source]'s, under [id].
+  SchoolAnnouncement withSource(String? source, {required String id}) =>
+      SchoolAnnouncement(
+        id: id,
+        title: title,
+        content: content,
+        author: author,
+        createdAt: createdAt,
+        validUntil: validUntil,
+        read: read,
+        source: source,
+      );
 }
 
 enum NoticeTone { positive, neutral, negative }
@@ -614,6 +738,7 @@ class StudentNotice {
     required this.teacher,
     required this.date,
     required this.tone,
+    this.source,
   });
   final String id;
   final String text;
@@ -621,6 +746,22 @@ class StudentNotice {
   final String teacher;
   final DateTime date;
   final NoticeTone tone;
+
+  /// The profile it comes from when every profile is shown together, its
+  /// id then begun with that profile's; null in a single profile's view.
+  final String? source;
+
+  /// This notice as [source]'s, under [id].
+  StudentNotice withSource(String? source, {required String id}) =>
+      StudentNotice(
+        id: id,
+        text: text,
+        category: category,
+        teacher: teacher,
+        date: date,
+        tone: tone,
+        source: source,
+      );
 }
 
 class AppSnapshot {

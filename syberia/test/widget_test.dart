@@ -878,8 +878,9 @@ class _TestRepository extends AppRepository {
 
   @override
   Future<SchoolMessageContent> fetchMessageContent(
-    SchoolMessage message,
-  ) async => SchoolMessageContent(
+    SchoolMessage message, {
+    String? profileId,
+  }) async => SchoolMessageContent(
     id: message.id,
     sender: message.sender,
     subject: message.subject,
@@ -894,7 +895,10 @@ class _TestRepository extends AppRepository {
 
   // The real one would reach Librus; the Today look-ahead asks for weeks.
   @override
-  Future<List<Lesson>> fetchTimetableWeek(DateTime day) async => const [];
+  Future<List<Lesson>> fetchTimetableWeek(
+    DateTime day, {
+    String? profileId,
+  }) async => const [];
 }
 
 class _SlowSyncRepository extends _TestRepository {
@@ -913,7 +917,10 @@ class _WeekAheadRepository extends _TestRepository {
   final requestedDays = <DateTime>[];
 
   @override
-  Future<List<Lesson>> fetchTimetableWeek(DateTime day) async {
+  Future<List<Lesson>> fetchTimetableWeek(
+    DateTime day, {
+    String? profileId,
+  }) async {
     weekRequests++;
     requestedDays.add(day);
     final start = DateTime(day.year, day.month, day.day, 8);

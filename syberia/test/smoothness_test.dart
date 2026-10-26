@@ -640,17 +640,20 @@ class _Repository extends AppRepository {
   Future<AppSnapshot> sync(AppSnapshot current) async => data = next ?? current;
 
   @override
-  Future<List<Lesson>> fetchTimetableWeek(DateTime day) {
+  Future<List<Lesson>> fetchTimetableWeek(DateTime day, {String? profileId}) {
     fetched.add(day);
     return week?.future ?? Future.value(weekLessons);
   }
 
   @override
-  Future<List<SchoolMessage>> fetchSentMessages() =>
+  Future<List<SchoolMessage>> fetchSentMessages({String? profileId}) =>
       sent?.future ?? Future.value(const []);
 
   @override
-  Future<SchoolMessageContent> fetchMessageContent(SchoolMessage message) =>
+  Future<SchoolMessageContent> fetchMessageContent(
+    SchoolMessage message, {
+    String? profileId,
+  }) =>
       content?.future ??
       Future.value(
         SchoolMessageContent(
