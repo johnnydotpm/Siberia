@@ -27,6 +27,7 @@ import '../domain/models.dart';
 import '../domain/profiles.dart';
 import '../domain/sync_news.dart';
 import '../home_widget.dart';
+import '../network_vpn.dart';
 import '../l10n/app_localizations.dart';
 import '../school_notifications.dart';
 import '../state/app_controller.dart';

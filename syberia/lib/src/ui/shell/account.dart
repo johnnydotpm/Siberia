@@ -854,25 +854,13 @@ class _LoginState extends State<_Login> {
 
   List<Widget> _fields(BuildContext context) => [
     Text(context.tr('loginHelp')),
-    const SizedBox(height: 12),
-    Card(
-      color: Theme.of(context).colorScheme.secondaryContainer,
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Icon(
-              Icons.vpn_lock_rounded,
-              color: Theme.of(context).colorScheme.onSecondaryContainer,
-            ),
-            const SizedBox(width: 12),
-            Expanded(child: Text(context.tr('vpnWarning'))),
-          ],
-        ),
-      ),
-    ),
     const SizedBox(height: 20),
+    // Only with a VPN on; asked again after a failed sign-in.
+    _VpnHint(
+      text: context.tr('vpnOnSignIn'),
+      error: widget.controller.error,
+      padding: const EdgeInsets.only(bottom: 20),
+    ),
     TextFormField(
       controller: email,
       keyboardType: TextInputType.emailAddress,

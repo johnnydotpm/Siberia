@@ -151,6 +151,91 @@ class _InfoCard extends StatelessWidget {
   );
 }
 
+/// Says that a VPN is on and Librus sometimes blocks VPNs, in [text], only
+/// while one is. It asks when it appears and again whenever [error]
+/// changes; nothing keeps asking in between.
+class _VpnHint extends StatefulWidget {
+  const _VpnHint({
+    required this.text,
+    this.error,
+    this.padding = EdgeInsets.zero,
+    super.key,
+  });
+
+  final String text;
+  final Object? error;
+
+  /// Around the card, while it shows.
+  final EdgeInsetsGeometry padding;
+
+  @override
+  State<_VpnHint> createState() => _VpnHintState();
+}
+
+class _VpnHintState extends State<_VpnHint> {
+  bool _on = false;
+  int _asked = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    unawaited(_ask());
+  }
+
+  @override
+  void didUpdateWidget(_VpnHint oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!identical(oldWidget.error, widget.error)) unawaited(_ask());
+  }
+
+  Future<void> _ask() async {
+    final asked = ++_asked;
+    final on = await Vpn.isActive() == true;
+    if (!mounted || asked != _asked || on == _on) return;
+    setState(() => _on = on);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return AnimatedSize(
+      duration: MediaQuery.disableAnimationsOf(context)
+          ? Duration.zero
+          : const Duration(milliseconds: 220),
+      curve: Curves.easeOutCubic,
+      alignment: AlignmentDirectional.topStart,
+      child: !_on
+          ? const SizedBox(width: double.infinity)
+          : Padding(
+              padding: widget.padding,
+              child: Card(
+                key: const ValueKey('vpn-hint'),
+                color: colors.secondaryContainer,
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Icon(
+                        Icons.vpn_lock_rounded,
+                        color: colors.onSecondaryContainer,
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          widget.text,
+                          style: TextStyle(color: colors.onSecondaryContainer),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+    );
+  }
+}
+
 /// The app's controller, for widgets deep in a page that act on it. Pages
 /// rebuild when it changes, so this never needs to tell them.
 class _ControllerScope extends InheritedWidget {

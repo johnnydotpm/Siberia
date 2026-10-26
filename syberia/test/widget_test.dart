@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syberia/src/app.dart';
 import 'package:syberia/src/data/app_repository.dart';
+import 'package:syberia/src/network_vpn.dart';
 import 'package:syberia/src/domain/models.dart';
 import 'package:syberia/src/domain/librus_error.dart';
 import 'package:syberia/src/data/snapshot_cache.dart';
@@ -103,6 +104,14 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Connect to Librus'), findsOneWidget);
     expect(find.textContaining('demonstr'), findsNothing);
+    await tester.tap(find.text('Connect Librus account'));
+    await tester.pumpAndSettle();
+    // A VPN is mentioned only while one is on: none yet.
+    expect(find.textContaining('VPN'), findsNothing);
+    Navigator.of(tester.element(find.byType(TextFormField).first)).pop();
+    await tester.pumpAndSettle();
+
+    Vpn.check = () async => true;
     await tester.tap(find.text('Connect Librus account'));
     await tester.pumpAndSettle();
     expect(find.textContaining('VPN'), findsOneWidget);

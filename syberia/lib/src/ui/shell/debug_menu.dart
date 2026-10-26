@@ -48,6 +48,7 @@ class _DebugMenuState extends State<_DebugMenu> {
   late Future<Map<String, String>> _about = _readAbout();
   late Future<List<String>> _reminders = widget.controller.scheduledReminders();
   late BrandEvent _preview = BrandEvents.override ?? BrandEvents.today();
+  final Future<bool?> _vpn = Vpn.phone();
   bool _checking = false;
   String? _checked;
 
@@ -302,6 +303,29 @@ class _DebugMenuState extends State<_DebugMenu> {
             },
             icon: const Icon(Icons.widgets_rounded),
             label: const Text('Refresh widgets'),
+          ),
+          const SizedBox(height: 24),
+          const _GroupLabel('VPN', accent: true),
+          FutureBuilder(
+            future: _vpn,
+            builder: (context, vpn) => Text(
+              'The phone says: ${switch (vpn.data) {
+                true => 'a VPN is on',
+                false => 'no VPN',
+                null => 'cannot tell',
+              }}.',
+            ),
+          ),
+          SwitchListTile(
+            key: const ValueKey('debug-simulate-vpn'),
+            contentPadding: EdgeInsets.zero,
+            title: const Text('Simulate a VPN'),
+            subtitle: const Text(
+              'The sign-in and error hints show as with one on, until the '
+              'app is closed.',
+            ),
+            value: Vpn.simulated,
+            onChanged: (on) => setState(() => Vpn.simulated = on),
           ),
           const SizedBox(height: 24),
           const _GroupLabel('Logos and animations', accent: true),

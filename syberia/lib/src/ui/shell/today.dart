@@ -137,6 +137,14 @@ class _TodayState extends State<_Today> {
                     color: Theme.of(context).colorScheme.error,
                   ),
                 ),
+              // A VPN may be why Librus did not answer: said only with one on.
+              if (controller.error case final error? when Vpn.mayCause(error))
+                _VpnHint(
+                  key: const ValueKey('today-vpn'),
+                  text: context.tr('vpnOnError'),
+                  error: error,
+                  padding: const EdgeInsets.only(bottom: _Space.card),
+                ),
             ],
           ),
           _AnimatedColumn(spacing: _Space.section, children: blocks),
