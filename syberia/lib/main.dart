@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 
 import 'src/background_notifications.dart';
 import 'src/data/app_repository.dart';
+import 'src/debug/diagnostics.dart';
 import 'src/frame_rate.dart';
 import 'src/home_widget.dart';
 import 'src/school_notifications.dart';
@@ -16,6 +17,7 @@ import 'src/ui/glass/glass_platform.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  Diagnostics.instance.watchUncaught();
   if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
     FrameRateBooster().start();
   }

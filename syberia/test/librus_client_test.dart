@@ -11,6 +11,7 @@ import 'package:syberia/src/data/librus/librus_client.dart';
 import 'package:syberia/src/data/librus/librus_logins.dart';
 import 'package:syberia/src/data/librus/reference_cache.dart';
 import 'package:syberia/src/data/snapshot_cache.dart';
+import 'package:syberia/src/debug/diagnostics.dart';
 import 'package:syberia/src/domain/librus_error.dart';
 import 'package:syberia/src/domain/models.dart';
 
@@ -159,6 +160,41 @@ void main() {
       expect(subjects(), 2, reason: 'old lists are fetched again');
     },
   );
+
+  test('the request log of a sign-in and a sync shows where each request '
+      'went, and nothing private', () async {
+    Diagnostics.instance.clear();
+    final dio = Dio()..httpClientAdapter = _FixtureAdapter(_successfulResponse);
+    final client = LibrusClient(
+      dio: dio,
+      secureStorage: const FlutterSecureStorage(),
+    );
+    await client.loginAndFetch(
+      username: 'parent@example.com',
+      password: 'secret',
+    );
+    final requests = Diagnostics.instance.requests;
+    expect(requests, isNotEmpty);
+    expect(
+      requests.map((request) => request.host).toSet(),
+      containsAll(['portal.librus.pl', 'api.librus.pl']),
+    );
+    final report = Diagnostics.instance.report(
+      about: const {},
+      private: const ['Uczeń Testowy'],
+      requests: Diagnostics.requestLimit,
+    );
+    for (final secret in [
+      'secret',
+      'parent@example.com',
+      'parent',
+      'test-student-login',
+      '?',
+      'Uczeń Testowy',
+    ]) {
+      expect(report, isNot(contains(secret)), reason: secret);
+    }
+  });
 
   test('uses Portal refresh flow and maps Librus modules', () async {
     final dio = Dio()..httpClientAdapter = _FixtureAdapter(_successfulResponse);

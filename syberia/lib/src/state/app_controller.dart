@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 
 import '../app_build_info.dart';
 import '../data/app_repository.dart';
+import '../debug/diagnostics.dart';
 import '../domain/librus_error.dart';
 import '../domain/models.dart';
 import '../domain/profiles.dart';
@@ -604,12 +605,18 @@ class AppController extends ChangeNotifier {
     await _repository.dismissUpdatesForVersion(AppBuildInfo.version);
   }
 
+  /// What the screens show for [error], noted for the debug menu too.
+  AppError _failed(Object error, StackTrace stack, String doing) {
+    Diagnostics.instance.recordError(error, stack, source: doing);
+    return AppError.from(error);
+  }
+
   Future<List<MessageRecipient>> fetchMessageRecipients() async {
     _error = null;
     try {
       return await _repository.fetchMessageRecipients();
-    } on Object catch (error) {
-      _error = AppError.from(error);
+    } on Object catch (error, stack) {
+      _error = _failed(error, stack, 'recipients');
       notifyListeners();
       rethrow;
     }
@@ -633,8 +640,8 @@ class AppController extends ChangeNotifier {
         _snapshot = snapshot.withSent(message);
         notifyListeners();
       }
-    } on Object catch (error) {
-      _error = AppError.from(error);
+    } on Object catch (error, stack) {
+      _error = _failed(error, stack, 'send');
       notifyListeners();
       rethrow;
     }
@@ -664,9 +671,9 @@ class AppController extends ChangeNotifier {
         _snapshot = snapshot.copyWith(sentMessages: sent);
         _sentMessagesLoadedAt = DateTime.now();
       }
-    } on Object catch (error) {
+    } on Object catch (error, stack) {
       if (snapshot.profile.id == profileId) {
-        _sentMessagesError = AppError.from(error);
+        _sentMessagesError = _failed(error, stack, 'sent messages');
       }
     } finally {
       _loadingSentMessages = false;
@@ -692,8 +699,8 @@ class AppController extends ChangeNotifier {
         notifyListeners();
       }
       return content;
-    } on Object catch (error) {
-      _error = AppError.from(error);
+    } on Object catch (error, stack) {
+      _error = _failed(error, stack, 'message');
       notifyListeners();
       rethrow;
     }
@@ -726,6 +733,7 @@ class AppController extends ChangeNotifier {
         }
       }
       if (firstError != null) {
+        // Each failure is already in the diagnostics, from opening it.
         _error = AppError.from(firstError);
         throw firstError;
       }
@@ -772,8 +780,8 @@ class AppController extends ChangeNotifier {
       notifyListeners();
       _updateHomeWidget();
       return lessons;
-    } on Object catch (error) {
-      _error = AppError.from(error);
+    } on Object catch (error, stack) {
+      _error = _failed(error, stack, 'timetable');
       notifyListeners();
       rethrow;
     }
@@ -936,8 +944,8 @@ class AppController extends ChangeNotifier {
     try {
       final added = await _addAndOpen([student], student.account);
       return added.isEmpty ? null : added.first;
-    } on Object catch (error) {
-      _error = AppError.from(error);
+    } on Object catch (error, stack) {
+      _error = _failed(error, stack, 'add student');
       return null;
     } finally {
       _signingIn = false;
@@ -1003,8 +1011,8 @@ class AppController extends ChangeNotifier {
       unawaited(configureBackground());
       unawaited(requestNotificationPermissionIfEnabled());
       return true;
-    } on Object catch (error) {
-      _error = AppError.from(error);
+    } on Object catch (error, stack) {
+      _error = _failed(error, stack, 'sign-in');
       return false;
     } finally {
       _signingIn = false;
@@ -1143,8 +1151,8 @@ class AppController extends ChangeNotifier {
       _syncNews = news == null || news.isEmpty ? null : news;
       await _recordNotifications();
       _updateHomeWidget();
-    } on Object catch (error) {
-      if (_syncKey == key) _error = AppError.from(error);
+    } on Object catch (error, stack) {
+      if (_syncKey == key) _error = _failed(error, stack, 'sync');
     } finally {
       _syncingProfiles.remove(key);
       _profiles = _repository.profiles;

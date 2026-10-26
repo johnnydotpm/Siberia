@@ -7,6 +7,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:xml/xml.dart';
 import 'package:html/parser.dart' as html_parser;
 
+import '../../debug/diagnostics.dart';
 import '../../domain/librus_error.dart';
 import '../../domain/models.dart';
 import '../../domain/stable_hash.dart';
@@ -43,7 +44,10 @@ class LibrusClient {
        _clock = clock ?? DateTime.now,
        _referenceCache = referenceCache ?? LibrusReferenceCache(),
        _logins =
-           logins ?? LibrusLogins(secureStorage: secureStorage, clock: clock);
+           logins ?? LibrusLogins(secureStorage: secureStorage, clock: clock) {
+    // Every request goes in the debug menu's log, without its query.
+    Diagnostics.instance.watch(_dio);
+  }
 
   static const _portalBase = 'https://portal.librus.pl';
   static const _portalApi = '$_portalBase/api/v3';
