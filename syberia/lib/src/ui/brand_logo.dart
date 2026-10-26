@@ -1,28 +1,69 @@
 import 'package:flutter/material.dart';
 
-/// The supplied light and dark marks, also used by the native launch screens.
+import 'brand/brand_events.dart';
+import 'brand/brand_mark.dart';
+import 'brand/brand_motion.dart';
+import 'brand/brand_wordmark.dart';
+
+export 'brand/brand_events.dart';
+export 'brand/brand_motion.dart';
+
+/// The book mark, drawn from the supplied SVG; on the days the logo dresses
+/// up, that day's, resting. The PNGs it was drawn from stay for the native
+/// launch screens.
 class AppLogo extends StatelessWidget {
-  const AppLogo({this.size = 84, super.key});
+  const AppLogo({this.size = 84, this.event, super.key});
   final double size;
 
+  /// The event to show; the nearest [BrandEventScope]'s when null.
+  final BrandEvent? event;
+
   @override
-  Widget build(BuildContext context) => Image.asset(
-    Theme.of(context).brightness == Brightness.dark
-        ? 'assets/branding/logo-dark.png'
-        : 'assets/branding/logo-light.png',
-    width: size,
-    height: size,
-    semanticLabel: 'SiberiaGB',
-  );
+  Widget build(BuildContext context) {
+    final shown = event ?? BrandEventScope.of(context);
+    return Semantics(
+      label: 'SiberiaGB',
+      image: true,
+      child: CustomPaint(
+        size: Size.square(size),
+        painter: BrandMarkPainter(
+          event: shown,
+          phase: LogoMotion.of(shown).rest,
+          dark: Theme.of(context).brightness == Brightness.dark,
+        ),
+      ),
+    );
+  }
 }
 
 /// The supplied Unbounded wordmark, shared by startup and app branding.
 class BrandWordmark extends StatelessWidget {
-  const BrandWordmark({this.fontSize = 56, super.key});
+  const BrandWordmark({
+    this.fontSize = 56,
+    this.event,
+    this.accessories = false,
+    super.key,
+  });
   final double fontSize;
+
+  /// The event to show; the nearest [BrandEventScope]'s when null.
+  final BrandEvent? event;
+
+  /// Whether the event's detail by the name is drawn, as on the large
+  /// wordmarks; a small one in a menu has the colours only.
+  final bool accessories;
 
   @override
   Widget build(BuildContext context) {
+    final shown = event ?? BrandEventScope.of(context);
+    if (shown != BrandEvent.ordinary) {
+      return EventWordmark(
+        event: shown,
+        phase: LogoMotion.of(shown).rest,
+        fontSize: fontSize,
+        accessories: accessories,
+      );
+    }
     final dark = Theme.of(context).brightness == Brightness.dark;
     return Text.rich(
       TextSpan(
@@ -70,12 +111,18 @@ Color startupBackground(Brightness brightness, {bool amoled = false}) =>
 class BrandLogoFrame extends StatelessWidget {
   const BrandLogoFrame({
     required this.phase,
+    this.event,
     this.iconKey,
     this.wordKey,
     super.key,
   });
 
   final double phase;
+
+  /// The event whose animation this is a frame of; the nearest
+  /// [BrandEventScope]'s when null. The ordinary one is the supplied
+  /// animation, as it always was.
+  final BrandEvent? event;
 
   /// On the mark and the wordmark, to find where they are drawn.
   final GlobalKey? iconKey;
@@ -134,6 +181,8 @@ class BrandLogoFrame extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final shown = event ?? BrandEventScope.of(context);
+    if (shown != BrandEvent.ordinary) return _eventFrame(context, shown);
     final word = BrandLogoFrame.word(phase);
     return Semantics(
       label: 'SiberiaGB',
@@ -149,7 +198,11 @@ class BrandLogoFrame extends StatelessWidget {
                 opacity: iconOpacity(phase),
                 child: Transform.scale(
                   scale: iconScale(phase),
-                  child: AppLogo(key: iconKey, size: 128),
+                  child: AppLogo(
+                    key: iconKey,
+                    size: 128,
+                    event: BrandEvent.ordinary,
+                  ),
                 ),
               ),
               const SizedBox(width: 28),
@@ -164,7 +217,10 @@ class BrandLogoFrame extends StatelessWidget {
                       child: Opacity(
                         key: const ValueKey('startup-word-opacity'),
                         opacity: word.clamp(0.0, 1.0),
-                        child: BrandWordmark(key: wordKey),
+                        child: BrandWordmark(
+                          key: wordKey,
+                          event: BrandEvent.ordinary,
+                        ),
                       ),
                     ),
                   ),
@@ -176,6 +232,43 @@ class BrandLogoFrame extends StatelessWidget {
       ),
     );
   }
+
+  /// A frame of an event's animation: the mark and the wordmark painted as
+  /// in the event's mockup, at the startup animation's size.
+  Widget _eventFrame(BuildContext context, BrandEvent shown) => Semantics(
+    label: 'SiberiaGB',
+    image: true,
+    child: ExcludeSemantics(
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox.square(
+              key: iconKey,
+              dimension: 128,
+              child: CustomPaint(
+                key: const ValueKey('brand-event-mark'),
+                painter: BrandMarkPainter(
+                  event: shown,
+                  phase: phase,
+                  dark: Theme.of(context).brightness == Brightness.dark,
+                ),
+              ),
+            ),
+            const SizedBox(width: 28),
+            EventWordmark(
+              key: wordKey,
+              event: shown,
+              phase: phase,
+              accessories: true,
+              clip: true,
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
 }
 
 /// Tells how long an [AnimatedBrandLogo] has been going, so the setup can
@@ -190,9 +283,12 @@ class BrandLogoTime {
 /// for as long as the app loads. No web view, network fonts or external
 /// scripts are needed at launch.
 class AnimatedBrandLogo extends StatefulWidget {
-  const AnimatedBrandLogo({this.time, super.key});
+  const AnimatedBrandLogo({this.time, this.event, super.key});
 
   final BrandLogoTime? time;
+
+  /// The event to animate; the nearest [BrandEventScope]'s when null.
+  final BrandEvent? event;
 
   @override
   State<AnimatedBrandLogo> createState() => _AnimatedBrandLogoState();
@@ -205,6 +301,7 @@ class _AnimatedBrandLogoState extends State<AnimatedBrandLogo>
     duration: BrandLogoFrame.cycle,
   );
   bool? _reduceMotion;
+  BrandEvent? _event;
 
   Duration _elapsed() => _animation.lastElapsedDuration ?? Duration.zero;
 
@@ -217,12 +314,28 @@ class _AnimatedBrandLogoState extends State<AnimatedBrandLogo>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    _follow();
+  }
+
+  @override
+  void didUpdateWidget(AnimatedBrandLogo oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _follow();
+  }
+
+  /// Plays the shown event's animation, or holds its resting frame with
+  /// less motion.
+  void _follow() {
     final reduce = MediaQuery.disableAnimationsOf(context);
-    if (_reduceMotion == reduce) return;
+    final event = widget.event ?? BrandEventScope.of(context);
+    if (_reduceMotion == reduce && _event == event) return;
     _reduceMotion = reduce;
+    _event = event;
+    final motion = LogoMotion.of(event);
+    _animation.duration = motion.cycle;
     if (reduce) {
       _animation.stop();
-      _animation.value = 0.5;
+      _animation.value = motion.rest;
     } else {
       _animation.repeat();
     }
@@ -238,6 +351,7 @@ class _AnimatedBrandLogoState extends State<AnimatedBrandLogo>
   @override
   Widget build(BuildContext context) => AnimatedBuilder(
     animation: _animation,
-    builder: (context, _) => BrandLogoFrame(phase: _animation.value),
+    builder: (context, _) =>
+        BrandLogoFrame(phase: _animation.value, event: _event),
   );
 }

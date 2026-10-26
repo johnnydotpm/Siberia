@@ -32,7 +32,7 @@ class _LoginRequired extends StatelessWidget {
                 const SizedBox(height: 24),
                 const FittedBox(
                   fit: BoxFit.scaleDown,
-                  child: BrandWordmark(fontSize: 34),
+                  child: BrandWordmark(fontSize: 34, accessories: true),
                 ),
                 const SizedBox(height: 12),
                 Text(

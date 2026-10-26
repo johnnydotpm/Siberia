@@ -179,6 +179,7 @@ class _OnboardingState extends State<_Onboarding>
         if (_intro case final intro?)
           _SetupIntro(
             key: const ValueKey('setup-intro'),
+            event: BrandEventScope.of(context),
             from: intro,
             target: _logoKey,
             background: startupBackground(

@@ -100,6 +100,9 @@ class AppRepository {
   /// Whether the first setup is done. It outlives signing out and resetting
   /// the settings: after either the app opens on signing in, not the setup.
   static const _onboardingKey = 'onboarding_done_v1';
+
+  /// Which event's logo to show at every launch, set in the debug menu.
+  static const _brandEventKey = 'debug_brand_event_v1';
   static const _latestReleaseUrl =
       'https://api.github.com/repos/johnnydotpm/Siberia/releases/latest';
 
@@ -947,6 +950,19 @@ class AppRepository {
 
   Future<String?> loadLocale() async =>
       (await _preferences).getString(_localeKey);
+
+  /// The logo event chosen in the debug menu for every launch, by name.
+  Future<String?> loadBrandEventOverride() async =>
+      (await _preferences).getString(_brandEventKey);
+
+  Future<void> saveBrandEventOverride(String? name) async {
+    final preferences = await _preferences;
+    if (name == null) {
+      await preferences.remove(_brandEventKey);
+    } else {
+      await preferences.setString(_brandEventKey, name);
+    }
+  }
 
   Future<void> saveLocale(String? languageCode) async {
     final preferences = await _preferences;

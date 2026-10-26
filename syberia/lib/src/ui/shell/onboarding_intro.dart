@@ -3,9 +3,11 @@ part of '../app_shell.dart';
 /// The startup animation carried on in the setup until the whole logo has
 /// been shown, however fast the app loaded. Then the wordmark leaves, the
 /// mark flies to its place on the first step, and the page comes in from
-/// beneath. A tap starts the flight at once.
+/// beneath. A tap starts the flight at once. On a holiday it is that day's
+/// animation.
 class _SetupIntro extends StatefulWidget {
   const _SetupIntro({
+    required this.event,
     required this.from,
     required this.target,
     required this.background,
@@ -13,6 +15,9 @@ class _SetupIntro extends StatefulWidget {
     required this.onDone,
     super.key,
   });
+
+  /// Whose animation it is: the day's, as on the startup screen.
+  final BrandEvent event;
 
   /// How far the animation had got on the startup screen.
   final Duration from;
@@ -40,15 +45,21 @@ typedef _FlightPath = ({
   Rect? wordHome,
   double word,
   Rect target,
+  Rect? wordRect,
+  double phase,
 });
 
 class _SetupIntroState extends State<_SetupIntro>
     with TickerProviderStateMixin {
   final _icon = GlobalKey();
   final _word = GlobalKey();
+  // Kept from the start, so a new day at midnight cannot change the
+  // animation halfway.
+  late final BrandEvent _event = widget.event;
+  late final LogoMotion _motion = LogoMotion.of(_event);
   late final AnimationController _logo = AnimationController(
     vsync: this,
-    duration: BrandLogoFrame.cycle,
+    duration: _motion.cycle,
   );
   late final AnimationController _flight =
       AnimationController(
@@ -71,25 +82,19 @@ class _SetupIntroState extends State<_SetupIntro>
   @override
   void initState() {
     super.initState();
-    final cycle = BrandLogoFrame.cycle.inMicroseconds;
+    final cycle = _motion.cycle.inMicroseconds;
     final elapsed = widget.from.inMicroseconds;
     final phase = (elapsed % cycle) / cycle;
     _logo.value = phase;
-    if (elapsed < cycle * BrandLogoFrame.wholeEnd) {
+    if (elapsed < cycle * _motion.wholeEnd) {
       // On to the end of the rest, so the whole logo is seen in full.
-      unawaited(_playTo(BrandLogoFrame.wholeEnd));
-    } else if (phase >= BrandLogoFrame.iconStart &&
-        phase <= BrandLogoFrame.iconEnd) {
+      unawaited(_playTo(_motion.wholeEnd));
+    } else if (phase >= _motion.iconStart && phase <= _motion.iconEnd) {
       // A slow start showed it already, and the mark is still whole.
       WidgetsBinding.instance.addPostFrameCallback((_) => _fly());
     } else {
       // Round to where the mark is whole again.
-      unawaited(
-        _playTo(
-          BrandLogoFrame.iconStart,
-          round: phase > BrandLogoFrame.iconStart,
-        ),
-      );
+      unawaited(_playTo(_motion.iconStart, round: phase > _motion.iconStart));
     }
   }
 
@@ -130,6 +135,23 @@ class _SetupIntroState extends State<_SetupIntro>
       return;
     }
     final phase = _logo.value;
+    if (_event != BrandEvent.ordinary) {
+      // The frame the flight starts from stays as it was: the name fades
+      // away, the mark settles into its resting look as it lands.
+      setState(
+        () => _path = (
+          icon: icon,
+          iconOpacity: 1,
+          wordHome: null,
+          word: 1,
+          target: target,
+          wordRect: word,
+          phase: phase,
+        ),
+      );
+      unawaited(_flight.forward());
+      return;
+    }
     final out = BrandLogoFrame.word(phase);
     setState(
       () => _path = (
@@ -140,6 +162,8 @@ class _SetupIntroState extends State<_SetupIntro>
         wordHome: word?.shift(Offset(1.1 * (1 - out) * word.width, 0)),
         word: out,
         target: target,
+        wordRect: null,
+        phase: phase,
       ),
     );
     unawaited(_flight.forward());
@@ -178,6 +202,7 @@ class _SetupIntroState extends State<_SetupIntro>
                         animation: _logo,
                         builder: (context, _) => BrandLogoFrame(
                           phase: _logo.value,
+                          event: _event,
                           iconKey: _icon,
                           wordKey: _word,
                         ),
@@ -191,6 +216,7 @@ class _SetupIntroState extends State<_SetupIntro>
         ),
       );
     }
+    if (_event != BrandEvent.ordinary) return _eventFlight(path);
     return IgnorePointer(
       child: AnimatedBuilder(
         key: const ValueKey('setup-intro-flight'),
@@ -242,6 +268,96 @@ class _SetupIntroState extends State<_SetupIntro>
                 child: Opacity(
                   opacity: iconOpacity.clamp(0.0, 1.0),
                   child: const FittedBox(child: AppLogo()),
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  /// The flight of an event's logo: the name, as it was when the flight
+  /// began, fades away to the left; the mark flies, turning into its
+  /// resting look as it lands, so it lands as the first step shows it.
+  Widget _eventFlight(_FlightPath path) {
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    final rest = _motion.rest;
+    return IgnorePointer(
+      child: AnimatedBuilder(
+        key: const ValueKey('setup-intro-flight'),
+        animation: _flight,
+        builder: (context, _) {
+          final t = _flight.value;
+          final fade = const Interval(
+            0.3,
+            0.9,
+            curve: Curves.easeOut,
+          ).transform(t);
+          final leave = const Interval(
+            0,
+            0.45,
+            curve: Curves.easeInCubic,
+          ).transform(t);
+          final move = const Interval(
+            0.1,
+            1,
+            curve: Curves.easeInOutCubic,
+          ).transform(t);
+          final land = const Interval(0.7, 1).transform(t);
+          final word = path.wordRect;
+          return Stack(
+            children: [
+              Positioned.fill(
+                child: ColoredBox(
+                  color: widget.background.withValues(alpha: 1 - fade),
+                ),
+              ),
+              if (word != null)
+                Positioned.fromRect(
+                  rect: word,
+                  child: FractionalTranslation(
+                    translation: Offset(-0.3 * leave, 0),
+                    child: Opacity(
+                      opacity: 1 - leave,
+                      child: FittedBox(
+                        child: EventWordmark(
+                          event: _event,
+                          phase: path.phase,
+                          accessories: true,
+                          clip: true,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              Positioned.fromRect(
+                rect: Rect.lerp(path.icon, path.target, move)!,
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    Opacity(
+                      opacity: 1 - land,
+                      child: CustomPaint(
+                        painter: BrandMarkPainter(
+                          event: _event,
+                          phase: path.phase,
+                          dark: dark,
+                        ),
+                      ),
+                    ),
+                    if (land > 0)
+                      Opacity(
+                        opacity: land,
+                        child: CustomPaint(
+                          painter: BrandMarkPainter(
+                            event: _event,
+                            phase: rest,
+                            dark: dark,
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
               ),
             ],

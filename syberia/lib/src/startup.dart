@@ -49,6 +49,8 @@ class _StartupAppState extends State<StartupApp> {
     try {
       final mode = await widget.preferences.loadColorMode();
       final language = await widget.preferences.loadLocale();
+      final event = await widget.preferences.loadBrandEventOverride();
+      BrandEvents.override = BrandEvent.values.asNameMap()[event];
       if (!mounted) return;
       setState(() {
         _colorMode = mode;
@@ -89,73 +91,76 @@ class _StartupAppState extends State<StartupApp> {
   Widget build(BuildContext context) {
     final controller = _controller;
     if (controller != null) return SyberiaApp(controller: controller);
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'SiberiaGB',
-      locale: _locale,
-      supportedLocales: AppLocalizations.supportedLocales,
-      localizationsDelegates: const [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-      ],
-      themeMode: switch (_colorMode) {
-        AppColorMode.system => ThemeMode.system,
-        AppColorMode.light => ThemeMode.light,
-        AppColorMode.dark || AppColorMode.amoled => ThemeMode.dark,
-      },
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF176B8F)),
-        scaffoldBackgroundColor: startupBackground(Brightness.light),
-      ),
-      darkTheme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF176B8F),
-          brightness: Brightness.dark,
+    return BrandEventScope(
+      event: BrandEvents.today(),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'SiberiaGB',
+        locale: _locale,
+        supportedLocales: AppLocalizations.supportedLocales,
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+        ],
+        themeMode: switch (_colorMode) {
+          AppColorMode.system => ThemeMode.system,
+          AppColorMode.light => ThemeMode.light,
+          AppColorMode.dark || AppColorMode.amoled => ThemeMode.dark,
+        },
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF176B8F)),
+          scaffoldBackgroundColor: startupBackground(Brightness.light),
         ),
-        scaffoldBackgroundColor: startupBackground(
-          Brightness.dark,
-          amoled: _colorMode == AppColorMode.amoled,
+        darkTheme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color(0xFF176B8F),
+            brightness: Brightness.dark,
+          ),
+          scaffoldBackgroundColor: startupBackground(
+            Brightness.dark,
+            amoled: _colorMode == AppColorMode.amoled,
+          ),
         ),
-      ),
-      home: Builder(
-        builder: (context) => AnnotatedRegion<SystemUiOverlayStyle>(
-          value: Theme.of(context).brightness == Brightness.dark
-              ? SystemUiOverlayStyle.light
-              : SystemUiOverlayStyle.dark,
-          child: Scaffold(
-            body: SafeArea(
-              child: Center(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(24),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Semantics(
-                        liveRegion: true,
-                        label: context.tr(
-                          _failed ? 'startupFailed' : 'startingApp',
+        home: Builder(
+          builder: (context) => AnnotatedRegion<SystemUiOverlayStyle>(
+            value: Theme.of(context).brightness == Brightness.dark
+                ? SystemUiOverlayStyle.light
+                : SystemUiOverlayStyle.dark,
+            child: Scaffold(
+              body: SafeArea(
+                child: Center(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Semantics(
+                          liveRegion: true,
+                          label: context.tr(
+                            _failed ? 'startupFailed' : 'startingApp',
+                          ),
+                          child: AnimatedBrandLogo(
+                            key: ValueKey('startup-logo-$_attempt'),
+                            time: _logoTime,
+                          ),
                         ),
-                        child: AnimatedBrandLogo(
-                          key: ValueKey('startup-logo-$_attempt'),
-                          time: _logoTime,
-                        ),
-                      ),
-                      if (_failed) ...[
-                        const SizedBox(height: 24),
-                        Text(
-                          context.tr('startupFailed'),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 12),
-                        FilledButton.icon(
-                          onPressed: _start,
-                          icon: const Icon(Icons.refresh_rounded),
-                          label: Text(context.tr('startupRetry')),
-                        ),
+                        if (_failed) ...[
+                          const SizedBox(height: 24),
+                          Text(
+                            context.tr('startupFailed'),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 12),
+                          FilledButton.icon(
+                            onPressed: _start,
+                            icon: const Icon(Icons.refresh_rounded),
+                            label: Text(context.tr('startupRetry')),
+                          ),
+                        ],
                       ],
-                    ],
+                    ),
                   ),
                 ),
               ),

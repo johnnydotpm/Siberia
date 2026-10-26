@@ -12,6 +12,7 @@ import 'package:syberia/src/data/app_repository.dart';
 import 'package:syberia/src/domain/models.dart';
 import 'package:syberia/src/startup.dart';
 import 'package:syberia/src/state/app_controller.dart';
+import 'package:syberia/src/ui/brand/brand_mark.dart';
 import 'package:syberia/src/ui/brand_logo.dart';
 
 void main() {
@@ -27,19 +28,14 @@ void main() {
   );
 
   Future<void> capture(WidgetTester tester, String name) async {
-    final context = tester.element(find.byType(AppLogo));
-    await tester.runAsync(
-      () => precacheImage(
-        AssetImage(
-          Theme.of(context).brightness == Brightness.dark
-              ? 'assets/branding/logo-dark.png'
-              : 'assets/branding/logo-light.png',
-        ),
-        context,
+    // The mark is drawn, not loaded: nothing to wait for.
+    expect(
+      find.descendant(
+        of: find.byType(AppLogo),
+        matching: find.byType(CustomPaint),
       ),
+      findsOneWidget,
     );
-    await tester.pump();
-    expect(tester.widget<RawImage>(find.byType(RawImage)).image, isNotNull);
     if (!const bool.fromEnvironment('CAPTURE_STARTUP')) return;
     final boundary = tester.renderObject<RenderRepaintBoundary>(
       find.byKey(const ValueKey('preview')),
@@ -126,10 +122,13 @@ void main() {
               .scaffoldBackgroundColor,
           background,
         );
-        expect(
-          tester.widget<Image>(find.byType(Image)).image,
-          AssetImage('assets/branding/logo-$variant.png'),
+        final mark = tester.widget<CustomPaint>(
+          find.descendant(
+            of: find.byType(AppLogo),
+            matching: find.byType(CustomPaint),
+          ),
         );
+        expect((mark.painter! as BrandMarkPainter).dark, variant == 'dark');
         if (mode == 'dark') await capture(tester, 'startup-dark');
         expect(tester.takeException(), isNull);
       }
