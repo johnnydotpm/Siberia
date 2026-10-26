@@ -41,6 +41,7 @@ import 'glass/glass_modals.dart';
 import 'glass/glass_platform.dart';
 import 'glass/glass_shell.dart';
 import 'home_widget_settings.dart';
+import 'linked_text.dart';
 import 'profile_avatar.dart';
 import 'screen_transitions.dart';
 import 'subject_colors.dart';

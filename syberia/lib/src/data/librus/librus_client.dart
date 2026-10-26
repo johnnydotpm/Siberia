@@ -355,7 +355,10 @@ class LibrusClient {
       id: summary.id,
       sender: summary.sender,
       subject: summary.subject,
-      body: _plainText(body.replaceAll('<![CDATA[', '').replaceAll(']]>', '')),
+      body: _plainText(
+        body.replaceAll('<![CDATA[', '').replaceAll(']]>', ''),
+        links: true,
+      ),
       receivedAt: summary.receivedAt,
       recipients: summary.sent
           ? [
@@ -1363,7 +1366,7 @@ class LibrusClient {
       id: summary.id,
       sender: summary.sender,
       subject: summary.subject,
-      body: _plainText(content.innerHtml),
+      body: _plainText(content.innerHtml, links: true),
       receivedAt: summary.receivedAt,
       attachments: attachments.values.toList(),
     );
@@ -2316,12 +2319,48 @@ String _gradeDescription(
     .where((text) => text.isNotEmpty)
     .join(' · ');
 
-String _plainText(String text) => text
-    .replaceAll(RegExp(r'<br\s*/?>', caseSensitive: false), '\n')
-    .replaceAll(RegExp(r'<[^>]+>'), '')
-    .replaceAll('&nbsp;', ' ')
-    .replaceAll('&amp;', '&')
-    .trim();
+/// [text] without its HTML. With [links], a link keeps where it leads,
+/// which the tags alone hold: "plan (https://…)", or the address alone
+/// when that is its text already.
+String _plainText(String text, {bool links = false}) =>
+    (links ? _keepLinks(text) : text)
+        .replaceAll(RegExp(r'<br\s*/?>', caseSensitive: false), '\n')
+        .replaceAll(RegExp(r'<[^>]+>'), '')
+        .replaceAll('&nbsp;', ' ')
+        .replaceAll('&amp;', '&')
+        .trim();
+
+/// The web and mail links of [html] written out in its text.
+String _keepLinks(String html) => html.replaceAllMapped(
+  RegExp(
+    r'''<a\b[^>]*?\bhref\s*=\s*(?:"([^"]*)"|'([^']*)')[^>]*>(.*?)</a\s*>''',
+    caseSensitive: false,
+    dotAll: true,
+  ),
+  (match) {
+    final label = match[3] ?? '';
+    final target = _htmlDecode(match[1] ?? match[2] ?? '').trim();
+    final scheme = Uri.tryParse(target)?.scheme.toLowerCase();
+    if (scheme != 'http' && scheme != 'https' && scheme != 'mailto') {
+      return label;
+    }
+    final shown = _htmlDecode(
+      label.replaceAll(RegExp(r'<[^>]+>'), '').replaceAll('&nbsp;', ' '),
+    ).trim();
+    String bare(String value) => value
+        .replaceFirst(
+          RegExp(r'^(?:https?://|mailto:)', caseSensitive: false),
+          '',
+        )
+        .replaceFirst(RegExp(r'/$'), '')
+        .toLowerCase();
+    final address = scheme == 'mailto' ? target.substring(7) : target;
+    if (shown.isEmpty) return address;
+    // A link that shows its own address needs it no second time.
+    if (bare(shown) == bare(target)) return shown;
+    return '$label ($address)';
+  },
+);
 String _jsonText(Object? value) {
   final text = value?.toString() ?? '';
   try {

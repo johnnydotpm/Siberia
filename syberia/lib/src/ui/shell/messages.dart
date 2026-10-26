@@ -763,6 +763,9 @@ class _MessageDetailSheetState extends State<_MessageDetailSheet> {
   /// a SnackBar would appear behind it.
   bool attachmentFailed = false;
 
+  /// Whether the last link tapped in the text could not be opened.
+  bool linkFailed = false;
+
   @override
   void initState() {
     super.initState();
@@ -937,11 +940,25 @@ class _MessageDetailSheetState extends State<_MessageDetailSheet> {
                       ],
                     ),
                   const Divider(height: 32),
-                  SelectableText(
+                  // Its links open with a tap; the text stays selectable.
+                  LinkedText(
                     message.body,
+                    key: const ValueKey('message-body'),
                     style: Theme.of(context).textTheme.bodyLarge
                         ?.copyWith(height: 1.45),
+                    onOpenFailed: () => setState(() => linkFailed = true),
                   ),
+                  if (linkFailed)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: Text(
+                        context.tr('linkOpenFailed'),
+                        key: const ValueKey('link-open-failed'),
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.error,
+                        ),
+                      ),
+                    ),
                   if (message.attachments.isNotEmpty) ...[
                     const SizedBox(height: 24),
                     Text(

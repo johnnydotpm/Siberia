@@ -765,6 +765,52 @@ void main() {
     },
   );
 
+  test('a message\'s links keep where they lead, from either mailbox', () async {
+    const html =
+        '<p>Plan: <a href="https://example.pl/a?x=1&amp;y=2" target="_blank">'
+        '<b>plan</b></a> i <a href="https://example.pl/">https://example.pl</a>,'
+        ' <a href="javascript:alert(1)">zły</a>,'
+        " <a href='mailto:sekretariat@example.pl'>sekretariat@example.pl</a></p>";
+    const expected =
+        'Plan: plan (https://example.pl/a?x=1&y=2) i https://example.pl, zły, '
+        'sekretariat@example.pl';
+    for (final xml in [true, false]) {
+      final client = LibrusClient(
+        dio: Dio()
+          ..httpClientAdapter = _FixtureAdapter((options) {
+            if (!xml && options.uri.path == '/wiadomosci2') {
+              return (403, 'Forbidden');
+            }
+            if (xml && options.uri.path.endsWith('/GetMessage')) {
+              final body = base64Encode(utf8.encode(html));
+              return (
+                200,
+                '<response><GetMessage><data><Message>$body</Message>'
+                    '</data></GetMessage></response>',
+              );
+            }
+            if (options.uri.path == '/wiadomosci/1/5/91/f0') {
+              return (
+                200,
+                '<table class="container-message"><tr><td>Message</td><td>'
+                    '<div class="container-message-content">$html</div>'
+                    '</td></tr></table>',
+              );
+            }
+            return _successfulResponse(options);
+          }),
+      );
+      final snapshot = await client.loginAndFetch(
+        username: 'parent@example.com',
+        password: 'secret',
+      );
+      final content = await client.fetchMessageContent(
+        snapshot.messages.single,
+      );
+      expect(content.body, expected, reason: xml ? 'XML mailbox' : 'web');
+    }
+  });
+
   test(
     'an authenticated empty inbox is different from a mailbox failure',
     () async {

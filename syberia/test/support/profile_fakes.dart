@@ -161,7 +161,7 @@ class FakeProfileClient extends LibrusClient {
       id: message.id,
       sender: message.sender,
       subject: message.subject,
-      body: 'Treść',
+      body: world.messageBody,
       receivedAt: message.receivedAt,
     );
   }
@@ -193,6 +193,9 @@ class FakeLibrusWorld {
 
   /// The messages opened, as "login:message id".
   final opened = <String>[];
+
+  /// The text of every message opened.
+  String messageBody = 'Treść';
 
   /// Every fetch so far, so each one's data differs.
   var fetchCount = 0;

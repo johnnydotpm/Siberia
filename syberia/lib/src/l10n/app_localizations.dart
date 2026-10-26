@@ -134,6 +134,7 @@ class AppLocalizations {
       'notification_notices': 'Nowe uwagi',
       'notification_attendance': 'Nowe wpisy frekwencji',
       'notification_events': 'Nowe wydarzenia',
+      'linkOpenFailed': 'Nie udało się otworzyć linku',
       'composeFrom': 'Od',
       'composeRecipientsOf': 'Adresaci: {school}',
       'togetherSettingsNote':
@@ -563,6 +564,7 @@ class AppLocalizations {
       'notification_notices': 'New remarks',
       'notification_attendance': 'New attendance entries',
       'notification_events': 'New events',
+      'linkOpenFailed': 'Couldn\'t open the link',
       'composeFrom': 'From',
       'composeRecipientsOf': 'Recipients: {school}',
       'togetherSettingsNote':
@@ -994,6 +996,7 @@ class AppLocalizations {
       'notification_notices': 'Новые замечания',
       'notification_attendance': 'Новые записи посещаемости',
       'notification_events': 'Новые события',
+      'linkOpenFailed': 'Не удалось открыть ссылку',
       'composeFrom': 'От',
       'composeRecipientsOf': 'Получатели: {school}',
       'togetherSettingsNote':
@@ -1424,6 +1427,7 @@ class AppLocalizations {
       'notification_notices': 'Neue Bemerkungen',
       'notification_attendance': 'Neue Anwesenheitseinträge',
       'notification_events': 'Neue Termine',
+      'linkOpenFailed': 'Der Link ließ sich nicht öffnen',
       'composeFrom': 'Von',
       'composeRecipientsOf': 'Empfänger: {school}',
       'togetherSettingsNote':
@@ -1861,6 +1865,7 @@ class AppLocalizations {
       'notification_notices': 'Нові зауваження',
       'notification_attendance': 'Нові записи відвідуваності',
       'notification_events': 'Нові події',
+      'linkOpenFailed': 'Не вдалося відкрити посилання',
       'composeFrom': 'Від',
       'composeRecipientsOf': 'Одержувачі: {school}',
       'togetherSettingsNote':
