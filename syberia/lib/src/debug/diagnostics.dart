@@ -135,6 +135,8 @@ class Diagnostics {
     _requests.clear();
   }
 
+  void clearRequests() => _requests.clear();
+
   /// A plain-text report: [about] first, as given, then the errors and the
   /// latest requests. Every text in [private] (names, logins, schools) is
   /// replaced, and so is anything that looks like an e-mail, a password, a

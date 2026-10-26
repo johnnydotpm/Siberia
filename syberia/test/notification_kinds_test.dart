@@ -293,6 +293,9 @@ class _Repository extends AppRepository {
 }
 
 class _Presenter implements SchoolNotificationPresenter {
+  @override
+  Future<List<String>> scheduledReminders() async => const [];
+
   final shown = <(SchoolNotificationCategory, String)>[];
 
   @override

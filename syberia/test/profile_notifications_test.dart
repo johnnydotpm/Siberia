@@ -23,6 +23,9 @@ class _Shown {
 }
 
 class _Presenter implements SchoolNotificationPresenter {
+  @override
+  Future<List<String>> scheduledReminders() async => const [];
+
   final shown = <_Shown>[];
   List<TestReminder> scheduled = const [];
 

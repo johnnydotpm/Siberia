@@ -1,10 +1,12 @@
 import 'dart:async';
+import 'dart:io' show Platform;
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart' show timeDilation;
 import 'package:flutter/rendering.dart'
     show
         OpacityLayer,
@@ -16,6 +18,8 @@ import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../app_build_info.dart';
+import '../data/app_repository.dart';
+import '../debug/diagnostics.dart';
 import '../domain/calendar_days.dart';
 import '../domain/grade_calculator.dart';
 import '../domain/librus_error.dart';
@@ -62,6 +66,7 @@ part 'shell/onboarding_finale.dart';
 part 'shell/free_days.dart';
 part 'shell/motion.dart';
 part 'shell/sync_news.dart';
+part 'shell/debug_menu.dart';
 
 class AppShell extends StatefulWidget {
   const AppShell({required this.controller, super.key});
@@ -497,12 +502,15 @@ class _SideNavigation extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Padding(
-              padding: EdgeInsets.fromLTRB(22, 22, 16, 20),
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                alignment: Alignment.centerLeft,
-                child: BrandWordmark(fontSize: 24),
+            _DebugMenuGesture(
+              controller: controller,
+              child: const Padding(
+                padding: EdgeInsets.fromLTRB(22, 22, 16, 20),
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: BrandWordmark(fontSize: 24),
+                ),
               ),
             ),
             Expanded(

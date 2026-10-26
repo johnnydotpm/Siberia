@@ -199,6 +199,9 @@ SchoolMessage _message(String id) => SchoolMessage(
 );
 
 class _Presenter implements SchoolNotificationPresenter {
+  @override
+  Future<List<String>> scheduledReminders() async => const [];
+
   final List<SchoolNotificationCategory> shown = [];
   List<TestReminder>? scheduled;
 

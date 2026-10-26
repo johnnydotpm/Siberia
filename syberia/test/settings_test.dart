@@ -311,6 +311,9 @@ class _Repository extends AppRepository {
 
 class _DenyingPresenter implements SchoolNotificationPresenter {
   @override
+  Future<List<String>> scheduledReminders() async => const [];
+
+  @override
   Future<void> initialize() async {}
 
   @override

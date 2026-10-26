@@ -4,6 +4,7 @@ import 'dart:ui' show PlatformDispatcher;
 import 'package:flutter/widgets.dart';
 
 import '../app_build_info.dart';
+import '../background_notifications.dart';
 import '../data/app_repository.dart';
 import '../debug/diagnostics.dart';
 import '../domain/librus_error.dart';
@@ -604,6 +605,43 @@ class AppController extends ChangeNotifier {
     notifyListeners();
     await _repository.dismissUpdatesForVersion(AppBuildInfo.version);
   }
+
+  /// For the debug menu: [category]'s notification, as it would come.
+  Future<void> showSampleNotification(SchoolNotificationCategory category) =>
+      notifications?.showSample(category) ?? Future.value();
+
+  /// For the debug menu: the test reminders the phone holds.
+  Future<List<String>> scheduledReminders() async =>
+      await notifications?.scheduledReminders() ?? const [];
+
+  /// For the debug menu: the background check, run now. Gives how many
+  /// profiles it fetched.
+  Future<int> checkInBackgroundNow() async {
+    final service = notifications;
+    if (service == null || isDemo) return 0;
+    final checked = await checkProfilesInBackground(
+      _repository,
+      service,
+      await service.loadSettings(),
+    );
+    await refreshProfiles();
+    return checked;
+  }
+
+  /// For the debug menu: when each profile last synced, in the profiles'
+  /// order.
+  Future<List<DateTime>> profileSyncTimes() async => [
+    for (final profile in _profiles)
+      (await _repository.loadProfileSnapshot(profile.id)).lastSync,
+  ];
+
+  /// For the debug menu: the logo event, by name, to show at every launch,
+  /// or none.
+  Future<void> saveLogoChoice(String? event) =>
+      _repository.saveBrandEventOverride(event);
+
+  /// For the debug menu: the home screen widgets drawn again.
+  void refreshHomeWidget() => _updateHomeWidget();
 
   /// What the screens show for [error], noted for the debug menu too.
   AppError _failed(Object error, StackTrace stack, String doing) {

@@ -209,6 +209,9 @@ abstract class SchoolNotificationPresenter {
     List<TestReminder> reminders, {
     required String channelName,
   });
+
+  /// The reminders the phone holds, as "title: body", for the debug menu.
+  Future<List<String>> scheduledReminders();
 }
 
 class FlutterSchoolNotificationPresenter
@@ -396,6 +399,17 @@ class FlutterSchoolNotificationPresenter
   }
 
   @override
+  Future<List<String>> scheduledReminders() async {
+    if (!_ready || !_canSchedule) return const [];
+    return [
+      for (final pending in await _plugin.pendingNotificationRequests())
+        if (pending.id >= _firstReminderId &&
+            pending.id < _firstReminderId + maxTestReminders)
+          '${pending.title ?? ''}: ${pending.body ?? ''}',
+    ];
+  }
+
+  @override
   Future<NotificationTarget?> launchTarget() async {
     if (!_ready) return null;
     try {
@@ -431,6 +445,26 @@ class SchoolNotificationService {
   Future<NotificationTarget?> launchTarget() => _presenter.launchTarget();
   void onTap(void Function(NotificationTarget) callback) =>
       _presenter.onTap(callback);
+
+  /// Notification ids from here on are the debug menu's samples.
+  static const _firstSampleId = 900;
+
+  /// A sample of [category]'s notification, in that category's channel, for
+  /// the debug menu; it replaces the category's previous sample.
+  Future<void> showSample(SchoolNotificationCategory category) async {
+    final title = (await _translations()).text('notification_${category.name}');
+    await _presenter.show(
+      category: category,
+      title: title,
+      body: 'A test notification from the debug menu.',
+      id: _firstSampleId + category.index,
+      target: NotificationTarget(category),
+      channelName: title,
+    );
+  }
+
+  /// The test reminders the phone holds now.
+  Future<List<String>> scheduledReminders() => _presenter.scheduledReminders();
 
   Future<SchoolNotificationSettings> loadSettings() async {
     final preferences = await _preferences;

@@ -80,6 +80,9 @@ Future<AppController> _launch(
 }
 
 class _Presenter implements SchoolNotificationPresenter {
+  @override
+  Future<List<String>> scheduledReminders() async => const [];
+
   _Presenter({this.allow = true});
   final bool allow;
   var asked = 0;
