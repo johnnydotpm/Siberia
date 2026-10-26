@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syberia/src/data/app_repository.dart';
@@ -5,6 +7,8 @@ import 'package:syberia/src/domain/librus_error.dart';
 import 'package:syberia/src/domain/models.dart';
 import 'package:syberia/src/domain/profiles.dart';
 import 'package:syberia/src/domain/together.dart';
+import 'package:syberia/src/school_notifications.dart';
+import 'package:syberia/src/state/app_controller.dart';
 
 import 'support/profile_fakes.dart';
 
@@ -336,6 +340,219 @@ void main() {
         'name': 'Uczeń',
       });
       expect(saved!.together, isTrue);
+    });
+  });
+
+  group('the app together', () {
+    /// Two profiles of one login, synced, the regular school open; and the
+    /// app on them.
+    Future<(AppController, FakeLibrusWorld, SchoolProfile, SchoolProfile)> app({
+      bool together = true,
+    }) async {
+      SharedPreferences.setMockInitialValues({});
+      // Synced just now, so opening it does not sync again behind the test.
+      final world = FakeLibrusWorld()..syncedAt = DateTime.now;
+      final repository = world.repository();
+      final found = await repository.signIn(
+        username: familyEmail,
+        password: 'x',
+      );
+      final added = await repository.addProfiles(found.students);
+      for (final profile in added) {
+        await repository.syncProfile(profile.id);
+      }
+      await repository.switchProfile(added[0].id);
+      final controller = AppController(repository, updatesEnabled: false);
+      await controller.bootstrap();
+      if (together) await controller.openTogether();
+      addTearDown(controller.dispose);
+      return (controller, world, added[0], added[1]);
+    }
+
+    test('shows the data of both profiles, each item marked with its own, '
+        'and opens so again after a restart', () async {
+      final (controller, world, regular, music) = await app();
+      expect(controller.together, isTrue);
+      expect(controller.snapshot.profile.id, togetherId);
+      expect(controller.snapshot.grades.map((grade) => grade.source).toSet(), {
+        regular.id,
+        music.id,
+      });
+      expect(controller.profileOf(music.id)?.id, music.id);
+
+      final reopened = AppController(world.repository(), updatesEnabled: false);
+      addTearDown(reopened.dispose);
+      await reopened.bootstrap();
+      expect(reopened.together, isTrue);
+      expect(reopened.snapshot.lessons, hasLength(2));
+    });
+
+    test('needs two profiles in it', () async {
+      final (controller, _, _, music) = await app(together: false);
+      await controller.setProfileTogether(music.id, false);
+      expect(controller.canBeTogether, isFalse);
+      await controller.openTogether();
+      expect(controller.together, isFalse);
+    });
+
+    test('syncs the profiles one after another', () async {
+      final (controller, world, _, _) = await app();
+      world.fetches.clear();
+      final hold = world.holds['kid-regular'] = Completer<void>();
+      final sync = controller.sync();
+      await Future<void>.delayed(Duration.zero);
+      expect(controller.syncing, isTrue);
+      expect(world.fetches, ['kid-regular'], reason: 'the second waits');
+      hold.complete();
+      await sync;
+      expect(world.fetches, ['kid-regular', 'kid-music']);
+      expect(controller.syncing, isFalse);
+    });
+
+    test('a profile that fails leaves the other\'s new data, and the error '
+        'names it', () async {
+      final (controller, world, regular, music) = await app();
+      String gradeOf(String profileId) => controller.snapshot.grades
+          .firstWhere((grade) => grade.source == profileId)
+          .id;
+      final regularBefore = gradeOf(regular.id);
+      final musicBefore = gradeOf(music.id);
+      // The first one in turn fails; the next one still syncs.
+      world.failing.add('kid-regular');
+      await controller.sync();
+      expect(gradeOf(music.id), isNot(musicBefore), reason: 'synced');
+      expect(gradeOf(regular.id), regularBefore, reason: 'kept as it was');
+      expect(controller.error?.errorCode, LibrusErrorCode.networkTimeout);
+      expect(controller.errorProfile?.id, regular.id);
+    });
+
+    test('opens a message, loads a timetable week and sends from the '
+        'profile each belongs to', () async {
+      final (controller, world, regular, music) = await app();
+      final message = SchoolMessage(
+        id: sourcedId(music.id, 'm9'),
+        sender: 'Nauczyciel',
+        subject: 'Temat',
+        preview: '',
+        receivedAt: DateTime(2026, 10, 25),
+        source: music.id,
+      );
+      final content = await controller.fetchMessageContent(message);
+      expect(world.opened, ['kid-music:m9']);
+      expect(content.id, message.id, reason: 'its attachments come from it');
+
+      await controller.fetchTimetableWeek(DateTime(2026, 10, 26));
+      expect(world.weeks, ['kid-regular', 'kid-music']);
+
+      final recipients = await controller.fetchMessageRecipients(
+        profileId: music.id,
+      );
+      expect(recipients.single.name, 'Nauczyciel kid-music');
+      await controller.sendMessage(
+        recipients: recipients,
+        subject: 'Temat',
+        body: 'Treść',
+        from: music.id,
+      );
+      final sent = controller.snapshot.sentMessages.single;
+      expect(sent.source, music.id);
+      expect(localId(sent.id, sent.source), 'sent-kid-music');
+      expect(regular.id, isNot(music.id));
+    });
+
+    test('marks homework done in its own profile', () async {
+      final (controller, _, regular, music) = await app();
+      final homework = SchoolEvent(
+        id: sourcedId(music.id, 'hw1'),
+        title: 'Zadanie',
+        subject: 'Fortepian',
+        date: DateTime(2026, 10, 27),
+        kind: EventKind.homework,
+        source: music.id,
+      );
+      await controller.setHomeworkDone(homework, true);
+      expect(controller.isHomeworkDone(homework), isTrue);
+      final repository = FakeLibrusWorld().repository();
+      expect((await repository.loadDoneHomework(profileId: music.id)).keys, [
+        'hw1',
+      ]);
+      expect(await repository.loadDoneHomework(profileId: regular.id), isEmpty);
+    });
+
+    test('keeps each profile\'s grade average, and a change in the view '
+        'together is both profiles\'', () async {
+      final (controller, world, regular, music) = await app(together: false);
+      await controller.setGradeAverageSettings(
+        const GradeAverageSettings(weighted: true),
+      );
+      await controller.openTogether();
+      expect(controller.gradeAverageFor(regular.id).weighted, isTrue);
+      expect(controller.gradeAverageFor(music.id).weighted, isFalse);
+
+      await controller.setGradeAverageSettings(
+        const GradeAverageSettings(plus: 0.75),
+      );
+      expect(controller.gradeAverageFor(regular.id).plus, 0.75);
+      expect(controller.gradeAverageFor(music.id).plus, 0.75);
+      final saved = world.repository();
+      for (final profile in [regular, music]) {
+        final settings = await saved.loadGradeAverageSettings(
+          profileId: profile.id,
+        );
+        expect(settings.plus, 0.75, reason: profile.id);
+      }
+    });
+
+    test('a notification of a profile in it does not leave it', () async {
+      final (controller, _, _, music) = await app();
+      await controller.openNotification(
+        NotificationTarget(
+          SchoolNotificationCategory.grades,
+          profileId: music.id,
+        ),
+      );
+      expect(controller.together, isTrue);
+      expect(controller.tabIndex, SchoolNotificationCategory.grades.tabIndex);
+    });
+
+    test('leaves for one profile when it is opened, when fewer than two are '
+        'left in it, or when a profile is removed', () async {
+      var (controller, world, regular, music) = await app();
+      await controller.switchProfile(regular.id);
+      expect(controller.together, isFalse);
+      expect(controller.snapshot.profile.id, isNot(togetherId));
+      expect(await world.repository().loadTogether(), isFalse);
+
+      (controller, world, regular, music) = await app();
+      await controller.setProfileTogether(music.id, false);
+      expect(controller.together, isFalse);
+      expect(controller.activeProfile?.id, regular.id);
+
+      (controller, world, regular, music) = await app();
+      await controller.removeProfile(music.id);
+      expect(controller.together, isFalse);
+      expect(controller.snapshot.profile.id, isNot(togetherId));
+    });
+
+    test('works in demo mode too', () async {
+      SharedPreferences.setMockInitialValues({});
+      final controller = AppController(
+        FakeLibrusWorld().repository(),
+        updatesEnabled: false,
+      );
+      addTearDown(controller.dispose);
+      await controller.bootstrap();
+      controller.startDemo();
+      await controller.openTogether();
+      expect(controller.together, isTrue);
+      final subjects = controller.snapshot.lessons
+          .map((lesson) => lesson.subject)
+          .toSet();
+      expect(subjects, containsAll(['Mathematics', 'Piano']));
+      final before = controller.snapshot.lastSync;
+      await Future<void>.delayed(const Duration(milliseconds: 5));
+      await controller.sync();
+      expect(controller.snapshot.lastSync.isAfter(before), isTrue);
     });
   });
 }

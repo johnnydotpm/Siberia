@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:syberia/src/data/app_repository.dart';
 import 'package:syberia/src/data/librus/librus_client.dart';
 import 'package:syberia/src/data/librus/librus_logins.dart';
+import 'package:syberia/src/domain/librus_error.dart';
 import 'package:syberia/src/domain/models.dart';
 import 'package:syberia/src/domain/profiles.dart';
 
@@ -96,6 +97,9 @@ class FakeProfileClient extends LibrusClient {
     final hold = world.holds[login];
     if (hold != null) await hold.future;
     if (world.offline) throw StateError('offline');
+    if (world.failing.contains(login)) {
+      throw const LibrusException(LibrusErrorCode.networkTimeout);
+    }
     final student = world.students[login];
     return student == null
         ? null
@@ -198,6 +202,9 @@ class FakeLibrusWorld {
   /// Fetches of a login wait for its completer.
   final holds = <String, Completer<void>>{};
   bool offline = false;
+
+  /// Logins whose fetches fail as when Librus does not answer.
+  final failing = <String>{};
   Future<void> sending = Future.value();
 
   /// When fetched data says it was synced; a fixed day by default.

@@ -11,6 +11,7 @@ import '../domain/librus_error.dart';
 import '../domain/models.dart';
 import '../domain/profiles.dart';
 import '../domain/sync_news.dart';
+import '../domain/together.dart';
 import '../home_widget.dart';
 import '../home_widget.dart' as home_widget show displaySubject;
 import '../l10n/app_localizations.dart';
@@ -83,6 +84,20 @@ class AppController extends ChangeNotifier {
       const SchoolNotificationSettings();
   bool _autoSyncOnOpen = true;
 
+  /// Whether every profile in the view together is shown at once.
+  bool _together = false;
+
+  /// In the view together: the data of each profile in it, in their order.
+  Map<String, AppSnapshot> _parts = const {};
+
+  /// In the view together: the settings and marks of each profile in it.
+  Map<String, GradeAverageSettings> _gradeAverages = const {};
+  Map<String, Map<String, String>> _shortNamesOf = const {};
+  Map<String, Map<String, DateTime>> _doneOf = const {};
+
+  /// The profile of the last error in the view together, if it had one.
+  String? _errorSource;
+
   AppSnapshot get snapshot => _snapshot!;
   bool get isDemo => _snapshot?.profile.provider == 'Demo';
 
@@ -142,7 +157,8 @@ class AppController extends ChangeNotifier {
   /// Another profile's sync goes on unseen.
   bool get syncing => _signingIn || _syncingProfiles.contains(_syncKey);
 
-  String get _syncKey => _repository.activeProfile?.id ?? '';
+  String get _syncKey =>
+      _together ? togetherId : _repository.activeProfile?.id ?? '';
 
   /// The profiles on the phone, in the order they were added.
   List<SchoolProfile> get profiles => _profiles;
@@ -155,8 +171,33 @@ class AppController extends ChangeNotifier {
   bool profileHasNews(String profileId) => _profileNews.contains(profileId);
 
   /// Whether a profile other than the open one has news.
-  bool get otherProfilesHaveNews =>
-      _profileNews.any((id) => id != activeProfile?.id);
+  bool get otherProfilesHaveNews => _profileNews.any(
+    (id) => _together ? !_isTogether(id) : id != activeProfile?.id,
+  );
+
+  /// Whether every profile in the view together is shown at once.
+  bool get together => _together;
+
+  /// The profiles in the view together, in their order.
+  List<SchoolProfile> get togetherProfiles => [
+    for (final profile in _profiles)
+      if (profile.together) profile,
+  ];
+
+  /// Whether the view together can open: two profiles at least are in it.
+  bool get canBeTogether => togetherProfiles.length >= 2;
+
+  bool _isTogether(String profileId) =>
+      togetherProfiles.any((profile) => profile.id == profileId);
+
+  /// The profile an item of the view together comes from.
+  SchoolProfile? profileOf(String? source) => source == null
+      ? null
+      : _profiles.where((profile) => profile.id == source).firstOrNull;
+
+  /// The profile the last error came from, in the view together.
+  SchoolProfile? get errorProfile =>
+      _together && _error != null ? profileOf(_errorSource) : null;
 
   /// The name and colour the open profile is shown with.
   ({String name, String school, int color}) get profileLook {
@@ -190,7 +231,17 @@ class AppController extends ChangeNotifier {
   AppDesign get design => _design;
   AppColorMode get colorMode => _colorMode;
   GradeAverageSettings get gradeAverage => _gradeAverage;
-  Map<String, String> get subjectShortNames => _subjectShortNames;
+
+  /// The grade average settings of [source], the profile of an item; the
+  /// open profile's for a single profile's items.
+  GradeAverageSettings gradeAverageFor(String? source) =>
+      (source == null ? null : _gradeAverages[source]) ?? _gradeAverage;
+
+  /// The subjects' short names; in the view together, those of every
+  /// profile in it, the first profile's where two differ.
+  Map<String, String> get subjectShortNames => !_together
+      ? _subjectShortNames
+      : {for (final names in _shortNamesOf.values.toList().reversed) ...names};
   TimetableView get timetableView => _timetableView;
   bool get mergeTimetableLessons => _mergeTimetableLessons;
   bool get showTimetableBreaks => _showTimetableBreaks;
@@ -208,11 +259,15 @@ class AppController extends ChangeNotifier {
   }
 
   /// Whether the student marked [item] as done.
-  bool isHomeworkDone(SchoolEvent item) => _doneHomework.containsKey(item.id);
+  bool isHomeworkDone(SchoolEvent item) {
+    final source = item.source;
+    if (source == null) return _doneHomework.containsKey(item.id);
+    return _doneOf[source]?.containsKey(localId(item.id, source)) ?? false;
+  }
 
   /// The name to show for [subject]: the student's short name if they set one.
   String displaySubject(String subject) =>
-      home_widget.displaySubject(subject, _subjectShortNames);
+      home_widget.displaySubject(subject, subjectShortNames);
   SchoolNotificationSettings get notificationSettings => _notificationSettings;
   bool get autoSyncOnOpen => _autoSyncOnOpen;
 
@@ -222,6 +277,11 @@ class AppController extends ChangeNotifier {
     await _loadPreferences();
     _snapshot = await _repository.load();
     _profiles = _repository.profiles;
+    if (await _repository.loadTogether() && canBeTogether) {
+      _together = true;
+      await _loadParts(open: _snapshot);
+      await _loadProfileSettings();
+    }
     _profileNews = await _repository.loadProfileNews();
     _widgetProfileId = await _repository.loadWidgetProfile();
     _onboardingDone = await _repository.loadOnboardingDone();
@@ -267,6 +327,23 @@ class AppController extends ChangeNotifier {
     _gradeAverage = await _repository.loadGradeAverageSettings();
     _subjectShortNames = await _repository.loadSubjectShortNames();
     _doneHomework = await _repository.loadDoneHomework();
+    final included = _together ? togetherProfiles : const <SchoolProfile>[];
+    _gradeAverages = {
+      for (final profile in included)
+        profile.id: await _repository.loadGradeAverageSettings(
+          profileId: profile.id,
+        ),
+    };
+    _shortNamesOf = {
+      for (final profile in included)
+        profile.id: await _repository.loadSubjectShortNamesOf(profile.id),
+    };
+    _doneOf = {
+      for (final profile in included)
+        profile.id: await _repository.loadDoneHomework(profileId: profile.id),
+    };
+    // The settings screen shows the first profile's in the view together.
+    if (included.isNotEmpty) _gradeAverage = _gradeAverages[included.first.id]!;
   }
 
   /// Puts every setting back to its default. The account, the school data,
@@ -361,19 +438,16 @@ class AppController extends ChangeNotifier {
       return;
     }
     Future<String> lessonsOf(SchoolProfile profile) async =>
-        profile.id == open.id
-        ? buildHomeWidgetPayload(
-            snapshot,
-            now,
-            l10n,
-            shortNames: _subjectShortNames,
-          )
-        : buildHomeWidgetPayload(
-            await _repository.loadProfileSnapshot(profile.id),
-            now,
-            l10n,
-            shortNames: await _repository.loadSubjectShortNamesOf(profile.id),
-          );
+        buildHomeWidgetPayload(
+          _ownData(profile.id) ??
+              await _repository.loadProfileSnapshot(profile.id),
+          now,
+          l10n,
+          shortNames: profile.id == open.id && !_together
+              ? _subjectShortNames
+              : _shortNamesOf[profile.id] ??
+                    await _repository.loadSubjectShortNamesOf(profile.id),
+        );
     final shown = _profiles.firstWhere(
       (profile) => profile.id == widgetProfileId,
       orElse: () => open,
@@ -389,7 +463,73 @@ class AppController extends ChangeNotifier {
     );
   }
 
+  /// The data of the profile [profileId] the app holds: the open profile's,
+  /// or in the view together, each of its profiles'.
+  AppSnapshot? _ownData(String profileId) => _together
+      ? _parts[profileId]
+      : profileId == activeProfile?.id
+      ? snapshot
+      : null;
+
+  /// Reads the data of every profile in the view together. The open one's
+  /// is [open] when given, as it holds timetable weeks loaded since.
+  Future<void> _loadParts({AppSnapshot? open}) async {
+    final openId = activeProfile?.id;
+    _parts = {
+      for (final profile in togetherProfiles)
+        profile.id: open != null && profile.id == openId
+            ? open
+            : await _repository.loadProfileSnapshot(profile.id),
+    };
+    _mergeParts();
+  }
+
+  /// Shows the parts as one.
+  void _mergeParts() {
+    _snapshot = mergeSnapshots([
+      for (final profile in togetherProfiles)
+        if (_parts[profile.id] case final data?) (profile, data),
+    ]);
+  }
+
+  /// Changes the data of the profile [profileId] in the view together.
+  void _changePart(String profileId, AppSnapshot Function(AppSnapshot) change) {
+    final part = _parts[profileId];
+    if (!_together || part == null) return;
+    _parts = {..._parts, profileId: change(part)};
+    _mergeParts();
+  }
+
+  /// Opens the view of every profile in it at once, with their saved data.
+  Future<void> openTogether() async {
+    if (_together || !canBeTogether) return;
+    _together = true;
+    await _loadParts(open: snapshot);
+    await _loadProfileSettings();
+    _syncNews = null;
+    _forgetSentMessages();
+    _error = null;
+    for (final profile in togetherProfiles) {
+      _seeNews(profile.id);
+    }
+    notifyListeners();
+    _updateHomeWidget();
+    if (!isDemo) await _repository.saveTogether(true);
+    final age = DateTime.now().difference(snapshot.lastSync);
+    if (_autoSyncOnOpen && age >= switchSyncAfter) unawaited(sync());
+  }
+
+  /// Leaves the view together, for one profile's.
+  void _leaveTogether() {
+    if (!_together) return;
+    _together = false;
+    _parts = const {};
+    _errorSource = null;
+    if (!isDemo) unawaited(_repository.saveTogether(false));
+  }
+
   Future<void> setSubjectShortName(String subject, String shortName) async {
+    if (_together) return _setSubjectShortNameTogether(subject, shortName);
     final names = Map<String, String>.of(_subjectShortNames);
     final trimmed = shortName.trim();
     if (trimmed.isEmpty) {
@@ -409,6 +549,35 @@ class AppController extends ChangeNotifier {
     await _repository.saveSubjectShortNames(names);
   }
 
+  /// In the view together a short name is every profile's in it.
+  Future<void> _setSubjectShortNameTogether(
+    String subject,
+    String shortName,
+  ) async {
+    final trimmed = shortName.trim();
+    final changed = <String, Map<String, String>>{};
+    for (final MapEntry(key: id, value: saved) in _shortNamesOf.entries) {
+      final names = Map<String, String>.of(saved);
+      if (trimmed.isEmpty) {
+        names.remove(subject);
+      } else {
+        names[subject] = trimmed;
+      }
+      changed[id] = Map.unmodifiable(names);
+    }
+    _shortNamesOf = changed;
+    if (changed[activeProfile?.id] case final open?) _subjectShortNames = open;
+    notifyListeners();
+    _homeWidgetDebounce?.cancel();
+    _homeWidgetDebounce = Timer(
+      const Duration(milliseconds: 600),
+      _updateHomeWidget,
+    );
+    for (final MapEntry(key: id, value: names) in changed.entries) {
+      await _repository.saveSubjectShortNames(names, profileId: id);
+    }
+  }
+
   @override
   void dispose() {
     _homeWidgetDebounce?.cancel();
@@ -416,7 +585,13 @@ class AppController extends ChangeNotifier {
   }
 
   Future<void> _recordNotifications() async {
-    await _notify(snapshot, activeProfile);
+    if (_together) {
+      for (final MapEntry(key: id, value: data) in _parts.entries) {
+        await _notify(data, profileOf(id));
+      }
+    } else {
+      await _notify(snapshot, activeProfile);
+    }
     // Scheduling takes a round trip per reminder, so it never holds the app
     // opening or a sync.
     unawaited(_updateReminders());
@@ -444,8 +619,10 @@ class AppController extends ChangeNotifier {
   /// Opens what a tapped notification is about: its profile, then its page.
   Future<void> openNotification(NotificationTarget target) async {
     final profileId = target.profileId;
+    // In the view together, a profile in it is already on screen.
     if (profileId != null &&
         profileId != activeProfile?.id &&
+        !(_together && _isTogether(profileId)) &&
         _profiles.any((profile) => profile.id == profileId)) {
       await switchProfile(profileId);
     }
@@ -556,9 +733,8 @@ class AppController extends ChangeNotifier {
           if (!profile.notify) continue;
           sources.add(
             ReminderSource(
-              profile.id == open.id
-                  ? snapshot
-                  : await _repository.loadProfileSnapshot(profile.id),
+              _ownData(profile.id) ??
+                  await _repository.loadProfileSnapshot(profile.id),
               profile: profile,
               name: _notificationName(profile),
             ),
@@ -649,10 +825,13 @@ class AppController extends ChangeNotifier {
     return AppError.from(error);
   }
 
-  Future<List<MessageRecipient>> fetchMessageRecipients() async {
+  /// Who the profile [profileId], or the open one, can write to.
+  Future<List<MessageRecipient>> fetchMessageRecipients({
+    String? profileId,
+  }) async {
     _error = null;
     try {
-      return await _repository.fetchMessageRecipients();
+      return await _repository.fetchMessageRecipients(profileId: profileId);
     } on Object catch (error, stack) {
       _error = _failed(error, stack, 'recipients');
       notifyListeners();
@@ -660,11 +839,13 @@ class AppController extends ChangeNotifier {
     }
   }
 
-  /// Sends a message; it shows in the Sent folder at once.
+  /// Sends a message from the profile [from], or the open one; it shows in
+  /// the Sent folder at once.
   Future<void> sendMessage({
     required List<MessageRecipient> recipients,
     required String subject,
     required String body,
+    String? from,
   }) async {
     _error = null;
     final profileId = snapshot.profile.id;
@@ -673,8 +854,12 @@ class AppController extends ChangeNotifier {
         recipients: recipients,
         subject: subject,
         body: body,
+        profileId: from,
       );
-      if (snapshot.profile.id == profileId) {
+      if (_together && from != null) {
+        _changePart(from, (data) => data.withSent(message));
+        notifyListeners();
+      } else if (snapshot.profile.id == profileId) {
         _snapshot = snapshot.withSent(message);
         notifyListeners();
       }
@@ -704,6 +889,17 @@ class AppController extends ChangeNotifier {
     _sentMessagesError = null;
     notifyListeners();
     try {
+      if (_together) {
+        for (final id in [..._parts.keys]) {
+          final sent = await _repository.fetchSentMessages(profileId: id);
+          if (snapshot.profile.id != profileId) break;
+          _changePart(id, (data) => data.copyWith(sentMessages: sent));
+        }
+        if (snapshot.profile.id == profileId) {
+          _sentMessagesLoadedAt = DateTime.now();
+        }
+        return;
+      }
       final sent = await _repository.fetchSentMessages();
       if (snapshot.profile.id == profileId) {
         _snapshot = snapshot.copyWith(sentMessages: sent);
@@ -729,6 +925,8 @@ class AppController extends ChangeNotifier {
     SchoolMessage message,
   ) async {
     _error = null;
+    final source = message.source;
+    if (source != null) return _fetchMessageContentOf(source, message);
     final profileId = snapshot.profile.id;
     try {
       final content = await _repository.fetchMessageContent(message);
@@ -739,6 +937,38 @@ class AppController extends ChangeNotifier {
       return content;
     } on Object catch (error, stack) {
       _error = _failed(error, stack, 'message');
+      notifyListeners();
+      rethrow;
+    }
+  }
+
+  /// Opens [message] of the view together from its own profile [source].
+  /// The content keeps the id of the view together, as its attachments
+  /// come from that profile too.
+  Future<SchoolMessageContent> _fetchMessageContentOf(
+    String source,
+    SchoolMessage message,
+  ) async {
+    final own = message.withSource(null, id: localId(message.id, source));
+    try {
+      final content = await _repository.fetchMessageContent(
+        own,
+        profileId: source,
+      );
+      _changePart(source, (data) => data.withOpened(own, content));
+      notifyListeners();
+      return SchoolMessageContent(
+        id: message.id,
+        sender: content.sender,
+        subject: content.subject,
+        body: content.body,
+        receivedAt: content.receivedAt,
+        attachments: content.attachments,
+        recipients: content.recipients,
+      );
+    } on Object catch (error, stack) {
+      _error = _failed(error, stack, 'message');
+      _errorSource = source;
       notifyListeners();
       rethrow;
     }
@@ -784,37 +1014,23 @@ class AppController extends ChangeNotifier {
   Future<Uri> fetchMessageAttachmentUrl({
     required String messageId,
     required String attachmentId,
-  }) => _repository.fetchMessageAttachmentUrl(
-    messageId: messageId,
-    attachmentId: attachmentId,
-  );
+  }) {
+    final source = _together ? sourceOfId(messageId, _parts.keys) : null;
+    return _repository.fetchMessageAttachmentUrl(
+      messageId: localId(messageId, source),
+      attachmentId: attachmentId,
+      profileId: source,
+    );
+  }
 
   Future<List<Lesson>> fetchTimetableWeek(DateTime day) async {
     _error = null;
+    if (_together) return _fetchTimetableWeekTogether(day);
     try {
       final lessons = await _repository.fetchTimetableWeek(day);
-      // Calendar days: a week the clocks change in is not 7 × 24 hours.
-      final weekStart = DateTime(
-        day.year,
-        day.month,
-        day.day - (day.weekday - 1),
+      _snapshot = snapshot.copyWith(
+        lessons: _withWeek(snapshot.lessons, lessons, day),
       );
-      final weekEnd = DateTime(
-        weekStart.year,
-        weekStart.month,
-        weekStart.day + 7,
-      );
-      final merged =
-          snapshot.lessons
-              .where(
-                (lesson) =>
-                    lesson.start.isBefore(weekStart) ||
-                    !lesson.start.isBefore(weekEnd),
-              )
-              .followedBy(lessons)
-              .toList(growable: false)
-            ..sort((a, b) => a.start.compareTo(b.start));
-      _snapshot = snapshot.copyWith(lessons: merged);
       notifyListeners();
       _updateHomeWidget();
       return lessons;
@@ -823,6 +1039,70 @@ class AppController extends ChangeNotifier {
       notifyListeners();
       rethrow;
     }
+  }
+
+  /// The week of [day] of every profile in the view together. A profile
+  /// that cannot load it leaves the others'; only when none can, it fails.
+  Future<List<Lesson>> _fetchTimetableWeekTogether(DateTime day) async {
+    final week = <Lesson>[];
+    (String, Object, StackTrace)? failed;
+    var loaded = 0;
+    for (final id in [..._parts.keys]) {
+      try {
+        final lessons = await _repository.fetchTimetableWeek(
+          day,
+          profileId: id,
+        );
+        loaded++;
+        _changePart(
+          id,
+          (data) =>
+              data.copyWith(lessons: _withWeek(data.lessons, lessons, day)),
+        );
+        week.addAll([
+          for (final lesson in lessons)
+            lesson.withSource(id, id: sourcedId(id, lesson.id)),
+        ]);
+      } on Object catch (error, stack) {
+        failed ??= (id, error, stack);
+      }
+    }
+    if (failed case (final id, final error, final stack)) {
+      _error = _failed(error, stack, 'timetable');
+      _errorSource = id;
+    }
+    notifyListeners();
+    _updateHomeWidget();
+    if (loaded == 0 && failed != null) throw failed.$2;
+    return week..sort((a, b) => a.start.compareTo(b.start));
+  }
+
+  /// [lessons] with the week of [day] in place of what they had for it.
+  static List<Lesson> _withWeek(
+    List<Lesson> lessons,
+    List<Lesson> week,
+    DateTime day,
+  ) {
+    // Calendar days: a week the clocks change in is not 7 × 24 hours.
+    final weekStart = DateTime(
+      day.year,
+      day.month,
+      day.day - (day.weekday - 1),
+    );
+    final weekEnd = DateTime(
+      weekStart.year,
+      weekStart.month,
+      weekStart.day + 7,
+    );
+    return lessons
+        .where(
+          (lesson) =>
+              lesson.start.isBefore(weekStart) ||
+              !lesson.start.isBefore(weekEnd),
+        )
+        .followedBy(week)
+        .toList(growable: false)
+      ..sort((a, b) => a.start.compareTo(b.start));
   }
 
   Future<void> setLocale(Locale? locale) async {
@@ -884,6 +1164,21 @@ class AppController extends ChangeNotifier {
   /// Marks [item] as done, or not. Done work is no longer reminded of.
   Future<void> setHomeworkDone(SchoolEvent item, bool done) async {
     if (isHomeworkDone(item) == done) return;
+    final source = item.source;
+    if (source != null) {
+      final id = localId(item.id, source);
+      final marks = {
+        for (final entry in (_doneOf[source] ?? const {}).entries)
+          if (entry.key != id) entry.key: entry.value,
+        if (done) id: item.date,
+      };
+      _doneOf = {..._doneOf, source: marks};
+      if (source == activeProfile?.id) _doneHomework = marks;
+      notifyListeners();
+      await _repository.saveDoneHomework(marks, profileId: source);
+      await _updateReminders();
+      return;
+    }
     _doneHomework = {
       for (final entry in _doneHomework.entries)
         if (entry.key != item.id) entry.key: entry.value,
@@ -901,7 +1196,19 @@ class AppController extends ChangeNotifier {
     await _repository.saveTodayLayout(layout);
   }
 
+  /// The settings of the grade average; in the view together, of every
+  /// profile in it.
   Future<void> setGradeAverageSettings(GradeAverageSettings settings) async {
+    if (_together) {
+      if (_gradeAverages.values.every((saved) => saved == settings)) return;
+      _gradeAverage = settings;
+      _gradeAverages = {for (final id in _gradeAverages.keys) id: settings};
+      notifyListeners();
+      for (final id in _gradeAverages.keys) {
+        await _repository.saveGradeAverageSettings(settings, profileId: id);
+      }
+      return;
+    }
     if (_gradeAverage == settings) return;
     _gradeAverage = settings;
     notifyListeners();
@@ -928,7 +1235,8 @@ class AppController extends ChangeNotifier {
   /// Opens the profile [profileId] at once with its saved data and its own
   /// settings. A sync of the profile left behind goes on and saves its data.
   Future<void> switchProfile(String profileId) async {
-    if (activeProfile?.id == profileId) return;
+    if (!_together && activeProfile?.id == profileId) return;
+    _leaveTogether();
     _snapshot = await _repository.switchProfile(profileId);
     await _loadProfileSettings();
     _profiles = _repository.profiles;
@@ -955,13 +1263,14 @@ class AppController extends ChangeNotifier {
     if (isDemo) return;
     final profiles = await _repository.loadProfiles(reload: true);
     final news = await _repository.loadProfileNews(reload: true);
-    final open = activeProfile?.id;
     _profiles = profiles;
-    _profileNews = open == null || !news.contains(open)
-        ? news
-        : ({...news}..remove(open));
-    if (open != null && news.contains(open)) {
-      unawaited(_repository.setProfileNews(open, false));
+    // What is on screen is seen: the open profile, or every one together.
+    final shown = _together
+        ? {for (final profile in togetherProfiles) profile.id}
+        : {?activeProfile?.id};
+    _profileNews = {...news}..removeAll(shown);
+    for (final id in shown.intersection(news)) {
+      unawaited(_repository.setProfileNews(id, false));
     }
     notifyListeners();
   }
@@ -1082,6 +1391,7 @@ class AppController extends ChangeNotifier {
     try {
       await _repository.switchProfile(first.id);
       final synced = await _repository.syncProfile(first.id);
+      _leaveTogether();
       _snapshot = synced;
     } on Object {
       for (final profile in added) {
@@ -1125,7 +1435,14 @@ class AppController extends ChangeNotifier {
     final remaining = await _repository.removeProfile(profileId);
     _profiles = _repository.profiles;
     _profileNews = {..._profileNews}..remove(profileId);
-    if (open || _profiles.isEmpty) {
+    final wasTogether = _together;
+    if (_together && canBeTogether) {
+      _parts = {..._parts}..remove(profileId);
+      _mergeParts();
+      await _loadProfileSettings();
+    } else if (wasTogether || open || _profiles.isEmpty) {
+      // Fewer than two left together: the open profile shows alone.
+      _leaveTogether();
       _snapshot = remaining;
       await _loadProfileSettings();
       _syncNews = null;
@@ -1159,9 +1476,39 @@ class AppController extends ChangeNotifier {
     await _updateReminders();
   }
 
+  /// Puts the profile [profileId] in the view together, or takes it out.
+  /// With fewer than two left in it, the view shows the open profile alone.
+  Future<void> setProfileTogether(String profileId, bool together) async {
+    await _repository.setProfileTogether(profileId, together);
+    _profiles = _repository.profiles;
+    if (_together && !canBeTogether) {
+      _leaveTogether();
+      _snapshot = await _repository.load();
+      await _loadProfileSettings();
+      _syncNews = null;
+      _forgetSentMessages();
+      _error = null;
+      _updateHomeWidget();
+    } else if (_together) {
+      if (together && !_parts.containsKey(profileId)) {
+        _parts = {
+          ..._parts,
+          profileId: await _repository.loadProfileSnapshot(profileId),
+        };
+      } else if (!together) {
+        _parts = {..._parts}..remove(profileId);
+      }
+      _mergeParts();
+      await _loadProfileSettings();
+      _updateHomeWidget();
+    }
+    notifyListeners();
+  }
+
   /// Syncs the open profile. Switching profiles meanwhile leaves the sync
   /// to finish and save its data, without touching the screen.
   Future<void> sync() async {
+    if (_together) return _syncTogether();
     final key = _syncKey;
     if (_syncingProfiles.contains(key) || _signingIn || _markingMessagesRead) {
       return;
@@ -1198,8 +1545,59 @@ class AppController extends ChangeNotifier {
     }
   }
 
+  /// Syncs every profile in the view together, one after another, as a
+  /// Librus login two of them share renews its session once at a time. A
+  /// profile that fails leaves the others' data, and the error names it.
+  Future<void> _syncTogether() async {
+    if (_syncingProfiles.contains(togetherId) ||
+        _signingIn ||
+        _markingMessagesRead) {
+      return;
+    }
+    _syncingProfiles.add(togetherId);
+    _error = null;
+    _errorSource = null;
+    notifyListeners();
+    final before = snapshot;
+    (SchoolProfile, Object, StackTrace)? failed;
+    try {
+      for (final profile in togetherProfiles) {
+        _syncingProfiles.add(profile.id);
+        try {
+          final result = await _repository.syncProfile(profile.id);
+          // A Sent folder loaded or a message sent meanwhile stays.
+          _changePart(
+            profile.id,
+            (data) => result.copyWith(sentMessages: data.sentMessages),
+          );
+          await _notify(result, profile);
+        } on Object catch (error, stack) {
+          failed ??= (profile, error, stack);
+        } finally {
+          _syncingProfiles.remove(profile.id);
+        }
+      }
+      if (!_together) return;
+      final news = before.lastSync.millisecondsSinceEpoch != 0
+          ? SyncNews.between(before, snapshot)
+          : null;
+      _syncNews = news == null || news.isEmpty ? null : news;
+      if (failed case (final profile, final error, final stack)) {
+        _error = _failed(error, stack, 'sync');
+        _errorSource = profile.id;
+      }
+      unawaited(_updateReminders());
+      _updateHomeWidget();
+    } finally {
+      _syncingProfiles.remove(togetherId);
+      _profiles = _repository.profiles;
+      notifyListeners();
+    }
+  }
+
   /// Signs out of every profile: their data and logins leave the phone.
   Future<void> logout() async {
+    _leaveTogether();
     _snapshot = await _repository.logout();
     _profiles = const [];
     _profileNews = const {};
