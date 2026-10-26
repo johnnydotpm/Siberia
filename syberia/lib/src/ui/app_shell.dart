@@ -26,6 +26,7 @@ import '../domain/librus_error.dart';
 import '../domain/models.dart';
 import '../domain/profiles.dart';
 import '../domain/sync_news.dart';
+import '../domain/together.dart' show togetherId;
 import '../home_widget.dart';
 import '../network_vpn.dart';
 import '../l10n/app_localizations.dart';

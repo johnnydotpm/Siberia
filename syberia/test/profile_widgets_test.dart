@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syberia/src/app.dart';
 import 'package:syberia/src/domain/profiles.dart';
+import 'package:syberia/src/domain/together.dart';
 import 'package:syberia/src/home_widget.dart';
 import 'package:syberia/src/l10n/app_localizations.dart';
 import 'package:syberia/src/state/app_controller.dart';
@@ -109,6 +110,30 @@ void main() {
     expect(_subjects(bridge.updates.last.$1), ['Lekcja s-music']);
   });
 
+  test('the widgets can show every profile together: their lessons in one '
+      'list, and on Android a list of its own', () async {
+    final (controller, bridge) = await _twoProfiles();
+    final regular = _byLogin(controller, 'kid-regular');
+    final music = _byLogin(controller, 'kid-music');
+    await controller.setWidgetProfile(togetherId);
+    await _flush();
+    expect(controller.widgetProfileId, togetherId);
+    final (payload, profiles) = bridge.updates.last;
+    expect(_subjects(payload), ['Lekcja s-regular', 'Lekcja s-music']);
+    expect(_subjects(profiles[togetherId]!), [
+      'Lekcja s-regular',
+      'Lekcja s-music',
+    ]);
+    expect(_subjects(profiles[music.id]!), ['Lekcja s-music']);
+
+    // With one profile left in it there is nothing to show together.
+    await controller.setProfileTogether(music.id, false);
+    await _flush();
+    expect(controller.widgetProfileId, regular.id);
+    expect(_subjects(bridge.updates.last.$1), ['Lekcja s-regular']);
+    expect(bridge.updates.last.$2.containsKey(togetherId), isFalse);
+  });
+
   test('a widget\'s profile is kept with its settings', () {
     const config = HomeWidgetConfig(profileId: 'p-1');
     expect(config.toJson()['profileId'], 'p-1');
@@ -144,6 +169,53 @@ void main() {
     await tester.pumpAndSettle();
     expect(bridge.saved[7]!.profileId, music.id);
   });
+
+  testWidgets('an Android widget can be set to show every profile together', (
+    tester,
+  ) async {
+    final (controller, bridge) = await _twoProfiles();
+    await tester.pumpWidget(
+      MaterialApp(
+        localizationsDelegates: const [AppLocalizations.delegate],
+        home: Scaffold(
+          body: HomeWidgetsSheet(
+            bridge: bridge,
+            profiles: controller.profiles,
+            defaultProfileId: controller.widgetProfileId,
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('widget-profile-$togetherId')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('widget-settings-save')));
+    await tester.pumpAndSettle();
+    expect(bridge.saved[7]!.profileId, togetherId);
+  });
+
+  testWidgets('on iPhone the settings can choose every profile together', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(800, 3200);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final (controller, bridge) = await _twoProfiles();
+    controller.selectTab(9);
+    await tester.pumpWidget(SyberiaApp(controller: controller));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('settings-widget-profile')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('widget-profile-$togetherId')));
+    await tester.pumpAndSettle();
+    expect(controller.widgetProfileId, togetherId);
+    expect(_subjects(bridge.updates.last.$1), [
+      'Lekcja s-regular',
+      'Lekcja s-music',
+    ]);
+    expect(find.text('All together'), findsOneWidget);
+    await tester.pumpWidget(const SizedBox.shrink());
+  }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
 
   testWidgets('on iPhone the settings choose the widget\'s profile', (
     tester,

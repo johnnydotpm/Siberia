@@ -346,7 +346,7 @@ class _TogetherRow extends StatelessWidget {
               opacity: possible ? 1 : 0.6,
               child: Row(
                 children: [
-                  _ProfileStack(
+                  ProfileStack(
                     included.length >= 2 ? included : controller.profiles,
                   ),
                   const SizedBox(width: 14),

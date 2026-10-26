@@ -3,6 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 import '../domain/models.dart';
 import '../domain/profiles.dart';
+import '../domain/together.dart';
 import '../home_widget.dart';
 import '../l10n/app_localizations.dart';
 import '../state/app_controller.dart';
@@ -62,6 +63,12 @@ class _HomeWidgetSettingsFormState extends State<HomeWidgetSettingsForm> {
     widget.onSaved();
   }
 
+  /// The profiles in the view together, which a widget can show at once.
+  List<SchoolProfile> get _together => [
+    for (final profile in widget.profiles)
+      if (profile.together) profile,
+  ];
+
   /// Applies [update] to the current settings, so quick taps build on each
   /// other instead of on the settings of the last frame.
   void _change(HomeWidgetConfig Function(HomeWidgetConfig) update) =>
@@ -99,6 +106,29 @@ class _HomeWidgetSettingsFormState extends State<HomeWidgetSettingsForm> {
             children: [
               if (widget.profiles.length > 1) ...[
                 _SectionTitle(context.tr('widgetProfile')),
+                if (_together case final together when together.length > 1)
+                  ListTile(
+                    key: const ValueKey('widget-profile-$togetherId'),
+                    leading: ProfileStack(together, radius: 18),
+                    title: Text(context.tr('together')),
+                    subtitle: Text(
+                      [
+                        for (final profile in together)
+                          togetherName(profile, together),
+                      ].join(' · '),
+                    ),
+                    trailing:
+                        (config.profileId ?? widget.defaultProfileId) ==
+                            togetherId
+                        ? Icon(
+                            Icons.check_rounded,
+                            color: Theme.of(context).colorScheme.primary,
+                          )
+                        : null,
+                    onTap: () => _change(
+                      (current) => current.copyWith(profileId: togetherId),
+                    ),
+                  ),
                 for (final profile in widget.profiles)
                   ListTile(
                     key: ValueKey('widget-profile-${profile.id}'),

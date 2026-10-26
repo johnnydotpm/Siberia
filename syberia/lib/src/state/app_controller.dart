@@ -12,6 +12,7 @@ import '../domain/models.dart';
 import '../domain/profiles.dart';
 import '../domain/sync_news.dart';
 import '../domain/together.dart';
+import '../domain/together.dart' as together_lib show togetherName;
 import '../home_widget.dart';
 import '../home_widget.dart' as home_widget show displaySubject;
 import '../l10n/app_localizations.dart';
@@ -208,13 +209,8 @@ class AppController extends ChangeNotifier {
 
   /// The name [profile] goes by beside the others in the view together:
   /// its own, or its school when another one in it has the same name.
-  String togetherName(SchoolProfile profile) {
-    final name = profile.displayName;
-    final shared = togetherProfiles.any(
-      (other) => other.id != profile.id && other.displayName == name,
-    );
-    return shared && profile.school.isNotEmpty ? profile.school : name;
-  }
+  String togetherName(SchoolProfile profile) =>
+      together_lib.togetherName(profile, togetherProfiles);
 
   /// The profile the last error came from, in the view together.
   SchoolProfile? get errorProfile =>
@@ -397,6 +393,8 @@ class AppController extends ChangeNotifier {
   /// the one chosen in the settings, or the first.
   String? get widgetProfileId {
     final chosen = _widgetProfileId;
+    // Every profile together, while two at least are in it.
+    if (chosen == togetherId && canBeTogether) return chosen;
     if (_profiles.any((profile) => profile.id == chosen)) return chosen;
     return _profiles.isEmpty ? null : _profiles.first.id;
   }
@@ -469,16 +467,42 @@ class AppController extends ChangeNotifier {
               : _shortNamesOf[profile.id] ??
                     await _repository.loadSubjectShortNamesOf(profile.id),
         );
+    // The lessons of every profile together, for widgets set to show them.
+    Future<String>? together;
+    Future<String> togetherLessons() => together ??= () async {
+      final included = togetherProfiles;
+      return buildHomeWidgetPayload(
+        mergeSnapshots([
+          for (final profile in included)
+            (
+              profile,
+              _ownData(profile.id) ??
+                  await _repository.loadProfileSnapshot(profile.id),
+            ),
+        ]),
+        now,
+        l10n,
+        shortNames: {
+          // The first profile's where two differ, as in the app.
+          for (final profile in included.reversed)
+            ...(_shortNamesOf[profile.id] ??
+                await _repository.loadSubjectShortNamesOf(profile.id)),
+        },
+      );
+    }();
     final shown = _profiles.firstWhere(
       (profile) => profile.id == widgetProfileId,
       orElse: () => open,
     );
     await widget.update(
-      await lessonsOf(shown),
+      widgetProfileId == togetherId
+          ? await togetherLessons()
+          : await lessonsOf(shown),
       profiles: widget.configurableInApp
           ? {
               for (final profile in _profiles)
                 profile.id: await lessonsOf(profile),
+              if (canBeTogether) togetherId: await togetherLessons(),
             }
           : const {},
     );
@@ -1509,7 +1533,6 @@ class AppController extends ChangeNotifier {
       _syncNews = null;
       _forgetSentMessages();
       _error = null;
-      _updateHomeWidget();
     } else if (_together) {
       if (together && !_parts.containsKey(profileId)) {
         _parts = {
@@ -1521,9 +1544,10 @@ class AppController extends ChangeNotifier {
       }
       _mergeParts();
       await _loadProfileSettings();
-      _updateHomeWidget();
     }
     notifyListeners();
+    // A widget may show every profile together, whichever view is open.
+    _updateHomeWidget();
   }
 
   /// Syncs the open profile. Switching profiles meanwhile leaves the sync

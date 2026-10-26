@@ -15,6 +15,17 @@ String localId(String id, String? source) =>
     ? id.substring(source.length + 1)
     : id;
 
+/// The name [profile] goes by beside [together], the profiles in the view
+/// together: its own, or its school when another one of them has the same
+/// name, as one child at two schools does.
+String togetherName(SchoolProfile profile, Iterable<SchoolProfile> together) {
+  final name = profile.displayName;
+  final shared = together.any(
+    (other) => other.id != profile.id && other.displayName == name,
+  );
+  return shared && profile.school.isNotEmpty ? profile.school : name;
+}
+
 /// The profile among [profileIds] whose item in the view together has [id].
 String? sourceOfId(String id, Iterable<String> profileIds) {
   final cut = id.indexOf('|');

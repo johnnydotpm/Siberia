@@ -605,19 +605,28 @@ class _WidgetProfileRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final together = controller.widgetProfileId == togetherId;
     final shown = controller.profiles.firstWhere(
       (profile) => profile.id == controller.widgetProfileId,
       orElse: () => controller.profiles.first,
     );
+    Widget check(bool selected, BuildContext context) => selected
+        ? Icon(
+            Icons.check_rounded,
+            color: Theme.of(context).colorScheme.primary,
+          )
+        : const SizedBox.shrink();
     return ListTile(
       key: const ValueKey('settings-widget-profile'),
-      leading: ProfileAvatar(
-        name: shown.displayName,
-        color: shown.color,
-        radius: 18,
-      ),
+      leading: together
+          ? ProfileStack(controller.togetherProfiles, radius: 18)
+          : ProfileAvatar(
+              name: shown.displayName,
+              color: shown.color,
+              radius: 18,
+            ),
       title: Text(context.tr('widgetProfile')),
-      subtitle: Text(shown.displayName),
+      subtitle: Text(together ? context.tr('together') : shown.displayName),
       trailing: const _Chevron(),
       onTap: () => showAppSheet<void>(
         context: context,
@@ -640,6 +649,21 @@ class _WidgetProfileRow extends StatelessWidget {
               style: _sheetTitleStyle(sheetContext),
             ),
             const SizedBox(height: 12),
+            if (controller.canBeTogether)
+              ListTile(
+                key: const ValueKey('widget-profile-$togetherId'),
+                contentPadding: EdgeInsets.zero,
+                leading: ProfileStack(controller.togetherProfiles),
+                title: Text(sheetContext.tr('together')),
+                subtitle: Text(
+                  _openProfileDetailOf(controller, together: true),
+                ),
+                trailing: check(together, sheetContext),
+                onTap: () {
+                  Navigator.pop(sheetContext);
+                  controller.setWidgetProfile(togetherId);
+                },
+              ),
             for (final profile in controller.profiles)
               ListTile(
                 key: ValueKey('widget-profile-${profile.id}'),
@@ -650,12 +674,10 @@ class _WidgetProfileRow extends StatelessWidget {
                 ),
                 title: Text(profile.displayName),
                 subtitle: profile.school.isEmpty ? null : Text(profile.school),
-                trailing: profile.id == shown.id
-                    ? Icon(
-                        Icons.check_rounded,
-                        color: Theme.of(sheetContext).colorScheme.primary,
-                      )
-                    : null,
+                trailing: check(
+                  !together && profile.id == shown.id,
+                  sheetContext,
+                ),
                 onTap: () {
                   Navigator.pop(sheetContext);
                   controller.setWidgetProfile(profile.id);
