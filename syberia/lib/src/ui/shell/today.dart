@@ -1079,7 +1079,7 @@ class _TogetherSummary extends StatelessWidget {
                 child: Row(
                   children: [
                     ProfileAvatar(
-                      name: profile.displayName,
+                      name: controller.togetherSign(profile),
                       color: profile.color,
                       radius: 15,
                     ),

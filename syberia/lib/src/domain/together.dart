@@ -16,14 +16,58 @@ String localId(String id, String? source) =>
     : id;
 
 /// The name [profile] goes by beside [together], the profiles in the view
-/// together: its own, or its school when another one of them has the same
-/// name, as one child at two schools does.
+/// together: its own, or, when another one of them has the same name, as
+/// one child at two schools does, what tells its school from theirs:
+/// "Podstawowa nr 12" beside "Muzyczna" for "Szkoła Podstawowa nr 12" and
+/// "Szkoła Muzyczna".
 String togetherName(SchoolProfile profile, Iterable<SchoolProfile> together) {
+  final name = profile.displayName;
+  final namesakes = [
+    for (final other in together)
+      if (other.id != profile.id && other.displayName == name) other,
+  ];
+  if (namesakes.isEmpty || profile.school.isEmpty) return name;
+  return _ownPart(profile.school, [
+    for (final other in namesakes)
+      if (other.school.isNotEmpty) other.school,
+  ]);
+}
+
+/// What the initials of [profile] come from beside [together]: its name,
+/// or its whole school when another one of them has the same name, so the
+/// two signs differ.
+String togetherSign(SchoolProfile profile, Iterable<SchoolProfile> together) {
   final name = profile.displayName;
   final shared = together.any(
     (other) => other.id != profile.id && other.displayName == name,
   );
   return shared && profile.school.isNotEmpty ? profile.school : name;
+}
+
+/// [school] without the words it begins with as each of [others] does,
+/// and without the marks left in front; the whole of it when nothing or
+/// everything is the same.
+String _ownPart(String school, List<String> others) {
+  if (others.isEmpty) return school;
+  final words = school.trim().split(RegExp(r'\s+'));
+  var shared = words.length;
+  for (final other in others) {
+    final theirs = other.trim().split(RegExp(r'\s+'));
+    var same = 0;
+    while (same < words.length &&
+        same < theirs.length &&
+        words[same].toLowerCase() == theirs[same].toLowerCase()) {
+      same++;
+    }
+    if (same < shared) shared = same;
+  }
+  if (shared == 0 || shared >= words.length) return school;
+  final rest = words
+      .skip(shared)
+      .join(' ')
+      .replaceFirst(RegExp(r'^[·,;:\-–—\s]+'), '');
+  if (rest.isEmpty) return school;
+  return rest[0].toUpperCase() + rest.substring(1);
 }
 
 /// The profile among [profileIds] whose item in the view together has [id].

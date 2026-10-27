@@ -1,6 +1,11 @@
+import 'dart:math';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import '../l10n/app_localizations.dart';
 
 /// Web addresses ("https://…", "http://…", "www.…") and e-mail addresses in
 /// a text, as people write them in messages.
@@ -76,15 +81,24 @@ Uri? _linkOf(String address) {
 }
 
 /// [text] whose links open with a tap, the rest of it as selectable as
-/// before.
+/// before. Text selected in a link offers to open the link or copy it.
 class LinkedText extends StatefulWidget {
-  const LinkedText(this.text, {this.style, this.onOpenFailed, super.key});
+  const LinkedText(
+    this.text, {
+    this.style,
+    this.onOpenFailed,
+    this.onOpened,
+    super.key,
+  });
 
   final String text;
   final TextStyle? style;
 
   /// Called when a link could not be opened, to say so.
   final VoidCallback? onOpenFailed;
+
+  /// Called when a link opened, to take back a word that one did not.
+  final VoidCallback? onOpened;
 
   /// Opens a link outside the app; true when it did. Tests put their own
   /// here.
@@ -101,6 +115,9 @@ class _LinkedTextState extends State<LinkedText> {
   late List<({String text, Uri? link})> _parts;
   final _recognizers = <TapGestureRecognizer>[];
 
+  /// Where the selection lies in the text, to tell whether in a link.
+  final _selection = SelectionListenerNotifier();
+
   @override
   void initState() {
     super.initState();
@@ -116,6 +133,7 @@ class _LinkedTextState extends State<LinkedText> {
   @override
   void dispose() {
     _forgetRecognizers();
+    _selection.dispose();
     super.dispose();
   }
 
@@ -143,7 +161,61 @@ class _LinkedTextState extends State<LinkedText> {
     } on Object {
       opened = false;
     }
-    if (!opened && mounted) widget.onOpenFailed?.call();
+    if (!mounted) return;
+    if (opened) {
+      widget.onOpened?.call();
+    } else {
+      widget.onOpenFailed?.call();
+    }
+  }
+
+  /// The first link the selection takes in, whole or in part.
+  Uri? _selectedLink() {
+    if (!_selection.registered) return null;
+    final range = _selection.selection.range;
+    if (range == null) return null;
+    final start = min(range.startOffset, range.endOffset);
+    final end = max(range.startOffset, range.endOffset);
+    if (start == end) return null;
+    var offset = 0;
+    for (final part in _parts) {
+      final partEnd = offset + part.text.length;
+      if (part.link case final link? when start < partEnd && end > offset) {
+        return link;
+      }
+      offset = partEnd;
+    }
+    return null;
+  }
+
+  /// What a link copies: an e-mail address without "mailto:".
+  static String _copied(Uri link) =>
+      link.scheme == 'mailto' ? link.path : link.toString();
+
+  Widget _menu(BuildContext context, SelectableRegionState region) {
+    final link = _selectedLink();
+    return AdaptiveTextSelectionToolbar.buttonItems(
+      anchors: region.contextMenuAnchors,
+      buttonItems: [
+        if (link != null) ...[
+          ContextMenuButtonItem(
+            label: context.tr('linkOpen'),
+            onPressed: () {
+              ContextMenuController.removeAny();
+              _open(link);
+            },
+          ),
+          ContextMenuButtonItem(
+            label: context.tr('linkCopy'),
+            onPressed: () {
+              ContextMenuController.removeAny();
+              Clipboard.setData(ClipboardData(text: _copied(link)));
+            },
+          ),
+        ],
+        ...region.contextMenuButtonItems,
+      ],
+    );
   }
 
   @override
@@ -151,25 +223,29 @@ class _LinkedTextState extends State<LinkedText> {
     final color = Theme.of(context).colorScheme.primary;
     var next = 0;
     return SelectionArea(
-      child: Text.rich(
-        TextSpan(
-          style: widget.style,
-          children: [
-            for (final part in _parts)
-              if (part.link == null)
-                TextSpan(text: part.text)
-              else
-                TextSpan(
-                  text: part.text,
-                  style: TextStyle(
-                    color: color,
-                    decoration: TextDecoration.underline,
-                    decorationColor: color,
+      contextMenuBuilder: _menu,
+      child: SelectionListener(
+        selectionNotifier: _selection,
+        child: Text.rich(
+          TextSpan(
+            style: widget.style,
+            children: [
+              for (final part in _parts)
+                if (part.link == null)
+                  TextSpan(text: part.text)
+                else
+                  TextSpan(
+                    text: part.text,
+                    style: TextStyle(
+                      color: color,
+                      decoration: TextDecoration.underline,
+                      decorationColor: color,
+                    ),
+                    mouseCursor: SystemMouseCursors.click,
+                    recognizer: _recognizers[next++],
                   ),
-                  mouseCursor: SystemMouseCursors.click,
-                  recognizer: _recognizers[next++],
-                ),
-          ],
+            ],
+          ),
         ),
       ),
     );

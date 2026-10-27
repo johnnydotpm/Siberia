@@ -331,17 +331,16 @@ class _AppShellState extends State<AppShell> {
           appBar: AppBar(
             title: Text(_title(context, controller.tabIndex)),
             actions: [
-              if (controller.syncing)
-                const Padding(
-                  padding: EdgeInsets.all(18),
-                  child: SizedBox.square(
-                    dimension: 18,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  ),
-                ),
+              // One sign of a sync: the button turns into its spinner.
               IconButton(
+                key: const ValueKey('sync-button'),
                 onPressed: controller.syncing ? null : controller.sync,
-                icon: const Icon(Icons.sync_rounded),
+                icon: controller.syncing
+                    ? const SizedBox.square(
+                        dimension: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Icon(Icons.sync_rounded),
                 tooltip: context.tr('sync'),
               ),
               IconButton(
@@ -373,6 +372,7 @@ class _AppShellState extends State<AppShell> {
             child: NavigationBar(
               selectedIndex: selected < 0 ? 0 : selected,
               onDestinationSelected: (index) {
+                HapticFeedback.selectionClick();
                 final page = bottomTabs[index];
                 if (page == controller.tabIndex) {
                   _reselect(page, glass: false);

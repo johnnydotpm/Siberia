@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../domain/profiles.dart';
+import '../domain/together.dart';
 
 import 'subject_colors.dart';
 
@@ -100,7 +101,8 @@ class ProfileStack extends StatelessWidget {
     final signs = <Widget>[
       for (final profile in shown)
         ProfileAvatar(
-          name: profile.displayName,
+          // One child at two schools: the schools' initials tell them apart.
+          name: togetherSign(profile, profiles),
           color: profile.color,
           radius: radius,
         ),

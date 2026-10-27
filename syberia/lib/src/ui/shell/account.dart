@@ -153,6 +153,7 @@ class _ProfilesSheet extends StatelessWidget {
           _TogetherRow(
             controller: controller,
             onTap: () {
+              HapticFeedback.selectionClick();
               Navigator.pop(context);
               controller.openTogether();
             },
@@ -179,6 +180,7 @@ class _ProfilesSheet extends StatelessWidget {
               active: profile.id == active?.id,
               news: controller.profileHasNews(profile.id),
               onTap: () {
+                HapticFeedback.selectionClick();
                 Navigator.pop(context);
                 controller.switchProfile(profile.id);
               },

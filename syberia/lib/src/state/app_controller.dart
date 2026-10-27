@@ -12,7 +12,9 @@ import '../domain/models.dart';
 import '../domain/profiles.dart';
 import '../domain/sync_news.dart';
 import '../domain/together.dart';
-import '../domain/together.dart' as together_lib show togetherName;
+import '../domain/together.dart'
+    as together_lib
+    show togetherName, togetherSign;
 import '../home_widget.dart';
 import '../home_widget.dart' as home_widget show displaySubject;
 import '../l10n/app_localizations.dart';
@@ -211,6 +213,10 @@ class AppController extends ChangeNotifier {
   /// its own, or its school when another one in it has the same name.
   String togetherName(SchoolProfile profile) =>
       together_lib.togetherName(profile, togetherProfiles);
+
+  /// What the initials of [profile] come from in the view together.
+  String togetherSign(SchoolProfile profile) =>
+      together_lib.togetherSign(profile, togetherProfiles);
 
   /// The profile the last error came from, in the view together.
   SchoolProfile? get errorProfile =>

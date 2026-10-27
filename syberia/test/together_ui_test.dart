@@ -101,7 +101,8 @@ void main() {
 
     controller.selectTab(2);
     await tester.pumpAndSettle();
-    // One child at two schools: the marks name the schools.
+    // One child at two schools: the marks name what tells the schools
+    // apart, "Szkoła" being the same in both.
     for (final profile in [regular, music]) {
       expect(
         find.byKey(ValueKey('grades-subject-${profile.id}|Matematyka')),
@@ -112,8 +113,9 @@ void main() {
         findsOneWidget,
       );
     }
-    expect(_markOf('Szkoła Muzyczna'), findsWidgets);
-    expect(_markOf('Szkoła Podstawowa'), findsWidgets);
+    expect(_markOf('Muzyczna'), findsWidgets);
+    expect(_markOf('Podstawowa'), findsWidgets);
+    expect(_markOf('Szkoła Muzyczna'), findsNothing);
 
     await _openProfiles(tester);
     expect(
@@ -333,7 +335,7 @@ void main() {
     );
     expect(banner, findsOneWidget);
     expect(
-      find.descendant(of: banner, matching: _markOf('Szkoła Muzyczna')),
+      find.descendant(of: banner, matching: _markOf('Muzyczna')),
       findsOneWidget,
     );
     expect(tester.takeException(), isNull);
@@ -406,8 +408,8 @@ void main() {
     world.failingWith = LibrusErrorCode.serverReply;
     await controller.sync();
     await tester.pumpAndSettle();
-    expect(find.textContaining('Szkoła Muzyczna: '), findsOneWidget);
-    expect(find.textContaining('Szkoła Podstawowa: '), findsNothing);
+    expect(find.textContaining('Muzyczna: '), findsOneWidget);
+    expect(find.textContaining('Podstawowa: '), findsNothing);
     expect(tester.takeException(), isNull);
     await tester.pumpWidget(const SizedBox.shrink());
   });

@@ -610,7 +610,11 @@ class _MessageTile extends StatelessWidget {
     return Dismissible(
       key: ValueKey('message-${item.id}'),
       direction: unread ? DismissDirection.startToEnd : DismissDirection.none,
-      confirmDismiss: (_) => _markRead(context),
+      confirmDismiss: (_) {
+        // Felt, as the homework's swipe is.
+        HapticFeedback.lightImpact();
+        return _markRead(context);
+      },
       background: _SwipeAction(
         icon: Icons.mark_email_read_rounded,
         label: context.tr('messageMarkRead'),
@@ -975,6 +979,7 @@ class _MessageDetailSheetState extends State<_MessageDetailSheet> {
                     style: Theme.of(context).textTheme.bodyLarge
                         ?.copyWith(height: 1.45),
                     onOpenFailed: () => setState(() => linkFailed = true),
+                    onOpened: () => setState(() => linkFailed = false),
                   ),
                   if (linkFailed)
                     Padding(
