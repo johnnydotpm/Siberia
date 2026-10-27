@@ -315,21 +315,42 @@ class _AveragePill extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final palette = SubjectColors.grade(average, theme.brightness);
+    final style = TextStyle(
+      color: palette.foreground,
+      fontSize: large ? 26 : 15,
+      fontWeight: FontWeight.w900,
+      fontFeatures: _tabular,
+    );
+    // In the subjects' column every small pill is as wide as one with two
+    // decimals, so "4,5" and "3,67" line up whatever the font.
+    BoxConstraints? constraints;
+    if (!large) {
+      final widest = TextPainter(
+        text: TextSpan(
+          text: _decimal(context, 8.88),
+          style: DefaultTextStyle.of(context).style.merge(style),
+        ),
+        textDirection: Directionality.of(context),
+        textScaler: MediaQuery.textScalerOf(context),
+        maxLines: 1,
+      )..layout();
+      constraints = BoxConstraints(minWidth: widest.width + 20);
+      widest.dispose();
+    }
     return Container(
+      key: const ValueKey('average-pill'),
       padding: large
           ? const EdgeInsets.symmetric(horizontal: 14, vertical: 8)
           : const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      constraints: constraints,
       decoration: BoxDecoration(
         color: palette.background,
         borderRadius: BorderRadius.circular(large ? 16 : 10),
       ),
       child: Text(
         average == null ? '—' : _decimal(context, average!),
-        style: TextStyle(
-          color: palette.foreground,
-          fontSize: large ? 26 : 15,
-          fontWeight: FontWeight.w900,
-        ),
+        textAlign: TextAlign.center,
+        style: style,
       ),
     );
   }

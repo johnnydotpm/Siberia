@@ -386,6 +386,7 @@ class _SubjectAttendanceRow extends StatelessWidget {
                         style: theme.textTheme.titleSmall?.copyWith(
                           fontWeight: FontWeight.w800,
                           color: low ? colors.error : null,
+                          fontFeatures: _tabular,
                         ),
                       ),
                     ],

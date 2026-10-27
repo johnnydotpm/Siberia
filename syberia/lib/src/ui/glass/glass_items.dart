@@ -111,6 +111,9 @@ class GlassSymbol {
   };
 }
 
+/// A count on a badge: past 99 it says "99+", so the badge stays small.
+String badgeText(int count) => count > 99 ? '99+' : '$count';
+
 /// One destination of the glass tab bar.
 @immutable
 class GlassTab {

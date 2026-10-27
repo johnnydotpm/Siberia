@@ -50,10 +50,7 @@ class _MessagesState extends State<_Messages> {
         MessageSection.today => context.tr('messagesToday'),
         MessageSection.yesterday => context.tr('messagesYesterday'),
         MessageSection.thisWeek => context.tr('messagesThisWeek'),
-        MessageSection.earlier => _capitalize(
-          DateFormat.yMMMM(Localizations.localeOf(context).toLanguageTag())
-              .format(value),
-        ),
+        MessageSection.earlier => _monthHeading(context, value, now),
       };
 
   @override
@@ -175,6 +172,7 @@ class _MessagesState extends State<_Messages> {
                 unreadCount == 0
                     ? context.tr('messagesUnread')
                     : '${context.tr('messagesUnread')} ($unreadCount)',
+                style: const TextStyle(fontFeatures: _tabular),
               ),
               selected: _unreadOnly,
               onSelected: (value) => setState(() => _unreadOnly = value),
@@ -350,6 +348,36 @@ MessageSection messageSection(DateTime value, DateTime now) {
   if (days == 1) return MessageSection.yesterday;
   if (days < 7 && value.weekday < now.weekday) return MessageSection.thisWeek;
   return MessageSection.earlier;
+}
+
+/// When a message came, went or was read, as its sheet says it: the day in
+/// words while it is near, and always the short date and the time:
+/// "Dziś, 27.10, 12:30", "Wczoraj, 26.10, 12:30", "Pon, 20.10, 12:30",
+/// then "14.09, 12:30", and with the year for another year. [inSentence]
+/// writes "dziś" and "wczoraj" (and, where weekdays are not capitalised,
+/// the weekday) in lower case, as after "Wysłano".
+String _messageStamp(
+  BuildContext context,
+  DateTime value, {
+  DateTime? now,
+  bool inSentence = false,
+}) {
+  final days = calendarDaysBetween(value, now ?? DateTime.now());
+  var day = switch (days) {
+    0 => context.tr('messagesToday'),
+    1 => context.tr('messagesYesterday'),
+    > 1 && < 7 => _shortWeekday(context, value),
+    _ => null,
+  };
+  final lowerWeekdays = const {
+    'pl',
+    'ru',
+    'uk',
+  }.contains(Localizations.localeOf(context).languageCode);
+  if (day != null && inSentence && (days <= 1 || lowerWeekdays)) {
+    day = day[0].toLowerCase() + day.substring(1);
+  }
+  return [?day, _shortDate(context, value), _time(value)].join(', ');
 }
 
 /// "12:30" today, the weekday this week, the date before that.
@@ -837,8 +865,8 @@ class _MessageDetailSheetState extends State<_MessageDetailSheet> {
                       style: const TextStyle(fontWeight: FontWeight.w700),
                     ),
                     Text(
-                      DateFormat('dd.MM.yyyy, HH:mm')
-                          .format(message.receivedAt),
+                      _messageStamp(context, message.receivedAt),
+                      key: const ValueKey('message-stamp'),
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                   ],
@@ -930,8 +958,8 @@ class _MessageDetailSheetState extends State<_MessageDetailSheet> {
                                 ),
                               ),
                               Text(
-                                DateFormat('dd.MM.yyyy, HH:mm')
-                                    .format(message.receivedAt),
+                                _messageStamp(context, message.receivedAt),
+                                key: const ValueKey('message-stamp'),
                                 style: Theme.of(context).textTheme.bodySmall,
                               ),
                             ],
@@ -1085,8 +1113,11 @@ class _SentRecipientsState extends State<_SentRecipients> {
                                     ? [
                                         context.tr('messageRead'),
                                         if (receiver.readAt != null)
-                                          DateFormat('dd.MM, HH:mm')
-                                              .format(receiver.readAt!),
+                                          _messageStamp(
+                                            context,
+                                            receiver.readAt!,
+                                            inSentence: true,
+                                          ),
                                       ].join(' · ')
                                     : context.tr('messageNotRead'),
                                 style: theme.textTheme.labelMedium?.copyWith(
@@ -1121,7 +1152,7 @@ class _SentRecipientsState extends State<_SentRecipients> {
               .tr('messageSentAt')
               .replaceAll(
                 '{date}',
-                DateFormat('dd.MM.yyyy, HH:mm').format(summary.receivedAt),
+                _messageStamp(context, summary.receivedAt, inSentence: true),
               ),
           style: theme.textTheme.bodySmall?.copyWith(
             color: colors.onSurfaceVariant,

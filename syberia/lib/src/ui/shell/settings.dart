@@ -426,10 +426,14 @@ class _SettingsProfile extends StatelessWidget {
                         Icon(Icons.cloud_done_rounded, size: 15, color: muted),
                         const SizedBox(width: 5),
                         Flexible(
-                          child: Text(
-                            _syncedAgo(context, controller.snapshot.lastSync),
-                            style: theme.textTheme.labelMedium?.copyWith(
-                              color: muted,
+                          // "przed chwilą" turns into "5 min temu" on its own.
+                          child: _MinuteClock(
+                            builder: (context, _) => Text(
+                              _syncedAgo(context, controller.snapshot.lastSync),
+                              key: const ValueKey('settings-synced-ago'),
+                              style: theme.textTheme.labelMedium?.copyWith(
+                                color: muted,
+                              ),
                             ),
                           ),
                         ),

@@ -434,6 +434,7 @@ class _TimelineLessonCard extends StatelessWidget {
                 color: foreground,
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
+                fontFeatures: _tabular,
               );
               final room = constraints.maxHeight;
               final subjectLine = lineHeight(subjectStyle);

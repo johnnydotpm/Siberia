@@ -69,7 +69,7 @@ class _NativeGlassTabBarState extends State<NativeGlassTabBar> {
             'label': tab.label,
             'symbol': tab.symbol.name,
             'selectedSymbol': tab.selectedSymbol.name,
-            'badge': tab.badge > 0 ? '${tab.badge}' : '',
+            'badge': tab.badge > 0 ? badgeText(tab.badge) : '',
           },
       ],
       'selected': widget.selectedIndex,

@@ -9,6 +9,7 @@ import 'package:syberia/src/app.dart';
 import 'package:syberia/src/data/app_repository.dart';
 import 'package:syberia/src/data/librus/librus_client.dart';
 import 'package:syberia/src/data/snapshot_cache.dart';
+import 'package:syberia/src/domain/calendar_days.dart';
 import 'package:syberia/src/domain/librus_error.dart';
 import 'package:syberia/src/domain/models.dart';
 import 'package:syberia/src/state/app_controller.dart';
@@ -330,6 +331,14 @@ void main() {
 
     testWidgets('an opened sent message lists its recipients', (tester) async {
       final message = _sent('s1');
+      final now = DateTime.now();
+      final readAt = DateTime(now.year, now.month, now.day, 7, 40);
+      // The day in words, in a sentence, with its short date and the time.
+      String stamp(DateTime value) => [
+        calendarDaysBetween(value, now) == 0 ? 'today' : 'yesterday',
+        DateFormat('dd.MM').format(value),
+        DateFormat('HH:mm').format(value),
+      ].join(', ');
       final (controller, client) = await show(
         tester,
         _snapshot(sent: [message]),
@@ -340,7 +349,7 @@ void main() {
           MessageReceiver(
             name: 'Teacher $index',
             read: index == 1,
-            readAt: index == 1 ? DateTime(2026, 10, 18, 7, 40) : null,
+            readAt: index == 1 ? readAt : null,
           ),
       ];
       await openSent(tester);
@@ -348,19 +357,14 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('Sent message'), findsOneWidget);
       expect(find.text('To:'), findsOneWidget);
-      expect(find.text('Read · 18.10, 07:40'), findsOneWidget);
+      expect(find.text('Read · ${stamp(readAt)}'), findsOneWidget);
       expect(find.text('Not read yet'), findsNWidgets(3));
       expect(find.text('Teacher 5'), findsNothing);
       await tester.tap(find.byKey(const ValueKey('sent-recipients-all')));
       await tester.pumpAndSettle();
       expect(find.text('Teacher 6'), findsOneWidget);
       expect(find.text('Not read yet'), findsNWidgets(5));
-      expect(
-        find.text(
-          'Sent ${DateFormat('dd.MM.yyyy, HH:mm').format(message.receivedAt)}',
-        ),
-        findsOneWidget,
-      );
+      expect(find.text('Sent ${stamp(message.receivedAt)}'), findsOneWidget);
       // The list row now knows all six.
       expect(controller.snapshot.sentMessages.single.recipients, hasLength(6));
       expect(tester.takeException(), isNull);

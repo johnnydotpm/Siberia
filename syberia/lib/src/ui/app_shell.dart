@@ -431,7 +431,10 @@ NavigationDestination _destination(
   // side navigation.
   Widget badged(IconData data) => Badge(
     isLabelVisible: badge > 0,
-    label: Text('$badge'),
+    label: Text(
+      badgeText(badge),
+      style: const TextStyle(fontFeatures: _tabular),
+    ),
     child: Icon(data),
   );
   return NavigationDestination(
@@ -538,7 +541,8 @@ class _SideNavigation extends StatelessWidget {
                           index == 5 && controller.snapshot.unreadMessages > 0
                           ? Badge(
                               label: Text(
-                                '${controller.snapshot.unreadMessages}',
+                                badgeText(controller.snapshot.unreadMessages),
+                                style: const TextStyle(fontFeatures: _tabular),
                               ),
                             )
                           : null,

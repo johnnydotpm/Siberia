@@ -583,6 +583,18 @@ String _shortWeekday(BuildContext context, DateTime value) => _capitalize(
       .replaceAll('.', ''),
 );
 
+/// The heading of a month in a list: "Wrzesień", and "Wrzesień 2025" for
+/// another year than [now]'s.
+String _monthHeading(BuildContext context, DateTime month, DateTime now) {
+  final locale = Localizations.localeOf(context).toLanguageTag();
+  return _capitalize(
+    (month.year == now.year
+            ? DateFormat.LLLL(locale)
+            : DateFormat.yMMMM(locale))
+        .format(month),
+  );
+}
+
 String _capitalize(String value) => value.isEmpty
     ? value
     : '${value.characters.first.toUpperCase()}${value.substring(value.characters.first.length)}';

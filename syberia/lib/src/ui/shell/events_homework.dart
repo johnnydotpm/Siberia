@@ -87,12 +87,7 @@ class _HomeworkState extends State<_Homework> {
   /// "Next week", "Later". Past work by month.
   String _section(DateTime due, DateTime today) {
     final days = calendarDaysBetween(today, due);
-    if (days < 0) {
-      return _capitalize(
-        DateFormat.yMMMM(Localizations.localeOf(context).toLanguageTag())
-            .format(due),
-      );
-    }
+    if (days < 0) return _monthHeading(context, due, today);
     if (days == 0) return context.tr('messagesToday');
     if (days == 1) return context.tr('widgetTomorrow');
     final weeks = (days + today.weekday - 1) ~/ 7;
