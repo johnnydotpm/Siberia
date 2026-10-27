@@ -158,11 +158,8 @@ class _GradesOverview extends StatelessWidget {
                       const SizedBox(height: 4),
                       Text(
                         [
-                          context.trArgs('gradesCount', {
-                            'count': '${grades.length}',
-                          }),
-                          if (fresh > 0)
-                            context.trArgs('gradesNew', {'count': '$fresh'}),
+                          _plural(context, grades.length, 'grades'),
+                          if (fresh > 0) _plural(context, fresh, 'gradesNew'),
                         ].join(' · '),
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: theme.colorScheme.onSurfaceVariant,
@@ -287,12 +284,10 @@ class _TogetherGradesOverview extends StatelessWidget {
                         ),
                         Text(
                           [
-                            context.trArgs('gradesCount', {
-                              'count': '${own.length}',
-                            }),
+                            _plural(context, own.length, 'grades'),
                             if (own.where((g) => _isNewGrade(g, now)).length
                                 case final fresh when fresh > 0)
-                              context.trArgs('gradesNew', {'count': '$fresh'}),
+                              _plural(context, fresh, 'gradesNew'),
                           ].join(' · '),
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.colorScheme.onSurfaceVariant,
@@ -630,7 +625,7 @@ Future<void> _showSubjectGrades(
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          '${context.tr('averageGrade')} · ${context.trArgs('gradesCount', {'count': '${grades.length}'})}',
+                          '${context.tr('averageGrade')} · ${_plural(context, grades.length, 'grades')}',
                           style: theme.textTheme.bodyMedium?.copyWith(
                             color: theme.colorScheme.onSurfaceVariant,
                           ),

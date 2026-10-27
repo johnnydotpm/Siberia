@@ -128,6 +128,32 @@ void main() {
     expect(presenter.shown, hasLength(1));
   });
 
+  test('several new entries are counted in the right Polish form', () async {
+    final presenter = _Presenter();
+    final service = SchoolNotificationService(presenter);
+    await service.processSnapshot(_snapshot());
+    await service.processSnapshot(
+      _snapshot(
+        attendance: [
+          for (final id in ['a1', 'a2', 'a3'])
+            _entry(id, AttendanceKind.absent, 'Nieobecność'),
+        ],
+      ),
+    );
+    await service.processSnapshot(
+      _snapshot(
+        attendance: [
+          for (final id in ['a1', 'a2', 'a3', 'b1', 'b2', 'b3', 'b4', 'b5'])
+            _entry(id, AttendanceKind.absent, 'Nieobecność'),
+        ],
+      ),
+    );
+    expect(presenter.shown, [
+      (SchoolNotificationCategory.attendance, '3 nowe wpisy'),
+      (SchoolNotificationCategory.attendance, '5 nowych wpisów'),
+    ]);
+  });
+
   test('an entry without a subject reads as its type alone', () async {
     final presenter = _Presenter();
     final service = SchoolNotificationService(presenter);

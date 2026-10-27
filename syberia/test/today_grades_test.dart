@@ -275,7 +275,7 @@ void main() {
     expect(
       find.descendant(
         of: find.byKey(const ValueKey('grades-overview')),
-        matching: find.text('Grades: 3 · New: 1'),
+        matching: find.text('3 grades · 1 new'),
       ),
       findsOneWidget,
     );

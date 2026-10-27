@@ -32,7 +32,7 @@ class AppLocalizations {
       'todayCurrentLesson': 'Aktualna lub następna lekcja',
       'startingApp': 'Uruchamianie aplikacji',
       'startupFailed': 'Nie udało się uruchomić aplikacji. Spróbuj ponownie.',
-      'markAllRead': 'Odczytaj wszystko',
+      'markAllRead': 'Oznacz wszystkie jako przeczytane',
       'timetableViewTimeline': 'Oś czasu',
       'timetableViewList': 'Lista',
       'lessonBreak': 'Przerwa {minutes} min',
@@ -62,8 +62,7 @@ class AppLocalizations {
       'messagesViewCards': 'Karty',
       'markingRead': 'Oznaczanie jako przeczytane…',
       'allMessagesRead': 'Wszystkie wiadomości są przeczytane.',
-      'markAllReadFailed':
-          'Nie udało się odczytać wszystkich wiadomości. Spróbuj ponownie.',
+      'markAllReadFailed': 'Nie udało się oznaczyć wszystkich wiadomości jako przeczytanych. Spróbuj ponownie.',
       'colorMode': 'Motyw',
       'colorMode_system': 'Motyw telefonu',
       'colorMode_light': 'Jasny',
@@ -82,7 +81,7 @@ class AppLocalizations {
       'subject': 'Temat',
       'messageBody': 'Treść wiadomości',
       'send': 'Wyślij',
-      'sending': 'Wysyłanie...',
+      'sending': 'Wysyłanie…',
       'messageSent': 'Wiadomość została wysłana.',
       'messageLoadFailed': 'Nie udało się pobrać treści wiadomości.',
       'attachments': 'Załączniki',
@@ -127,23 +126,34 @@ class AppLocalizations {
       'notificationsDescription': 'Nowe dane z Librusa',
       'notificationPermissionDenied':
           'Zezwól na powiadomienia w ustawieniach systemu.',
-      'notificationMultiple': '{count} nowych wpisów',
       'notification_grades': 'Nowe oceny',
       'notification_messages': 'Nowe wiadomości',
       'notification_announcements': 'Nowe ogłoszenia',
       'notification_notices': 'Nowe uwagi',
       'notification_attendance': 'Nowe wpisy frekwencji',
       'notification_events': 'Nowe wydarzenia',
+      'gradesOne': '{count} ocena',
+      'gradesFew': '{count} oceny',
+      'gradesMany': '{count} ocen',
+      'gradesNewOne': '{count} nowa',
+      'gradesNewFew': '{count} nowe',
+      'gradesNewMany': '{count} nowych',
+      'profilesOne': '{count} profil',
+      'profilesFew': '{count} profile',
+      'profilesMany': '{count} profili',
+      'newEntriesOne': '{count} nowy wpis',
+      'newEntriesFew': '{count} nowe wpisy',
+      'newEntriesMany': '{count} nowych wpisów',
       'linkOpenFailed': 'Nie udało się otworzyć linku',
       'composeFrom': 'Od',
-      'composeRecipientsOf': 'Adresaci: {school}',
+      'composeRecipientsOf': 'Odbiorcy: {school}',
       'togetherSettingsNote':
-          'We «Wszystkie razem» zmiana dotyczy wszystkich profili w widoku',
+          'W widoku „Wszystkie razem” zmiana dotyczy wszystkich jego profili',
       'together': 'Wszystkie razem',
-      'togetherNeedsTwo': 'Potrzeba co najmniej dwóch profili razem — włączysz je przez ⋯ przy profilu',
-      'profileTogether': 'Pokazuj we «Wszystkie razem»',
+      'togetherNeedsTwo': 'Potrzeba co najmniej dwóch profili razem – włączysz je przez ⋯ przy profilu',
+      'profileTogether': 'Pokazuj w widoku „Wszystkie razem”',
       'profileTogetherHint':
-          'Jego lekcje, oceny i wiadomości są w widoku razem',
+          'Jego lekcje, oceny i wiadomości są w widoku „Wszystkie razem”',
       'vpnOnSignIn': 'Masz włączony VPN. Librus czasem blokuje połączenia przez VPN – jeśli logowanie się nie uda, wyłącz go.',
       'vpnOnError':
           'Masz włączony VPN, a Librus czasem go blokuje. Spróbuj go wyłączyć.',
@@ -190,7 +200,6 @@ class AppLocalizations {
           'Z których profili przychodzą powiadomienia i przypomnienia.',
       'profiles': 'Profile',
       'profile': 'Profil',
-      'profilesCount': 'Profile: {count}',
       'profileButton': 'Profil: {name}',
       'profileOpen': 'Otwarty',
       'profileActions': 'Więcej: {name}',
@@ -255,7 +264,7 @@ class AppLocalizations {
       'otherAttendance': 'Inne wpisy',
       'partlyAbsent': 'Częściowa nieobecność',
       'lessonNumber': 'lekcja {number}',
-      'attendanceRate': 'Obecność',
+      'attendanceRate': 'Frekwencja',
       'nowLesson': 'Teraz',
       'lessonProgress': 'Minęło {elapsed} z {total} min',
       'chooseDate': 'Wybierz dzień',
@@ -349,7 +358,7 @@ class AppLocalizations {
       'averagePreview': 'Twoja średnia',
       'averagePreviewOwn': 'Z bieżącego semestru, z tymi ustawieniami',
       'averageExample': 'Przykład: {grades}',
-      'todayNext': 'Dalej',
+      'todayNext': 'Potem',
       'todayNextLesson': 'Następna lekcja',
       'todayLastLesson': 'Ostatnia lekcja dzisiaj',
       'todayDone': 'Lekcje na dziś skończone',
@@ -368,8 +377,6 @@ class AppLocalizations {
       'resetDefaults': 'Przywróć',
       'gradesViewCompact': 'Kompaktowa lista',
       'gradesViewCards': 'Rozwijane karty',
-      'gradesCount': 'Ocen: {count}',
-      'gradesNew': 'Nowe: {count}',
       'lessonsOne': '%d lekcja',
       'demoMode': 'Tryb demonstracyjny',
       'homeWidgets': 'Widżety',
@@ -411,7 +418,7 @@ class AppLocalizations {
       'chartStyle_ring': 'Okrągły',
       'chartStyle_pie': 'Kołowy',
       'chartStyle_bar': 'Płaski',
-      'design': 'Wygląd',
+      'design': 'Styl',
       'design_glass': 'Szkło',
       'design_classic': 'Klasyczny',
       'attendanceCalendar': 'Kalendarz obecności',
@@ -513,7 +520,7 @@ class AppLocalizations {
       'subject': 'Subject',
       'messageBody': 'Message',
       'send': 'Send',
-      'sending': 'Sending...',
+      'sending': 'Sending…',
       'messageSent': 'The message has been sent.',
       'messageLoadFailed': 'The message could not be loaded.',
       'attachments': 'Attachments',
@@ -557,13 +564,24 @@ class AppLocalizations {
       'notifications': 'Notifications',
       'notificationsDescription': 'New Librus updates',
       'notificationPermissionDenied': 'Allow notifications in system settings.',
-      'notificationMultiple': '{count} new items',
       'notification_grades': 'New grades',
       'notification_messages': 'New messages',
       'notification_announcements': 'New announcements',
       'notification_notices': 'New remarks',
       'notification_attendance': 'New attendance entries',
       'notification_events': 'New events',
+      'gradesOne': '{count} grade',
+      'gradesFew': '{count} grades',
+      'gradesMany': '{count} grades',
+      'gradesNewOne': '{count} new',
+      'gradesNewFew': '{count} new',
+      'gradesNewMany': '{count} new',
+      'profilesOne': '{count} profile',
+      'profilesFew': '{count} profiles',
+      'profilesMany': '{count} profiles',
+      'newEntriesOne': '{count} new item',
+      'newEntriesFew': '{count} new items',
+      'newEntriesMany': '{count} new items',
       'linkOpenFailed': 'Couldn\'t open the link',
       'composeFrom': 'From',
       'composeRecipientsOf': 'Recipients: {school}',
@@ -619,7 +637,6 @@ class AppLocalizations {
           'Which profiles send notifications and reminders.',
       'profiles': 'Profiles',
       'profile': 'Profile',
-      'profilesCount': 'Profiles: {count}',
       'profileButton': 'Profile: {name}',
       'profileOpen': 'Open',
       'profileActions': 'More for {name}',
@@ -798,8 +815,6 @@ class AppLocalizations {
       'resetDefaults': 'Reset',
       'gradesViewCompact': 'Compact list',
       'gradesViewCards': 'Expandable cards',
-      'gradesCount': 'Grades: {count}',
-      'gradesNew': 'New: {count}',
       'lessonsOne': '%d lesson',
       'demoMode': 'Demo mode',
       'homeWidgets': 'Home screen widgets',
@@ -894,7 +909,7 @@ class AppLocalizations {
       'todayCurrentLesson': 'Текущий или следующий урок',
       'startingApp': 'Запуск приложения',
       'startupFailed': 'Не удалось запустить приложение. Повторите попытку.',
-      'markAllRead': 'Прочитать всё',
+      'markAllRead': 'Отметить все как прочитанные',
       'timetableViewTimeline': 'Шкала времени',
       'timetableViewList': 'Списком',
       'lessonBreak': 'Перемена {minutes} мин',
@@ -925,7 +940,7 @@ class AppLocalizations {
       'markingRead': 'Отметка прочитанного…',
       'allMessagesRead': 'Все сообщения прочитаны.',
       'markAllReadFailed':
-          'Не удалось отметить все сообщения. Повторите попытку.',
+          'Не удалось отметить все сообщения прочитанными. Повторите попытку.',
       'colorMode': 'Тема',
       'colorMode_system': 'Тема телефона',
       'colorMode_light': 'Светлая',
@@ -944,7 +959,7 @@ class AppLocalizations {
       'subject': 'Тема',
       'messageBody': 'Текст сообщения',
       'send': 'Отправить',
-      'sending': 'Отправка...',
+      'sending': 'Отправка…',
       'messageSent': 'Сообщение отправлено.',
       'messageLoadFailed': 'Не удалось загрузить сообщение.',
       'attachments': 'Вложения',
@@ -989,24 +1004,35 @@ class AppLocalizations {
       'notificationsDescription': 'Новые данные из Librus',
       'notificationPermissionDenied':
           'Разрешите уведомления в настройках системы.',
-      'notificationMultiple': 'Новых записей: {count}',
       'notification_grades': 'Новые оценки',
       'notification_messages': 'Новые сообщения',
       'notification_announcements': 'Новые объявления',
       'notification_notices': 'Новые замечания',
       'notification_attendance': 'Новые записи посещаемости',
       'notification_events': 'Новые события',
+      'gradesOne': '{count} оценка',
+      'gradesFew': '{count} оценки',
+      'gradesMany': '{count} оценок',
+      'gradesNewOne': '{count} новая',
+      'gradesNewFew': '{count} новые',
+      'gradesNewMany': '{count} новых',
+      'profilesOne': '{count} профиль',
+      'profilesFew': '{count} профиля',
+      'profilesMany': '{count} профилей',
+      'newEntriesOne': '{count} новая запись',
+      'newEntriesFew': '{count} новые записи',
+      'newEntriesMany': '{count} новых записей',
       'linkOpenFailed': 'Не удалось открыть ссылку',
       'composeFrom': 'От',
       'composeRecipientsOf': 'Получатели: {school}',
       'togetherSettingsNote':
-          'В «Все вместе» изменение применяется ко всем профилям режима',
+          'В режиме «Все вместе» изменение применяется ко всем его профилям',
       'together': 'Все вместе',
       'togetherNeedsTwo':
           'Нужно хотя бы два профиля вместе — включите их через ⋯ у профиля',
-      'profileTogether': 'Показывать в «Все вместе»',
+      'profileTogether': 'Показывать в режиме «Все вместе»',
       'profileTogetherHint':
-          'Его уроки, оценки и сообщения видны в общем режиме',
+          'Его уроки, оценки и сообщения видны в режиме «Все вместе»',
       'vpnOnSignIn': 'Включён VPN. Librus иногда блокирует VPN: если войти не получится, выключите его.',
       'vpnOnError': 'Включён VPN, а Librus иногда его блокирует. Попробуйте выключить VPN.',
       'onboardingSummary': 'Ваши настройки',
@@ -1052,13 +1078,12 @@ class AppLocalizations {
           'От каких профилей приходят уведомления и напоминания.',
       'profiles': 'Профили',
       'profile': 'Профиль',
-      'profilesCount': 'Профили: {count}',
       'profileButton': 'Профиль: {name}',
       'profileOpen': 'Открыт',
       'profileActions': 'Ещё: {name}',
       'addProfile': 'Добавить профиль',
       'logoutAll': 'Выйти из всех',
-      'logoutAllConfirm': 'Выйти из всех профилей? Данные дневника пропадут с телефона, пока ты не войдёшь снова.',
+      'logoutAllConfirm': 'Выйти из всех профилей? Данные дневника пропадут с телефона, пока вы не войдёте снова.',
       'renameProfile': 'Переименовать',
       'profileName': 'Название профиля',
       'profileNameHelp':
@@ -1075,7 +1100,7 @@ class AppLocalizations {
       'chooseStudentsHelp': 'Каждый станет отдельным профилем со своими данными. Переключение — одним нажатием.',
       'addChosen': 'Добавить',
       'gradeCalculator': 'Калькулятор оценок',
-      'gradeCalculatorHint': 'Добавь оценки и посмотри, как изменится средний балл. В Librus ничего не отправляется.',
+      'gradeCalculatorHint': 'Добавьте оценки и посмотрите, как изменится средний балл. В Librus ничего не отправляется.',
       'gradeCalculatorAdd': 'Добавить оценку',
       'gradeCalculatorClear': 'Очистить',
       'gradeCalculatorUnweighted':
@@ -1099,7 +1124,7 @@ class AppLocalizations {
       'notification_timetable': 'Изменения в расписании',
       'account': 'Аккаунт Librus',
       'logout': 'Выйти',
-      'logoutConfirm': 'Выйти из аккаунта? Данные дневника пропадут с телефона, пока ты не войдёшь снова.',
+      'logoutConfirm': 'Выйти из аккаунта? Данные дневника пропадут с телефона, пока вы не войдёте снова.',
       'connect': 'Подключить Librus',
       'email': 'E-mail аккаунта Librus',
       'password': 'Пароль',
@@ -1198,7 +1223,7 @@ class AppLocalizations {
       'notificationsOn': 'Включены · {enabled} из {total}',
       'notificationsOff': 'Выключены',
       'checkUpdates': 'Проверить обновления',
-      'updateLatest': 'У тебя последняя версия',
+      'updateLatest': 'У вас последняя версия',
       'updateAvailableShort': 'Доступна версия {version}',
       'updateCheckFailed': 'Не удалось проверить обновления',
       'openRelease': 'Открыть',
@@ -1207,10 +1232,10 @@ class AppLocalizations {
       'resetSettings': 'Сбросить настройки',
       'resetSettingsConfirm': 'Все настройки вернутся по умолчанию. Аккаунт, короткие названия предметов и виджеты останутся.',
       'resetSettingsDone': 'Настройки сброшены',
-      'averagePreview': 'Твой средний балл',
+      'averagePreview': 'Ваш средний балл',
       'averagePreviewOwn': 'За текущий семестр, с этими настройками',
       'averageExample': 'Например: {grades}',
-      'todayNext': 'Дальше',
+      'todayNext': 'Затем',
       'todayNextLesson': 'Следующий урок',
       'todayLastLesson': 'Последний урок сегодня',
       'todayDone': 'Уроки на сегодня закончились',
@@ -1229,8 +1254,6 @@ class AppLocalizations {
       'resetDefaults': 'Сбросить',
       'gradesViewCompact': 'Компактный список',
       'gradesViewCards': 'Раскрывающиеся карточки',
-      'gradesCount': 'Оценок: {count}',
-      'gradesNew': 'Новых: {count}',
       'lessonsOne': '%d урок',
       'demoMode': 'Демонстрационный режим',
       'homeWidgets': 'Виджеты',
@@ -1375,7 +1398,7 @@ class AppLocalizations {
       'subject': 'Betreff',
       'messageBody': 'Nachrichtentext',
       'send': 'Senden',
-      'sending': 'Wird gesendet …',
+      'sending': 'Wird gesendet…',
       'messageSent': 'Die Nachricht wurde gesendet.',
       'messageLoadFailed': 'Die Nachricht konnte nicht geladen werden.',
       'attachments': 'Anhänge',
@@ -1420,13 +1443,24 @@ class AppLocalizations {
       'notificationsDescription': 'Neue Daten aus Librus',
       'notificationPermissionDenied':
           'Erlaube Benachrichtigungen in den Systemeinstellungen.',
-      'notificationMultiple': '{count} neue Einträge',
       'notification_grades': 'Neue Noten',
       'notification_messages': 'Neue Nachrichten',
       'notification_announcements': 'Neue Mitteilungen',
       'notification_notices': 'Neue Bemerkungen',
       'notification_attendance': 'Neue Anwesenheitseinträge',
       'notification_events': 'Neue Termine',
+      'gradesOne': '{count} Note',
+      'gradesFew': '{count} Noten',
+      'gradesMany': '{count} Noten',
+      'gradesNewOne': '{count} neue',
+      'gradesNewFew': '{count} neue',
+      'gradesNewMany': '{count} neue',
+      'profilesOne': '{count} Profil',
+      'profilesFew': '{count} Profile',
+      'profilesMany': '{count} Profile',
+      'newEntriesOne': '{count} neuer Eintrag',
+      'newEntriesFew': '{count} neue Einträge',
+      'newEntriesMany': '{count} neue Einträge',
       'linkOpenFailed': 'Der Link ließ sich nicht öffnen',
       'composeFrom': 'Von',
       'composeRecipientsOf': 'Empfänger: {school}',
@@ -1480,7 +1514,6 @@ class AppLocalizations {
           'Von welchen Profilen Benachrichtigungen und Erinnerungen kommen.',
       'profiles': 'Profile',
       'profile': 'Profil',
-      'profilesCount': 'Profile: {count}',
       'profileButton': 'Profil: {name}',
       'profileOpen': 'Geöffnet',
       'profileActions': 'Mehr: {name}',
@@ -1660,8 +1693,6 @@ class AppLocalizations {
       'resetDefaults': 'Zurücksetzen',
       'gradesViewCompact': 'Kompakte Liste',
       'gradesViewCards': 'Aufklappbare Karten',
-      'gradesCount': 'Noten: {count}',
-      'gradesNew': 'Neu: {count}',
       'lessonsOne': '%d Stunde',
       'demoMode': 'Demomodus',
       'homeWidgets': 'Widgets',
@@ -1763,7 +1794,7 @@ class AppLocalizations {
       'todayCurrentLesson': 'Поточний або наступний урок',
       'startingApp': 'Запуск застосунку',
       'startupFailed': 'Не вдалося запустити застосунок. Спробуйте ще раз.',
-      'markAllRead': 'Прочитати все',
+      'markAllRead': 'Позначити всі як прочитані',
       'timetableViewTimeline': 'Шкала часу',
       'timetableViewList': 'Списком',
       'lessonBreak': 'Перерва {minutes} хв',
@@ -1793,8 +1824,7 @@ class AppLocalizations {
       'messagesViewCards': 'Картками',
       'markingRead': 'Позначення прочитаного…',
       'allMessagesRead': 'Усі повідомлення прочитані.',
-      'markAllReadFailed':
-          'Не вдалося позначити всі повідомлення. Спробуйте ще раз.',
+      'markAllReadFailed': 'Не вдалося позначити всі повідомлення прочитаними. Спробуйте ще раз.',
       'colorMode': 'Тема',
       'colorMode_system': 'Тема телефона',
       'colorMode_light': 'Світла',
@@ -1858,23 +1888,34 @@ class AppLocalizations {
       'notificationsDescription': 'Нові дані з Librus',
       'notificationPermissionDenied':
           'Дозвольте сповіщення в налаштуваннях системи.',
-      'notificationMultiple': 'Нових записів: {count}',
       'notification_grades': 'Нові оцінки',
       'notification_messages': 'Нові повідомлення',
       'notification_announcements': 'Нові оголошення',
       'notification_notices': 'Нові зауваження',
       'notification_attendance': 'Нові записи відвідуваності',
       'notification_events': 'Нові події',
+      'gradesOne': '{count} оцінка',
+      'gradesFew': '{count} оцінки',
+      'gradesMany': '{count} оцінок',
+      'gradesNewOne': '{count} нова',
+      'gradesNewFew': '{count} нові',
+      'gradesNewMany': '{count} нових',
+      'profilesOne': '{count} профіль',
+      'profilesFew': '{count} профілі',
+      'profilesMany': '{count} профілів',
+      'newEntriesOne': '{count} новий запис',
+      'newEntriesFew': '{count} нові записи',
+      'newEntriesMany': '{count} нових записів',
       'linkOpenFailed': 'Не вдалося відкрити посилання',
       'composeFrom': 'Від',
       'composeRecipientsOf': 'Одержувачі: {school}',
       'togetherSettingsNote':
-          'В «Усі разом» зміна стосується всіх профілів режиму',
+          'У режимі «Усі разом» зміна стосується всіх його профілів',
       'together': 'Усі разом',
       'togetherNeedsTwo': 'Потрібно щонайменше два профілі разом — увімкніть їх через ⋯ біля профілю',
-      'profileTogether': 'Показувати в «Усі разом»',
+      'profileTogether': 'Показувати в режимі «Усі разом»',
       'profileTogetherHint':
-          'Його уроки, оцінки й повідомлення видно в спільному режимі',
+          'Його уроки, оцінки й повідомлення видно в режимі «Усі разом»',
       'vpnOnSignIn': 'Увімкнено VPN. Librus іноді блокує VPN: якщо не вдасться ввійти, вимкніть його.',
       'vpnOnError':
           'Увімкнено VPN, а Librus іноді його блокує. Спробуйте вимкнути VPN.',
@@ -1920,13 +1961,12 @@ class AppLocalizations {
           'Від яких профілів надходять сповіщення й нагадування.',
       'profiles': 'Профілі',
       'profile': 'Профіль',
-      'profilesCount': 'Профілі: {count}',
       'profileButton': 'Профіль: {name}',
       'profileOpen': 'Відкритий',
       'profileActions': 'Ще: {name}',
       'addProfile': 'Додати профіль',
       'logoutAll': 'Вийти з усіх',
-      'logoutAllConfirm': 'Вийти з усіх профілів? Дані щоденника зникнуть з телефона, доки ти не ввійдеш знову.',
+      'logoutAllConfirm': 'Вийти з усіх профілів? Дані щоденника зникнуть з телефона, доки ви не ввійдете знову.',
       'renameProfile': 'Перейменувати',
       'profileName': 'Назва профілю',
       'profileNameHelp':
@@ -1943,7 +1983,7 @@ class AppLocalizations {
       'chooseStudentsHelp': 'Кожен стане окремим профілем зі своїми даними. Перемикання — одним дотиком.',
       'addChosen': 'Додати',
       'gradeCalculator': 'Калькулятор оцінок',
-      'gradeCalculatorHint': 'Додай оцінки й подивись, як зміниться середній бал. У Librus нічого не надсилається.',
+      'gradeCalculatorHint': 'Додайте оцінки й подивіться, як зміниться середній бал. У Librus нічого не надсилається.',
       'gradeCalculatorAdd': 'Додати оцінку',
       'gradeCalculatorClear': 'Очистити',
       'gradeCalculatorUnweighted':
@@ -1967,7 +2007,7 @@ class AppLocalizations {
       'notification_timetable': 'Зміни в розкладі',
       'account': 'Обліковий запис Librus',
       'logout': 'Вийти',
-      'logoutConfirm': 'Вийти з акаунта? Дані щоденника зникнуть з телефона, доки ти не ввійдеш знову.',
+      'logoutConfirm': 'Вийти з акаунта? Дані щоденника зникнуть з телефона, доки ви не ввійдете знову.',
       'connect': 'Підключити Librus',
       'email': 'Електронна пошта Librus',
       'password': 'Пароль',
@@ -2066,7 +2106,7 @@ class AppLocalizations {
       'notificationsOn': 'Увімкнено · {enabled} з {total}',
       'notificationsOff': 'Вимкнено',
       'checkUpdates': 'Перевірити оновлення',
-      'updateLatest': 'У тебе остання версія',
+      'updateLatest': 'У вас остання версія',
       'updateAvailableShort': 'Доступна версія {version}',
       'updateCheckFailed': 'Не вдалося перевірити оновлення',
       'openRelease': 'Відкрити',
@@ -2075,10 +2115,10 @@ class AppLocalizations {
       'resetSettings': 'Скинути налаштування',
       'resetSettingsConfirm': 'Усі налаштування повернуться до типових. Акаунт, короткі назви предметів і віджети залишаться.',
       'resetSettingsDone': 'Налаштування скинуто',
-      'averagePreview': 'Твій середній бал',
+      'averagePreview': 'Ваш середній бал',
       'averagePreviewOwn': 'За поточний семестр, з цими налаштуваннями',
       'averageExample': 'Наприклад: {grades}',
-      'todayNext': 'Далі',
+      'todayNext': 'Потім',
       'todayNextLesson': 'Наступний урок',
       'todayLastLesson': 'Останній урок сьогодні',
       'todayDone': 'Уроки на сьогодні закінчились',
@@ -2097,8 +2137,6 @@ class AppLocalizations {
       'resetDefaults': 'Скинути',
       'gradesViewCompact': 'Компактний список',
       'gradesViewCards': 'Розгортні картки',
-      'gradesCount': 'Оцінок: {count}',
-      'gradesNew': 'Нових: {count}',
       'lessonsOne': '%d урок',
       'demoMode': 'Демонстраційний режим',
       'homeWidgets': 'Віджети',
@@ -2187,10 +2225,47 @@ class AppLocalizations {
   static Set<String> keysFor(String languageCode) =>
       (_values[languageCode] ?? const <String, String>{}).keys.toSet();
 
-  String text(String key) =>
-      (_values[locale.languageCode] ?? _values['pl']!)[key] ??
-      _values['pl']![key] ??
-      key;
+  String text(String key) {
+    final value =
+        (_values[locale.languageCode] ?? _values['pl']!)[key] ??
+        _values['pl']![key] ??
+        key;
+    return locale.languageCode == 'pl' ? _keepShortWords(value) : value;
+  }
+
+  /// "{count} …" in the form [count] takes: Polish, Russian and Ukrainian
+  /// have three of them, English and German two. [key] names the three
+  /// texts: `${key}One`, `${key}Few` and `${key}Many`.
+  String plural(int count, String key) {
+    final ones = count % 10;
+    final tens = count % 100;
+    final few = ones >= 2 && ones <= 4 && (tens < 12 || tens > 14);
+    final form = switch (locale.languageCode) {
+      'ru' || 'uk' =>
+        ones == 1 && tens != 11
+            ? 'One'
+            : few
+            ? 'Few'
+            : 'Many',
+      'pl' =>
+        count == 1
+            ? 'One'
+            : few
+            ? 'Few'
+            : 'Many',
+      _ => count == 1 ? 'One' : 'Many',
+    };
+    return text('$key$form').replaceAll('{count}', '$count');
+  }
+
+  /// [value] with each Polish one-letter word ("w", "z", "i", …) held to
+  /// the word after it, so a line never ends on one. Only a text long
+  /// enough to break into lines needs it.
+  static String _keepShortWords(String value) => value.length < 40
+      ? value
+      : value.replaceAllMapped(_shortWord, (match) => '${match[1]}\u00A0');
+
+  static final _shortWord = RegExp(r'(?<=^|[\s(„])([aiouwzAIOUWZ]) ');
 }
 
 class _AppLocalizationsDelegate

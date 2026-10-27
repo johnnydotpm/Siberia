@@ -392,9 +392,11 @@ class _SettingsProfile extends StatelessWidget {
                   children: [
                     Text(
                       several
-                          ? context.trArgs('profilesCount', {
-                              'count': '${controller.profiles.length}',
-                            })
+                          ? _plural(
+                              context,
+                              controller.profiles.length,
+                              'profiles',
+                            )
                           : context.tr('profile'),
                       style: theme.textTheme.labelMedium?.copyWith(
                         color: muted,

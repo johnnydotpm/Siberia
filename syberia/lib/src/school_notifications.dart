@@ -696,9 +696,7 @@ class SchoolNotificationService {
       final title = translations.text('notification_${category.name}');
       final body = items.length == 1
           ? items.single.body
-          : translations
-                .text('notificationMultiple')
-                .replaceAll('{count}', '${items.length}');
+          : translations.plural(items.length, 'newEntries');
       try {
         await _presenter.show(
           category: category,
