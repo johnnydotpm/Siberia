@@ -10,13 +10,33 @@ class _Messages extends StatefulWidget {
 
 enum _MessageFolder { inbox, sent }
 
+/// The index of the Messages tab.
+const _messagesTab = 5;
+
 class _MessagesState extends State<_Messages> {
   final _search = TextEditingController();
   bool _unreadOnly = false;
   _MessageFolder _folder = _MessageFolder.inbox;
 
+  /// The messages shown as unread under the filter, by id: one read there,
+  /// opened or swiped, stays, as read now, until the filter, the folder or
+  /// the tab changes.
+  final _shownUnread = <String>{};
+
+  @override
+  void initState() {
+    super.initState();
+    widget.controller.addListener(_onController);
+  }
+
+  /// Left for another tab: what was read here goes from the filter.
+  void _onController() {
+    if (widget.controller.tabIndex != _messagesTab) _shownUnread.clear();
+  }
+
   void _openFolder(_MessageFolder folder) {
     HapticFeedback.selectionClick();
+    _shownUnread.clear();
     setState(() => _folder = folder);
     // A sync leaves the Sent folder out, so it is loaded when opened.
     if (folder == _MessageFolder.sent) {
@@ -26,6 +46,7 @@ class _MessagesState extends State<_Messages> {
 
   @override
   void dispose() {
+    widget.controller.removeListener(_onController);
     _search.dispose();
     super.dispose();
   }
@@ -63,18 +84,27 @@ class _MessagesState extends State<_Messages> {
                 : controller.snapshot.messages)
             .toList()
           ..sort((a, b) => b.receivedAt.compareTo(a.receivedAt));
-    final query = _search.text.trim().toLowerCase();
+    final query = _plainPolish(_search.text.trim());
+    if (_unreadOnly && !sentFolder) {
+      _shownUnread.addAll([
+        for (final item in all)
+          if (item.unread) item.id,
+      ]);
+    }
     final messages = all
-        .where((item) => sentFolder || !_unreadOnly || item.unread)
+        .where(
+          (item) =>
+              sentFolder || !_unreadOnly || _shownUnread.contains(item.id),
+        )
         .where(
           (item) =>
               query.isEmpty ||
-              item.subject.toLowerCase().contains(query) ||
-              item.sender.toLowerCase().contains(query) ||
+              _plainPolish(item.subject).contains(query) ||
+              _plainPolish(item.sender).contains(query) ||
               item.recipients.any(
-                (name) => name.toLowerCase().contains(query),
+                (name) => _plainPolish(name).contains(query),
               ) ||
-              item.preview.toLowerCase().contains(query),
+              _plainPolish(item.preview).contains(query),
         )
         .toList();
     final error = sentFolder
@@ -175,7 +205,10 @@ class _MessagesState extends State<_Messages> {
                 style: const TextStyle(fontFeatures: _tabular),
               ),
               selected: _unreadOnly,
-              onSelected: (value) => setState(() => _unreadOnly = value),
+              onSelected: (value) => setState(() {
+                _unreadOnly = value;
+                _shownUnread.clear();
+              }),
             ),
           const Spacer(),
           if (sentFolder)

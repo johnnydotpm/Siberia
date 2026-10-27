@@ -298,19 +298,17 @@ class _ComposeMessageSheetState extends State<_ComposeMessageSheet> {
                             Autocomplete<MessageRecipient>(
                               displayStringForOption: (item) => item.name,
                               optionsBuilder: (value) {
-                                final query = value.text.trim().toLowerCase();
+                                final query = _plainPolish(value.text.trim());
                                 return items.where(
                                   (item) =>
                                       !selectedRecipients.any(
                                         (selected) => selected.id == item.id,
                                       ) &&
                                       (query.isEmpty ||
-                                          item.name.toLowerCase().contains(
-                                            query,
-                                          ) ||
-                                          item.group.toLowerCase().contains(
-                                            query,
-                                          )),
+                                          _plainPolish(item.name)
+                                              .contains(query) ||
+                                          _plainPolish(item.group)
+                                              .contains(query)),
                                 );
                               },
                               onSelected: (item) {

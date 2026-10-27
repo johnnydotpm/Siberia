@@ -149,7 +149,10 @@ class FakeProfileClient extends LibrusClient {
   @override
   Future<List<MessageRecipient>> fetchMessageRecipients() async {
     final login = profile!.synergiaLogin ?? '';
-    return [MessageRecipient(id: 1, name: 'Nauczyciel $login', group: '')];
+    return [
+      MessageRecipient(id: 1, name: 'Nauczyciel $login', group: ''),
+      ...world.recipients,
+    ];
   }
 
   @override
@@ -196,6 +199,9 @@ class FakeLibrusWorld {
 
   /// The text of every message opened.
   String messageBody = 'Treść';
+
+  /// Recipients every login offers after its own teacher.
+  List<MessageRecipient> recipients = const [];
 
   /// Every fetch so far, so each one's data differs.
   var fetchCount = 0;

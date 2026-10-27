@@ -761,3 +761,18 @@ TextStyle? _fitWords(
   }
   return identical(fitted, base) ? style : fitted;
 }
+
+/// Lower case without Polish accents, one letter for one, so positions
+/// stay the same as in the original. Searches compare in it: "lukasz"
+/// finds "Łukasz".
+String _plainPolish(String value) {
+  const from = 'ąćęłńóśźż';
+  const to = 'acelnoszz';
+  final lower = value.toLowerCase();
+  final out = StringBuffer();
+  for (final unit in lower.split('')) {
+    final index = from.indexOf(unit);
+    out.write(index < 0 ? unit : to[index]);
+  }
+  return out.toString();
+}

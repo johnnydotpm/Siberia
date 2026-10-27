@@ -118,13 +118,13 @@ class _HomeworkState extends State<_Homework> {
         .toList(growable: false);
     final past = all.where((item) => item.date.isBefore(today)).toList()
       ..sort((a, b) => b.date.compareTo(a.date));
-    final query = _search.text.trim().toLowerCase();
+    final query = _plainPolish(_search.text.trim());
     bool matches(SchoolEvent item) =>
         query.isEmpty ||
-        item.title.toLowerCase().contains(query) ||
-        item.subject.toLowerCase().contains(query) ||
-        _SubjectScope.of(context, item.subject).toLowerCase().contains(query) ||
-        item.description.toLowerCase().contains(query);
+        _plainPolish(item.title).contains(query) ||
+        _plainPolish(item.subject).contains(query) ||
+        _plainPolish(_SubjectScope.of(context, item.subject)).contains(query) ||
+        _plainPolish(item.description).contains(query);
     final shown = (_past ? past : upcoming).where(matches).toList();
     final done = _past
         ? const <SchoolEvent>[]
@@ -350,20 +350,6 @@ const _eventTypeWords = [
 
 /// Categories that say nothing about the entry.
 const _genericEventTypes = {'', 'inne', 'other', 'wydarzenie'};
-
-/// Lower case without Polish accents, one letter for one, so positions
-/// stay the same as in the original.
-String _plainPolish(String value) {
-  const from = 'ąćęłńóśźż';
-  const to = 'acelnoszz';
-  final lower = value.toLowerCase();
-  final out = StringBuffer();
-  for (final unit in lower.split('')) {
-    final index = from.indexOf(unit);
-    out.write(index < 0 ? unit : to[index]);
-  }
-  return out.toString();
-}
 
 /// The kind of [item], the word to show for it, if any, and the text
 /// without that word when the kind came from it. The category decides; a

@@ -1279,6 +1279,24 @@ class AppController extends ChangeNotifier {
     notifyListeners();
   }
 
+  DateTime? _timetableDay;
+
+  /// Opens the timetable at [day], wherever it was left, as a tap on the
+  /// lesson on Today does.
+  void openTimetableDay(DateTime day) {
+    _timetableDay = DateTime(day.year, day.month, day.day);
+    _tabIndex = 1;
+    notifyListeners();
+  }
+
+  /// The day the timetable was asked to open at, once: the timetable takes
+  /// it as it draws.
+  DateTime? takeTimetableDay() {
+    final day = _timetableDay;
+    _timetableDay = null;
+    return day;
+  }
+
   /// Data this old opens with a sync when the user switches to its profile
   /// and automatic sync is on.
   static const switchSyncAfter = Duration(minutes: 20);

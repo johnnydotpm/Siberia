@@ -112,6 +112,10 @@ class _TimetableState extends State<_Timetable> {
   final _loadingWeeks = <DateTime>{};
   final _emptyWeeks = <DateTime>{};
 
+  /// The sync the empty weeks were found before: a later one may have
+  /// brought lessons for them, so they are asked for again.
+  DateTime? _emptyWeeksOf;
+
   @override
   void initState() {
     super.initState();
@@ -374,6 +378,17 @@ class _TimetableState extends State<_Timetable> {
       groups.putIfAbsent(day, () => []).add(item);
     }
     final now = DateTime.now();
+    final synced = widget.controller.snapshot.lastSync;
+    if (synced != _emptyWeeksOf) {
+      _emptyWeeksOf = synced;
+      _emptyWeeks.clear();
+    }
+    // A day asked for from elsewhere is shown at once.
+    if (widget.controller.takeTimetableDay() case final day?
+        when day != selectedDay) {
+      _select(day);
+      if (_pages != null) _anchorAt(day);
+    }
     selectedDay ??= _nearestDayWithLessons(now, groups.keys);
     final weekendDays = {
       for (final day in groups.keys)

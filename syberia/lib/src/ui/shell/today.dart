@@ -421,7 +421,8 @@ class _NowCard extends StatelessWidget {
       borderRadius: BorderRadius.circular(14),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
-        onTap: () => controller.selectTab(1),
+        // The timetable opens at this lesson's day, not where it was left.
+        onTap: () => controller.openTimetableDay(lesson.start),
         child: Padding(
           padding: const EdgeInsets.all(_Space.inset),
           child: Column(
