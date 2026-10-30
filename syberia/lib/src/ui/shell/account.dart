@@ -973,7 +973,7 @@ class _ChooseStudentsState extends State<_ChooseStudents> {
       FilledButton(
         key: const ValueKey('choose-students-add'),
         style: _wideButton,
-        onPressed: chosen.isEmpty || (askRole && role == null)
+        onPressed: chosen.isEmpty
             ? null
             : () => Navigator.pop(context, [
                 for (final student in widget.students)
