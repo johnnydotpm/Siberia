@@ -47,6 +47,13 @@ AppSnapshot _snapshot({
   lastSync: DateTime.now(),
 );
 
+/// Tomorrow on the calendar: 24 hours on is still today once a year, in the
+/// night the clocks go back.
+DateTime _tomorrow() {
+  final now = DateTime.now();
+  return DateTime(now.year, now.month, now.day + 1);
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -88,7 +95,7 @@ void main() {
   testWidgets('a double lesson is one block in both timetable views', (
     tester,
   ) async {
-    final day = DateTime.now().add(const Duration(days: 1));
+    final day = _tomorrow();
     final start = DateTime(day.year, day.month, day.day, 8);
     final controller = AppController(
       _Repository(
@@ -138,7 +145,7 @@ void main() {
   testWidgets('tests of the day sit on the lessons they are written in', (
     tester,
   ) async {
-    final day = DateTime.now().add(const Duration(days: 1));
+    final day = _tomorrow();
     final start = DateTime(day.year, day.month, day.day, 8);
     SchoolEvent event(
       String id,
@@ -240,7 +247,7 @@ void main() {
     tester.view.physicalSize = const Size(360, 640);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
-    final day = DateTime.now().add(const Duration(days: 1));
+    final day = _tomorrow();
     final start = DateTime(day.year, day.month, day.day, 8);
     final long = List.filled(30, 'Rozdział 3, zadania z funkcji.').join(' ');
     SchoolEvent test(String id) => SchoolEvent(
@@ -318,7 +325,15 @@ void main() {
             sender: 'Teacher Beta',
             subject: 'Chess contest',
             preview: 'Sign up by Friday',
-            receivedAt: now.subtract(const Duration(days: 1)),
+            // Yesterday on the calendar: 24 hours back is two days back
+            // in the night after the clocks go forward.
+            receivedAt: DateTime(
+              now.year,
+              now.month,
+              now.day - 1,
+              now.hour,
+              now.minute,
+            ),
             unread: true,
           ),
           SchoolMessage(
@@ -394,8 +409,9 @@ class _Repository extends AppRepository {
 
   @override
   Future<SchoolMessageContent> fetchMessageContent(
-    SchoolMessage message,
-  ) async {
+    SchoolMessage message, {
+    String? profileId,
+  }) async {
     opened.add(message.id);
     return SchoolMessageContent(
       id: message.id,
@@ -408,5 +424,8 @@ class _Repository extends AppRepository {
 
   // The real one would reach Librus; the Today look-ahead asks for weeks.
   @override
-  Future<List<Lesson>> fetchTimetableWeek(DateTime day) async => const [];
+  Future<List<Lesson>> fetchTimetableWeek(
+    DateTime day, {
+    String? profileId,
+  }) async => const [];
 }

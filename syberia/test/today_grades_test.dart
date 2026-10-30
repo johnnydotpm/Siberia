@@ -6,14 +6,15 @@ import 'package:syberia/src/data/app_repository.dart';
 import 'package:syberia/src/domain/models.dart';
 import 'package:syberia/src/state/app_controller.dart';
 
-Lesson _lesson(String id, String subject, DateTime start) => Lesson(
-  id: id,
-  subject: subject,
-  teacher: 'Teacher',
-  room: '21',
-  start: start,
-  end: start.add(const Duration(minutes: 45)),
-);
+Lesson _lesson(String id, String subject, DateTime start, {DateTime? end}) =>
+    Lesson(
+      id: id,
+      subject: subject,
+      teacher: 'Teacher',
+      room: '21',
+      start: start,
+      end: end ?? start.add(const Duration(minutes: 45)),
+    );
 
 Grade _grade(
   String id,
@@ -139,12 +140,18 @@ void main() {
   ) async {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
-    final tomorrow = today.add(const Duration(days: 1, hours: 8));
+    final tomorrow = DateTime(today.year, today.month, today.day + 1, 8);
     await _pump(
       tester,
       _snapshot(
         lessons: [
-          _lesson('done', 'Physics', now.subtract(const Duration(hours: 2))),
+          // Over at any time of the day, even just after midnight.
+          _lesson(
+            'done',
+            'Physics',
+            today,
+            end: today.add(const Duration(seconds: 1)),
+          ),
           _lesson('tomorrow', 'History', tomorrow),
         ],
       ),
@@ -171,14 +178,14 @@ void main() {
             id: 'h1',
             title: 'Essay',
             subject: 'Polish',
-            date: today.add(const Duration(days: 1)),
+            date: DateTime(today.year, today.month, today.day + 1),
             kind: EventKind.homework,
           ),
           SchoolEvent(
             id: 'e1',
             title: 'Algebra test',
             subject: 'Math',
-            date: today.add(const Duration(days: 3)),
+            date: DateTime(today.year, today.month, today.day + 3),
             kind: EventKind.exam,
             typeLabel: 'Test',
           ),
@@ -268,7 +275,7 @@ void main() {
     expect(
       find.descendant(
         of: find.byKey(const ValueKey('grades-overview')),
-        matching: find.text('Grades: 3 · New: 1'),
+        matching: find.text('3 grades · 1 new'),
       ),
       findsOneWidget,
     );
@@ -388,5 +395,8 @@ class _Repository extends AppRepository {
 
   // The real one would reach Librus; the Today look-ahead asks for weeks.
   @override
-  Future<List<Lesson>> fetchTimetableWeek(DateTime day) async => const [];
+  Future<List<Lesson>> fetchTimetableWeek(
+    DateTime day, {
+    String? profileId,
+  }) async => const [];
 }

@@ -9,7 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../domain/models.dart';
 import 'snapshot_cache.dart';
 
-/// Keeps the last Librus snapshot in a file of its own.
+/// Keeps a profile's last Librus snapshot in a file of its own.
 ///
 /// A large snapshot used to live in SharedPreferences, which Android loads
 /// into memory as a whole with every preference. In a file it is read only
@@ -17,14 +17,32 @@ import 'snapshot_cache.dart';
 /// and where no app directory is available (unit tests), the snapshot stays
 /// in SharedPreferences.
 class SnapshotStore {
+  /// The store of the profile [profileId]; without one, the store versions
+  /// before profiles kept their one snapshot in.
   SnapshotStore({
     required this._preferences,
     Future<Directory> Function()? directory,
+    this.profileId,
   }) : _directory = directory ?? getApplicationSupportDirectory;
 
   /// Where the snapshot used to be kept, and still is when there is no file.
   static const preferencesKey = 'last_librus_snapshot_v1';
   static const fileName = 'librus_snapshot_v1.json';
+
+  final String? profileId;
+
+  /// The store of the profile [id], in the same place as this one.
+  SnapshotStore forProfile(String id) => SnapshotStore(
+    preferences: _preferences,
+    directory: _directory,
+    profileId: id,
+  );
+
+  String get _key =>
+      profileId == null ? preferencesKey : '${preferencesKey}_$profileId';
+
+  String get _fileName =>
+      profileId == null ? fileName : 'librus_snapshot_v1_$profileId.json';
 
   final Future<SharedPreferences> _preferences;
   final Future<Directory> Function() _directory;
@@ -35,7 +53,7 @@ class SnapshotStore {
     if (kIsWeb) return null;
     try {
       final directory = await _directory();
-      return File('${directory.path}${Platform.pathSeparator}$fileName');
+      return File('${directory.path}${Platform.pathSeparator}$_fileName');
     } on Object {
       return null;
     }
@@ -44,7 +62,7 @@ class SnapshotStore {
   Future<AppSnapshot?> read() async {
     final preferences = await _preferences;
     final file = await _resolveFile();
-    final legacy = preferences.getString(preferencesKey);
+    final legacy = preferences.getString(_key);
     if (file == null) return SnapshotCache.decode(legacy);
     await _writes;
     if (legacy != null) {
@@ -53,7 +71,7 @@ class SnapshotStore {
       if (snapshot != null) {
         await _enqueue(() => compute(_writeRaw, (file.path, legacy)));
       }
-      await preferences.remove(preferencesKey);
+      await preferences.remove(_key);
       return snapshot;
     }
     return compute(_readFile, file.path);
@@ -63,7 +81,7 @@ class SnapshotStore {
     final file = await _resolveFile();
     if (file == null) {
       await (await _preferences).setString(
-        preferencesKey,
+        _key,
         SnapshotCache.encode(snapshot),
       );
       return;
@@ -72,12 +90,21 @@ class SnapshotStore {
   }
 
   Future<void> clear() async {
-    await (await _preferences).remove(preferencesKey);
+    await (await _preferences).remove(_key);
     final file = await _resolveFile();
     if (file == null) return;
     await _enqueue(() async {
       if (await file.exists()) await file.delete();
     });
+  }
+
+  /// Takes over the snapshot of [legacy], the store of a version before
+  /// profiles, unless this profile has one of its own already.
+  Future<void> adopt(SnapshotStore legacy) async {
+    final own = await read();
+    final old = await legacy.read();
+    if (old != null && own == null) await write(old);
+    if (old != null) await legacy.clear();
   }
 
   /// Writes go one after another, so an older snapshot cannot land last.

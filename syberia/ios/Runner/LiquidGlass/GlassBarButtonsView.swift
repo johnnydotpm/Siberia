@@ -141,6 +141,14 @@ final class GlassBarButtonsView: NSObject, FlutterPlatformView, UINavigationBarD
     // Glass bar button items do not inherit the bar's tint, so every item
     // gets its colour explicitly.
     button.tintColor = .label
+    if let color = spec["color"] as? NSNumber {
+      button.tintColor = UIColor(argb: color.int64Value)
+    }
+    #if compiler(>=6.2)
+      if #available(iOS 26.0, *), spec["badge"] as? Bool == true {
+        button.badge = .indicator()
+      }
+    #endif
     if spec["prominent"] as? Bool == true {
       button.tintColor = tint
       #if compiler(>=6.2)

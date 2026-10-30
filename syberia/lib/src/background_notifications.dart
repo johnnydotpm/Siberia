@@ -6,6 +6,7 @@ import 'package:workmanager/workmanager.dart';
 
 import 'data/app_repository.dart';
 import 'data/librus/librus_client.dart';
+import 'domain/profiles.dart';
 import 'school_notifications.dart';
 
 const _taskId = 'siberiagb_librus_notification_check';
@@ -53,19 +54,48 @@ void schoolNotificationCallbackDispatcher() {
       final settings = await notifications.loadSettings();
       if (!settings.needsBackgroundCheck) return true;
       await notifications.initialize();
-      final snapshot = await repository.fetchBackgroundSnapshot(
-        parts: backgroundParts(settings),
-      );
-      if (snapshot != null) {
-        await notifications.processSnapshot(snapshot);
-        await notifications.updateReminders(snapshot);
-      }
+      await checkProfilesInBackground(repository, notifications, settings);
       return true;
     } on Object {
       // Network and authentication failures must not generate false alerts.
       return true;
     }
   });
+}
+
+/// Fetches every profile with notifications on and notifies of what is new
+/// in each. News of a profile other than the open one puts a dot on it.
+/// The test reminders of all profiles are scheduled again after a fetch.
+/// Gives how many profiles were fetched: none synced in the last
+/// [AppRepository.backgroundPause] is.
+Future<int> checkProfilesInBackground(
+  AppRepository repository,
+  SchoolNotificationService notifications,
+  SchoolNotificationSettings settings,
+) async {
+  final checked = await repository.fetchBackgroundSnapshots(
+    parts: backgroundParts(settings),
+  );
+  if (checked.isEmpty) return 0;
+  final profiles = await repository.loadProfiles();
+  final open = repository.activeProfile;
+  String? name(SchoolProfile profile) =>
+      profiles.length > 1 ? profile.displayName : null;
+  for (final (profile, snapshot) in checked) {
+    final news = await notifications.processSnapshot(
+      snapshot,
+      profile: profile,
+      name: name(profile),
+    );
+    if (news && profile.id != open?.id) {
+      await repository.setProfileNews(profile.id, true);
+    }
+  }
+  await notifications.updateAllReminders([
+    for (final (profile, snapshot) in await repository.notifyingSnapshots())
+      ReminderSource(snapshot, profile: profile, name: name(profile)),
+  ]);
+  return checked.length;
 }
 
 /// What the background check downloads: only what a notification or the

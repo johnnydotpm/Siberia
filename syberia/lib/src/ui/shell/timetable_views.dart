@@ -1,13 +1,30 @@
 part of '../app_shell.dart';
 
+/// The lesson to open a day at: the one on now, or else the next one.
+_LessonBlock? _focusBlock(
+  List<_LessonBlock> blocks,
+  _LessonBlock? current,
+  DateTime now,
+) =>
+    current ??
+    blocks
+        .where(
+          (block) => !block.lesson.cancelled && block.lesson.start.isAfter(now),
+        )
+        .firstOrNull;
+
 class _TimetableTimeline extends StatelessWidget {
   const _TimetableTimeline(
     this.lessons, {
     required this.mergeLessons,
     required this.showBreaks,
+    this.focusKey,
   });
   final bool mergeLessons;
   final bool showBreaks;
+
+  /// Given to the lesson on now, or else the next one, to open the day at.
+  final GlobalKey? focusKey;
 
   static const _pixelsPerMinute = 1.75;
   static const _axisWidth = 62.0;
@@ -29,14 +46,15 @@ class _TimetableTimeline extends StatelessWidget {
               1.5 +
           8,
     );
+    final breaks = _breaksBetween(blocks);
     double offset(DateTime time) {
       var result = time.difference(axisStart).inSeconds / 60 * _pixelsPerMinute;
       if (showBreaks) {
-        for (var index = 0; index < blocks.length - 1; index++) {
-          final end = blocks[index].lesson.end;
-          final start = blocks[index + 1].lesson.start;
+        for (final gapBetween in breaks) {
+          final end = gapBetween.before.lesson.end;
+          final start = gapBetween.after.lesson.start;
           final gap = start.difference(end).inMilliseconds;
-          if (gap <= 0 || !time.isAfter(end)) continue;
+          if (!time.isAfter(end)) continue;
           final extra = math.max(
             0.0,
             breakHeight - gap / 60000 * _pixelsPerMinute,
@@ -52,6 +70,12 @@ class _TimetableTimeline extends StatelessWidget {
     final height = math.max(60.0, offset(last));
     final now = DateTime.now();
     final current = _currentBlock(blocks, now);
+    bool isCurrent(_LessonBlock block) =>
+        !block.lesson.cancelled &&
+        !now.isBefore(block.lesson.start) &&
+        now.isBefore(block.lesson.end);
+    final focus = _focusBlock(blocks, current, now);
+    final lanes = _timelineLanes(blocks);
     final currentBreak = current == null ? _currentBreak(blocks, now) : null;
     final currentTop = (current != null || currentBreak != null)
         ? offset(now)
@@ -64,83 +88,148 @@ class _TimetableTimeline extends StatelessWidget {
 
     return SizedBox(
       height: height,
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          for (final block in blocks) ...[
-            Positioned(
-              top: offset(block.lesson.start),
-              left: 0,
-              width: _axisWidth - 8,
-              height: blockHeight(block),
-              child: _TimelineRail(block),
-            ),
-            Positioned(
-              top: offset(block.lesson.start),
-              left: _axisWidth,
-              right: 0,
-              height: blockHeight(block),
-              child: _TimelineLessonCard(
-                key: ValueKey('timeline-lesson-${block.lesson.id}'),
-                block: block,
-                hue: colors[block.lesson.subject] ?? 0,
-                current: identical(block, current),
-                now: now,
-              ),
-            ),
-          ],
-          for (var index = 0; index < blocks.length - 1; index++)
-            if (showBreaks &&
-                blocks[index + 1].lesson.start.isAfter(
-                  blocks[index].lesson.end,
-                ))
+      child: LayoutBuilder(
+        builder: (context, constraints) => Stack(
+          clipBehavior: Clip.none,
+          children: [
+            for (final (index, block) in blocks.indexed) ...[
+              // Lessons side by side share the rail of the first one; each
+              // of them says its times itself.
+              if (lanes[index].lane == 0)
+                Positioned(
+                  top: offset(block.lesson.start),
+                  left: 0,
+                  width: _axisWidth - 8,
+                  height: blockHeight(block),
+                  child: _TimelineRail(block),
+                ),
               Positioned(
-                top: offset(blocks[index].lesson.end),
-                height:
-                    offset(blocks[index + 1].lesson.start) -
-                    offset(blocks[index].lesson.end),
-                left: _axisWidth,
-                right: 0,
-                child: Center(
-                  child: _BreakLabel(
-                    blocks[index + 1].lesson.start.difference(
-                      blocks[index].lesson.end,
-                    ),
+                top: offset(block.lesson.start),
+                left: _laneLeft(constraints.maxWidth, lanes[index]),
+                width: _laneWidth(constraints.maxWidth, lanes[index]),
+                height: blockHeight(block),
+                child: KeyedSubtree(
+                  key: identical(block, focus) ? focusKey : null,
+                  child: _TimelineLessonCard(
+                    key: ValueKey('timeline-lesson-${block.lesson.id}'),
+                    block: block,
+                    hue: colors[block.lesson.subject] ?? 0,
+                    current: isCurrent(block),
+                    now: now,
+                    showTimes: lanes[index].lanes > 1,
                   ),
                 ),
               ),
-          if (currentTop != null && currentTop >= 0 && currentTop <= height)
-            Positioned(
-              key: ValueKey(
-                current != null
-                    ? 'timetable-current-time-${current.lesson.id}'
-                    : 'timetable-current-time-break-${currentBreak!.before.lesson.id}-${currentBreak.after.lesson.id}',
+            ],
+            if (showBreaks)
+              for (final gap in breaks)
+                Positioned(
+                  top: offset(gap.before.lesson.end),
+                  height:
+                      offset(gap.after.lesson.start) -
+                      offset(gap.before.lesson.end),
+                  left: _axisWidth,
+                  right: 0,
+                  child: Center(
+                    child: _BreakLabel(
+                      gap.after.lesson.start.difference(gap.before.lesson.end),
+                    ),
+                  ),
+                ),
+            if (currentTop != null && currentTop >= 0 && currentTop <= height)
+              Positioned(
+                key: ValueKey(
+                  current != null
+                      ? 'timetable-current-time-${current.lesson.id}'
+                      : 'timetable-current-time-break-${currentBreak!.before.lesson.id}-${currentBreak.after.lesson.id}',
+                ),
+                top: currentTop,
+                left: 0,
+                // During a lesson the line stops at its card, which shows the
+                // progress itself, so the title stays readable.
+                right: current != null ? null : 0,
+                width: current != null ? _axisWidth + 4.5 : null,
+                child: const _TimelineNowLine(),
               ),
-              top: currentTop,
-              left: 0,
-              // During a lesson the line stops at its card, which shows the
-              // progress itself, so the title stays readable.
-              right: current != null ? null : 0,
-              width: current != null ? _axisWidth + 4.5 : null,
-              child: const _TimelineNowLine(),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
+  /// The gap between cards side by side.
+  static const _laneGap = 6.0;
+
+  static double _laneWidth(double width, ({int lane, int lanes}) place) =>
+      (width - _axisWidth - _laneGap * (place.lanes - 1)) / place.lanes;
+
+  static double _laneLeft(double width, ({int lane, int lanes}) place) =>
+      _axisWidth + place.lane * (_laneWidth(width, place) + _laneGap);
+
   _TimetableBreak? _currentBreak(List<_LessonBlock> blocks, DateTime now) {
     final active = blocks.where((block) => !block.lesson.cancelled).toList();
-    for (var index = 0; index < active.length - 1; index++) {
-      final before = active[index];
-      final after = active[index + 1];
-      if (!now.isBefore(before.lesson.end) &&
-          now.isBefore(after.lesson.start)) {
-        return _TimetableBreak(before: before, after: after);
+    for (final gap in _breaksBetween(active)) {
+      if (!now.isBefore(gap.before.lesson.end) &&
+          now.isBefore(gap.after.lesson.start)) {
+        return gap;
       }
     }
     return null;
   }
+}
+
+/// The breaks of a day of [blocks] in order of their start: from the end of
+/// all the lessons before to the next lesson. With lessons of two schools
+/// at once, the one ending last ends the time before a break.
+List<_TimetableBreak> _breaksBetween(List<_LessonBlock> blocks) {
+  final breaks = <_TimetableBreak>[];
+  _LessonBlock? latest;
+  for (final block in blocks) {
+    if (latest != null && block.lesson.start.isAfter(latest.lesson.end)) {
+      breaks.add(_TimetableBreak(before: latest, after: block));
+    }
+    if (latest == null || !block.lesson.end.isBefore(latest.lesson.end)) {
+      latest = block;
+    }
+  }
+  return breaks;
+}
+
+/// Where each of [blocks], in order of their start, stands across the day:
+/// lessons at the same time, as two schools' in the view together, stand
+/// side by side, each in a lane of the lanes of their group.
+List<({int lane, int lanes})> _timelineLanes(List<_LessonBlock> blocks) {
+  final lanes = List.filled(blocks.length, (lane: 0, lanes: 1));
+  var group = <int>[];
+  var laneEnds = <DateTime>[];
+  DateTime? groupEnd;
+  void closeGroup() {
+    for (final index in group) {
+      lanes[index] = (lane: lanes[index].lane, lanes: laneEnds.length);
+    }
+    group = [];
+    laneEnds = [];
+    groupEnd = null;
+  }
+
+  for (final (index, block) in blocks.indexed) {
+    final start = block.lesson.start;
+    final end = block.lesson.end;
+    if (groupEnd case final until? when !start.isBefore(until)) closeGroup();
+    var lane = laneEnds.indexWhere((laneEnd) => !start.isBefore(laneEnd));
+    if (lane < 0) {
+      lane = laneEnds.length;
+      laneEnds.add(end);
+    } else {
+      laneEnds[lane] = end;
+    }
+    lanes[index] = (lane: lane, lanes: 1);
+    group.add(index);
+    if (groupEnd case final until? when !end.isAfter(until)) continue;
+    groupEnd = end;
+  }
+  closeGroup();
+  return lanes;
 }
 
 class _TimetableBreak {
@@ -263,12 +352,17 @@ class _TimelineLessonCard extends StatelessWidget {
     required this.hue,
     required this.current,
     required this.now,
+    this.showTimes = false,
   });
 
   final _LessonBlock block;
   final int hue;
   final bool current;
   final DateTime now;
+
+  /// Its times in its details, beside another lesson at the same time,
+  /// whose rail it shares.
+  final bool showTimes;
 
   @override
   Widget build(BuildContext context) {
@@ -280,8 +374,14 @@ class _TimelineLessonCard extends StatelessWidget {
         ? now.difference(lesson.start).inMinutes.clamp(0, duration.inMinutes)
         : 0;
     final tests = _DayTests.of(context, block);
-    final details = _blockDetails(context, block);
-    return Opacity(
+    final details = [
+      if (showTimes) '${_time(lesson.start)}–${_time(lesson.end)}',
+      _blockDetails(context, block),
+    ].where((part) => part.isNotEmpty).join(' · ');
+    final marked =
+        _ControllerScope.maybeOf(context)?.profileMark(lesson.source) != null;
+    // No layer of its own for a lesson that is on.
+    return _LightOpacity(
       opacity: lesson.cancelled ? 0.55 : 1,
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
@@ -300,9 +400,12 @@ class _TimelineLessonCard extends StatelessWidget {
               // Measured, so a short card drops the details line before
               // anything overflows, whatever the font and text size.
               final scaler = MediaQuery.textScalerOf(context);
+              // As the text is drawn: over the page's text style, whose
+              // line height the lines without one of their own take.
+              final base = DefaultTextStyle.of(context).style;
               double lineHeight(TextStyle style) {
                 final painter = TextPainter(
-                  text: TextSpan(text: 'Ag', style: style),
+                  text: TextSpan(text: 'Ag', style: base.merge(style)),
                   textDirection: Directionality.of(context),
                   textScaler: scaler,
                   maxLines: 1,
@@ -331,18 +434,52 @@ class _TimelineLessonCard extends StatelessWidget {
                 color: foreground,
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
+                fontFeatures: _tabular,
               );
               final room = constraints.maxHeight;
               final subjectLine = lineHeight(subjectStyle);
+              // A test's label beside the subject may stand taller than it:
+              // 1 above it, 2 above and below its text or icon.
+              final firstLine = tests.isEmpty
+                  ? subjectLine
+                  : math.max(
+                      subjectLine,
+                      5 +
+                          math.max(
+                            13.0,
+                            lineHeight(
+                              const TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                          ),
+                    );
               final detailsHeight = 2 + lineHeight(detailsStyle);
               final progressHeight = current
                   ? 3 + math.max(4, lineHeight(progressStyle) + 2)
                   : 0;
+              // Beside another lesson the card is narrow: the mark takes a
+              // line of its own when there is room, so the times stay whole.
+              // 3 above the mark and 1 above and below its name.
+              final markHeight =
+                  5 +
+                  lineHeight(
+                    Theme.of(context).textTheme.labelSmall!
+                        .copyWith(fontWeight: FontWeight.w800, height: 1.35),
+                  );
+              final markLine =
+                  marked &&
+                  showTimes &&
+                  room >=
+                      firstLine + markHeight + detailsHeight + progressHeight;
               final showDetails =
-                  details.isNotEmpty &&
-                  room >= subjectLine + detailsHeight + progressHeight;
+                  (details.isNotEmpty || marked) &&
+                  room >= firstLine + detailsHeight + progressHeight;
               final reserved =
-                  (showDetails ? detailsHeight : 0) + progressHeight;
+                  (showDetails ? detailsHeight : 0) +
+                  (markLine ? markHeight : 0) +
+                  progressHeight;
               final subjectLines = room - reserved >= subjectLine * 2 ? 2 : 1;
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -358,10 +495,14 @@ class _TimelineLessonCard extends StatelessWidget {
                           style: subjectStyle,
                         ),
                       ),
+                      // In a narrow card beside another lesson, the test's
+                      // label gives way as the subject does.
                       if (tests.isNotEmpty)
-                        Padding(
-                          padding: const EdgeInsets.only(left: 6, top: 1),
-                          child: _TestPill(tests),
+                        Flexible(
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 6, top: 1),
+                            child: _TestPill(tests),
+                          ),
                         ),
                       if (lesson.substitution)
                         Padding(
@@ -374,14 +515,31 @@ class _TimelineLessonCard extends StatelessWidget {
                         ),
                     ],
                   ),
+                  if (markLine)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 3),
+                      child: _ProfileMark(lesson.source),
+                    ),
                   if (showDetails)
                     Padding(
                       padding: const EdgeInsets.only(top: 2),
-                      child: Text(
-                        details,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: detailsStyle,
+                      child: Row(
+                        children: [
+                          // A long name gives way to the room and teacher.
+                          if (marked && !markLine) ...[
+                            Flexible(child: _ProfileMark(lesson.source)),
+                            const SizedBox(width: 6),
+                          ],
+                          Expanded(
+                            flex: 2,
+                            child: Text(
+                              details,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: detailsStyle,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   if (current) ...[
@@ -389,27 +547,36 @@ class _TimelineLessonCard extends StatelessWidget {
                     Row(
                       children: [
                         Expanded(
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(3),
-                            child: LinearProgressIndicator(
-                              value: duration.inMinutes == 0
-                                  ? 0
-                                  : elapsed / duration.inMinutes,
-                              minHeight: 4,
-                              color: palette.accent,
-                              backgroundColor: foreground.withValues(
-                                alpha: 0.15,
-                              ),
-                            ),
+                          // Glides as the lesson goes on, to the second.
+                          child: _GlidingProgress(
+                            value: duration.inSeconds <= 0
+                                ? 0
+                                : (now.difference(lesson.start).inSeconds /
+                                          duration.inSeconds)
+                                      .clamp(0.0, 1.0),
+                            minHeight: 4,
+                            radius: 3,
+                            color: palette.accent,
+                            backgroundColor: foreground.withValues(alpha: 0.15),
                           ),
                         ),
                         const SizedBox(width: 8),
-                        Text(
-                          context.trArgs('lessonProgress', {
-                            'elapsed': '$elapsed',
-                            'total': '${duration.inMinutes}',
-                          }),
-                          style: progressStyle,
+                        // Long words or large text cut it short rather than
+                        // push the badge out of the card; the bar keeps the
+                        // rest.
+                        ConstrainedBox(
+                          constraints: BoxConstraints(
+                            maxWidth: constraints.maxWidth * 0.55,
+                          ),
+                          child: Text(
+                            context.trArgs('lessonProgress', {
+                              'elapsed': '$elapsed',
+                              'total': '${duration.inMinutes}',
+                            }),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: progressStyle,
+                          ),
                         ),
                         const SizedBox(width: 6),
                         Container(
@@ -449,9 +616,13 @@ class _TimetableList extends StatelessWidget {
     this.lessons, {
     required this.mergeLessons,
     required this.showBreaks,
+    this.focusKey,
   });
   final bool mergeLessons;
   final bool showBreaks;
+
+  /// Given to the lesson on now, or else the next one, to open the day at.
+  final GlobalKey? focusKey;
   final List<Lesson> lessons;
 
   @override
@@ -459,17 +630,20 @@ class _TimetableList extends StatelessWidget {
     final blocks = _lessonBlocks(lessons, merge: mergeLessons);
     final now = DateTime.now();
     final current = _currentBlock(blocks, now);
+    final focus = _focusBlock(blocks, current, now);
     final colors = _SubjectScope.colorsOf(context)
         .forDay(blocks.map((block) => block.lesson.subject));
+    // A break comes before a lesson that starts after every one before it
+    // has ended, lessons of two schools at once included.
+    final breakBefore = {
+      for (final gap in _breaksBetween(blocks)) gap.after: gap,
+    };
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         for (var index = 0; index < blocks.length; index++) ...[
           if (index > 0)
-            if (showBreaks &&
-                blocks[index].lesson.start.isAfter(
-                  blocks[index - 1].lesson.end,
-                ))
+            if (breakBefore[blocks[index]] case final gap? when showBreaks)
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 6),
                 child: Row(
@@ -478,8 +652,8 @@ class _TimetableList extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 10),
                       child: _BreakLabel(
-                        blocks[index].lesson.start.difference(
-                          blocks[index - 1].lesson.end,
+                        gap.after.lesson.start.difference(
+                          gap.before.lesson.end,
                         ),
                       ),
                     ),
@@ -489,12 +663,19 @@ class _TimetableList extends StatelessWidget {
               )
             else
               const SizedBox(height: 4),
-          _TimetableRow(
-            key: ValueKey('timetable-row-${blocks[index].lesson.id}'),
-            block: blocks[index],
-            hue: colors[blocks[index].lesson.subject] ?? 0,
-            current: identical(blocks[index], current),
-            now: now,
+          KeyedSubtree(
+            key: identical(blocks[index], focus) ? focusKey : null,
+            child: _TimetableRow(
+              key: ValueKey('timetable-row-${blocks[index].lesson.id}'),
+              block: blocks[index],
+              hue: colors[blocks[index].lesson.subject] ?? 0,
+              current:
+                  identical(blocks[index], current) ||
+                  (!blocks[index].lesson.cancelled &&
+                      !now.isBefore(blocks[index].lesson.start) &&
+                      now.isBefore(blocks[index].lesson.end)),
+              now: now,
+            ),
           ),
         ],
       ],
@@ -525,7 +706,8 @@ class _TimetableRow extends StatelessWidget {
     final details = _blockDetails(context, block);
     final muted = theme.colorScheme.onSurfaceVariant;
     final duration = lesson.end.difference(lesson.start).inMinutes;
-    return Opacity(
+    // No layer of its own for a lesson that is on.
+    return _LightOpacity(
       opacity: lesson.cancelled ? 0.55 : 1,
       child: Material(
         color: current
@@ -590,15 +772,18 @@ class _TimetableRow extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        _SubjectScope.of(context, lesson.subject),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: _rowTitleStyle(context)?.copyWith(
-                          decoration: lesson.cancelled
-                              ? TextDecoration.lineThrough
-                              : null,
+                      _MarkedTitle(
+                        Text(
+                          _SubjectScope.of(context, lesson.subject),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: _rowTitleStyle(context)?.copyWith(
+                            decoration: lesson.cancelled
+                                ? TextDecoration.lineThrough
+                                : null,
+                          ),
                         ),
+                        lesson.source,
                       ),
                       if (details.isNotEmpty)
                         Text(
@@ -656,6 +841,7 @@ class _TimetableRow extends StatelessWidget {
 void _showLessonDetails(BuildContext context, _LessonBlock block) {
   final lesson = block.lesson;
   final tests = _DayTests.of(context, block);
+  final controller = _ControllerScope.maybeOf(context);
   final screen = MediaQuery.sizeOf(context);
   final details = [
     if (block.count > 1) _lessonCount(context, block.count),
@@ -694,6 +880,8 @@ void _showLessonDetails(BuildContext context, _LessonBlock block) {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              if (controller != null)
+                _SheetProfileMark(controller, lesson.source),
               Text(
                 displaySubject(lesson.subject, const {}),
                 style: _sheetTitleStyle(context),

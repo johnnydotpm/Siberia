@@ -99,7 +99,11 @@ class _TodayState extends State<_Today> {
     final locale = Localizations.localeOf(context).toLanguageTag();
     final blocks = <Widget>[
       for (final block in controller.todayLayout.visible)
-        ?_todayBlock(context, block, now),
+        if (_todayBlock(context, block, now) case final child?)
+          KeyedSubtree(
+            key: ValueKey('today-block-${block.name}'),
+            child: child,
+          ),
     ];
     return _Refresh(
       controller: controller,
@@ -117,18 +121,33 @@ class _TodayState extends State<_Today> {
           if (controller.snapshot.lastSync.millisecondsSinceEpoch != 0)
             _LastSync(controller, now: now),
           const SizedBox(height: _Space.card),
-          if (controller.error != null) ...[
-            _InfoCard(
-              icon: Icons.error_outline_rounded,
-              text: context.trError(controller.error!),
-              color: Theme.of(context).colorScheme.error,
-            ),
-            const SizedBox(height: _Space.card),
-          ],
-          for (final (index, block) in blocks.indexed) ...[
-            if (index > 0) const SizedBox(height: _Space.section),
-            block,
-          ],
+          // What a sync brings comes and goes smoothly.
+          _AnimatedColumn(
+            children: [
+              // No connection is said calmly in the line above instead.
+              if (controller.error != null &&
+                  !(_calmError(controller.error!) != null &&
+                      controller.snapshot.lastSync.millisecondsSinceEpoch != 0))
+                Padding(
+                  key: const ValueKey('today-error'),
+                  padding: const EdgeInsets.only(bottom: _Space.card),
+                  child: _InfoCard(
+                    icon: Icons.error_outline_rounded,
+                    text: _errorText(context, controller),
+                    color: Theme.of(context).colorScheme.error,
+                  ),
+                ),
+              // A VPN may be why Librus did not answer: said only with one on.
+              if (controller.error case final error? when Vpn.mayCause(error))
+                _VpnHint(
+                  key: const ValueKey('today-vpn'),
+                  text: context.tr('vpnOnError'),
+                  error: error,
+                  padding: const EdgeInsets.only(bottom: _Space.card),
+                ),
+            ],
+          ),
+          _AnimatedColumn(spacing: _Space.section, children: blocks),
         ],
       ),
     );
@@ -148,13 +167,11 @@ class _TodayState extends State<_Today> {
         child,
       ],
     );
-    Widget spaced(Iterable<Widget> items) => Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+    Widget spaced(Iterable<(String, Widget)> items) => _AnimatedColumn(
+      spacing: _Space.item,
       children: [
-        for (final (index, item) in items.indexed) ...[
-          if (index > 0) const SizedBox(height: _Space.item),
-          item,
-        ],
+        for (final (id, item) in items)
+          KeyedSubtree(key: ValueKey(id), child: item),
       ],
     );
     switch (block) {
@@ -200,7 +217,11 @@ class _TodayState extends State<_Today> {
         return section(
           context.tr('homework'),
           4,
-          spaced(homework.take(3).map((item) => _HomeworkCard(item, now: now))),
+          spaced(
+            homework
+                .take(3)
+                .map((item) => (item.id, _HomeworkCard(item, now: now))),
+          ),
           key: const ValueKey('today-homework'),
         );
       case TodayBlock.events:
@@ -217,7 +238,7 @@ class _TodayState extends State<_Today> {
         return section(
           context.tr('todayExams'),
           3,
-          spaced(events.take(3).map(_EventTile.new)),
+          spaced(events.take(3).map((item) => (item.id, _EventTile(item)))),
           key: const ValueKey('today-events'),
         );
       case TodayBlock.messages:
@@ -231,11 +252,14 @@ class _TodayState extends State<_Today> {
             unread
                 .take(2)
                 .map(
-                  (item) => _MessageTile(
-                    controller,
-                    item,
-                    style: MessageListStyle.cards,
-                    now: now,
+                  (item) => (
+                    item.id,
+                    _MessageTile(
+                      controller,
+                      item,
+                      style: MessageListStyle.cards,
+                      now: now,
+                    ),
                   ),
                 ),
           ),
@@ -347,7 +371,7 @@ class _NowCard extends StatelessWidget {
         lesson.start.month,
         lesson.start.day,
       );
-      final dayName = _daysBetween(now, day) == 1
+      final dayName = calendarDaysBetween(now, day) == 1
           ? context.tr('widgetTomorrow')
           : _shortWeekday(context, day);
       // The big subject below is that day's first lesson, not today's.
@@ -397,7 +421,8 @@ class _NowCard extends StatelessWidget {
       borderRadius: BorderRadius.circular(14),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
-        onTap: () => controller.selectTab(1),
+        // The timetable opens at this lesson's day, not where it was left.
+        onTap: () => controller.openTimetableDay(lesson.start),
         child: Padding(
           padding: const EdgeInsets.all(_Space.inset),
           child: Column(
@@ -441,8 +466,10 @@ class _NowCard extends StatelessWidget {
                   if (sameDay || current != null) ...[
                     if (current != null) const Spacer(),
                     const SizedBox(width: 8),
-                    Text(
+                    // "In 17 min" rolls to 16, as numbers do in iOS.
+                    _RollingText(
                       when,
+                      key: const ValueKey('today-now-when'),
                       style: theme.textTheme.labelLarge?.copyWith(
                         color: foreground,
                         fontWeight: FontWeight.w800,
@@ -478,6 +505,14 @@ class _NowCard extends StatelessWidget {
                       ),
                     ),
                   ),
+                  if (controller.profileMark(lesson.source) != null)
+                    Padding(
+                      padding: const EdgeInsetsDirectional.only(
+                        start: 8,
+                        top: 6,
+                      ),
+                      child: _ProfileMark(lesson.source),
+                    ),
                   if (lesson.substitution)
                     Padding(
                       padding: const EdgeInsets.only(left: 8, top: 4),
@@ -502,21 +537,20 @@ class _NowCard extends StatelessWidget {
                 Row(
                   children: [
                     Expanded(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(4),
-                        child: LinearProgressIndicator(
-                          value: progress,
-                          minHeight: 6,
-                          color: palette.accent,
-                          backgroundColor: foreground.withValues(alpha: 0.15),
-                        ),
+                      child: _GlidingProgress(
+                        key: const ValueKey('today-now-progress'),
+                        value: progress,
+                        minHeight: 6,
+                        color: palette.accent,
+                        backgroundColor: foreground.withValues(alpha: 0.15),
                       ),
                     ),
                     const SizedBox(width: 12),
-                    Text(
+                    _RollingText(
                       context.trArgs('lessonEndsIn', {
                         'minutes': '$minutesLeft',
                       }),
+                      key: const ValueKey('today-now-left'),
                       style: theme.textTheme.labelLarge?.copyWith(
                         color: foreground,
                         fontWeight: FontWeight.w800,
@@ -591,8 +625,34 @@ class _RecentGrades extends StatelessWidget {
                             showNew: false,
                           ),
                           const SizedBox(height: 6),
-                          Text(
-                            _SubjectScope.of(context, grade.subject),
+                          // In the view together, a dot of its profile's
+                          // colour: no room for its name.
+                          Text.rich(
+                            TextSpan(
+                              children: [
+                                if (_ControllerScope.maybeOf(context)
+                                        ?.profileMark(grade.source) !=
+                                    null)
+                                  WidgetSpan(
+                                    alignment: PlaceholderAlignment.middle,
+                                    child: Padding(
+                                      padding: const EdgeInsetsDirectional.only(
+                                        end: 4,
+                                      ),
+                                      child: _ProfileMark(
+                                        grade.source,
+                                        dot: true,
+                                      ),
+                                    ),
+                                  ),
+                                TextSpan(
+                                  text: _SubjectScope.of(
+                                    context,
+                                    grade.subject,
+                                  ),
+                                ),
+                              ],
+                            ),
                             maxLines: 2,
                             textAlign: TextAlign.center,
                             overflow: TextOverflow.ellipsis,
@@ -625,14 +685,23 @@ class _RecentGrades extends StatelessWidget {
 
 /// "Today", "Yesterday", the weekday within a week, then the date.
 String _gradeWhen(BuildContext context, DateTime date, DateTime now) {
-  final days = _daysBetween(date, now);
+  final days = calendarDaysBetween(date, now);
   if (days <= 0) return context.tr('messagesToday');
   if (days == 1) return context.tr('messagesYesterday');
   if (days < 7) return _shortWeekday(context, date);
   return _shortDate(context, date);
 }
 
-/// "Updated at 17:05" under the date; a tap syncs again.
+/// The line to say a sync failed for want of a connection with, rather than
+/// a red card: the data on screen is still good, only older.
+String? _calmError(AppError error) => switch (error.errorCode) {
+  LibrusErrorCode.networkUnavailable => 'syncOffline',
+  LibrusErrorCode.networkTimeout => 'syncNoAnswer',
+  _ => null,
+};
+
+/// "Updated at 17:05" under the date, or "No internet · data from 17:05";
+/// a tap syncs again.
 class _LastSync extends StatelessWidget {
   const _LastSync(this.controller, {required this.now});
   final AppController controller;
@@ -643,13 +712,18 @@ class _LastSync extends StatelessWidget {
     final theme = Theme.of(context);
     final color = theme.colorScheme.onSurfaceVariant;
     final last = controller.snapshot.lastSync;
+    final error = controller.error;
+    final calm = controller.syncing || error == null ? null : _calmError(error);
+    final when = _sameDay(last, now)
+        ? _time(last)
+        : '${_shortDate(context, last)}, ${_time(last)}';
     final text = controller.syncing
         ? context.tr('todayUpdating')
+        : calm != null
+        ? context.trArgs(calm, {'time': when})
         : _sameDay(last, now)
-        ? context.trArgs('todayUpdatedAt', {'time': _time(last)})
-        : context.trArgs('todayUpdatedOn', {
-            'date': '${_shortDate(context, last)}, ${_time(last)}',
-          });
+        ? context.trArgs('todayUpdatedAt', {'time': when})
+        : context.trArgs('todayUpdatedOn', {'date': when});
     return Align(
       alignment: AlignmentDirectional.centerStart,
       child: InkWell(
@@ -661,7 +735,11 @@ class _LastSync extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.sync_rounded, size: 14, color: color),
+              Icon(
+                calm == null ? Icons.sync_rounded : Icons.cloud_off_rounded,
+                size: 14,
+                color: color,
+              ),
               const SizedBox(width: 4),
               Flexible(
                 child: Text(
@@ -850,6 +928,7 @@ class _Summary extends StatelessWidget {
   final AppController controller;
   @override
   Widget build(BuildContext context) {
+    if (controller.together) return _TogetherSummary(controller);
     final data = controller.snapshot;
     final semester = _preferredSemester(data.grades);
     final average = controller.gradeAverage.average(
@@ -867,7 +946,8 @@ class _Summary extends StatelessWidget {
           children: [
             Expanded(
               child: _Metric(
-                average == null ? '—' : _decimal(context, average),
+                average,
+                (value) => _decimal(context, value),
                 context.tr('averageGrade'),
                 Icons.school_rounded,
                 key: const ValueKey('summary-grades'),
@@ -877,8 +957,9 @@ class _Summary extends StatelessWidget {
             Expanded(
               child: _Metric(
                 data.attendance.isEmpty
-                    ? '—'
-                    : _percent(context, present / data.attendance.length * 100),
+                    ? null
+                    : present / data.attendance.length * 100,
+                (value) => _percent(context, value),
                 context.tr('attendanceRate'),
                 Icons.fact_check_rounded,
                 key: const ValueKey('summary-absences'),
@@ -887,7 +968,8 @@ class _Summary extends StatelessWidget {
             ),
             Expanded(
               child: _Metric(
-                '${data.unreadMessages}',
+                data.unreadMessages.toDouble(),
+                (value) => '${value.round()}',
                 context.tr('messagesUnread'),
                 Icons.mail_rounded,
                 key: const ValueKey('summary-messages'),
@@ -904,12 +986,17 @@ class _Summary extends StatelessWidget {
 class _Metric extends StatelessWidget {
   const _Metric(
     this.value,
+    this.format,
     this.label,
     this.icon, {
     required this.onTap,
     super.key,
   });
-  final String value, label;
+
+  /// Counts its way to a new value after a sync; null shows a dash.
+  final double? value;
+  final String Function(double value) format;
+  final String label;
   final IconData icon;
   final VoidCallback onTap;
   @override
@@ -923,10 +1010,11 @@ class _Metric extends StatelessWidget {
         children: [
           Icon(icon, color: Theme.of(context).colorScheme.primary),
           const SizedBox(height: 4),
-          Text(
+          _CountingText(
             value,
+            format: format,
             style: Theme.of(context).textTheme.titleLarge
-                ?.copyWith(fontWeight: FontWeight.w800),
+                ?.copyWith(fontWeight: FontWeight.w800, fontFeatures: _tabular),
           ),
           Text(
             label,
@@ -937,4 +1025,157 @@ class _Metric extends StatelessWidget {
       ),
     ),
   );
+}
+
+/// In the view together, each profile's average and attendance on a row of
+/// its own, and every unread message under them.
+class _TogetherSummary extends StatelessWidget {
+  const _TogetherSummary(this.controller);
+  final AppController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    final data = controller.snapshot;
+    final semester = _preferredSemester(data.grades);
+    final valueStyle = theme.textTheme.titleMedium?.copyWith(
+      fontWeight: FontWeight.w800,
+      fontFeatures: _tabular,
+      color: colors.onPrimaryContainer,
+    );
+    final labelStyle = theme.textTheme.labelSmall?.copyWith(
+      color: colors.onPrimaryContainer.withValues(alpha: 0.75),
+    );
+    Widget figure(String value, String label, {required double width}) =>
+        SizedBox(
+          width: width,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(value, maxLines: 1, style: valueStyle),
+              Text(
+                label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.end,
+                style: labelStyle,
+              ),
+            ],
+          ),
+        );
+    final width = MediaQuery.textScalerOf(context).scale(72).clamp(72.0, 110.0);
+    return Card(
+      key: const ValueKey('today-together-summary'),
+      color: colors.primaryContainer,
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        children: [
+          for (final profile in controller.togetherProfiles)
+            InkWell(
+              key: ValueKey('summary-profile-${profile.id}'),
+              onTap: () => controller.selectTab(2),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(14, 10, 14, 10),
+                child: Row(
+                  children: [
+                    ProfileAvatar(
+                      name: controller.togetherSign(profile),
+                      color: profile.color,
+                      radius: 15,
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        controller.profileMark(profile.id)?.name ??
+                            profile.displayName,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w700,
+                          color: colors.onPrimaryContainer,
+                        ),
+                      ),
+                    ),
+                    figure(
+                      switch (controller
+                          .gradeAverageFor(profile.id)
+                          .average(
+                            data.grades.where(
+                              (grade) =>
+                                  grade.source == profile.id &&
+                                  grade.semester == semester,
+                            ),
+                          )) {
+                        final average? => _decimal(context, average),
+                        null => '—',
+                      },
+                      context.tr('averageGrade'),
+                      width: width,
+                    ),
+                    const SizedBox(width: 8),
+                    figure(
+                      switch (data.attendance
+                          .where((item) => item.source == profile.id)
+                          .toList()) {
+                        final own when own.isNotEmpty => _percent(
+                          context,
+                          own
+                                  .where((item) => item.kind.countsAsPresence)
+                                  .length /
+                              own.length *
+                              100,
+                        ),
+                        _ => '—',
+                      },
+                      context.tr('attendanceRate'),
+                      width: width,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          Divider(
+            height: 1,
+            indent: 14,
+            endIndent: 14,
+            color: colors.onPrimaryContainer.withValues(alpha: 0.15),
+          ),
+          InkWell(
+            key: const ValueKey('summary-messages'),
+            onTap: () => controller.selectTab(5),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
+              child: Row(
+                children: [
+                  Icon(Icons.mail_rounded, size: 20, color: colors.primary),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      '${context.tr('messagesUnread')}: ${data.unreadMessages}',
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: colors.onPrimaryContainer,
+                      ),
+                    ),
+                  ),
+                  const _Chevron(),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// The last error, begun with the name of the profile it came from in the
+/// view together.
+String _errorText(BuildContext context, AppController controller) {
+  final text = context.trError(controller.error!);
+  final profile = controller.errorProfile;
+  if (profile == null) return text;
+  final name = controller.profileMark(profile.id)?.name ?? profile.displayName;
+  return '$name: $text';
 }

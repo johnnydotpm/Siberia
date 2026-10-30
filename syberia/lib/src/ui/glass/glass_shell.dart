@@ -1,10 +1,11 @@
 import 'dart:math' as math;
-import 'dart:ui' show ImageFilter;
+import 'dart:ui' show FragmentShader, ImageFilter;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'glass_fade.dart';
 import 'glass_items.dart';
 import 'glass_platform.dart';
 import 'native_bar_buttons.dart';
@@ -128,6 +129,7 @@ class GlassShell extends StatefulWidget {
     required this.actions,
     required this.drawer,
     required this.body,
+    this.onTabReselected,
     super.key,
   });
 
@@ -147,6 +149,11 @@ class GlassShell extends StatefulWidget {
   final int? selectedTab;
 
   final ValueChanged<int> onTabSelected;
+
+  /// The tab already open was tapped again. Its page goes back to the top
+  /// in any case; a page may also do more, as the timetable going back to
+  /// today.
+  final ValueChanged<int>? onTabReselected;
 
   /// Read by VoiceOver for the button that opens [drawer].
   final String menuLabel;
@@ -221,6 +228,7 @@ class _GlassShellState extends State<GlassShell> {
       widget.onTabSelected(index);
       return;
     }
+    widget.onTabReselected?.call(index);
     final list = _lists[widget.pageIndex];
     if (list == null || !list.mounted) return;
     Scrollable.maybeOf(list)?.position.animateTo(
@@ -442,20 +450,11 @@ class _TopBar extends StatelessWidget implements PreferredSizeWidget {
 
 /// What iOS shows where content slides under a bar: it blurs and fades into
 /// the background, more strongly the closer it gets to the screen's edge.
-class _ScrollEdge extends StatelessWidget {
+class _ScrollEdge extends StatefulWidget {
   const _ScrollEdge({required this.solidExtent, required this.strength});
 
   /// How far below [solidExtent] the effect takes to fade out.
   static const double tail = 36;
-
-  /// The blur at full strength. A backdrop blur cannot fade by itself, so
-  /// the tail is cut into bands, each a little sharper than the one above.
-  /// They are thin enough for the steps between them not to show.
-  static const double _blur = 14;
-  static const int _bands = 9;
-
-  /// How much of the background colour covers the blurred content.
-  static const double _veil = 0.7;
 
   /// The height, from the top, where the effect is at full strength.
   final double solidExtent;
@@ -464,28 +463,73 @@ class _ScrollEdge extends StatelessWidget {
   final ValueListenable<double> strength;
 
   @override
+  State<_ScrollEdge> createState() => _ScrollEdgeState();
+}
+
+class _ScrollEdgeState extends State<_ScrollEdge> {
+  /// The blur at full strength, which eases out down the tail, so it lets go
+  /// of the content gently.
+  static const double _blur = 14;
+
+  /// How much of the background colour covers the blurred content.
+  static const double _veil = 0.7;
+
+  /// Where the shader runs, a few blurs, strongest first, each letting go
+  /// smoothly where the next one is fully there: the blur turns from one
+  /// strength to the next with no line between them.
+  static const _levels = [_blur, 7.0, 3.5, 1.5];
+
+  /// Elsewhere a backdrop blur cannot let go by itself, so the tail is cut
+  /// into bands, each a little sharper than the one above.
+  static const int _bands = 9;
+
+  /// A blur below this, in points, is too slight to see on any screen.
+  static const double _slightest = 0.5;
+
+  /// One shader for each level, where the shader can run.
+  late final List<FragmentShader>? _shaders = GlassFade.available
+      ? [for (final _ in _levels) GlassFade.shader()!]
+      : null;
+
+  @override
+  void dispose() {
+    for (final shader in _shaders ?? const <FragmentShader>[]) {
+      shader.dispose();
+    }
+    super.dispose();
+  }
+
+  /// The blur at [t] of the way down the tail.
+  static double _profile(double t) => _blur * math.pow(1 - t, 1.5).toDouble();
+
+  /// How far down the tail the profile comes to [sigma].
+  static double _depthOf(double sigma) =>
+      1 - math.pow(sigma / _blur, 2 / 3).toDouble();
+
+  /// The blur of band [index] at full strength.
+  static double _bandBlur(int index) => _profile((index + 0.5) / _bands);
+
+  @override
   Widget build(BuildContext context) {
     final background = Theme.of(context).scaffoldBackgroundColor;
+    final solidExtent = widget.solidExtent;
+    const tail = _ScrollEdge.tail;
     return IgnorePointer(
       child: ValueListenableBuilder<double>(
-        valueListenable: strength,
+        valueListenable: widget.strength,
         builder: (context, value, _) {
           if (value <= 0) return const SizedBox.shrink();
-          const step = tail / _bands;
           final extent = solidExtent + tail;
           return BackdropGroup(
             child: Stack(
               children: [
-                _band(0, solidExtent, _blur * value),
-                for (var index = 0; index < _bands; index++)
-                  _band(
-                    solidExtent + index * step,
-                    step,
-                    // Eases out, so the blur lets go of the content gently.
-                    _blur *
-                        value *
-                        math.pow(1 - (index + 0.5) / _bands, 1.5).toDouble(),
-                  ),
+                ..._shaders == null
+                    ? _bandsOf(value)
+                    : _fadesOf(
+                        value,
+                        _shaders,
+                        MediaQuery.devicePixelRatioOf(context),
+                      ),
                 Positioned.fill(
                   child: DecoratedBox(
                     decoration: BoxDecoration(
@@ -516,18 +560,71 @@ class _ScrollEdge extends StatelessWidget {
     );
   }
 
-  static Widget _band(double top, double height, double sigma) => Positioned(
-    left: 0,
-    right: 0,
-    top: top,
-    height: height,
-    child: ClipRect(
-      child: BackdropFilter.grouped(
-        filter: ImageFilter.blur(sigmaX: sigma, sigmaY: sigma),
-        child: const SizedBox.expand(),
-      ),
-    ),
-  );
+  /// The levels, the weakest first and the strongest over it. Each covers
+  /// the room from where the stronger one starts to let go to where it is
+  /// gone itself, and lets go across the stretch the profile takes from its
+  /// strength to the next one's. The edge sits at the top of the screen, and
+  /// the shader counts in the screen's pixels: [ratio] turns points into
+  /// them.
+  List<Widget> _fadesOf(
+    double value,
+    List<FragmentShader> shaders,
+    double ratio,
+  ) {
+    final solidExtent = widget.solidExtent;
+    const tail = _ScrollEdge.tail;
+    final depths = [for (final level in _levels) _depthOf(level)];
+    double down(double depth) => solidExtent + depth * tail;
+    return [
+      for (var index = _levels.length - 1; index >= 0; index--)
+        _area(
+          index == 0 ? 0 : down(depths[index - 1]),
+          down(index + 1 < _levels.length ? depths[index + 1] : 1),
+          GlassFade.filter(
+            shaders[index],
+            sigma: _levels[index] * value,
+            from: down(depths[index]) * ratio,
+            to:
+                down(index + 1 < _levels.length ? depths[index + 1] : 1) *
+                ratio,
+          ),
+        ),
+    ];
+  }
+
+  List<Widget> _bandsOf(double value) {
+    final solidExtent = widget.solidExtent;
+    const step = _ScrollEdge.tail / _bands;
+    return [
+      _area(0, solidExtent, _blurOf(_blur * value)),
+      for (var index = 0; index < _bands; index++)
+        // The last band blurs by a fifth of a point: as if not at all, and
+        // a pass less on every frame.
+        if (_bandBlur(index) >= _slightest)
+          _area(
+            solidExtent + index * step,
+            solidExtent + (index + 1) * step,
+            _blurOf(_bandBlur(index) * value),
+          ),
+    ];
+  }
+
+  static ImageFilter _blurOf(double sigma) =>
+      ImageFilter.blur(sigmaX: sigma, sigmaY: sigma);
+
+  static Widget _area(double top, double bottom, ImageFilter filter) =>
+      Positioned(
+        left: 0,
+        right: 0,
+        top: top,
+        height: bottom - top,
+        child: ClipRect(
+          child: BackdropFilter.grouped(
+            filter: filter,
+            child: const SizedBox.expand(),
+          ),
+        ),
+      );
 }
 
 /// Centres the title on the screen, like UIKit, and moves it aside only when

@@ -78,7 +78,12 @@ class _Heading extends StatelessWidget {
 /// Nothing to show, said the way the system does: the page's own symbol
 /// and what is missing, rather than a generic "no data".
 class _Empty extends StatelessWidget {
-  const _Empty(this.text, {this.icon = Icons.inbox_rounded, this.color});
+  const _Empty(
+    this.text, {
+    this.icon = Icons.inbox_rounded,
+    this.color,
+    super.key,
+  });
   final String text;
   final IconData icon;
 
@@ -146,6 +151,91 @@ class _InfoCard extends StatelessWidget {
   );
 }
 
+/// Says that a VPN is on and Librus sometimes blocks VPNs, in [text], only
+/// while one is. It asks when it appears and again whenever [error]
+/// changes; nothing keeps asking in between.
+class _VpnHint extends StatefulWidget {
+  const _VpnHint({
+    required this.text,
+    this.error,
+    this.padding = EdgeInsets.zero,
+    super.key,
+  });
+
+  final String text;
+  final Object? error;
+
+  /// Around the card, while it shows.
+  final EdgeInsetsGeometry padding;
+
+  @override
+  State<_VpnHint> createState() => _VpnHintState();
+}
+
+class _VpnHintState extends State<_VpnHint> {
+  bool _on = false;
+  int _asked = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    unawaited(_ask());
+  }
+
+  @override
+  void didUpdateWidget(_VpnHint oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!identical(oldWidget.error, widget.error)) unawaited(_ask());
+  }
+
+  Future<void> _ask() async {
+    final asked = ++_asked;
+    final on = await Vpn.isActive() == true;
+    if (!mounted || asked != _asked || on == _on) return;
+    setState(() => _on = on);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return AnimatedSize(
+      duration: MediaQuery.disableAnimationsOf(context)
+          ? Duration.zero
+          : const Duration(milliseconds: 220),
+      curve: Curves.easeOutCubic,
+      alignment: AlignmentDirectional.topStart,
+      child: !_on
+          ? const SizedBox(width: double.infinity)
+          : Padding(
+              padding: widget.padding,
+              child: Card(
+                key: const ValueKey('vpn-hint'),
+                color: colors.secondaryContainer,
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Icon(
+                        Icons.vpn_lock_rounded,
+                        color: colors.onSecondaryContainer,
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          widget.text,
+                          style: TextStyle(color: colors.onSecondaryContainer),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+    );
+  }
+}
+
 /// The app's controller, for widgets deep in a page that act on it. Pages
 /// rebuild when it changes, so this never needs to tell them.
 class _ControllerScope extends InheritedWidget {
@@ -197,27 +287,8 @@ List<Widget> _spaced(Iterable<Widget> items, [double gap = _Space.item]) => [
 /// "{count} days" in the right form: Polish, Russian and Ukrainian have
 /// three of them, English and German two. [key] names the three texts:
 /// `${key}One`, `${key}Few` and `${key}Many`.
-String _plural(BuildContext context, int count, String key) {
-  final ones = count % 10;
-  final tens = count % 100;
-  final few = ones >= 2 && ones <= 4 && (tens < 12 || tens > 14);
-  final form = switch (Localizations.localeOf(context).languageCode) {
-    'ru' || 'uk' =>
-      ones == 1 && tens != 11
-          ? 'One'
-          : few
-          ? 'Few'
-          : 'Many',
-    'pl' =>
-      count == 1
-          ? 'One'
-          : few
-          ? 'Few'
-          : 'Many',
-    _ => count == 1 ? 'One' : 'Many',
-  };
-  return context.trArgs('$key$form', {'count': '$count'});
-}
+String _plural(BuildContext context, int count, String key) =>
+    AppLocalizations.of(context).plural(count, key);
 
 /// The label over a group of a list: a day, a month, a part of the
 /// settings. [accent] draws it in the theme's colour, as the settings do.
@@ -379,12 +450,18 @@ class _Refresh extends StatelessWidget {
     required this.controller,
     required this.child,
     this.onRefresh,
+    this.nested = false,
   });
   final AppController controller;
   final Widget child;
 
   /// What a pull does, when not a sync of everything.
   final Future<void> Function()? onRefresh;
+
+  /// Whether the list pulled is deeper down, as a day inside the timetable's
+  /// pages: the indicator still comes at the top of the page, under the bar.
+  final bool nested;
+
   @override
   Widget build(BuildContext context) => RefreshIndicator.adaptive(
     // A tap felt the moment the pull takes, as in the system apps.
@@ -392,6 +469,9 @@ class _Refresh extends StatelessWidget {
       HapticFeedback.mediumImpact();
       return (onRefresh ?? controller.sync)();
     },
+    notificationPredicate: nested
+        ? (notification) => notification.metrics.axis == Axis.vertical
+        : defaultScrollNotificationPredicate,
     // Under a glass top bar the indicator would otherwise appear behind it.
     edgeOffset: _chromeInsets(context).top,
     child: child,
@@ -415,10 +495,18 @@ class _PageList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scope = GlassPageScope.maybeOf(context);
-    if (scope == null) return ListView(padding: padding, children: children);
+    if (scope == null) {
+      return ListView(
+        // A search field's keyboard goes once the list is moved.
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+        padding: padding,
+        children: children,
+      );
+    }
     final insets = MediaQuery.paddingOf(context);
     final title = scope.largeTitle;
     return ListView(
+      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
       padding: padding.copyWith(
         // The title brings its own spacing below the bar.
         top: (title == null ? padding.top : 0) + insets.top,
@@ -495,6 +583,196 @@ String _shortWeekday(BuildContext context, DateTime value) => _capitalize(
       .replaceAll('.', ''),
 );
 
+/// The heading of a month in a list: "Wrzesień", and "Wrzesień 2025" for
+/// another year than [now]'s.
+String _monthHeading(BuildContext context, DateTime month, DateTime now) {
+  final locale = Localizations.localeOf(context).toLanguageTag();
+  return _capitalize(
+    (month.year == now.year
+            ? DateFormat.LLLL(locale)
+            : DateFormat.yMMMM(locale))
+        .format(month),
+  );
+}
+
 String _capitalize(String value) => value.isEmpty
     ? value
     : '${value.characters.first.toUpperCase()}${value.substring(value.characters.first.length)}';
+
+/// What a swipe along a row does, shown under it as it slides.
+class _SwipeAction extends StatelessWidget {
+  const _SwipeAction({required this.icon, required this.label});
+  final IconData icon;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return Container(
+      alignment: AlignmentDirectional.centerStart,
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      decoration: BoxDecoration(
+        color: colors.primaryContainer,
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: colors.onPrimaryContainer),
+          const SizedBox(width: 8),
+          Text(
+            label,
+            style: TextStyle(
+              color: colors.onPrimaryContainer,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// One action of a row's long-press menu.
+typedef _ItemAction = ({
+  Key key,
+  IconData icon,
+  String label,
+  VoidCallback run,
+});
+
+/// What a long press on a row offers, as a menu sheet: the row's name and
+/// its actions. Felt as the press takes, as in iOS.
+Future<void> _showItemActions(
+  BuildContext context, {
+  required String title,
+  required List<_ItemAction> actions,
+}) {
+  HapticFeedback.mediumImpact();
+  return showAppSheet<void>(
+    context: context,
+    compact: true,
+    showDragHandle: true,
+    builder: (sheet) => SafeArea(
+      child: Column(
+        key: const ValueKey('item-actions'),
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(
+              _Space.sheet,
+              0,
+              _Space.sheet,
+              8,
+            ),
+            child: Text(
+              title,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: _rowTitleStyle(sheet),
+            ),
+          ),
+          for (final action in actions)
+            ListTile(
+              key: action.key,
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: _Space.sheet,
+              ),
+              leading: Icon(action.icon),
+              title: Text(action.label),
+              onTap: () {
+                Navigator.pop(sheet);
+                action.run();
+              },
+            ),
+          SizedBox(height: 8 + _systemButtonsRoom(sheet)),
+        ],
+      ),
+    ),
+  );
+}
+
+/// Text that wraps between words rather than inside one. When a single word
+/// is wider than the space, as long German words are with large text, the
+/// font shrinks until that word fits, but not below 70%: past that a break
+/// inside the word reads better than tiny text.
+class _WholeWords extends StatelessWidget {
+  const _WholeWords(
+    this.text, {
+    this.style,
+    this.textAlign,
+    this.maxLines,
+    super.key,
+  });
+
+  final String text;
+  final TextStyle? style;
+  final TextAlign? textAlign;
+  final int? maxLines;
+
+  @override
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (context, constraints) => Text(
+      text,
+      textAlign: textAlign,
+      maxLines: maxLines,
+      style: _fitWords(context, text, style, constraints.maxWidth),
+    ),
+  );
+}
+
+TextStyle? _fitWords(
+  BuildContext context,
+  String text,
+  TextStyle? style,
+  double width,
+) {
+  if (!width.isFinite) return style;
+  final scaler = MediaQuery.textScalerOf(context);
+  final direction = Directionality.of(context);
+  final words = text.split(RegExp(r'\s+'));
+  double widest(TextStyle style) {
+    var result = 0.0;
+    for (final word in words) {
+      final painter = TextPainter(
+        text: TextSpan(text: word, style: style),
+        textDirection: direction,
+        textScaler: scaler,
+        maxLines: 1,
+      )..layout();
+      result = math.max(result, painter.width);
+      painter.dispose();
+    }
+    return result;
+  }
+
+  final base = DefaultTextStyle.of(context).style.merge(style);
+  final smallest = (base.fontSize ?? 14) * 0.7;
+  var fitted = base;
+  // Large text can scale non-linearly, so check again after each step.
+  for (var step = 0; step < 4; step++) {
+    final needed = widest(fitted);
+    final size = fitted.fontSize ?? 14;
+    if (needed <= width || size <= smallest) break;
+    fitted = fitted.copyWith(
+      fontSize: math.max(smallest, size * width / needed * 0.98),
+    );
+  }
+  return identical(fitted, base) ? style : fitted;
+}
+
+/// Lower case without Polish accents, one letter for one, so positions
+/// stay the same as in the original. Searches compare in it: "lukasz"
+/// finds "Łukasz".
+String _plainPolish(String value) {
+  const from = 'ąćęłńóśźż';
+  const to = 'acelnoszz';
+  final lower = value.toLowerCase();
+  final out = StringBuffer();
+  for (final unit in lower.split('')) {
+    final index = from.indexOf(unit);
+    out.write(index < 0 ? unit : to[index]);
+  }
+  return out.toString();
+}

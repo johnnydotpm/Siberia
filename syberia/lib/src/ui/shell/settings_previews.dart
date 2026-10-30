@@ -42,47 +42,51 @@ class _PreviewChoice<T> extends StatelessWidget {
                     child: Semantics(
                       selected: option.value == selected,
                       button: true,
-                      child: InkWell(
-                        key: option.key,
-                        borderRadius: BorderRadius.circular(14),
-                        onTap: () => onSelected(option.value),
-                        child: Padding(
-                          padding: const EdgeInsets.all(2),
-                          child: Column(
-                            children: [
-                              AnimatedContainer(
-                                duration: const Duration(milliseconds: 180),
-                                height: 64,
-                                padding: const EdgeInsets.all(3),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(13),
-                                  border: Border.all(
-                                    color: option.value == selected
-                                        ? colors.primary
-                                        : colors.outlineVariant,
-                                    width: option.value == selected ? 2.5 : 1,
+                      child: Builder(
+                        builder: (optionContext) => InkWell(
+                          key: option.key,
+                          borderRadius: BorderRadius.circular(14),
+                          onTap: () => _choose(optionContext, option.value),
+                          child: Padding(
+                            padding: const EdgeInsets.all(2),
+                            child: Column(
+                              children: [
+                                AnimatedContainer(
+                                  duration: const Duration(milliseconds: 180),
+                                  height: 64,
+                                  padding: const EdgeInsets.all(3),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(13),
+                                    border: Border.all(
+                                      color: option.value == selected
+                                          ? colors.primary
+                                          : colors.outlineVariant,
+                                      width: option.value == selected ? 2.5 : 1,
+                                    ),
+                                  ),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(9),
+                                    child: SizedBox.expand(
+                                      child: option.preview,
+                                    ),
                                   ),
                                 ),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(9),
-                                  child: SizedBox.expand(child: option.preview),
+                                const SizedBox(height: 6),
+                                _WholeWords(
+                                  option.label,
+                                  textAlign: TextAlign.center,
+                                  maxLines: 2,
+                                  style: theme.textTheme.labelMedium?.copyWith(
+                                    color: option.value == selected
+                                        ? colors.primary
+                                        : colors.onSurface,
+                                    fontWeight: option.value == selected
+                                        ? FontWeight.w800
+                                        : FontWeight.w500,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(height: 6),
-                              Text(
-                                option.label,
-                                textAlign: TextAlign.center,
-                                maxLines: 2,
-                                style: theme.textTheme.labelMedium?.copyWith(
-                                  color: option.value == selected
-                                      ? colors.primary
-                                      : colors.onSurface,
-                                  fontWeight: option.value == selected
-                                      ? FontWeight.w800
-                                      : FontWeight.w500,
-                                ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -93,6 +97,22 @@ class _PreviewChoice<T> extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  /// The new look spreads in a circle from the option tapped, as in
+  /// Telegram.
+  void _choose(BuildContext context, T value) {
+    if (value == selected) return;
+    HapticFeedback.selectionClick();
+    final box = context.findRenderObject();
+    ScreenTransitions.run(
+      context,
+      ScreenChange.reveal,
+      () => onSelected(value),
+      origin: box is RenderBox && box.hasSize
+          ? box.localToGlobal(box.size.center(Offset.zero))
+          : null,
     );
   }
 }

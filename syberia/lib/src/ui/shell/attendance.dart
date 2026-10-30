@@ -243,11 +243,12 @@ class _AttendanceBySubject extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bySubject = <String, List<AttendanceRecord>>{};
+    // In the view together a subject of each school is a row of its own.
+    final bySubject = <(String?, String), List<AttendanceRecord>>{};
     for (final record in records) {
       final subject = record.subject.trim();
       if (subject.isNotEmpty) {
-        bySubject.putIfAbsent(subject, () => []).add(record);
+        bySubject.putIfAbsent((record.source, subject), () => []).add(record);
       }
     }
     double rate(List<AttendanceRecord> items) =>
@@ -255,7 +256,9 @@ class _AttendanceBySubject extends StatelessWidget {
     final subjects = bySubject.keys.toList()
       ..sort((a, b) {
         final byRate = rate(bySubject[a]!).compareTo(rate(bySubject[b]!));
-        return byRate != 0 ? byRate : a.compareTo(b);
+        if (byRate != 0) return byRate;
+        final byName = a.$2.compareTo(b.$2);
+        return byName != 0 ? byName : (a.$1 ?? '').compareTo(b.$1 ?? '');
       });
     return Card(
       key: const ValueKey('attendance-by-subject'),
@@ -276,12 +279,13 @@ class _AttendanceBySubject extends StatelessWidget {
                     ?.copyWith(fontWeight: FontWeight.w800),
               ),
             ),
-            for (final subject in subjects)
+            for (final key in subjects)
               _SubjectAttendanceRow(
-                subject: subject,
-                records: bySubject[subject]!,
-                percentage: rate(bySubject[subject]!),
-                low: rate(bySubject[subject]!) < _gradingThreshold,
+                subject: key.$2,
+                source: key.$1,
+                records: bySubject[key]!,
+                percentage: rate(bySubject[key]!),
+                low: rate(bySubject[key]!) < _gradingThreshold,
                 style: style,
               ),
           ],
@@ -298,8 +302,12 @@ class _SubjectAttendanceRow extends StatelessWidget {
     required this.percentage,
     required this.low,
     required this.style,
+    this.source,
   });
   final String subject;
+
+  /// The profile the subject is of, in the view together.
+  final String? source;
   final List<AttendanceRecord> records;
   final double percentage;
   final bool low;
@@ -328,9 +336,17 @@ class _SubjectAttendanceRow extends StatelessWidget {
       for (final kind in AttendanceKind.values)
         (kind: kind, count: count((value) => value == kind)),
     ].where((entry) => entry.count > 0);
+    final id = '${source == null ? '' : '$source|'}$subject';
     return InkWell(
-      key: ValueKey('attendance-subject-$subject'),
-      onTap: () => _showSubjectAttendance(context, name, records, style),
+      key: ValueKey('attendance-subject-$id'),
+      onTap: () => _showSubjectAttendance(
+        context,
+        name,
+        records,
+        style,
+        source: source,
+        controller: _ControllerScope.maybeOf(context),
+      ),
       child: Padding(
         padding: const EdgeInsetsDirectional.fromSTEB(_Space.inset, 8, 12, 8),
         child: Row(
@@ -351,22 +367,26 @@ class _SubjectAttendanceRow extends StatelessWidget {
                   Row(
                     children: [
                       Expanded(
-                        child: Text(
-                          name,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: theme.textTheme.titleSmall?.copyWith(
-                            fontWeight: FontWeight.w700,
+                        child: _MarkedTitle(
+                          Text(
+                            name,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: theme.textTheme.titleSmall?.copyWith(
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
+                          source,
                         ),
                       ),
                       const SizedBox(width: 8),
                       Text(
                         _percent(context, percentage),
-                        key: ValueKey('attendance-subject-rate-$subject'),
+                        key: ValueKey('attendance-subject-rate-$id'),
                         style: theme.textTheme.titleSmall?.copyWith(
                           fontWeight: FontWeight.w800,
                           color: low ? colors.error : null,
+                          fontFeatures: _tabular,
                         ),
                       ),
                     ],
@@ -420,8 +440,10 @@ Future<void> _showSubjectAttendance(
   BuildContext context,
   String name,
   List<AttendanceRecord> records,
-  AttendanceChartStyle style,
-) => showAppSheet<void>(
+  AttendanceChartStyle style, {
+  String? source,
+  AppController? controller,
+}) => showAppSheet<void>(
   context: context,
   compact: true,
   showDragHandle: true,
@@ -442,7 +464,11 @@ Future<void> _showSubjectAttendance(
           children: [
             Padding(
               padding: const EdgeInsets.only(bottom: 12),
-              child: Text(name, style: _sheetTitleStyle(context)),
+              child: _MarkedTitle(
+                Text(name, style: _sheetTitleStyle(context)),
+                source,
+                controller: controller,
+              ),
             ),
             _AttendanceChart(
               counts: {
@@ -777,7 +803,7 @@ class _AttendanceTile extends StatelessWidget {
         background: _attendanceColor(item.kind).withValues(alpha: 0.22),
         foreground: Theme.of(context).colorScheme.onSurface,
       ),
-      title: Text(item.type),
+      title: _MarkedTitle(Text(item.type), item.source),
       subtitle: Text(
         [
           if (showSubject && item.subject.isNotEmpty) item.subject,

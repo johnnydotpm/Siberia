@@ -19,18 +19,20 @@ SiberiaGB is a fully functional, cross-platform Librus client written using the 
 ## Features
 
 - Sign-in with non-expiring sessions
+- Several profiles in one app: a parent with two children, or a student at two schools. Each profile keeps its own data, grades, homework and average settings, and switching takes one tap
+- "All together" mode: several profiles' data in one view, such as the lessons of a regular and a music school on one timetable. Every item carries its profile's mark, lessons at the same time stand side by side, and a message goes from the profile you pick
 - Timetable as a timeline or a list, with merged double lessons and tests shown on the lessons they are set for
 - Grades coloured by value and average calculation, including weighted averages and your own value for pluses and minuses
 - A grade calculator: how new grades would change the average, and how many it takes to reach a target
 - Schedule, calendar, and upcoming events
 - Homework grouped by due date, with search
 - A Today screen with the current and next lesson and blocks you can hide and reorder
-- A "Next lesson" home screen widget (Android and iOS), with per-widget settings on Android
+- A "Next lesson" home screen widget (Android and iOS), with per-widget settings on Android, including which profile it shows, or all of them together
 - Full messaging support
 - Announcements
 - Attendance with an attendance chart
 - Remarks
-- Notifications across eight categories: grades, messages, announcements, remarks, attendance, events, homework, and timetable
+- Notifications across eight categories: grades, messages, announcements, remarks, attendance, events, homework, and timetable; with several profiles they carry the profile's name, and each profile has its own switch
 - Test reminders the evening before or that morning, at a time you choose (Android and iOS)
 - Background data synchronization (Android)
 - The app is available in five languages: Polish, English, Russian, German, and Ukrainian

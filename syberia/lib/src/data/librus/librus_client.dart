@@ -7,8 +7,11 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:xml/xml.dart';
 import 'package:html/parser.dart' as html_parser;
 
+import '../../debug/diagnostics.dart';
 import '../../domain/librus_error.dart';
 import '../../domain/models.dart';
+import '../../domain/stable_hash.dart';
+import 'librus_logins.dart';
 import 'reference_cache.dart';
 
 /// The parts of a snapshot a sync can be limited to.
@@ -26,15 +29,25 @@ enum LibrusPart {
 /// Portal-backed Synergia access and web mailbox sessions. Token and session
 /// lifetimes follow Szkolny.eu: six hours for API access and 45 minutes for web.
 class LibrusClient {
+  /// A client for one student: `synergiaLogin` in the Librus login
+  /// `account`, which [logins] keeps. Without them it works for the login it
+  /// signs in to.
   LibrusClient({
     Dio? dio,
     FlutterSecureStorage? secureStorage,
     DateTime Function()? clock,
     LibrusReferenceCache? referenceCache,
+    LibrusLogins? logins,
+    this._account,
+    this._synergiaLogin,
   }) : _dio = dio ?? Dio(),
-       _secureStorage = secureStorage ?? const FlutterSecureStorage(),
        _clock = clock ?? DateTime.now,
-       _referenceCache = referenceCache ?? LibrusReferenceCache();
+       _referenceCache = referenceCache ?? LibrusReferenceCache(),
+       _logins =
+           logins ?? LibrusLogins(secureStorage: secureStorage, clock: clock) {
+    // Every request goes in the debug menu's log, without its query.
+    Diagnostics.instance.watch(_dio);
+  }
 
   static const _portalBase = 'https://portal.librus.pl';
   static const _portalApi = '$_portalBase/api/v3';
@@ -44,15 +57,22 @@ class LibrusClient {
   static const _tokenUrl = '$_portalBase/oauth2/access_token';
   static const _clientId = 'VaItV6oRutdo8fnjJwysnTjVlvaswf52ZqmXsJGP';
   static const _redirectUrl = 'app://librus';
-  static const _sessionKey = 'syberia_portal_session_v1';
   static const _userAgent =
       'Mozilla/5.0 (Linux; Android 15) AppleWebKit/537.36 '
       '(KHTML, like Gecko) Chrome/146.0 Mobile Safari/537.36 LibrusMobileApp';
 
   final DateTime Function() _clock;
   final LibrusReferenceCache _referenceCache;
+  final LibrusLogins _logins;
+  String? _account;
+  String? _synergiaLogin;
+
+  /// The Librus login this client works in, once known.
+  String? get account => _account;
+
+  /// The student it fetches, once chosen.
+  String? get synergiaLogin => _session?.synergiaLogin ?? _synergiaLogin;
   final Dio _dio;
-  final FlutterSecureStorage _secureStorage;
   final List<_Cookie> _cookies = [];
   _PortalSession? _session;
   String? _synergiaToken;
@@ -86,14 +106,33 @@ class LibrusClient {
     required String username,
     required String password,
   }) async {
+    await _signIn(username, password);
+    return fetchSnapshot();
+  }
+
+  /// Logs in to a Librus account and lists its students, from which the app
+  /// makes profiles. The login is saved for them.
+  Future<LibrusSignIn> signIn({
+    required String username,
+    required String password,
+  }) async {
+    await _signIn(username, password);
+    return LibrusSignIn(
+      account: _account!,
+      students: await _students(_session!.accessToken),
+    );
+  }
+
+  Future<void> _signIn(String username, String password) async {
     final email = username.trim();
     if (email.isEmpty || password.isEmpty) {
       throw const LibrusException(LibrusErrorCode.missingCredentials);
     }
     _clearRuntimeSessions();
     _session = await _loginWithPortal(email, password);
+    _account = LibrusLogin.keyOf(email);
+    _synergiaLogin = null;
     await _saveSession();
-    return fetchSnapshot();
   }
 
   /// [parts] limits the sync to these parts; the others come back empty.
@@ -102,16 +141,35 @@ class LibrusClient {
     return fetchSnapshot(parts: parts);
   }
 
+  /// Forgets this client's session and the lists it kept, and the login
+  /// itself.
   Future<void> logout() async {
-    _clearRuntimeSessions();
-    _session = null;
-    await _referenceCache.clear();
-    await _secureStorage.delete(key: _sessionKey);
+    await forget();
+    final account = _account;
+    if (account != null) await _logins.remove(account);
   }
 
+  /// Forgets this client's session and the lists it kept for its student.
+  /// The login stays, for the other profiles in it.
+  Future<void> forget() async {
+    final lists = await _restoreSession() ? _referenceAccount : null;
+    _clearRuntimeSessions();
+    _session = null;
+    if (lists != null) await _referenceCache.remove(lists);
+  }
+
+  /// The students in this client's login, the one it fetches selected.
   Future<List<LinkedSynergiaAccount>> fetchSynergiaAccounts() async {
     await _prepareFreshSession();
-    final root = await _portalGet('SynergiaAccounts', _session!.accessToken);
+    final selected = _session!.synergiaLogin;
+    return [
+      for (final student in await _students(_session!.accessToken))
+        student.copyWith(selected: student.login == selected),
+    ];
+  }
+
+  Future<List<LinkedSynergiaAccount>> _students(String accessToken) async {
+    final root = await _portalGet('SynergiaAccounts', accessToken);
     final accounts = _findList(root, const [
       'accounts',
       'Accounts',
@@ -124,28 +182,11 @@ class LibrusClient {
           LinkedSynergiaAccount(
             login: _accountLogin(account)!,
             name: account['studentName']?.toString().trim() ?? '',
-            selected: _accountLogin(account) == _session!.synergiaLogin,
+            selected: false,
+            account: _account ?? '',
+            parent: account['group'] == 'parent',
           ),
     ];
-  }
-
-  Future<AppSnapshot> selectSynergiaAccount(String login) async {
-    await _prepareFreshSession();
-    final previous = _session!;
-    final previousToken = _synergiaToken;
-    final previousTokenExpiry = _apiTokenExpiresAt;
-    _session = previous.copyWith(synergiaLogin: login);
-    _clearRuntimeSessions();
-    try {
-      return await fetchSnapshot();
-    } on Object {
-      _session = previous;
-      _synergiaToken = previousToken;
-      _apiTokenExpiresAt = previousTokenExpiry;
-      _cookies.clear();
-      await _saveSession();
-      rethrow;
-    }
   }
 
   Future<List<MessageRecipient>> fetchMessageRecipients() async {
@@ -314,7 +355,10 @@ class LibrusClient {
       id: summary.id,
       sender: summary.sender,
       subject: summary.subject,
-      body: _plainText(body.replaceAll('<![CDATA[', '').replaceAll(']]>', '')),
+      body: _plainText(
+        body.replaceAll('<![CDATA[', '').replaceAll(']]>', ''),
+        links: true,
+      ),
       receivedAt: summary.receivedAt,
       recipients: summary.sent
           ? [
@@ -510,7 +554,7 @@ class LibrusClient {
 
   /// Names the cached lists after the account without storing its address.
   String get _referenceAccount =>
-      _stableHash('${_session!.email}\n${_session!.synergiaLogin ?? ''}');
+      stableHash('${_session!.email}\n${_session!.synergiaLogin ?? ''}');
 
   /// Lists fetched a while ago may lack what was added since. Lists only a
   /// few minutes old are not fetched again yet.
@@ -614,26 +658,14 @@ class LibrusClient {
 
   Future<void> _refreshPortalAndSynergia() async {
     var session = _session!;
-    final selectedLogin = session.synergiaLogin;
-    try {
-      if (session.refreshToken.isNotEmpty) {
-        final token = await _exchangeToken({
-          'grant_type': 'refresh_token',
-          'client_id': _clientId,
-          'refresh_token': session.refreshToken,
-        });
-        session = session.copyWith(
-          accessToken: token['access_token']?.toString(),
-          refreshToken: token['refresh_token']?.toString(),
-        );
-      }
-    } on LibrusException {
-      _cookies.clear();
-      session = (await _loginWithPortal(
-        session.email,
-        session.password,
-      )).copyWith(synergiaLogin: selectedLogin);
-    }
+    final account = _account;
+    // The login's other profiles share its tokens: they are renewed one
+    // profile at a time, and saved as they are renewed.
+    session = session.withLogin(
+      account == null
+          ? await _renewLogin(session.login)
+          : await _logins.renewed(account, _renewLogin),
+    );
     final accountsResponse = await _portalGet(
       'SynergiaAccounts',
       session.accessToken,
@@ -676,7 +708,30 @@ class LibrusClient {
     _synergiaToken = accessToken;
     _apiTokenExpiresAt = _clock().add(const Duration(hours: 6));
     _session = session.copyWith(synergiaLogin: login);
-    await _saveSession();
+  }
+
+  /// New portal tokens for [current]: refreshed, or from logging in again
+  /// with the password when Librus refuses the refresh.
+  Future<LibrusLogin> _renewLogin(LibrusLogin current) async {
+    if (current.refreshToken.isEmpty) return current;
+    try {
+      final token = await _exchangeToken({
+        'grant_type': 'refresh_token',
+        'client_id': _clientId,
+        'refresh_token': current.refreshToken,
+      });
+      return current.copyWith(
+        accessToken: token['access_token']?.toString(),
+        refreshToken: token['refresh_token']?.toString(),
+      );
+    } on LibrusException {
+      _cookies.clear();
+      final fresh = await _loginWithPortal(current.email, current.password);
+      return current.copyWith(
+        accessToken: fresh.accessToken,
+        refreshToken: fresh.refreshToken,
+      );
+    }
   }
 
   Future<void> _prepareFreshSession() async {
@@ -1311,7 +1366,7 @@ class LibrusClient {
       id: summary.id,
       sender: summary.sender,
       subject: summary.subject,
-      body: _plainText(content.innerHtml),
+      body: _plainText(content.innerHtml, links: true),
       receivedAt: summary.receivedAt,
       attachments: attachments.values.toList(),
     );
@@ -1418,21 +1473,21 @@ class LibrusClient {
     }
   }
 
-  Future<void> _saveSession() => _secureStorage.write(
-    key: _sessionKey,
-    value: jsonEncode(_session!.toJson()),
-  );
+  Future<void> _saveSession() async {
+    final account = _account;
+    if (account != null) {
+      await _logins.write(account, _session!.login, fresh: true);
+    }
+  }
+
   Future<bool> _restoreSession() async {
     if (_session != null) return true;
-    final raw = await _secureStorage.read(key: _sessionKey);
-    if (raw == null || raw.isEmpty) return false;
-    try {
-      _session = _PortalSession.fromJson(_map(jsonDecode(raw))!);
-      return true;
-    } on Object {
-      await logout();
-      return false;
-    }
+    final account = _account;
+    if (account == null) return false;
+    final login = await _logins.read(account);
+    if (login == null) return false;
+    _session = _PortalSession.of(login, synergiaLogin: _synergiaLogin);
+    return true;
   }
 
   static List<Lesson> _parseTimetable(
@@ -1737,6 +1792,7 @@ class LibrusClient {
     required Map<int, String> teacherTypes,
     required Map<int, String> people,
     required DateTime today,
+    int? ownClass,
   }) {
     final days = <FreeDay>[];
     (DateTime, DateTime)? range(Map<String, dynamic> item) {
@@ -1763,6 +1819,11 @@ class LibrusClient {
       }
     }
     for (final item in _list(classDays['ClassFreeDays'])) {
+      // Librus lists every class's days off, a work placement of another
+      // class among them: only the student's own class counts, and with
+      // no class known, none named for a class does.
+      final forClass = _referenceId(item['Class']);
+      if (forClass != null && forClass != ownClass) continue;
       if (range(item) case (final from, final to)) {
         days.add(
           FreeDay(
@@ -2005,6 +2066,7 @@ _ParsedSnapshot _parseSnapshot(_SnapshotInput input) {
       ),
       people: people,
       today: DateTime.now(),
+      ownClass: _referenceId(me?['Class']),
     ),
     apiMessages: inbox == null
         ? null
@@ -2055,15 +2117,6 @@ class _TrackedMap<V> extends MapBase<int, V> {
   V? remove(Object? key) => _names.remove(key);
 }
 
-/// A short name that stays the same across runs (FNV-1a).
-String _stableHash(String value) {
-  var hash = 0x811c9dc5;
-  for (final unit in utf8.encode(value)) {
-    hash = ((hash ^ unit) * 0x01000193) & 0xffffffff;
-  }
-  return hash.toRadixString(16).padLeft(8, '0');
-}
-
 class _PortalSession {
   const _PortalSession({
     required this.email,
@@ -2077,30 +2130,31 @@ class _PortalSession {
   final String accessToken;
   final String refreshToken;
   final String? synergiaLogin;
-  _PortalSession copyWith({
-    String? accessToken,
-    String? refreshToken,
-    String? synergiaLogin,
-  }) => _PortalSession(
+  factory _PortalSession.of(LibrusLogin login, {String? synergiaLogin}) =>
+      _PortalSession(
+        email: login.email,
+        password: login.password,
+        accessToken: login.accessToken,
+        refreshToken: login.refreshToken,
+        synergiaLogin: synergiaLogin,
+      );
+
+  LibrusLogin get login => LibrusLogin(
     email: email,
     password: password,
-    accessToken: accessToken ?? this.accessToken,
-    refreshToken: refreshToken ?? this.refreshToken,
-    synergiaLogin: synergiaLogin ?? this.synergiaLogin,
+    accessToken: accessToken,
+    refreshToken: refreshToken,
   );
-  Map<String, Object?> toJson() => {
-    'email': email,
-    'password': password,
-    'accessToken': accessToken,
-    'refreshToken': refreshToken,
-    'synergiaLogin': synergiaLogin,
-  };
-  factory _PortalSession.fromJson(Map<String, dynamic> json) => _PortalSession(
-    email: json['email'] as String,
-    password: json['password'] as String,
-    accessToken: json['accessToken'] as String? ?? '',
-    refreshToken: json['refreshToken'] as String? ?? '',
-    synergiaLogin: json['synergiaLogin'] as String?,
+
+  _PortalSession withLogin(LibrusLogin login) =>
+      _PortalSession.of(login, synergiaLogin: synergiaLogin);
+
+  _PortalSession copyWith({String? synergiaLogin}) => _PortalSession(
+    email: email,
+    password: password,
+    accessToken: accessToken,
+    refreshToken: refreshToken,
+    synergiaLogin: synergiaLogin ?? this.synergiaLogin,
   );
 }
 
@@ -2225,15 +2279,17 @@ DateTime? _withTime(DateTime date, Object? value) {
 /// one at the weekend.
 DateTime librusSyncWeekStart(DateTime now) {
   final weekStart = _startOfWeek(now);
+  // The next Monday by the calendar. The week the clocks go back is an hour
+  // longer, and seven times 24 hours from its Monday end on its Sunday: the
+  // week asked of Librus then started on a Sunday.
   return now.weekday > DateTime.friday
-      ? weekStart.add(const Duration(days: 7))
+      ? DateTime(weekStart.year, weekStart.month, weekStart.day + 7)
       : weekStart;
 }
 
-DateTime _startOfWeek(DateTime date) {
-  final day = DateTime(date.year, date.month, date.day);
-  return day.subtract(Duration(days: day.weekday - 1));
-}
+/// The Monday of [date]'s week, counted in calendar days.
+DateTime _startOfWeek(DateTime date) =>
+    DateTime(date.year, date.month, date.day - (date.weekday - 1));
 
 String _dateOnly(DateTime date) =>
     '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
@@ -2263,12 +2319,48 @@ String _gradeDescription(
     .where((text) => text.isNotEmpty)
     .join(' · ');
 
-String _plainText(String text) => text
-    .replaceAll(RegExp(r'<br\s*/?>', caseSensitive: false), '\n')
-    .replaceAll(RegExp(r'<[^>]+>'), '')
-    .replaceAll('&nbsp;', ' ')
-    .replaceAll('&amp;', '&')
-    .trim();
+/// [text] without its HTML. With [links], a link keeps where it leads,
+/// which the tags alone hold: "plan (https://…)", or the address alone
+/// when that is its text already.
+String _plainText(String text, {bool links = false}) =>
+    (links ? _keepLinks(text) : text)
+        .replaceAll(RegExp(r'<br\s*/?>', caseSensitive: false), '\n')
+        .replaceAll(RegExp(r'<[^>]+>'), '')
+        .replaceAll('&nbsp;', ' ')
+        .replaceAll('&amp;', '&')
+        .trim();
+
+/// The web and mail links of [html] written out in its text.
+String _keepLinks(String html) => html.replaceAllMapped(
+  RegExp(
+    r'''<a\b[^>]*?\bhref\s*=\s*(?:"([^"]*)"|'([^']*)')[^>]*>(.*?)</a\s*>''',
+    caseSensitive: false,
+    dotAll: true,
+  ),
+  (match) {
+    final label = match[3] ?? '';
+    final target = _htmlDecode(match[1] ?? match[2] ?? '').trim();
+    final scheme = Uri.tryParse(target)?.scheme.toLowerCase();
+    if (scheme != 'http' && scheme != 'https' && scheme != 'mailto') {
+      return label;
+    }
+    final shown = _htmlDecode(
+      label.replaceAll(RegExp(r'<[^>]+>'), '').replaceAll('&nbsp;', ' '),
+    ).trim();
+    String bare(String value) => value
+        .replaceFirst(
+          RegExp(r'^(?:https?://|mailto:)', caseSensitive: false),
+          '',
+        )
+        .replaceFirst(RegExp(r'/$'), '')
+        .toLowerCase();
+    final address = scheme == 'mailto' ? target.substring(7) : target;
+    if (shown.isEmpty) return address;
+    // A link that shows its own address needs it no second time.
+    if (bare(shown) == bare(target)) return shown;
+    return '$label ($address)';
+  },
+);
 String _jsonText(Object? value) {
   final text = value?.toString() ?? '';
   try {

@@ -4,13 +4,20 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// stays on the phone. Each mark keeps its work's due day, so marks for
 /// work long past are dropped.
 abstract final class HomeworkDoneStore {
+  /// Where versions before profiles kept the marks of their one student.
   static const key = 'homework_done_v1';
+
+  /// Where the profile [profileId] keeps its marks.
+  static String keyFor(String profileId) => '${key}_$profileId';
 
   /// Marks for work due longer ago than this are dropped when saving.
   static const keep = Duration(days: 60);
 
   /// The marked homework's ids with their due days.
-  static Map<String, DateTime> read(SharedPreferences preferences) => {
+  static Map<String, DateTime> read(
+    SharedPreferences preferences, {
+    String key = key,
+  }) => {
     for (final entry in preferences.getStringList(key) ?? const <String>[])
       if (_parse(entry) case (final id, final due)) id: due,
   };
@@ -19,6 +26,7 @@ abstract final class HomeworkDoneStore {
     SharedPreferences preferences,
     Map<String, DateTime> marks, {
     DateTime? now,
+    String key = key,
   }) {
     final oldest = (now ?? DateTime.now()).subtract(keep);
     return preferences.setStringList(key, [

@@ -135,13 +135,19 @@ void main() {
       expect(controller.snapshot.sentMessages.first.subject, 'Demo reply');
       expect(await repository.fetchBackgroundSnapshot(), isNull);
       expect(await repository.fetchLatestReleaseVersion(), isNull);
-      expect(await repository.fetchSynergiaAccounts(), isEmpty);
+      expect(await repository.availableStudents(), isEmpty);
       await expectLater(
         repository.loginLibrus(username: 'unused', password: 'unused'),
         throwsStateError,
       );
       await expectLater(
-        repository.selectSynergiaAccount('real-account'),
+        repository.addProfiles(const [
+          LinkedSynergiaAccount(
+            login: 'real-account',
+            name: 'Uczeń',
+            selected: false,
+          ),
+        ]),
         throwsStateError,
       );
       await expectLater(
@@ -231,10 +237,10 @@ void main() {
         ),
         findsOneWidget,
       );
-      await tester.tap(find.byIcon(Icons.person_rounded).first);
+      await tester.tap(_profileButton().first);
       await tester.pumpAndSettle();
       expect(find.text('Demo mode'), findsOneWidget);
-      expect(find.byIcon(Icons.switch_account_rounded), findsNothing);
+      expect(find.byKey(const ValueKey('profiles-add')), findsNothing);
       await tester.tap(find.byKey(const ValueKey('account-logout')));
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const ValueKey('account-logout-confirm')));
@@ -284,3 +290,10 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 }
+
+/// The profile button of the top bar, in either design.
+Finder _profileButton() => find.byWidgetPredicate(
+  (widget) =>
+      widget.key == const ValueKey('profile-button') ||
+      widget.key == const ValueKey('glass-bar-button-account'),
+);

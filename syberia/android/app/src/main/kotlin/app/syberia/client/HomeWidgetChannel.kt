@@ -1,5 +1,7 @@
 package app.syberia.client
 
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
 import android.content.Context
 import android.os.Build
 import io.flutter.plugin.common.BinaryMessenger
@@ -22,10 +24,12 @@ object HomeWidgetChannel {
             when (call.method) {
                 "update" -> {
                     val payload = call.argument<String>("payload")
+                    // Each profile's lessons, for widgets set to show it.
+                    val profiles = call.argument<Map<String, String>>("profiles").orEmpty()
                     if (payload == null) {
                         result.error("invalid_arguments", null, null)
                     } else {
-                        NextLessonWidgetProvider.savePayload(app, payload)
+                        NextLessonWidgetProvider.savePayload(app, payload, profiles)
                         result.success(null)
                     }
                 }
@@ -50,6 +54,19 @@ object HomeWidgetChannel {
                     }
                 }
                 "dynamicColorsSupported" -> result.success(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
+                // The launcher places the widget with its own dialog.
+                "canPinWidget" -> result.success(
+                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&
+                        AppWidgetManager.getInstance(app).isRequestPinAppWidgetSupported,
+                )
+                "pinWidget" -> result.success(
+                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&
+                        AppWidgetManager.getInstance(app).requestPinAppWidget(
+                            ComponentName(app, NextLessonWidgetProvider::class.java),
+                            null,
+                            null,
+                        ),
+                )
                 "configuringWidgetId" -> result.success(configuring)
                 "finishConfiguring" -> {
                     result.success(null)

@@ -188,7 +188,8 @@ Future<AppController> _controller() async {
 class _Repository extends AppRepository {
   @override
   Future<AppSnapshot> load() async {
-    final tomorrow = DateTime.now().add(const Duration(days: 1));
+    final now = DateTime.now();
+    final tomorrow = DateTime(now.year, now.month, now.day + 1);
     final start = DateTime(tomorrow.year, tomorrow.month, tomorrow.day, 8);
     return AppSnapshot(
       profile: const StudentProfile(
@@ -224,5 +225,8 @@ class _Repository extends AppRepository {
 
   // The real one would reach Librus; the Today look-ahead asks for weeks.
   @override
-  Future<List<Lesson>> fetchTimetableWeek(DateTime day) async => const [];
+  Future<List<Lesson>> fetchTimetableWeek(
+    DateTime day, {
+    String? profileId,
+  }) async => const [];
 }

@@ -28,6 +28,12 @@ class GlassPlate extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final direction = Directionality.maybeOf(context);
+    final ratio = MediaQuery.maybeDevicePixelRatioOf(context) ?? 1;
+    // Shadows faded to nothing, as on a selection at rest, are not drawn.
+    final shadows = [
+      for (final shadow in look.shadows)
+        if (shadow.color.a > 0) shadow,
+    ];
     final content = child ?? const SizedBox.expand();
     final veil = look.veil;
     final lens = look.bend > 0 && GlassLens.available
@@ -65,13 +71,15 @@ class GlassPlate extends StatelessWidget {
     } else {
       glass = BackdropFilter.grouped(filter: look.filter, child: content);
     }
+    // Glass on its way in changes from frame to frame: nothing to keep.
+    final keep = look.visibility >= 1;
     return CustomPaint(
-      painter: look.shadows.isEmpty
+      painter: shadows.isEmpty
           ? null
-          : _ShadowPainter(shape, look.shadows, direction),
+          : _ShadowPainter(shape, shadows, direction, ratio, keep: keep),
       foregroundPainter: look.rim.color.a == 0
           ? null
-          : _RimPainter(shape, look.rim, direction),
+          : _RimPainter(shape, look.rim, direction, ratio, keep: keep),
       child: ClipPath(
         clipper: ShapeBorderClipper(shape: shape, textDirection: direction),
         child: glass,
@@ -91,14 +99,99 @@ double _cornerRadius(ShapeBorder shape, TextDirection? direction) {
   return corners?.resolve(direction).topLeft.x ?? double.infinity;
 }
 
+/// Rims and shadows drawn once and kept as pixels.
+///
+/// Impeller draws every frame afresh, the parts of the screen that did not
+/// change too. A stroke or a shape under a blur costs it a pass of its own
+/// each time: a few for every rim and shadow, over the page as it scrolls.
+/// The same pixels kept in an image cost one plain draw. An image is kept
+/// for each shape, size and look, so a glass that changes size, as under a
+/// finger, draws anew while it moves.
+abstract final class _Baked {
+  static final _images = <Object, ui.Image>{};
+
+  /// Enough for every glass on a screen and the next one.
+  static const _capacity = 24;
+
+  /// Larger than this, a glass draws its rim and shadow as before.
+  static const _maxPixels = 3000000;
+
+  /// How often an image has been drawn, for tests.
+  static int debugBaked = 0;
+
+  /// The image [draw] makes for [key], [width] by [height] pixels, or null
+  /// when it would be too large.
+  static ui.Image? image(
+    Object key,
+    int width,
+    int height,
+    void Function(Canvas canvas) draw,
+  ) {
+    if (width <= 0 || height <= 0 || width * height > _maxPixels) return null;
+    // Most recently used last.
+    final kept = _images.remove(key);
+    if (kept != null) return _images[key] = kept;
+    final recorder = ui.PictureRecorder();
+    draw(Canvas(recorder));
+    final picture = recorder.endRecording();
+    final image = picture.toImageSync(width, height);
+    picture.dispose();
+    _images[key] = image;
+    debugBaked++;
+    while (_images.length > _capacity) {
+      // A picture that still shows it keeps its own hold on it.
+      _images.remove(_images.keys.first)!.dispose();
+    }
+    return image;
+  }
+
+  /// Draws [image], made at [ratio] pixels to a point, over [area].
+  static void paint(
+    Canvas canvas,
+    ui.Image image,
+    double ratio,
+    Rect area, {
+    BlendMode blendMode = BlendMode.srcOver,
+  }) => canvas.drawImageRect(
+    image,
+    Rect.fromLTWH(0, 0, image.width.toDouble(), image.height.toDouble()),
+    Rect.fromLTWH(
+      area.left,
+      area.top,
+      image.width / ratio,
+      image.height / ratio,
+    ),
+    Paint()
+      ..blendMode = blendMode
+      ..filterQuality = FilterQuality.low,
+  );
+}
+
+/// The image of a glass's rim or shadow, kept by GlassPlate. Exposed for
+/// tests: how many have been drawn so far.
+@visibleForTesting
+int get debugGlassImagesBaked => _Baked.debugBaked;
+
 /// The hairline iOS 26 draws at the edge of its glass: strongest at the very
 /// edge and gone a point further in.
 class _RimPainter extends CustomPainter {
-  const _RimPainter(this.shape, this.rim, this.direction);
+  const _RimPainter(
+    this.shape,
+    this.rim,
+    this.direction,
+    this.ratio, {
+    required this.keep,
+  });
 
   final ShapeBorder shape;
   final GlassRim rim;
   final TextDirection? direction;
+
+  /// Pixels to a point on this screen, for the kept image.
+  final double ratio;
+
+  /// Whether the rim is kept as an image; not while the glass fades in.
+  final bool keep;
 
   /// What an edge gets of the light when it faces it at half a right angle,
   /// as every straight edge does.
@@ -106,6 +199,34 @@ class _RimPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    final width = (size.width * ratio).ceil();
+    final height = (size.height * ratio).ceil();
+    final image = !keep
+        ? null
+        : _Baked.image(
+            ('rim', shape, rim, direction, size, ratio),
+            width,
+            height,
+            (canvas) {
+              canvas.scale(ratio);
+              _draw(canvas, size);
+            },
+          );
+    if (image == null) {
+      _draw(canvas, size);
+      return;
+    }
+    // Drawn in the rim's own way, as each stroke was: light is added.
+    _Baked.paint(
+      canvas,
+      image,
+      ratio,
+      Offset.zero & size,
+      blendMode: rim.blendMode,
+    );
+  }
+
+  void _draw(Canvas canvas, Size size) {
     final bounds = Offset.zero & size;
     final outline = shape.getOuterPath(bounds, textDirection: direction);
     final stroke = Paint()
@@ -187,28 +308,71 @@ class _RimPainter extends CustomPainter {
   bool shouldRepaint(_RimPainter oldDelegate) =>
       oldDelegate.shape != shape ||
       oldDelegate.rim != rim ||
-      oldDelegate.direction != direction;
+      oldDelegate.direction != direction ||
+      oldDelegate.ratio != ratio ||
+      oldDelegate.keep != keep;
 }
 
 /// Shadows around the glass and none under it, where they would show
 /// through.
 class _ShadowPainter extends CustomPainter {
-  const _ShadowPainter(this.shape, this.shadows, this.direction);
+  const _ShadowPainter(
+    this.shape,
+    this.shadows,
+    this.direction,
+    this.ratio, {
+    required this.keep,
+  });
 
   final ShapeBorder shape;
   final List<BoxShadow> shadows;
   final TextDirection? direction;
 
+  /// Pixels to a point on this screen, for the kept image.
+  final double ratio;
+
+  /// Whether the shadow is kept as an image; not while the glass fades in.
+  final bool keep;
+
   @override
   void paint(Canvas canvas, Size size) {
-    final bounds = Offset.zero & size;
-    final outline = shape.getOuterPath(bounds, textDirection: direction);
     var reach = 0.0;
     for (final shadow in shadows) {
       final extent =
           shadow.blurRadius * 2 + shadow.spreadRadius + shadow.offset.distance;
       if (extent > reach) reach = extent;
     }
+    final area = (Offset.zero & size).inflate(reach);
+    // A soft shadow keeps its look at fewer pixels, where a large glass
+    // would take too many.
+    var scale = ratio;
+    while (scale > 1 &&
+        area.width * area.height * scale * scale > _Baked._maxPixels) {
+      scale -= 1;
+    }
+    final image = !keep
+        ? null
+        : _Baked.image(
+            ('shadow', shape, shadows.join('|'), direction, size, scale),
+            (area.width * scale).ceil(),
+            (area.height * scale).ceil(),
+            (canvas) {
+              canvas
+                ..scale(scale)
+                ..translate(reach, reach);
+              _draw(canvas, size, reach);
+            },
+          );
+    if (image == null) {
+      _draw(canvas, size, reach);
+      return;
+    }
+    _Baked.paint(canvas, image, scale, area);
+  }
+
+  void _draw(Canvas canvas, Size size, double reach) {
+    final bounds = Offset.zero & size;
+    final outline = shape.getOuterPath(bounds, textDirection: direction);
     canvas
       ..save()
       ..clipPath(
@@ -233,6 +397,8 @@ class _ShadowPainter extends CustomPainter {
   bool shouldRepaint(_ShadowPainter oldDelegate) =>
       oldDelegate.shape != shape ||
       oldDelegate.direction != direction ||
+      oldDelegate.ratio != ratio ||
+      oldDelegate.keep != keep ||
       !_same(oldDelegate.shadows, shadows);
 
   static bool _same(List<BoxShadow> a, List<BoxShadow> b) {

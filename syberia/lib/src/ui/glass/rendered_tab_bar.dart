@@ -370,7 +370,9 @@ class _RenderedGlassTabBarState extends State<RenderedGlassTabBar> {
         Positioned.fill(
           child: selecting
               ? ClipPath(
-                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                  // No layer of its own, which Impeller would make on every
+                  // frame: tabs need no smoother edge than the clip gives.
+                  clipBehavior: Clip.antiAlias,
                   clipper: _AroundSelection(grown, squash),
                   child: tabs(selected: false),
                 )
@@ -531,7 +533,7 @@ class _Tab extends StatelessWidget {
       button: true,
       selected: open,
       label: tab.label,
-      value: tab.badge > 0 ? '${tab.badge}' : null,
+      value: tab.badge > 0 ? badgeText(tab.badge) : null,
       onTap: onTap,
       child: ExcludeSemantics(child: content),
     );
@@ -573,13 +575,14 @@ class _TabIcon extends StatelessWidget {
               color: dark ? const Color(0xFFFF4245) : const Color(0xFFFF383C),
             ),
             child: Text(
-              '$badge',
+              badgeText(badge),
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 13,
                 fontWeight: FontWeight.w400,
                 height: 1,
                 letterSpacing: 0,
+                fontFeatures: [FontFeature.tabularFigures()],
               ),
             ),
           ),

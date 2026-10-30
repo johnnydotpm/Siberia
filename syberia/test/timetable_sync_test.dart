@@ -67,20 +67,50 @@ void main() {
     );
   });
 
+  test('the weeks around a clock change start on their Mondays', () {
+    // The weekend before the clocks go back in Poland: the next Monday, not
+    // the Sunday that seven times 24 hours reach. The clocks change only
+    // where the zone has them change, as on the phones:
+    // TZ=Europe/Warsaw flutter test test/timetable_sync_test.dart
+    expect(
+      librusSyncWeekStart(DateTime(2026, 10, 24, 12)),
+      DateTime(2026, 10, 26),
+    );
+    expect(
+      librusSyncWeekStart(DateTime(2026, 10, 25, 23)),
+      DateTime(2026, 10, 26),
+    );
+    // And every day of five years.
+    for (
+      var day = DateTime(2026);
+      day.year < 2031;
+      day = DateTime(day.year, day.month, day.day + 1)
+    ) {
+      final noon = DateTime(day.year, day.month, day.day, 12);
+      final start = librusSyncWeekStart(noon);
+      expect(start.weekday, DateTime.monday, reason: '$noon');
+      expect((start.hour, start.minute), (0, 0), reason: '$noon');
+    }
+  });
+
+  /// Signed in as the student of [_snapshot], with nothing saved yet.
+  void signedIn() => SharedPreferences.setMockInitialValues({
+    'active_profile_v1': jsonEncode(_snapshot(const []).profile.toJson()),
+  });
+
   test('a sync replaces its own week and keeps later weeks', () async {
+    signedIn();
     final repository = AppRepository(
       librusClient: _FakeLibrusClient(_snapshot([synced])),
     );
     final result = await repository.sync(_snapshot([earlier, stale, nextWeek]));
     expect(result.lessons.map((lesson) => lesson.id), ['synced', 'nextWeek']);
-    final preferences = await SharedPreferences.getInstance();
-    final cached = SnapshotCache.decode(
-      preferences.getString('last_librus_snapshot_v1'),
-    );
-    expect(cached!.lessons.map((lesson) => lesson.id), ['synced', 'nextWeek']);
+    final cached = await AppRepository().load();
+    expect(cached.lessons.map((lesson) => lesson.id), ['synced', 'nextWeek']);
   });
 
   test('another account keeps nothing from the previous one', () async {
+    signedIn();
     final repository = AppRepository(
       librusClient: _FakeLibrusClient(_snapshot([synced])),
     );

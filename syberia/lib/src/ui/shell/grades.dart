@@ -14,15 +14,15 @@ class _GradesState extends State<_Grades> {
   @override
   Widget build(BuildContext context) {
     final controller = widget.controller;
-    final settings = controller.gradeAverage;
     final view = controller.gradesView;
     final grades = controller.snapshot.grades
         .where((grade) => grade.semester == semester)
         .toList(growable: false);
-    // Grades come newest first, so subjects with recent grades lead.
-    final groups = <String, List<Grade>>{};
+    // Grades come newest first, so subjects with recent grades lead. In the
+    // view together a subject of each school is a row of its own.
+    final groups = <(String?, String), List<Grade>>{};
     for (final item in grades) {
-      groups.putIfAbsent(item.subject, () => []).add(item);
+      groups.putIfAbsent((item.source, item.subject), () => []).add(item);
     }
     final subjects = groups.entries.toList(growable: false);
     return _Refresh(
@@ -69,25 +69,30 @@ class _GradesState extends State<_Grades> {
           const SizedBox(height: _Space.card),
           // An average of nothing is left out, not shown as "—".
           if (subjects.isNotEmpty) ...[
-            _GradesOverview(grades, settings),
+            if (controller.together)
+              _TogetherGradesOverview(controller, grades)
+            else
+              _GradesOverview(grades, controller.gradeAverage),
             const SizedBox(height: _Space.card),
           ],
           if (subjects.isEmpty)
             _Empty(context.tr('emptyGrades'), icon: Icons.school_rounded)
           else
-            for (final (index, MapEntry(key: subject, value: items))
+            for (final (index, MapEntry(key: (source, subject), value: items))
                 in subjects.indexed) ...[
               if (index > 0) const SizedBox(height: _Space.item),
               view == GradesView.compact
                   ? _SubjectGradesRow(
                       subject: subject,
                       grades: items,
-                      settings: settings,
+                      settings: controller.gradeAverageFor(source),
+                      source: source,
                     )
                   : _SubjectGradesTile(
                       subject: subject,
                       grades: items,
-                      settings: settings,
+                      settings: controller.gradeAverageFor(source),
+                      source: source,
                     ),
             ],
         ],
@@ -153,11 +158,8 @@ class _GradesOverview extends StatelessWidget {
                       const SizedBox(height: 4),
                       Text(
                         [
-                          context.trArgs('gradesCount', {
-                            'count': '${grades.length}',
-                          }),
-                          if (fresh > 0)
-                            context.trArgs('gradesNew', {'count': '$fresh'}),
+                          _plural(context, grades.length, 'grades'),
+                          if (fresh > 0) _plural(context, fresh, 'gradesNew'),
                         ].join(' · '),
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: theme.colorScheme.onSurfaceVariant,
@@ -236,6 +238,73 @@ class _GradesOverview extends StatelessWidget {
   }
 }
 
+/// In the view together, each profile's semester average by its own
+/// settings, with how many grades it has, one row per profile.
+class _TogetherGradesOverview extends StatelessWidget {
+  const _TogetherGradesOverview(this.controller, this.grades);
+  final AppController controller;
+  final List<Grade> grades;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final now = DateTime.now();
+    final rows = [
+      for (final profile in controller.togetherProfiles)
+        if (grades.where((grade) => grade.source == profile.id).toList()
+            case final own when own.isNotEmpty)
+          (profile, own),
+    ];
+    return Card(
+      key: const ValueKey('grades-overview'),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Column(
+          children: _spaced([
+            for (final (profile, own) in rows)
+              Row(
+                key: ValueKey('grades-overview-${profile.id}'),
+                children: [
+                  _AveragePill(
+                    controller.gradeAverageFor(profile.id).average(own),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _MarkedTitle(
+                          Text(
+                            context.tr('averageGrade'),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: _rowTitleStyle(context),
+                          ),
+                          profile.id,
+                        ),
+                        Text(
+                          [
+                            _plural(context, own.length, 'grades'),
+                            if (own.where((g) => _isNewGrade(g, now)).length
+                                case final fresh when fresh > 0)
+                              _plural(context, fresh, 'gradesNew'),
+                          ].join(' · '),
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+          ], 10),
+        ),
+      ),
+    );
+  }
+}
+
 /// An average in the colour of the grade it rounds to.
 class _AveragePill extends StatelessWidget {
   const _AveragePill(this.average, {this.large = false});
@@ -246,21 +315,42 @@ class _AveragePill extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final palette = SubjectColors.grade(average, theme.brightness);
+    final style = TextStyle(
+      color: palette.foreground,
+      fontSize: large ? 26 : 15,
+      fontWeight: FontWeight.w900,
+      fontFeatures: _tabular,
+    );
+    // In the subjects' column every small pill is as wide as one with two
+    // decimals, so "4,5" and "3,67" line up whatever the font.
+    BoxConstraints? constraints;
+    if (!large) {
+      final widest = TextPainter(
+        text: TextSpan(
+          text: _decimal(context, 8.88),
+          style: DefaultTextStyle.of(context).style.merge(style),
+        ),
+        textDirection: Directionality.of(context),
+        textScaler: MediaQuery.textScalerOf(context),
+        maxLines: 1,
+      )..layout();
+      constraints = BoxConstraints(minWidth: widest.width + 20);
+      widest.dispose();
+    }
     return Container(
+      key: const ValueKey('average-pill'),
       padding: large
           ? const EdgeInsets.symmetric(horizontal: 14, vertical: 8)
           : const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      constraints: constraints,
       decoration: BoxDecoration(
         color: palette.background,
         borderRadius: BorderRadius.circular(large ? 16 : 10),
       ),
       child: Text(
         average == null ? '—' : _decimal(context, average!),
-        style: TextStyle(
-          color: palette.foreground,
-          fontSize: large ? 26 : 15,
-          fontWeight: FontWeight.w900,
-        ),
+        textAlign: TextAlign.center,
+        style: style,
       ),
     );
   }
@@ -342,10 +432,14 @@ class _SubjectGradesRow extends StatelessWidget {
     required this.subject,
     required this.grades,
     required this.settings,
+    this.source,
   });
   final String subject;
   final List<Grade> grades;
   final GradeAverageSettings settings;
+
+  /// The profile the subject is of, in the view together.
+  final String? source;
 
   @override
   Widget build(BuildContext context) {
@@ -356,7 +450,9 @@ class _SubjectGradesRow extends StatelessWidget {
     ).accent;
     final chronological = grades.reversed.toList(growable: false);
     return Card(
-      key: ValueKey('grades-subject-$subject'),
+      key: ValueKey(
+        'grades-subject-${source == null ? '' : '$source|'}$subject',
+      ),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: () => _showSubjectGrades(context, subject, grades, settings),
@@ -372,11 +468,14 @@ class _SubjectGradesRow extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      _SubjectScope.of(context, subject),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: _rowTitleStyle(context),
+                    _MarkedTitle(
+                      Text(
+                        _SubjectScope.of(context, subject),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: _rowTitleStyle(context),
+                      ),
+                      source,
                     ),
                     const SizedBox(height: 8),
                     Wrap(
@@ -406,10 +505,14 @@ class _SubjectGradesTile extends StatelessWidget {
     required this.subject,
     required this.grades,
     required this.settings,
+    this.source,
   });
   final String subject;
   final List<Grade> grades;
   final GradeAverageSettings settings;
+
+  /// The profile the subject is of, in the view together.
+  final String? source;
 
   @override
   Widget build(BuildContext context) {
@@ -420,7 +523,9 @@ class _SubjectGradesTile extends StatelessWidget {
     ).accent;
     final average = settings.average(grades);
     return Card(
-      key: ValueKey('grades-subject-$subject'),
+      key: ValueKey(
+        'grades-subject-${source == null ? '' : '$source|'}$subject',
+      ),
       clipBehavior: Clip.antiAlias,
       child: Container(
         decoration: BoxDecoration(
@@ -433,11 +538,14 @@ class _SubjectGradesTile extends StatelessWidget {
           title: Row(
             children: [
               Expanded(
-                child: Text(
-                  _SubjectScope.of(context, subject),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: _rowTitleStyle(context),
+                child: _MarkedTitle(
+                  Text(
+                    _SubjectScope.of(context, subject),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: _rowTitleStyle(context),
+                  ),
+                  source,
                 ),
               ),
               const SizedBox(width: 8),
@@ -538,7 +646,7 @@ Future<void> _showSubjectGrades(
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          '${context.tr('averageGrade')} · ${context.trArgs('gradesCount', {'count': '${grades.length}'})}',
+                          '${context.tr('averageGrade')} · ${_plural(context, grades.length, 'grades')}',
                           style: theme.textTheme.bodyMedium?.copyWith(
                             color: theme.colorScheme.onSurfaceVariant,
                           ),
@@ -581,58 +689,62 @@ Future<void> _showSubjectGrades(
   },
 );
 
-Future<void> _showGradeDetails(BuildContext context, Grade grade) =>
-    showAppSheet<void>(
-      context: context,
-      compact: true,
-      showDragHandle: true,
-      isScrollControlled: true,
-      builder: (context) {
-        final history = [grade, ...grade.previousGrades.reversed];
-        return SafeArea(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              maxHeight: MediaQuery.sizeOf(context).height * 0.85,
+Future<void> _showGradeDetails(BuildContext context, Grade grade) {
+  final controller = _ControllerScope.maybeOf(context);
+  return showAppSheet<void>(
+    context: context,
+    compact: true,
+    showDragHandle: true,
+    isScrollControlled: true,
+    builder: (context) {
+      final history = [grade, ...grade.previousGrades.reversed];
+      return SafeArea(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.sizeOf(context).height * 0.85,
+          ),
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(
+              _Space.sheet,
+              4,
+              _Space.sheet,
+              24,
             ),
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(
-                _Space.sheet,
-                4,
-                _Space.sheet,
-                24,
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    context.tr('gradeDetails'),
-                    style: _sheetTitleStyle(context),
-                  ),
-                  const SizedBox(height: 12),
-                  for (var index = 0; index < history.length; index++) ...[
-                    if (index > 0)
-                      Center(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 6),
-                          child: Icon(
-                            Icons.arrow_upward_rounded,
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (controller != null)
+                  _SheetProfileMark(controller, grade.source),
+                Text(
+                  context.tr('gradeDetails'),
+                  style: _sheetTitleStyle(context),
+                ),
+                const SizedBox(height: 12),
+                for (var index = 0; index < history.length; index++) ...[
+                  if (index > 0)
+                    Center(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 6),
+                        child: Icon(
+                          Icons.arrow_upward_rounded,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                       ),
-                    _GradeHistoryCard(
-                      key: ValueKey('grade-history-${history[index].id}'),
-                      grade: history[index],
                     ),
-                  ],
+                  _GradeHistoryCard(
+                    key: ValueKey('grade-history-${history[index].id}'),
+                    grade: history[index],
+                  ),
                 ],
-              ),
+              ],
             ),
           ),
-        );
-      },
-    );
+        ),
+      );
+    },
+  );
+}
 
 class _GradeHistoryCard extends StatelessWidget {
   const _GradeHistoryCard({super.key, required this.grade});

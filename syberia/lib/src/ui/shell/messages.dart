@@ -10,13 +10,33 @@ class _Messages extends StatefulWidget {
 
 enum _MessageFolder { inbox, sent }
 
+/// The index of the Messages tab.
+const _messagesTab = 5;
+
 class _MessagesState extends State<_Messages> {
   final _search = TextEditingController();
   bool _unreadOnly = false;
   _MessageFolder _folder = _MessageFolder.inbox;
 
+  /// The messages shown as unread under the filter, by id: one read there,
+  /// opened or swiped, stays, as read now, until the filter, the folder or
+  /// the tab changes.
+  final _shownUnread = <String>{};
+
+  @override
+  void initState() {
+    super.initState();
+    widget.controller.addListener(_onController);
+  }
+
+  /// Left for another tab: what was read here goes from the filter.
+  void _onController() {
+    if (widget.controller.tabIndex != _messagesTab) _shownUnread.clear();
+  }
+
   void _openFolder(_MessageFolder folder) {
     HapticFeedback.selectionClick();
+    _shownUnread.clear();
     setState(() => _folder = folder);
     // A sync leaves the Sent folder out, so it is loaded when opened.
     if (folder == _MessageFolder.sent) {
@@ -26,6 +46,7 @@ class _MessagesState extends State<_Messages> {
 
   @override
   void dispose() {
+    widget.controller.removeListener(_onController);
     _search.dispose();
     super.dispose();
   }
@@ -45,20 +66,13 @@ class _MessagesState extends State<_Messages> {
   }
 
   /// "Today", "Yesterday", "This week", then the month.
-  String _section(DateTime value, DateTime now) {
-    final day = DateTime(value.year, value.month, value.day);
-    final today = DateTime(now.year, now.month, now.day);
-    final days = today.difference(day).inDays;
-    if (days <= 0) return context.tr('messagesToday');
-    if (days == 1) return context.tr('messagesYesterday');
-    if (days < 7 && day.weekday < today.weekday) {
-      return context.tr('messagesThisWeek');
-    }
-    return _capitalize(
-      DateFormat.yMMMM(Localizations.localeOf(context).toLanguageTag())
-          .format(value),
-    );
-  }
+  String _section(DateTime value, DateTime now) =>
+      switch (messageSection(value, now)) {
+        MessageSection.today => context.tr('messagesToday'),
+        MessageSection.yesterday => context.tr('messagesYesterday'),
+        MessageSection.thisWeek => context.tr('messagesThisWeek'),
+        MessageSection.earlier => _monthHeading(context, value, now),
+      };
 
   @override
   Widget build(BuildContext context) {
@@ -70,18 +84,27 @@ class _MessagesState extends State<_Messages> {
                 : controller.snapshot.messages)
             .toList()
           ..sort((a, b) => b.receivedAt.compareTo(a.receivedAt));
-    final query = _search.text.trim().toLowerCase();
+    final query = _plainPolish(_search.text.trim());
+    if (_unreadOnly && !sentFolder) {
+      _shownUnread.addAll([
+        for (final item in all)
+          if (item.unread) item.id,
+      ]);
+    }
     final messages = all
-        .where((item) => sentFolder || !_unreadOnly || item.unread)
+        .where(
+          (item) =>
+              sentFolder || !_unreadOnly || _shownUnread.contains(item.id),
+        )
         .where(
           (item) =>
               query.isEmpty ||
-              item.subject.toLowerCase().contains(query) ||
-              item.sender.toLowerCase().contains(query) ||
+              _plainPolish(item.subject).contains(query) ||
+              _plainPolish(item.sender).contains(query) ||
               item.recipients.any(
-                (name) => name.toLowerCase().contains(query),
+                (name) => _plainPolish(name).contains(query),
               ) ||
-              item.preview.toLowerCase().contains(query),
+              _plainPolish(item.preview).contains(query),
         )
         .toList();
     final error = sentFolder
@@ -179,9 +202,13 @@ class _MessagesState extends State<_Messages> {
                 unreadCount == 0
                     ? context.tr('messagesUnread')
                     : '${context.tr('messagesUnread')} ($unreadCount)',
+                style: const TextStyle(fontFeatures: _tabular),
               ),
               selected: _unreadOnly,
-              onSelected: (value) => setState(() => _unreadOnly = value),
+              onSelected: (value) => setState(() {
+                _unreadOnly = value;
+                _shownUnread.clear();
+              }),
             ),
           const Spacer(),
           if (sentFolder)
@@ -256,10 +283,11 @@ class _MessagesState extends State<_Messages> {
         ),
       ],
       if (loadingSent && all.isEmpty)
+        // The rows to come, in place of a spinner.
         const Padding(
           key: ValueKey('sent-loading'),
-          padding: EdgeInsets.all(32),
-          child: Center(child: CircularProgressIndicator()),
+          padding: EdgeInsets.only(top: _Space.card),
+          child: _MessageRowsSkeleton(),
         )
       else if (messages.isEmpty && error == null)
         if (query.isNotEmpty)
@@ -324,6 +352,7 @@ class _MessagesState extends State<_Messages> {
             controller: controller,
             onRefresh: refresh,
             child: ListView(
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
               padding: EdgeInsets.fromLTRB(
                 _Space.page,
                 _Space.page,
@@ -339,12 +368,55 @@ class _MessagesState extends State<_Messages> {
   }
 }
 
+/// Where a message goes in the list: the part of it its day falls in.
+enum MessageSection { today, yesterday, thisWeek, earlier }
+
+/// The section of a message received at [value], seen at [now]. Days are
+/// counted on the calendar, so the day after the clocks change still has
+/// its yesterday.
+@visibleForTesting
+MessageSection messageSection(DateTime value, DateTime now) {
+  final days = calendarDaysBetween(value, now);
+  if (days <= 0) return MessageSection.today;
+  if (days == 1) return MessageSection.yesterday;
+  if (days < 7 && value.weekday < now.weekday) return MessageSection.thisWeek;
+  return MessageSection.earlier;
+}
+
+/// When a message came, went or was read, as its sheet says it: the day in
+/// words while it is near, and always the short date and the time:
+/// "Dziś, 27.10, 12:30", "Wczoraj, 26.10, 12:30", "Pon, 20.10, 12:30",
+/// then "14.09, 12:30", and with the year for another year. [inSentence]
+/// writes "dziś" and "wczoraj" (and, where weekdays are not capitalised,
+/// the weekday) in lower case, as after "Wysłano".
+String _messageStamp(
+  BuildContext context,
+  DateTime value, {
+  DateTime? now,
+  bool inSentence = false,
+}) {
+  final days = calendarDaysBetween(value, now ?? DateTime.now());
+  var day = switch (days) {
+    0 => context.tr('messagesToday'),
+    1 => context.tr('messagesYesterday'),
+    > 1 && < 7 => _shortWeekday(context, value),
+    _ => null,
+  };
+  final lowerWeekdays = const {
+    'pl',
+    'ru',
+    'uk',
+  }.contains(Localizations.localeOf(context).languageCode);
+  if (day != null && inSentence && (days <= 1 || lowerWeekdays)) {
+    day = day[0].toLowerCase() + day.substring(1);
+  }
+  return [?day, _shortDate(context, value), _time(value)].join(', ');
+}
+
 /// "12:30" today, the weekday this week, the date before that.
 String _messageTime(BuildContext context, DateTime value, DateTime now) {
   final locale = Localizations.localeOf(context).toLanguageTag();
-  final day = DateTime(value.year, value.month, value.day);
-  final today = DateTime(now.year, now.month, now.day);
-  final days = today.difference(day).inDays;
+  final days = calendarDaysBetween(value, now);
   // Today and yesterday have their own sections, so the time says more.
   if (days <= 1) return DateFormat('HH:mm').format(value);
   if (days < 7) return _shortWeekday(context, value);
@@ -380,6 +452,27 @@ class _MessageTile extends StatelessWidget {
     return false;
   }
 
+  /// A long press: open it, or mark it read without opening it.
+  void _actions(BuildContext context, bool unread) => _showItemActions(
+    context,
+    title: item.subject.isEmpty ? item.sender : item.subject,
+    actions: [
+      (
+        key: ValueKey('message-action-open-${item.id}'),
+        icon: Icons.mail_outline_rounded,
+        label: context.tr('open'),
+        run: () => _showMessageDetail(context, controller, item),
+      ),
+      if (unread)
+        (
+          key: ValueKey('message-action-read-${item.id}'),
+          icon: Icons.mark_email_read_rounded,
+          label: context.tr('messageMarkRead'),
+          run: () => _markRead(context),
+        ),
+    ],
+  );
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -410,18 +503,21 @@ class _MessageTile extends StatelessWidget {
                 Row(
                   children: [
                     Expanded(
-                      child: item.sent
-                          ? _RecipientsLine(item.recipients)
-                          : Text(
-                              item.sender.isEmpty ? '—' : item.sender,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: theme.textTheme.titleSmall?.copyWith(
-                                fontWeight: unread
-                                    ? FontWeight.w800
-                                    : FontWeight.w600,
+                      child: _MarkedTitle(
+                        item.sent
+                            ? _RecipientsLine(item.recipients)
+                            : Text(
+                                item.sender.isEmpty ? '—' : item.sender,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: theme.textTheme.titleSmall?.copyWith(
+                                  fontWeight: unread
+                                      ? FontWeight.w800
+                                      : FontWeight.w600,
+                                ),
                               ),
-                            ),
+                        item.source,
+                      ),
                     ),
                     if (item.hasAttachments)
                       Padding(
@@ -464,16 +560,24 @@ class _MessageTile extends StatelessWidget {
                         ),
                       ),
                     ),
-                    if (unread)
-                      Container(
-                        key: ValueKey('message-unread-${item.id}'),
-                        width: 9,
-                        height: 9,
-                        margin: const EdgeInsets.only(left: 8, top: 6),
-                        decoration: BoxDecoration(
-                          color: colors.primary,
-                          shape: BoxShape.circle,
-                        ),
+                    // Read, the dot fades away rather than vanish.
+                    if (!item.sent)
+                      AnimatedSwitcher(
+                        duration: _motion(context, _Motion.list),
+                        transitionBuilder: (child, animation) =>
+                            _Fade(opacity: animation, child: child),
+                        child: unread
+                            ? Container(
+                                key: ValueKey('message-unread-${item.id}'),
+                                width: 9,
+                                height: 9,
+                                margin: const EdgeInsets.only(left: 8, top: 6),
+                                decoration: BoxDecoration(
+                                  color: colors.primary,
+                                  shape: BoxShape.circle,
+                                ),
+                              )
+                            : const SizedBox.shrink(),
                       ),
                     if (item.sent && item.recipientRead != null)
                       Padding(
@@ -508,6 +612,7 @@ class _MessageTile extends StatelessWidget {
             clipBehavior: Clip.antiAlias,
             child: InkWell(
               onTap: () => _showMessageDetail(context, controller, item),
+              onLongPress: item.sent ? null : () => _actions(context, unread),
               child: Container(
                 decoration: BoxDecoration(
                   border: Border(
@@ -526,41 +631,26 @@ class _MessageTile extends StatelessWidget {
               InkWell(
                 borderRadius: BorderRadius.circular(14),
                 onTap: () => _showMessageDetail(context, controller, item),
+                onLongPress: item.sent ? null : () => _actions(context, unread),
                 child: content,
               ),
               // Under the text, past the avatar: 12 + 40 + 12.
               const Divider(height: 1, indent: 64),
             ],
           );
-    if (!unread) return tile;
+    if (item.sent) return tile;
+    // Kept once read, only no longer swiped, so the row changes in place.
     return Dismissible(
       key: ValueKey('message-${item.id}'),
-      direction: DismissDirection.startToEnd,
-      confirmDismiss: (_) => _markRead(context),
-      background: Container(
-        alignment: AlignmentDirectional.centerStart,
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        decoration: BoxDecoration(
-          color: colors.primaryContainer,
-          borderRadius: BorderRadius.circular(14),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.mark_email_read_rounded,
-              color: colors.onPrimaryContainer,
-            ),
-            const SizedBox(width: 8),
-            Text(
-              context.tr('messageMarkRead'),
-              style: TextStyle(
-                color: colors.onPrimaryContainer,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ],
-        ),
+      direction: unread ? DismissDirection.startToEnd : DismissDirection.none,
+      confirmDismiss: (_) {
+        // Felt, as the homework's swipe is.
+        HapticFeedback.lightImpact();
+        return _markRead(context);
+      },
+      background: _SwipeAction(
+        icon: Icons.mark_email_read_rounded,
+        label: context.tr('messageMarkRead'),
       ),
       child: tile,
     );
@@ -738,6 +828,9 @@ class _MessageDetailSheetState extends State<_MessageDetailSheet> {
   /// a SnackBar would appear behind it.
   bool attachmentFailed = false;
 
+  /// Whether the last link tapped in the text could not be opened.
+  bool linkFailed = false;
+
   @override
   void initState() {
     super.initState();
@@ -767,6 +860,61 @@ class _MessageDetailSheetState extends State<_MessageDetailSheet> {
     } finally {
       if (mounted) setState(() => openingAttachment = null);
     }
+  }
+
+  /// While the text loads: what the list knows already, the subject and
+  /// who it is from, and grey lines where the text will be.
+  Widget _loadingMessage(BuildContext context) {
+    final message = widget.message;
+    return ListView(
+      key: const ValueKey('message-loading'),
+      primary: false,
+      padding: const EdgeInsets.all(20),
+      children: [
+        _SheetProfileMark(widget.controller, message.source),
+        Text(
+          message.subject,
+          style: Theme.of(context).textTheme.headlineSmall
+              ?.copyWith(fontWeight: FontWeight.w800),
+        ),
+        const SizedBox(height: 12),
+        if (message.sent)
+          const _Skeleton(
+            child: Row(
+              children: [
+                _Bone.circle(36),
+                SizedBox(width: 12),
+                _Bone(width: 140, height: 13),
+              ],
+            ),
+          )
+        else
+          Row(
+            children: [
+              _SenderAvatar(message.sender),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      message.sender,
+                      style: const TextStyle(fontWeight: FontWeight.w700),
+                    ),
+                    Text(
+                      _messageStamp(context, message.receivedAt),
+                      key: const ValueKey('message-stamp'),
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        const Divider(height: 32),
+        const _TextSkeleton(),
+      ],
+    );
   }
 
   @override
@@ -799,7 +947,7 @@ class _MessageDetailSheetState extends State<_MessageDetailSheet> {
             future: content,
             builder: (context, snapshot) {
               if (snapshot.connectionState != ConnectionState.done) {
-                return const Center(child: CircularProgressIndicator());
+                return _loadingMessage(context);
               }
               if (snapshot.hasError) {
                 return Padding(
@@ -821,6 +969,7 @@ class _MessageDetailSheetState extends State<_MessageDetailSheet> {
                   20 + _systemButtonsRoom(context),
                 ),
                 children: [
+                  _SheetProfileMark(widget.controller, widget.message.source),
                   Text(
                     message.subject,
                     style: Theme.of(context).textTheme.headlineSmall
@@ -846,8 +995,8 @@ class _MessageDetailSheetState extends State<_MessageDetailSheet> {
                                 ),
                               ),
                               Text(
-                                DateFormat('dd.MM.yyyy, HH:mm')
-                                    .format(message.receivedAt),
+                                _messageStamp(context, message.receivedAt),
+                                key: const ValueKey('message-stamp'),
                                 style: Theme.of(context).textTheme.bodySmall,
                               ),
                             ],
@@ -856,11 +1005,26 @@ class _MessageDetailSheetState extends State<_MessageDetailSheet> {
                       ],
                     ),
                   const Divider(height: 32),
-                  SelectableText(
+                  // Its links open with a tap; the text stays selectable.
+                  LinkedText(
                     message.body,
+                    key: const ValueKey('message-body'),
                     style: Theme.of(context).textTheme.bodyLarge
                         ?.copyWith(height: 1.45),
+                    onOpenFailed: () => setState(() => linkFailed = true),
+                    onOpened: () => setState(() => linkFailed = false),
                   ),
+                  if (linkFailed)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: Text(
+                        context.tr('linkOpenFailed'),
+                        key: const ValueKey('link-open-failed'),
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.error,
+                        ),
+                      ),
+                    ),
                   if (message.attachments.isNotEmpty) ...[
                     const SizedBox(height: 24),
                     Text(
@@ -987,8 +1151,11 @@ class _SentRecipientsState extends State<_SentRecipients> {
                                     ? [
                                         context.tr('messageRead'),
                                         if (receiver.readAt != null)
-                                          DateFormat('dd.MM, HH:mm')
-                                              .format(receiver.readAt!),
+                                          _messageStamp(
+                                            context,
+                                            receiver.readAt!,
+                                            inSentence: true,
+                                          ),
                                       ].join(' · ')
                                     : context.tr('messageNotRead'),
                                 style: theme.textTheme.labelMedium?.copyWith(
@@ -1023,7 +1190,7 @@ class _SentRecipientsState extends State<_SentRecipients> {
               .tr('messageSentAt')
               .replaceAll(
                 '{date}',
-                DateFormat('dd.MM.yyyy, HH:mm').format(summary.receivedAt),
+                _messageStamp(context, summary.receivedAt, inSentence: true),
               ),
           style: theme.textTheme.bodySmall?.copyWith(
             color: colors.onSurfaceVariant,

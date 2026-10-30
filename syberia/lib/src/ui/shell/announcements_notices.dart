@@ -37,11 +37,14 @@ class _Announcements extends StatelessWidget {
                       ? colors.onSurfaceVariant
                       : colors.onPrimaryContainer,
                 ),
-                title: Text(
-                  item.title,
-                  style: _rowTitleStyle(context)?.copyWith(
-                    fontWeight: item.read ? FontWeight.w700 : FontWeight.w800,
+                title: _MarkedTitle(
+                  Text(
+                    item.title,
+                    style: _rowTitleStyle(context)?.copyWith(
+                      fontWeight: item.read ? FontWeight.w700 : FontWeight.w800,
+                    ),
                   ),
+                  item.source,
                 ),
                 subtitle: Text(
                   '${item.author} · ${_shortDate(context, item.createdAt)}',
@@ -119,11 +122,15 @@ class _Notices extends StatelessWidget {
                 ),
                 // What the note is, "Pochwała", says more than its tone,
                 // which the colour and the symbol show already.
-                title: Text(
-                  item.category.isEmpty
-                      ? toneLabel
-                      : _capitalize(item.category),
-                  style: _rowTitleStyle(context)?.copyWith(color: tone.accent),
+                title: _MarkedTitle(
+                  Text(
+                    item.category.isEmpty
+                        ? toneLabel
+                        : _capitalize(item.category),
+                    style: _rowTitleStyle(context)
+                        ?.copyWith(color: tone.accent),
+                  ),
+                  item.source,
                 ),
                 subtitle: Text(item.teacher),
                 trailing: Text(

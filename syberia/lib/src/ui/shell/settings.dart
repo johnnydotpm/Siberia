@@ -123,7 +123,12 @@ class _Settings extends StatelessWidget {
               key: const ValueKey('settings-short-names'),
               leading: const _SettingsIcon(Icons.short_text_rounded),
               title: Text(context.tr('shortSubjectNames')),
-              subtitle: Text(context.tr('shortSubjectNamesDescription')),
+              subtitle: Text(
+                [
+                  context.tr('shortSubjectNamesDescription'),
+                  if (controller.together) context.tr('togetherSettingsNote'),
+                ].join('\n'),
+              ),
               trailing: const _Chevron(),
               onTap: () => showAppSheet<void>(
                 context: context,
@@ -158,6 +163,16 @@ class _Settings extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Each profile keeps its own; a change here is all of
+                  // theirs.
+                  if (controller.together) ...[
+                    Text(
+                      context.tr('togetherSettingsNote'),
+                      key: const ValueKey('settings-together-note'),
+                      style: _metaStyle(context),
+                    ),
+                    const SizedBox(height: 12),
+                  ],
                   for (final (sign, key, value) in [
                     ('+', 'grade-plus', settings.plus),
                     ('-', 'grade-minus', settings.minus),
@@ -227,7 +242,11 @@ class _Settings extends StatelessWidget {
         if (bridge.configurableInApp || ios)
           _SettingsSection(
             title: context.tr('homeWidgets'),
-            children: [_HomeWidgetsRow(bridge)],
+            children: [
+              _HomeWidgetsRow(bridge, controller),
+              if (ios && controller.profiles.length > 1)
+                _WidgetProfileRow(controller),
+            ],
           ),
         _SettingsSection(
           title: context.tr('settingsAbout'),
@@ -240,6 +259,20 @@ class _Settings extends StatelessWidget {
               ),
             ),
             _CheckUpdatesRow(controller),
+            // The demo leaves the setup until it ends.
+            if (!controller.isDemo)
+              ListTile(
+                key: const ValueKey('settings-onboarding'),
+                leading: const _SettingsIcon(Icons.restart_alt_rounded),
+                title: Text(context.tr('onboardingAgain')),
+                trailing: const _Chevron(),
+                // The settings move back and the setup comes forward.
+                onTap: () => ScreenTransitions.run(
+                  context,
+                  ScreenChange.zoom,
+                  controller.restartOnboarding,
+                ),
+              ),
             ListTile(
               key: const ValueKey('settings-whats-new'),
               leading: const _SettingsIcon(Icons.new_releases_rounded),
@@ -337,39 +370,50 @@ class _SettingsProfile extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final muted = theme.colorScheme.onSurfaceVariant;
-    final profile = controller.snapshot.profile;
+    final several = controller.profiles.length > 1;
     return Card(
       key: const ValueKey('settings-profile'),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
-        onTap: () => _showAccount(context, controller),
+        onTap: () => _showProfiles(context, controller),
         child: Padding(
           padding: const EdgeInsets.fromLTRB(16, 16, 8, 16),
           child: Row(
             children: [
-              _SenderAvatar(profile.name, radius: 28),
+              _OpenProfileSign(
+                controller,
+                radius: 28,
+                news: controller.otherProfilesHaveNews,
+              ),
               const SizedBox(width: 14),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      context.tr('account'),
+                      several
+                          ? _plural(
+                              context,
+                              controller.profiles.length,
+                              'profiles',
+                            )
+                          : context.tr('profile'),
                       style: theme.textTheme.labelMedium?.copyWith(
                         color: muted,
                       ),
                     ),
                     Text(
-                      profile.name,
+                      _openProfileName(context, controller),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w800,
                       ),
                     ),
-                    if (profile.school.isNotEmpty)
+                    if (_openProfileDetail(context, controller)
+                        case final detail when detail.isNotEmpty)
                       Text(
-                        profile.school,
+                        detail,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: theme.textTheme.bodyMedium?.copyWith(
@@ -382,10 +426,14 @@ class _SettingsProfile extends StatelessWidget {
                         Icon(Icons.cloud_done_rounded, size: 15, color: muted),
                         const SizedBox(width: 5),
                         Flexible(
-                          child: Text(
-                            _syncedAgo(context, controller.snapshot.lastSync),
-                            style: theme.textTheme.labelMedium?.copyWith(
-                              color: muted,
+                          // "przed chwilą" turns into "5 min temu" on its own.
+                          child: _MinuteClock(
+                            builder: (context, _) => Text(
+                              _syncedAgo(context, controller.snapshot.lastSync),
+                              key: const ValueKey('settings-synced-ago'),
+                              style: theme.textTheme.labelMedium?.copyWith(
+                                color: muted,
+                              ),
                             ),
                           ),
                         ),
@@ -483,10 +531,15 @@ Future<void> _showLanguageSheet(
                       color: Theme.of(sheetContext).colorScheme.primary,
                     )
                   : null,
-              onTap: () {
-                controller.setLocale(code == null ? null : Locale(code));
-                Navigator.pop(sheetContext);
-              },
+              // The texts dissolve into the new language as the sheet goes.
+              onTap: () => ScreenTransitions.run(
+                sheetContext,
+                ScreenChange.dissolve,
+                () {
+                  controller.setLocale(code == null ? null : Locale(code));
+                  Navigator.pop(sheetContext);
+                },
+              ),
             ),
         ],
       ),
@@ -495,8 +548,9 @@ Future<void> _showLanguageSheet(
 );
 
 class _HomeWidgetsRow extends StatefulWidget {
-  const _HomeWidgetsRow(this.bridge);
+  const _HomeWidgetsRow(this.bridge, this.controller);
   final HomeWidgetBridge bridge;
+  final AppController controller;
 
   @override
   State<_HomeWidgetsRow> createState() => _HomeWidgetsRowState();
@@ -538,9 +592,106 @@ class _HomeWidgetsRowState extends State<_HomeWidgetsRow> {
               isScrollControlled: true,
               useSafeArea: true,
               showDragHandle: true,
-              builder: (_) => HomeWidgetsSheet(bridge: widget.bridge),
+              builder: (_) => HomeWidgetsSheet(
+                bridge: widget.bridge,
+                profiles: widget.controller.profiles,
+                defaultProfileId: widget.controller.widgetProfileId,
+              ),
             )
           : null,
+    );
+  }
+}
+
+/// The profile the iPhone widget shows. Its widgets have no settings of
+/// their own, so the app picks for them.
+class _WidgetProfileRow extends StatelessWidget {
+  const _WidgetProfileRow(this.controller);
+  final AppController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    final together = controller.widgetProfileId == togetherId;
+    final shown = controller.profiles.firstWhere(
+      (profile) => profile.id == controller.widgetProfileId,
+      orElse: () => controller.profiles.first,
+    );
+    Widget check(bool selected, BuildContext context) => selected
+        ? Icon(
+            Icons.check_rounded,
+            color: Theme.of(context).colorScheme.primary,
+          )
+        : const SizedBox.shrink();
+    return ListTile(
+      key: const ValueKey('settings-widget-profile'),
+      leading: together
+          ? ProfileStack(controller.togetherProfiles, radius: 18)
+          : ProfileAvatar(
+              name: shown.displayName,
+              color: shown.color,
+              radius: 18,
+            ),
+      title: Text(context.tr('widgetProfile')),
+      subtitle: Text(together ? context.tr('together') : shown.displayName),
+      trailing: const _Chevron(),
+      onTap: () => showAppSheet<void>(
+        context: context,
+        compact: true,
+        isScrollControlled: true,
+        useSafeArea: true,
+        showDragHandle: true,
+        builder: (sheetContext) => ListView(
+          shrinkWrap: true,
+          primary: false,
+          padding: EdgeInsets.fromLTRB(
+            _Space.sheet,
+            0,
+            _Space.sheet,
+            24 + MediaQuery.viewPaddingOf(sheetContext).bottom,
+          ),
+          children: [
+            Text(
+              sheetContext.tr('widgetProfile'),
+              style: _sheetTitleStyle(sheetContext),
+            ),
+            const SizedBox(height: 12),
+            if (controller.canBeTogether)
+              ListTile(
+                key: const ValueKey('widget-profile-$togetherId'),
+                contentPadding: EdgeInsets.zero,
+                leading: ProfileStack(controller.togetherProfiles),
+                title: Text(sheetContext.tr('together')),
+                subtitle: Text(
+                  _openProfileDetailOf(controller, together: true),
+                ),
+                trailing: check(together, sheetContext),
+                onTap: () {
+                  Navigator.pop(sheetContext);
+                  controller.setWidgetProfile(togetherId);
+                },
+              ),
+            for (final profile in controller.profiles)
+              ListTile(
+                key: ValueKey('widget-profile-${profile.id}'),
+                contentPadding: EdgeInsets.zero,
+                leading: ProfileAvatar(
+                  name: profile.displayName,
+                  color: profile.color,
+                ),
+                title: Text(profile.displayName),
+                subtitle: profile.school.isEmpty ? null : Text(profile.school),
+                trailing: check(
+                  !together && profile.id == shown.id,
+                  sheetContext,
+                ),
+                onTap: () {
+                  Navigator.pop(sheetContext);
+                  controller.setWidgetProfile(profile.id);
+                },
+              ),
+          ],
+        ),
+      ),
     );
   }
 }

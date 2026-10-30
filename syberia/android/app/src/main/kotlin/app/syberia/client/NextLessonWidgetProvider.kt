@@ -37,9 +37,8 @@ import kotlin.math.min
  */
 class NextLessonWidgetProvider : AppWidgetProvider() {
     override fun onUpdate(context: Context, manager: AppWidgetManager, ids: IntArray) {
-        val payload = loadPayload(context)
-        ids.forEach { render(context, manager, it, payload) }
-        scheduleNextRefresh(context, payload)
+        ids.forEach { render(context, manager, it, payloadFor(context, it)) }
+        scheduleNextRefresh(context, allPayloads(context))
     }
 
     override fun onAppWidgetOptionsChanged(
@@ -48,7 +47,7 @@ class NextLessonWidgetProvider : AppWidgetProvider() {
         id: Int,
         newOptions: Bundle,
     ) {
-        render(context, manager, id, loadPayload(context))
+        render(context, manager, id, payloadFor(context, id))
     }
 
     override fun onDeleted(context: Context, ids: IntArray) {
@@ -60,23 +59,54 @@ class NextLessonWidgetProvider : AppWidgetProvider() {
     }
 
     companion object {
+        /** The lessons of the profile chosen for widgets in the app. */
         private const val PAYLOAD_KEY = "next_lessons_v1"
 
-        fun savePayload(context: Context, payload: String?) {
-            context.getSharedPreferences(WidgetConfig.PREFERENCES, Context.MODE_PRIVATE).edit().apply {
+        /** Each profile's lessons, for the widgets set to show it. */
+        private const val PROFILE_PREFIX = "${PAYLOAD_KEY}_"
+
+        private fun profileKey(profileId: String) = PROFILE_PREFIX + profileId
+
+        /**
+         * Saves the lessons the app sent: [payload] for widgets without a
+         * profile of their own, [profiles] by profile id. Profiles the app no
+         * longer sends are forgotten.
+         */
+        fun savePayload(context: Context, payload: String?, profiles: Map<String, String> = emptyMap()) {
+            val preferences = context.getSharedPreferences(WidgetConfig.PREFERENCES, Context.MODE_PRIVATE)
+            preferences.edit().apply {
                 if (payload == null) remove(PAYLOAD_KEY) else putString(PAYLOAD_KEY, payload)
+                preferences.all.keys
+                    .filter { it.startsWith(PROFILE_PREFIX) && it.removePrefix(PROFILE_PREFIX) !in profiles }
+                    .forEach { remove(it) }
+                profiles.forEach { (id, raw) -> putString(profileKey(id), raw) }
             }.apply()
             val manager = AppWidgetManager.getInstance(context)
             val ids = widgetIds(context)
             if (ids.isEmpty()) return
-            val parsed = loadPayload(context)
-            ids.forEach { render(context, manager, it, parsed) }
-            scheduleNextRefresh(context, parsed)
+            ids.forEach { render(context, manager, it, payloadFor(context, it)) }
+            scheduleNextRefresh(context, allPayloads(context))
         }
 
         /** Redraws one widget, after its settings changed. */
         fun refresh(context: Context, id: Int) {
-            render(context, AppWidgetManager.getInstance(context), id, loadPayload(context))
+            render(context, AppWidgetManager.getInstance(context), id, payloadFor(context, id))
+        }
+
+        /**
+         * The lessons widget [id] shows: its profile's, or the common ones
+         * when it has none or the profile is gone.
+         */
+        private fun payloadFor(context: Context, id: Int): WidgetPayload? {
+            val profile = WidgetConfig.load(context, id).profileId
+            return profile?.let { loadPayload(context, profileKey(it)) } ?: loadPayload(context, PAYLOAD_KEY)
+        }
+
+        /** Every saved set of lessons, for the next time a widget must change. */
+        private fun allPayloads(context: Context): List<WidgetPayload> {
+            val keys = context.getSharedPreferences(WidgetConfig.PREFERENCES, Context.MODE_PRIVATE)
+                .all.keys.filter { it == PAYLOAD_KEY || it.startsWith(PROFILE_PREFIX) }
+            return keys.mapNotNull { loadPayload(context, it) }
         }
 
         /** The widgets on the home screen with their sizes in dp, for the app's settings. */
@@ -96,9 +126,9 @@ class NextLessonWidgetProvider : AppWidgetProvider() {
             AppWidgetManager.getInstance(context)
                 .getAppWidgetIds(ComponentName(context, NextLessonWidgetProvider::class.java))
 
-        private fun loadPayload(context: Context): WidgetPayload? {
+        private fun loadPayload(context: Context, key: String): WidgetPayload? {
             val raw = context.getSharedPreferences(WidgetConfig.PREFERENCES, Context.MODE_PRIVATE)
-                .getString(PAYLOAD_KEY, null) ?: return null
+                .getString(key, null) ?: return null
             return try {
                 val json = JSONObject(raw)
                 val labels = json.getJSONObject("labels")
@@ -171,12 +201,13 @@ class NextLessonWidgetProvider : AppWidgetProvider() {
          * Redraws the widget when a lesson starts or ends, and when a lesson
          * comes close enough for its countdown.
          */
-        private fun scheduleNextRefresh(context: Context, payload: WidgetPayload?) {
+        private fun scheduleNextRefresh(context: Context, payloads: List<WidgetPayload>) {
             val now = System.currentTimeMillis()
-            val next = payload?.lessons
-                ?.flatMap { listOf(it.start - COUNTDOWN_WINDOW, it.start, it.end) }
-                ?.filter { it > now }
-                ?.minOrNull()
+            val next = payloads
+                .flatMap { it.lessons }
+                .flatMap { listOf(it.start - COUNTDOWN_WINDOW, it.start, it.end) }
+                .filter { it > now }
+                .minOrNull()
             val alarms = alarmManager(context)
             val intent = refreshIntent(context)
             if (next == null) {

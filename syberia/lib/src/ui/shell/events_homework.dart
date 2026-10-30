@@ -86,13 +86,8 @@ class _HomeworkState extends State<_Homework> {
   /// Upcoming work by when it is due: "Today", "Tomorrow", "This week",
   /// "Next week", "Later". Past work by month.
   String _section(DateTime due, DateTime today) {
-    final days = _daysBetween(today, due);
-    if (days < 0) {
-      return _capitalize(
-        DateFormat.yMMMM(Localizations.localeOf(context).toLanguageTag())
-            .format(due),
-      );
-    }
+    final days = calendarDaysBetween(today, due);
+    if (days < 0) return _monthHeading(context, due, today);
     if (days == 0) return context.tr('messagesToday');
     if (days == 1) return context.tr('widgetTomorrow');
     final weeks = (days + today.weekday - 1) ~/ 7;
@@ -123,13 +118,13 @@ class _HomeworkState extends State<_Homework> {
         .toList(growable: false);
     final past = all.where((item) => item.date.isBefore(today)).toList()
       ..sort((a, b) => b.date.compareTo(a.date));
-    final query = _search.text.trim().toLowerCase();
+    final query = _plainPolish(_search.text.trim());
     bool matches(SchoolEvent item) =>
         query.isEmpty ||
-        item.title.toLowerCase().contains(query) ||
-        item.subject.toLowerCase().contains(query) ||
-        _SubjectScope.of(context, item.subject).toLowerCase().contains(query) ||
-        item.description.toLowerCase().contains(query);
+        _plainPolish(item.title).contains(query) ||
+        _plainPolish(item.subject).contains(query) ||
+        _plainPolish(_SubjectScope.of(context, item.subject)).contains(query) ||
+        _plainPolish(item.description).contains(query);
     final shown = (_past ? past : upcoming).where(matches).toList();
     final done = _past
         ? const <SchoolEvent>[]
@@ -138,7 +133,8 @@ class _HomeworkState extends State<_Homework> {
     String? lastSection;
     for (final item in shown) {
       final section = _section(item.date, today);
-      if (section != lastSection) {
+      final first = section != lastSection;
+      if (first) {
         rows.add(
           _GroupLabel(
             section,
@@ -147,10 +143,18 @@ class _HomeworkState extends State<_Homework> {
           ),
         );
         lastSection = section;
-      } else {
-        rows.add(const SizedBox(height: _Space.item));
       }
-      rows.add(_HomeworkCard(item, now: now));
+      rows.add(
+        AnimatedPadding(
+          key: ValueKey('homework-row-${item.id}'),
+          duration: _motion(context, _Motion.list),
+          curve: _Motion.curve,
+          // The first of its group sits under the label; the next one under
+          // it slides up when it goes.
+          padding: EdgeInsets.only(top: first ? 0 : _Space.item),
+          child: _HomeworkCard(item, now: now),
+        ),
+      );
     }
     if (done.isNotEmpty) {
       rows.add(
@@ -174,7 +178,8 @@ class _HomeworkState extends State<_Homework> {
                 ),
                 child: AnimatedRotation(
                   turns: _showDone ? 0.5 : 0,
-                  duration: const Duration(milliseconds: 200),
+                  duration: _motion(context, _Motion.list),
+                  curve: _Motion.curve,
                   child: Icon(
                     Icons.expand_more_rounded,
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -186,9 +191,42 @@ class _HomeworkState extends State<_Homework> {
         ),
       );
       if (_showDone) {
-        rows.addAll(_spaced(done.map((item) => _HomeworkCard(item, now: now))));
+        for (final (index, item) in done.indexed) {
+          rows.add(
+            AnimatedPadding(
+              // Apart from its row above, so one moves out and one in.
+              key: ValueKey('homework-done-row-${item.id}'),
+              duration: _motion(context, _Motion.list),
+              curve: _Motion.curve,
+              padding: EdgeInsets.only(top: index == 0 ? 0 : _Space.item),
+              child: _HomeworkCard(item, now: now),
+            ),
+          );
+        }
       }
     }
+    final empty = shown.isEmpty
+        ? query.isNotEmpty && done.isEmpty
+              ? _Empty(
+                  key: const ValueKey('homework-empty-search'),
+                  context.tr('noResults'),
+                  icon: Icons.search_off_rounded,
+                )
+              : done.isNotEmpty
+              // Everything due is done: said with a check, as a good thing.
+              ? _Empty(
+                  key: const ValueKey('homework-empty-done'),
+                  context.tr('homeworkAllDone'),
+                  icon: Icons.task_alt_rounded,
+                  color: Theme.of(context).colorScheme.primary,
+                )
+              : _Empty(
+                  key: const ValueKey('homework-empty'),
+                  context.tr('emptyHomework'),
+                  icon: Icons.assignment_rounded,
+                )
+        : null;
+    final list = [?empty, ...rows];
 
     String counted(String key, int count) =>
         count == 0 ? context.tr(key) : '${context.tr(key)} ($count)';
@@ -241,22 +279,13 @@ class _HomeworkState extends State<_Homework> {
               setState(() => _past = selection.first);
             },
           ),
-          if (shown.isEmpty)
-            if (query.isNotEmpty && done.isEmpty)
-              _Empty(context.tr('noResults'), icon: Icons.search_off_rounded)
-            else if (done.isNotEmpty)
-              // Everything due is done: said with a check, as a good thing.
-              _Empty(
-                context.tr('homeworkAllDone'),
-                icon: Icons.task_alt_rounded,
-                color: Theme.of(context).colorScheme.primary,
-              )
-            else
-              _Empty(
-                context.tr('emptyHomework'),
-                icon: Icons.assignment_rounded,
-              ),
-          ...rows,
+          // Past work is a long list that only changes with a sync, so it
+          // is built as it scrolls in. What is to do comes and goes smoothly;
+          // a search or the other list shows at once, as in Reminders.
+          if (_past)
+            ...list
+          else
+            _AnimatedColumn(key: ValueKey(query), children: list),
         ],
       ),
     );
@@ -265,18 +294,11 @@ class _HomeworkState extends State<_Homework> {
 
 /// When an entry is due: "Today", "Tomorrow", or the weekday and date.
 String _dueLabel(BuildContext context, DateTime date, DateTime now) =>
-    switch (_daysBetween(now, date)) {
+    switch (calendarDaysBetween(now, date)) {
       0 => context.tr('messagesToday'),
       1 => context.tr('widgetTomorrow'),
       _ => '${_shortWeekday(context, date)}, ${_shortDate(context, date)}',
     };
-
-/// Whole days from [from] to [to], unaffected by daylight saving.
-int _daysBetween(DateTime from, DateTime to) => DateTime.utc(
-  to.year,
-  to.month,
-  to.day,
-).difference(DateTime.utc(from.year, from.month, from.day)).inDays;
 
 /// The assignment itself. Librus falls back to the type ("Zadanie domowe")
 /// when an assignment has neither topic nor text.
@@ -328,20 +350,6 @@ const _eventTypeWords = [
 
 /// Categories that say nothing about the entry.
 const _genericEventTypes = {'', 'inne', 'other', 'wydarzenie'};
-
-/// Lower case without Polish accents, one letter for one, so positions
-/// stay the same as in the original.
-String _plainPolish(String value) {
-  const from = 'ąćęłńóśźż';
-  const to = 'acelnoszz';
-  final lower = value.toLowerCase();
-  final out = StringBuffer();
-  for (final unit in lower.split('')) {
-    final index = from.indexOf(unit);
-    out.write(index < 0 ? unit : to[index]);
-  }
-  return out.toString();
-}
 
 /// The kind of [item], the word to show for it, if any, and the text
 /// without that word when the kind came from it. The category decides; a
@@ -395,7 +403,7 @@ class _EventTile extends StatelessWidget {
     if (item.kind == EventKind.homework) return _HomeworkCard(item, now: now);
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-    final days = _daysBetween(now, item.date);
+    final days = calendarDaysBetween(now, item.date);
     final soon = days == 0 || days == 1;
     final when = _dueLabel(context, item.date, now);
     final (:type, :label, :text) = _eventType(item);
@@ -422,91 +430,116 @@ class _EventTile extends StatelessWidget {
           horizontal: _Space.inset,
           vertical: 12,
         ),
-        child: Row(
-          children: [
-            _IconTile(
-              key: ValueKey('event-type-${item.id}-${type.name}'),
-              icon: type.icon,
-              background: tone.background,
-              foreground: tone.foreground,
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      if (hasSubject) ...[
-                        Container(
-                          width: 8,
-                          height: 8,
-                          decoration: BoxDecoration(
-                            color: subjectAccent,
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                        const SizedBox(width: 6),
-                      ],
-                      Flexible(
-                        child: Text(
-                          title,
-                          maxLines: hasSubject ? 1 : 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: _rowTitleStyle(context),
-                        ),
-                      ),
-                      // "Wycieczka do Krakowa" needs no "Wycieczka" next to it.
-                      if (label != null &&
-                          !_plainPolish(title)
-                              .startsWith(_plainPolish(label))) ...[
-                        const SizedBox(width: 6),
-                        Container(
-                          key: ValueKey('event-label-${item.id}'),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 7,
-                            vertical: 2,
-                          ),
-                          decoration: BoxDecoration(
-                            color: tone.background,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            label,
-                            maxLines: 1,
-                            style: theme.textTheme.labelSmall?.copyWith(
-                              color: tone.foreground,
-                              fontWeight: FontWeight.w800,
+        // The date, a year longer for one of next year, wraps rather than
+        // pushing the card's content out.
+        child: LayoutBuilder(
+          builder: (context, card) => Row(
+            children: [
+              _IconTile(
+                key: ValueKey('event-type-${item.id}-${type.name}'),
+                icon: type.icon,
+                background: tone.background,
+                foreground: tone.foreground,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // The kind gives way before it pushes out of the card, as
+                    // when a date of next year makes the date beside it wider.
+                    LayoutBuilder(
+                      builder: (context, constraints) => Row(
+                        children: [
+                          if (hasSubject) ...[
+                            Container(
+                              width: 8,
+                              height: 8,
+                              decoration: BoxDecoration(
+                                color: subjectAccent,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                          ],
+                          Flexible(
+                            child: Text(
+                              title,
+                              maxLines: hasSubject ? 1 : 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: _rowTitleStyle(context),
                             ),
                           ),
-                        ),
-                      ],
-                    ],
-                  ),
-                  if (details.isNotEmpty)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 3),
-                      child: Text(
-                        details,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: colors.onSurfaceVariant,
-                        ),
+                          if (_ControllerScope.maybeOf(context)
+                                  ?.profileMark(item.source) !=
+                              null) ...[
+                            const SizedBox(width: 6),
+                            // Gives way with the title before the kind does.
+                            Flexible(child: _ProfileMark(item.source)),
+                          ],
+                          // "Wycieczka do Krakowa" needs no "Wycieczka" next to it.
+                          if (label != null &&
+                              !_plainPolish(title)
+                                  .startsWith(_plainPolish(label))) ...[
+                            const SizedBox(width: 6),
+                            ConstrainedBox(
+                              constraints: BoxConstraints(
+                                maxWidth: constraints.maxWidth * 0.45,
+                              ),
+                              child: Container(
+                                key: ValueKey('event-label-${item.id}'),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 7,
+                                  vertical: 2,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: tone.background,
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Text(
+                                  label,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: theme.textTheme.labelSmall?.copyWith(
+                                    color: tone.foreground,
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ],
                       ),
                     ),
-                ],
+                    if (details.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 3),
+                        child: Text(
+                          details,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: colors.onSurfaceVariant,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(width: 8),
-            Text(
-              when,
-              style: theme.textTheme.labelMedium?.copyWith(
-                color: soon ? colors.error : colors.onSurfaceVariant,
-                fontWeight: soon ? FontWeight.w800 : FontWeight.w600,
+              const SizedBox(width: 8),
+              ConstrainedBox(
+                constraints: BoxConstraints(maxWidth: card.maxWidth * 0.35),
+                child: Text(
+                  when,
+                  textAlign: TextAlign.end,
+                  style: theme.textTheme.labelMedium?.copyWith(
+                    color: soon ? colors.error : colors.onSurfaceVariant,
+                    fontWeight: soon ? FontWeight.w800 : FontWeight.w600,
+                  ),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -528,7 +561,7 @@ class _HomeworkCard extends StatelessWidget {
       theme.brightness,
     );
     final details = _homeworkDetails(item);
-    final days = _daysBetween(now, item.date);
+    final days = calendarDaysBetween(now, item.date);
     // Due today or tomorrow: the one to do first.
     final soon = days == 0 || days == 1;
     final due = _dueLabel(context, item.date, now);
@@ -540,16 +573,19 @@ class _HomeworkCard extends StatelessWidget {
         Row(
           children: [
             Expanded(
-              child: Text(
-                item.subject.isEmpty
-                    ? context.tr('homeworkItem')
-                    : _SubjectScope.of(context, item.subject),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: theme.textTheme.labelLarge?.copyWith(
-                  color: palette.accent,
-                  fontWeight: FontWeight.w800,
+              child: _MarkedTitle(
+                Text(
+                  item.subject.isEmpty
+                      ? context.tr('homeworkItem')
+                      : _SubjectScope.of(context, item.subject),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.labelLarge?.copyWith(
+                    color: palette.accent,
+                    fontWeight: FontWeight.w800,
+                  ),
                 ),
+                item.source,
               ),
             ),
             const SizedBox(width: 8),
@@ -589,11 +625,36 @@ class _HomeworkCard extends StatelessWidget {
         ],
       ],
     );
-    return Card(
+    final card = Card(
       key: ValueKey('homework-${item.id}'),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: () => _showHomeworkDetails(context, item),
+        onLongPress: controller == null
+            ? null
+            : () => _showItemActions(
+                context,
+                title: _homeworkTitle(context, item),
+                actions: [
+                  (
+                    key: ValueKey('homework-action-open-${item.id}'),
+                    icon: Icons.assignment_outlined,
+                    label: context.tr('open'),
+                    run: () => _showHomeworkDetails(context, item),
+                  ),
+                  (
+                    key: ValueKey('homework-action-done-${item.id}'),
+                    icon: done
+                        ? Icons.remove_done_rounded
+                        : Icons.task_alt_rounded,
+                    label: context.tr(
+                      done ? 'homeworkMarkNotDone' : 'homeworkMarkDone',
+                    ),
+                    run: () =>
+                        _setHomeworkDone(context, controller, item, !done),
+                  ),
+                ],
+              ),
         child: Container(
           decoration: BoxDecoration(
             border: Border(left: BorderSide(color: palette.accent, width: 4)),
@@ -617,12 +678,33 @@ class _HomeworkCard extends StatelessWidget {
                     const SizedBox(width: 4),
                     // Done work steps back.
                     Expanded(
-                      child: Opacity(opacity: done ? 0.6 : 1, child: content),
+                      child: _LightOpacity(
+                        opacity: done ? 0.6 : 1,
+                        child: content,
+                      ),
                     ),
                   ],
                 ),
         ),
       ),
+    );
+    if (controller == null) return card;
+    // A swipe marks it, as a swipe marks a message read; the card springs
+    // back and leaves the list.
+    return Dismissible(
+      key: ValueKey('homework-swipe-${item.id}'),
+      direction: DismissDirection.startToEnd,
+      confirmDismiss: (_) async {
+        HapticFeedback.lightImpact();
+        _setHomeworkDone(context, controller, item, !done);
+        return false;
+      },
+      // A short word, seen in the little room a swipe opens.
+      background: _SwipeAction(
+        icon: done ? Icons.remove_done_rounded : Icons.task_alt_rounded,
+        label: context.tr(done ? 'homeworkMarkNotDone' : 'homeworkDoneSection'),
+      ),
+      child: card,
     );
   }
 }
@@ -720,7 +802,7 @@ class _DoneCheckState extends State<_DoneCheck> {
             dimension: 40,
             child: Center(
               child: AnimatedContainer(
-                duration: const Duration(milliseconds: 150),
+                duration: _motion(context, const Duration(milliseconds: 150)),
                 width: 24,
                 height: 24,
                 decoration: BoxDecoration(
@@ -782,6 +864,8 @@ void _showHomeworkDetails(BuildContext context, SchoolEvent item) {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              if (controller != null)
+                _SheetProfileMark(controller, item.source),
               if (item.subject.isNotEmpty)
                 Text(
                   displaySubject(item.subject, const {}),

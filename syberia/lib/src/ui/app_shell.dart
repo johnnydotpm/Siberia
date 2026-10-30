@@ -1,28 +1,49 @@
 import 'dart:async';
+import 'dart:io' show Platform;
 import 'dart:math' as math;
+import 'dart:ui' as ui;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart' show timeDilation;
+import 'package:flutter/rendering.dart'
+    show
+        OpacityLayer,
+        RenderAbstractViewport,
+        RenderObjectVisitor,
+        RenderProxyBox;
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../app_build_info.dart';
+import '../data/app_repository.dart';
+import '../debug/diagnostics.dart';
+import '../domain/calendar_days.dart';
 import '../domain/grade_calculator.dart';
 import '../domain/librus_error.dart';
 import '../domain/models.dart';
+import '../domain/profiles.dart';
+import '../domain/sync_news.dart';
+import '../domain/together.dart' show togetherId;
 import '../home_widget.dart';
+import '../network_vpn.dart';
 import '../l10n/app_localizations.dart';
 import '../school_notifications.dart';
 import '../state/app_controller.dart';
 import '../test_reminders.dart';
+import 'brand/brand_mark.dart';
+import 'brand/brand_wordmark.dart';
 import 'brand_logo.dart';
 import 'glass/glass_items.dart';
 import 'glass/glass_modals.dart';
 import 'glass/glass_platform.dart';
 import 'glass/glass_shell.dart';
 import 'home_widget_settings.dart';
+import 'linked_text.dart';
+import 'profile_avatar.dart';
+import 'screen_transitions.dart';
 import 'subject_colors.dart';
 
 part 'shell/common.dart';
@@ -40,7 +61,16 @@ part 'shell/settings.dart';
 part 'shell/settings_previews.dart';
 part 'shell/notification_settings.dart';
 part 'shell/account.dart';
+part 'shell/onboarding.dart';
+part 'shell/onboarding_intro.dart';
+part 'shell/onboarding_motion.dart';
+part 'shell/onboarding_sign_in.dart';
+part 'shell/onboarding_finale.dart';
 part 'shell/free_days.dart';
+part 'shell/motion.dart';
+part 'shell/sync_news.dart';
+part 'shell/debug_menu.dart';
+part 'shell/together.dart';
 
 class AppShell extends StatefulWidget {
   const AppShell({required this.controller, super.key});
@@ -63,11 +93,54 @@ class _AppShellState extends State<AppShell> {
   Set<String> _colorSubjects = const {};
   SubjectColors _colors = SubjectColors.empty;
 
+  /// The vertical list last scrolled on each page, to take back to the top.
+  final _lists = <int, BuildContext>{};
+
+  /// The page whose tab was tapped while open, for the page to act on.
+  final _reselected = _Reselect();
+
   AppController get controller => widget.controller;
+
+  @override
+  void dispose() {
+    _reselected.dispose();
+    super.dispose();
+  }
+
+  /// The open tab tapped again: its page back to the top, as in system
+  /// apps; the timetable back to today.
+  void _reselect(int page, {required bool glass}) {
+    _reselected.fire(page);
+    // The glass shell scrolls its own pages.
+    if (glass) return;
+    final list = _lists[page];
+    if (list == null || !list.mounted) return;
+    final position = Scrollable.maybeOf(list)?.position;
+    if (position == null) return;
+    if (_reduceMotion(context)) {
+      position.jumpTo(0);
+    } else {
+      position.animateTo(
+        0,
+        duration: const Duration(milliseconds: 350),
+        curve: Curves.easeOutCubic,
+      );
+    }
+  }
+
+  bool _onScroll(ScrollNotification notification) {
+    // The page's own list, not one nested in it or a horizontal strip.
+    if (notification.depth == 0 &&
+        notification.metrics.axis == Axis.vertical &&
+        notification.context != null) {
+      _lists[controller.tabIndex] = notification.context!;
+    }
+    return false;
+  }
 
   Widget _page(int index) => switch (index) {
     0 => _Today(controller),
-    1 => _Timetable(controller),
+    1 => _Timetable(controller, reselected: _reselected),
     2 => _Grades(controller),
     3 => _Events(controller),
     4 => _Homework(controller),
@@ -97,6 +170,12 @@ class _AppShellState extends State<AppShell> {
     listenable: controller,
     builder: (context, _) => LayoutBuilder(
       builder: (context, constraints) {
+        // The first setup comes before anything else; the demo, started
+        // from its logo, leaves it for the time being.
+        if (!controller.onboardingDone && !controller.isDemo) {
+          _pages.clear();
+          return _Onboarding(controller: controller);
+        }
         if (!controller.isDemo &&
             controller.snapshot.profile.provider != 'Librus Synergia') {
           _pages.clear();
@@ -134,7 +213,29 @@ class _AppShellState extends State<AppShell> {
             days: controller.snapshot.freeDays,
             child: _ControllerScope(
               controller: controller,
-              child: IndexedStack(index: current, children: pages),
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  NotificationListener<ScrollNotification>(
+                    onNotification: _onScroll,
+                    child: IndexedStack(index: current, children: pages),
+                  ),
+                  // Under the top bar, over the page.
+                  Positioned(
+                    top: 0,
+                    left: _Space.page,
+                    right: _Space.page,
+                    child: Builder(
+                      builder: (context) => Padding(
+                        padding: EdgeInsets.only(
+                          top: MediaQuery.paddingOf(context).top + 8,
+                        ),
+                        child: Center(child: _SyncNewsBanner(controller)),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         );
@@ -197,6 +298,8 @@ class _AppShellState extends State<AppShell> {
             ],
             selectedTab: selected < 0 ? null : selected,
             onTabSelected: (index) => controller.selectTab(bottomTabs[index]),
+            onTabReselected: (index) =>
+                _reselect(bottomTabs[index], glass: true),
             menuLabel: MaterialLocalizations.of(context).openAppDrawerTooltip,
             actions: [
               if (controller.tabIndex == 5)
@@ -215,12 +318,7 @@ class _AppShellState extends State<AppShell> {
                 loading: controller.syncing,
                 onPressed: controller.syncing ? null : controller.sync,
               ),
-              GlassBarButton(
-                id: 'account',
-                symbol: GlassSymbol.account,
-                label: context.tr('account'),
-                onPressed: () => _showAccount(context, controller),
-              ),
+              _profileBarButton(context, controller),
             ],
             drawer: _SideNavigation(controller: controller, glass: true),
             body: body,
@@ -233,24 +331,26 @@ class _AppShellState extends State<AppShell> {
           appBar: AppBar(
             title: Text(_title(context, controller.tabIndex)),
             actions: [
-              if (controller.syncing)
-                const Padding(
-                  padding: EdgeInsets.all(18),
-                  child: SizedBox.square(
-                    dimension: 18,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  ),
-                ),
+              // One sign of a sync: the button turns into its spinner.
               IconButton(
+                key: const ValueKey('sync-button'),
                 onPressed: controller.syncing ? null : controller.sync,
-                icon: const Icon(Icons.sync_rounded),
+                icon: controller.syncing
+                    ? const SizedBox.square(
+                        dimension: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Icon(Icons.sync_rounded),
                 tooltip: context.tr('sync'),
               ),
               IconButton(
-                onPressed: () => _showAccount(context, controller),
-                icon: const CircleAvatar(
+                key: const ValueKey('profile-button'),
+                tooltip: context.tr('profiles'),
+                onPressed: () => _showProfiles(context, controller),
+                icon: _OpenProfileSign(
+                  controller,
                   radius: 15,
-                  child: Icon(Icons.person_rounded, size: 18),
+                  news: controller.otherProfilesHaveNews,
                 ),
               ),
             ],
@@ -271,8 +371,15 @@ class _AppShellState extends State<AppShell> {
                   ),
             child: NavigationBar(
               selectedIndex: selected < 0 ? 0 : selected,
-              onDestinationSelected: (index) =>
-                  controller.selectTab(bottomTabs[index]),
+              onDestinationSelected: (index) {
+                HapticFeedback.selectionClick();
+                final page = bottomTabs[index];
+                if (page == controller.tabIndex) {
+                  _reselect(page, glass: false);
+                } else {
+                  controller.selectTab(page);
+                }
+              },
               destinations: [
                 _destination(
                   Icons.home_outlined,
@@ -304,6 +411,16 @@ class _AppShellState extends State<AppShell> {
   );
 }
 
+/// Tells a page that its tab was tapped while it was open.
+class _Reselect extends ChangeNotifier {
+  int? page;
+
+  void fire(int value) {
+    page = value;
+    notifyListeners();
+  }
+}
+
 NavigationDestination _destination(
   IconData icon,
   IconData selected,
@@ -314,7 +431,10 @@ NavigationDestination _destination(
   // side navigation.
   Widget badged(IconData data) => Badge(
     isLabelVisible: badge > 0,
-    label: Text('$badge'),
+    label: Text(
+      badgeText(badge),
+      style: const TextStyle(fontFeatures: _tabular),
+    ),
     child: Icon(data),
   );
   return NavigationDestination(
@@ -388,12 +508,15 @@ class _SideNavigation extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Padding(
-              padding: EdgeInsets.fromLTRB(22, 22, 16, 20),
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                alignment: Alignment.centerLeft,
-                child: BrandWordmark(fontSize: 24),
+            _DebugMenuGesture(
+              controller: controller,
+              child: const Padding(
+                padding: EdgeInsets.fromLTRB(22, 22, 16, 20),
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: BrandWordmark(fontSize: 24),
+                ),
               ),
             ),
             Expanded(
@@ -418,7 +541,8 @@ class _SideNavigation extends StatelessWidget {
                           index == 5 && controller.snapshot.unreadMessages > 0
                           ? Badge(
                               label: Text(
-                                '${controller.snapshot.unreadMessages}',
+                                badgeText(controller.snapshot.unreadMessages),
+                                style: const TextStyle(fontFeatures: _tabular),
                               ),
                             )
                           : null,
@@ -434,18 +558,28 @@ class _SideNavigation extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(14),
               child: ListTile(
-                leading: const CircleAvatar(child: Icon(Icons.person_rounded)),
+                key: const ValueKey('drawer-profile'),
+                leading: _OpenProfileSign(
+                  controller,
+                  news: controller.otherProfilesHaveNews,
+                ),
                 title: Text(
-                  controller.snapshot.profile.name,
+                  _openProfileName(context, controller),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
                 subtitle: Text(
-                  controller.snapshot.profile.school,
+                  _openProfileDetail(context, controller),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                onTap: () => _showAccount(context, controller),
+                onTap: () {
+                  // The sheet outlives the menu, so it opens from the
+                  // navigator's context.
+                  final navigator = Navigator.of(context);
+                  if (!permanent) navigator.pop();
+                  _showProfiles(navigator.context, controller);
+                },
               ),
             ),
           ],

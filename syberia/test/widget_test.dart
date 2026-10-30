@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syberia/src/app.dart';
 import 'package:syberia/src/data/app_repository.dart';
+import 'package:syberia/src/network_vpn.dart';
 import 'package:syberia/src/domain/models.dart';
 import 'package:syberia/src/domain/librus_error.dart';
 import 'package:syberia/src/data/snapshot_cache.dart';
@@ -75,7 +76,7 @@ void main() {
     await controller.bootstrap();
     await tester.pumpWidget(SyberiaApp(controller: controller));
     await tester.pumpAndSettle();
-    await tester.tap(find.byIcon(Icons.person_rounded).first);
+    await tester.tap(_profileButton().first);
     await tester.pumpAndSettle();
     ButtonStyleButton logout() =>
         tester.widget(find.byKey(const ValueKey('account-logout')));
@@ -93,50 +94,24 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
   });
 
-  testWidgets('account sheet lets the user choose a linked Synergia login', (
-    tester,
-  ) async {
-    final data = AppSnapshot(
-      profile: const StudentProfile(
-        id: '1',
-        name: 'Test',
-        school: 'School',
-        provider: 'Librus Synergia',
-      ),
-      lessons: const [],
-      grades: const [],
-      events: const [],
-      messages: const [],
-      attendance: const [],
-      announcements: const [],
-      notices: const [],
-      lastSync: DateTime.now(),
-    );
-    final repository = _AccountChoiceRepository(data);
-    final controller = AppController(repository, updatesEnabled: false);
-    await controller.bootstrap();
-    await tester.pumpWidget(SyberiaApp(controller: controller));
-    await tester.pumpAndSettle();
-    await tester.tap(find.byIcon(Icons.person_rounded).first);
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Synergia accounts'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('fixture-student-u'));
-    await tester.pumpAndSettle();
-    expect(repository.selected, 'fixture-student-u');
-    expect(tester.takeException(), isNull);
-  });
-
   testWidgets('asks for Librus login instead of showing demo school', (
     tester,
   ) async {
-    SharedPreferences.setMockInitialValues({});
+    SharedPreferences.setMockInitialValues({'onboarding_done_v1': true});
     final controller = AppController(AppRepository(), updatesEnabled: false);
     await controller.bootstrap();
     await tester.pumpWidget(SyberiaApp(controller: controller));
     await tester.pumpAndSettle();
     expect(find.text('Connect to Librus'), findsOneWidget);
     expect(find.textContaining('demonstr'), findsNothing);
+    await tester.tap(find.text('Connect Librus account'));
+    await tester.pumpAndSettle();
+    // A VPN is mentioned only while one is on: none yet.
+    expect(find.textContaining('VPN'), findsNothing);
+    Navigator.of(tester.element(find.byType(TextFormField).first)).pop();
+    await tester.pumpAndSettle();
+
+    Vpn.check = () async => true;
     await tester.tap(find.text('Connect Librus account'));
     await tester.pumpAndSettle();
     expect(find.textContaining('VPN'), findsOneWidget);
@@ -465,11 +440,7 @@ void main() {
     tester,
   ) async {
     final now = DateTime.now();
-    final tomorrow = DateTime(
-      now.year,
-      now.month,
-      now.day,
-    ).add(const Duration(days: 1, hours: 8));
+    final tomorrow = DateTime(now.year, now.month, now.day + 1, 8);
     final snapshot = AppSnapshot(
       profile: const StudentProfile(
         id: '1',
@@ -483,8 +454,9 @@ void main() {
           subject: 'Finished lesson',
           teacher: 'Nauczyciel A',
           room: '1',
-          start: now.subtract(const Duration(hours: 2)),
-          end: now.subtract(const Duration(hours: 1)),
+          // Over at any time of the day, even just after midnight.
+          start: DateTime(now.year, now.month, now.day),
+          end: DateTime(now.year, now.month, now.day, 0, 0, 1),
         ),
         Lesson(
           id: 'tomorrow',
@@ -538,8 +510,9 @@ void main() {
           subject: 'Finished lesson',
           teacher: 'Nauczyciel A',
           room: '1',
-          start: now.subtract(const Duration(hours: 2)),
-          end: now.subtract(const Duration(hours: 1)),
+          // Over at any time of the day, even just after midnight.
+          start: DateTime(now.year, now.month, now.day),
+          end: DateTime(now.year, now.month, now.day, 0, 0, 1),
         ),
       ],
       grades: const [],
@@ -676,11 +649,7 @@ void main() {
     addTearDown(tester.view.resetDevicePixelRatio);
 
     final now = DateTime.now();
-    final lessonDay = DateTime(
-      now.year,
-      now.month,
-      now.day,
-    ).add(const Duration(days: 2));
+    final lessonDay = DateTime(now.year, now.month, now.day + 2);
     final start = DateTime(lessonDay.year, lessonDay.month, lessonDay.day, 8);
     final snapshot = AppSnapshot(
       profile: const StudentProfile(
@@ -754,6 +723,10 @@ void main() {
     tester,
   ) async {
     final now = DateTime.now();
+    // The app opens on the term under way, the second from February to
+    // August; the other one is a tap away.
+    final term = now.month >= 2 && now.month <= 8 ? 2 : 1;
+    final other = 3 - term;
     final snapshot = AppSnapshot(
       profile: const StudentProfile(
         id: '1',
@@ -770,7 +743,7 @@ void main() {
           description: 'Rozdział 1',
           date: now,
           weight: 2,
-          semester: 1,
+          semester: term,
           category: 'Sprawdzian',
           previousGrades: [
             Grade(
@@ -780,7 +753,7 @@ void main() {
               description: 'Najstarszy wpis',
               date: now.subtract(const Duration(days: 14)),
               weight: 1,
-              semester: 1,
+              semester: term,
               category: 'Sprawdzian',
             ),
             Grade(
@@ -790,7 +763,7 @@ void main() {
               description: 'Pośredni wpis',
               date: now.subtract(const Duration(days: 7)),
               weight: 2,
-              semester: 1,
+              semester: term,
               category: 'Sprawdzian',
             ),
           ],
@@ -802,7 +775,7 @@ void main() {
           description: '',
           date: now,
           weight: 1,
-          semester: 1,
+          semester: term,
           category: 'Kartkówka',
         ),
         Grade(
@@ -812,7 +785,7 @@ void main() {
           description: 'Drugi okres',
           date: now,
           weight: 1,
-          semester: 2,
+          semester: other,
           category: 'Odpowiedź',
         ),
       ],
@@ -890,7 +863,7 @@ void main() {
     ).pop();
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Semester 2'));
+    await tester.tap(find.text('Semester $other'));
     await tester.pumpAndSettle();
     expect(find.byKey(const ValueKey('grade-chip-g3')), findsOneWidget);
     expect(find.byKey(const ValueKey('grade-chip-g1')), findsNothing);
@@ -905,8 +878,9 @@ class _TestRepository extends AppRepository {
 
   @override
   Future<SchoolMessageContent> fetchMessageContent(
-    SchoolMessage message,
-  ) async => SchoolMessageContent(
+    SchoolMessage message, {
+    String? profileId,
+  }) async => SchoolMessageContent(
     id: message.id,
     sender: message.sender,
     subject: message.subject,
@@ -921,7 +895,10 @@ class _TestRepository extends AppRepository {
 
   // The real one would reach Librus; the Today look-ahead asks for weeks.
   @override
-  Future<List<Lesson>> fetchTimetableWeek(DateTime day) async => const [];
+  Future<List<Lesson>> fetchTimetableWeek(
+    DateTime day, {
+    String? profileId,
+  }) async => const [];
 }
 
 class _SlowSyncRepository extends _TestRepository {
@@ -940,7 +917,10 @@ class _WeekAheadRepository extends _TestRepository {
   final requestedDays = <DateTime>[];
 
   @override
-  Future<List<Lesson>> fetchTimetableWeek(DateTime day) async {
+  Future<List<Lesson>> fetchTimetableWeek(
+    DateTime day, {
+    String? profileId,
+  }) async {
     weekRequests++;
     requestedDays.add(day);
     final start = DateTime(day.year, day.month, day.day, 8);
@@ -957,32 +937,16 @@ class _WeekAheadRepository extends _TestRepository {
   }
 }
 
-class _AccountChoiceRepository extends _TestRepository {
-  _AccountChoiceRepository(super.data);
-  String? selected;
-  @override
-  Future<List<LinkedSynergiaAccount>> fetchSynergiaAccounts() async => const [
-    LinkedSynergiaAccount(
-      login: 'fixture-parent',
-      name: 'Test',
-      selected: true,
-    ),
-    LinkedSynergiaAccount(
-      login: 'fixture-student-u',
-      name: 'Test',
-      selected: false,
-    ),
-  ];
-  @override
-  Future<AppSnapshot> selectSynergiaAccount(String login) async {
-    selected = login;
-    return data;
-  }
-}
-
 /// The weekday buttons above the timetable.
 Finder _dayChips() => find.byWidgetPredicate(
   (widget) =>
       widget.key is ValueKey<String> &&
       (widget.key! as ValueKey<String>).value.startsWith('timetable-day-'),
+);
+
+/// The profile button of the top bar, in either design.
+Finder _profileButton() => find.byWidgetPredicate(
+  (widget) =>
+      widget.key == const ValueKey('profile-button') ||
+      widget.key == const ValueKey('glass-bar-button-account'),
 );

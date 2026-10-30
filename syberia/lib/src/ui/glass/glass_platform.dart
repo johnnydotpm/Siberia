@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 import '../../theme/app_theme.dart';
+import 'glass_fade.dart';
 import 'glass_lens.dart';
 
 /// Sizes of the system bars, as UIKit reports them.
@@ -132,7 +133,11 @@ abstract final class GlassPlatform {
         if (ImageFilter.isShaderFilterSupported) {
           _backend = GlassBackend.rendered;
           metrics.value = GlassMetrics.ios26;
-          await Future.wait([AppTheme.loadAppleLikeFont(), GlassLens.load()]);
+          await Future.wait([
+            AppTheme.loadAppleLikeFont(),
+            GlassLens.load(),
+            GlassFade.load(),
+          ]);
         }
       default:
     }

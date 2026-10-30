@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/timezone.dart' as tz;
 
 import 'domain/models.dart';
+import 'domain/profiles.dart';
 import 'homework_done.dart';
 import 'l10n/app_localizations.dart';
 import 'test_reminders.dart';
@@ -33,6 +34,61 @@ enum SchoolNotificationCategory {
     homework => 4,
     timetable => 1,
   };
+}
+
+/// What a tap on a notification opens: a part of the app, in the profile
+/// the notification is about when it names one.
+@immutable
+class NotificationTarget {
+  const NotificationTarget(this.category, {this.profileId});
+
+  final SchoolNotificationCategory category;
+  final String? profileId;
+
+  /// `grades`, or `grades|` and the profile's id.
+  String get payload =>
+      profileId == null ? category.name : '${category.name}|$profileId';
+
+  static NotificationTarget? parse(String? payload) {
+    if (payload == null) return null;
+    final split = payload.indexOf('|');
+    final name = split < 0 ? payload : payload.substring(0, split);
+    final profile = split < 0 ? null : payload.substring(split + 1);
+    for (final category in SchoolNotificationCategory.values) {
+      if (category.name == name) {
+        return NotificationTarget(
+          category,
+          profileId: profile == null || profile.isEmpty ? null : profile,
+        );
+      }
+    }
+    return null;
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      other is NotificationTarget &&
+      other.category == category &&
+      other.profileId == profileId;
+
+  @override
+  int get hashCode => Object.hash(category, profileId);
+}
+
+/// The number of a notification of [category] about the profile in [slot]:
+/// each profile has ten, and the first profile keeps the numbers 1 to 8 it
+/// had before profiles. Reminders start at 1000.
+int notificationId(SchoolNotificationCategory category, {int slot = 0}) =>
+    1 + slot * 10 + category.index;
+
+/// One profile's data for the test reminders. [name] goes in front of the
+/// titles when the phone has more than one profile.
+class ReminderSource {
+  const ReminderSource(this.snapshot, {this.profile, this.name});
+
+  final AppSnapshot snapshot;
+  final SchoolProfile? profile;
+  final String? name;
 }
 
 /// A change to a lesson the timetable notifications can be limited to.
@@ -92,6 +148,17 @@ class SchoolNotificationSettings {
   bool get hasEnabledCategory =>
       enabled && SchoolNotificationCategory.values.any(allows);
 
+  /// Whether every kind of notification is on and the reminders are as they
+  /// come: "all" in the setup.
+  bool get everything =>
+      enabled &&
+      SchoolNotificationCategory.values.every(
+        (category) => categories[category] ?? true,
+      ) &&
+      attendanceKinds.length == AttendanceKind.values.length &&
+      timetableChanges.length == TimetableChange.values.length &&
+      reminders == const TestReminderSettings();
+
   bool get remindersOn => enabled && reminders.any;
 
   /// Whether anything needs the background check: new data to report, or
@@ -119,13 +186,22 @@ class SchoolNotificationSettings {
 abstract class SchoolNotificationPresenter {
   Future<void> initialize();
   Future<bool> requestPermission();
+
+  /// Shows a notification of [category]. [id] replaces an earlier one with
+  /// the same number; [target] is what a tap opens; [channelName] names the
+  /// category in the system settings. Each falls back to the category.
   Future<void> show({
     required SchoolNotificationCategory category,
     required String title,
     required String body,
+    int? id,
+    NotificationTarget? target,
+    String? channelName,
   });
-  Future<SchoolNotificationCategory?> launchCategory();
-  void onTap(void Function(SchoolNotificationCategory) callback);
+
+  /// What the notification that opened the app points to, if one did.
+  Future<NotificationTarget?> launchTarget();
+  void onTap(void Function(NotificationTarget target) callback);
 
   /// Replaces every scheduled reminder with [reminders]; an empty list
   /// cancels them all.
@@ -133,13 +209,16 @@ abstract class SchoolNotificationPresenter {
     List<TestReminder> reminders, {
     required String channelName,
   });
+
+  /// The reminders the phone holds, as "title: body", for the debug menu.
+  Future<List<String>> scheduledReminders();
 }
 
 class FlutterSchoolNotificationPresenter
     implements SchoolNotificationPresenter {
   final FlutterLocalNotificationsPlugin _plugin =
       FlutterLocalNotificationsPlugin();
-  void Function(SchoolNotificationCategory)? _tapCallback;
+  void Function(NotificationTarget)? _tapCallback;
   bool _ready = false;
 
   @override
@@ -167,8 +246,8 @@ class FlutterSchoolNotificationPresenter
           web: WebInitializationSettings(),
         ),
         onDidReceiveNotificationResponse: (response) {
-          final category = _categoryFromPayload(response.payload);
-          if (category != null) _tapCallback?.call(category);
+          final target = NotificationTarget.parse(response.payload);
+          if (target != null) _tapCallback?.call(target);
         },
       );
       _ready = true;
@@ -224,18 +303,22 @@ class FlutterSchoolNotificationPresenter
     required SchoolNotificationCategory category,
     required String title,
     required String body,
+    int? id,
+    NotificationTarget? target,
+    String? channelName,
   }) async {
     if (!_ready) return;
+    final channel = channelName ?? title;
     await _plugin.show(
-      id: category.index + 1,
+      id: id ?? notificationId(category),
       title: title,
       body: body,
-      payload: category.name,
+      payload: (target ?? NotificationTarget(category)).payload,
       notificationDetails: NotificationDetails(
         android: AndroidNotificationDetails(
           'siberiagb_${category.name}',
-          title,
-          channelDescription: 'SiberiaGB: $title',
+          channel,
+          channelDescription: 'SiberiaGB: $channel',
           importance: Importance.defaultImportance,
           priority: Priority.defaultPriority,
         ),
@@ -280,7 +363,10 @@ class FlutterSchoolNotificationPresenter
         scheduledDate: tz.TZDateTime.from(reminder.at, tz.UTC),
         title: reminder.title,
         body: reminder.body,
-        payload: SchoolNotificationCategory.events.name,
+        payload: NotificationTarget(
+          SchoolNotificationCategory.events,
+          profileId: reminder.profileId,
+        ).payload,
         androidScheduleMode: _exactAlarms
             ? AndroidScheduleMode.exactAllowWhileIdle
             : AndroidScheduleMode.inexactAllowWhileIdle,
@@ -313,27 +399,31 @@ class FlutterSchoolNotificationPresenter
   }
 
   @override
-  Future<SchoolNotificationCategory?> launchCategory() async {
+  Future<List<String>> scheduledReminders() async {
+    if (!_ready || !_canSchedule) return const [];
+    return [
+      for (final pending in await _plugin.pendingNotificationRequests())
+        if (pending.id >= _firstReminderId &&
+            pending.id < _firstReminderId + maxTestReminders)
+          '${pending.title ?? ''}: ${pending.body ?? ''}',
+    ];
+  }
+
+  @override
+  Future<NotificationTarget?> launchTarget() async {
     if (!_ready) return null;
     try {
       final details = await _plugin.getNotificationAppLaunchDetails();
       if (details?.didNotificationLaunchApp != true) return null;
-      return _categoryFromPayload(details?.notificationResponse?.payload);
+      return NotificationTarget.parse(details?.notificationResponse?.payload);
     } on Object {
       return null;
     }
   }
 
   @override
-  void onTap(void Function(SchoolNotificationCategory) callback) {
+  void onTap(void Function(NotificationTarget) callback) {
     _tapCallback = callback;
-  }
-
-  SchoolNotificationCategory? _categoryFromPayload(String? payload) {
-    for (final category in SchoolNotificationCategory.values) {
-      if (category.name == payload) return category;
-    }
-    return null;
   }
 }
 
@@ -352,10 +442,29 @@ class SchoolNotificationService {
 
   Future<void> initialize() => _presenter.initialize();
   Future<bool> requestPermission() => _presenter.requestPermission();
-  Future<SchoolNotificationCategory?> launchCategory() =>
-      _presenter.launchCategory();
-  void onTap(void Function(SchoolNotificationCategory) callback) =>
+  Future<NotificationTarget?> launchTarget() => _presenter.launchTarget();
+  void onTap(void Function(NotificationTarget) callback) =>
       _presenter.onTap(callback);
+
+  /// Notification ids from here on are the debug menu's samples.
+  static const _firstSampleId = 900;
+
+  /// A sample of [category]'s notification, in that category's channel, for
+  /// the debug menu; it replaces the category's previous sample.
+  Future<void> showSample(SchoolNotificationCategory category) async {
+    final title = (await _translations()).text('notification_${category.name}');
+    await _presenter.show(
+      category: category,
+      title: title,
+      body: 'A test notification from the debug menu.',
+      id: _firstSampleId + category.index,
+      target: NotificationTarget(category),
+      channelName: title,
+    );
+  }
+
+  /// The test reminders the phone holds now.
+  Future<List<String>> scheduledReminders() => _presenter.scheduledReminders();
 
   Future<SchoolNotificationSettings> loadSettings() async {
     final preferences = await _preferences;
@@ -448,37 +557,68 @@ class SchoolNotificationService {
 
   /// Schedules the reminders for the tests in [snapshot] with the saved
   /// settings, replacing the ones scheduled before. Signed out, or with
-  /// reminders off, none are left. Updates run one after another, so an
-  /// older list can never land last.
-  Future<void> updateReminders(AppSnapshot snapshot, {DateTime? now}) {
-    final next = _reminderUpdates.then((_) => _updateReminders(snapshot, now));
+  /// reminders off, none are left.
+  Future<void> updateReminders(AppSnapshot snapshot, {DateTime? now}) =>
+      updateAllReminders([ReminderSource(snapshot)], now: now);
+
+  /// Schedules the reminders for the tests of every profile in [sources]
+  /// as one list, the soonest first, replacing the ones scheduled before.
+  /// Updates run one after another, so an older list can never land last.
+  Future<void> updateAllReminders(
+    List<ReminderSource> sources, {
+    DateTime? now,
+  }) {
+    final next = _reminderUpdates.then((_) => _updateReminders(sources, now));
     _reminderUpdates = next.catchError((Object _) {});
     return next;
   }
 
-  Future<void> _updateReminders(AppSnapshot snapshot, DateTime? now) async {
+  Future<void> _updateReminders(
+    List<ReminderSource> sources,
+    DateTime? now,
+  ) async {
     final settings = await loadSettings();
     final translations = await _translations();
-    final signedIn =
-        snapshot.profile.provider == 'Librus Synergia' &&
-        snapshot.lastSync.millisecondsSinceEpoch != 0;
-    // Homework the student marked as done is not reminded of.
-    final done = HomeworkDoneStore.read(await _preferences);
-    final reminders = signedIn && settings.remindersOn
-        ? buildTestReminders(
-            snapshot.events.where(
-              (event) =>
-                  event.kind != EventKind.homework ||
-                  !done.containsKey(event.id),
-            ),
-            settings.reminders,
-            now ?? DateTime.now(),
-            translations,
-          )
-        : const <TestReminder>[];
+    final preferences = await _preferences;
+    final reminders = <TestReminder>[];
+    for (final source in sources) {
+      final snapshot = source.snapshot;
+      final signedIn =
+          snapshot.profile.provider == 'Librus Synergia' &&
+          snapshot.lastSync.millisecondsSinceEpoch != 0;
+      if (!signedIn || !settings.remindersOn) continue;
+      final profile = source.profile;
+      // Homework the student marked as done is not reminded of.
+      final done = HomeworkDoneStore.read(
+        preferences,
+        key: profile == null
+            ? HomeworkDoneStore.key
+            : HomeworkDoneStore.keyFor(profile.id),
+      );
+      final name = source.name;
+      for (final reminder in buildTestReminders(
+        snapshot.events.where(
+          (event) =>
+              event.kind != EventKind.homework || !done.containsKey(event.id),
+        ),
+        settings.reminders,
+        now ?? DateTime.now(),
+        translations,
+      )) {
+        reminders.add(
+          TestReminder(
+            at: reminder.at,
+            title: name == null ? reminder.title : '$name · ${reminder.title}',
+            body: reminder.body,
+            profileId: profile?.id,
+          ),
+        );
+      }
+    }
+    reminders.sort((a, b) => a.at.compareTo(b.at));
     try {
       await _presenter.scheduleReminders(
-        reminders,
+        reminders.take(maxTestReminders).toList(growable: false),
         channelName: translations.text('reminders'),
       );
     } on Object {
@@ -494,18 +634,35 @@ class SchoolNotificationService {
     return AppLocalizations(Locale(language));
   }
 
-  Future<void> processSnapshot(AppSnapshot snapshot) async {
+  /// Notifies of what is new in [snapshot] since the last one of its
+  /// profile. [profile] keeps the profile's notifications and what it has
+  /// seen apart from the others'; [name] goes in front of the titles when
+  /// the phone has more than one profile. True when something new came that
+  /// the settings want to hear of.
+  ///
+  /// A [quiet] profile, with notifications off, only marks what it saw.
+  Future<bool> processSnapshot(
+    AppSnapshot snapshot, {
+    SchoolProfile? profile,
+    String? name,
+    bool quiet = false,
+  }) async {
     if (snapshot.profile.provider != 'Librus Synergia' ||
         snapshot.lastSync.millisecondsSinceEpoch == 0) {
-      return;
+      return false;
     }
     final preferences = await _preferences;
     await preferences.reload();
     final settings = await loadSettings();
-    final seenKey = '$_seenPrefix${snapshot.profile.id}';
+    // Before profiles, what was seen was kept by the student's id; it moves
+    // to the profile's own key.
+    final studentKey = '$_seenPrefix${snapshot.profile.id}';
+    final seenKey = profile == null ? studentKey : '$_seenPrefix${profile.id}';
     final translations = await _translations();
     final current = _candidates(snapshot, translations);
-    final previous = _readSeen(preferences.getString(seenKey));
+    final previous = _readSeen(
+      preferences.getString(seenKey) ?? preferences.getString(studentKey),
+    );
     final firstSnapshot = previous == null;
     final updated = <String, List<String>>{};
     final newItems = <SchoolNotificationCategory, List<_Candidate>>{};
@@ -526,24 +683,34 @@ class SchoolNotificationService {
     // Muted items are still marked as seen, so enabling a category, or a
     // kind inside it, never replays its entire history.
     await preferences.setString(seenKey, jsonEncode(updated));
+    if (seenKey != studentKey) await preferences.remove(studentKey);
+    if (quiet) return false;
+    var found = false;
     for (final category in SchoolNotificationCategory.values) {
       final items = [
         for (final item in newItems[category]!)
           if (item.wanted?.call(settings) ?? true) item,
       ];
       if (!settings.allows(category) || items.isEmpty) continue;
+      found = true;
       final title = translations.text('notification_${category.name}');
       final body = items.length == 1
           ? items.single.body
-          : translations
-                .text('notificationMultiple')
-                .replaceAll('{count}', '${items.length}');
+          : translations.plural(items.length, 'newEntries');
       try {
-        await _presenter.show(category: category, title: title, body: body);
+        await _presenter.show(
+          category: category,
+          title: name == null ? title : '$name · $title',
+          body: body,
+          id: notificationId(category, slot: profile?.slot ?? 0),
+          target: NotificationTarget(category, profileId: profile?.id),
+          channelName: title,
+        );
       } on Object {
         // Notification delivery is best effort; synchronization still succeeds.
       }
     }
+    return found;
   }
 
   Map<String, List<String>>? _readSeen(String? raw) {

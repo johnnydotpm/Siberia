@@ -206,10 +206,16 @@ class _Repository extends AppRepository {
   Future<AppSnapshot> load() async => data;
 
   @override
-  Future<List<Lesson>> fetchTimetableWeek(DateTime day) async => const [];
+  Future<List<Lesson>> fetchTimetableWeek(
+    DateTime day, {
+    String? profileId,
+  }) async => const [];
 }
 
 class _Presenter implements SchoolNotificationPresenter {
+  @override
+  Future<List<String>> scheduledReminders() async => const [];
+
   List<TestReminder> scheduled = const [];
 
   @override
@@ -221,11 +227,14 @@ class _Presenter implements SchoolNotificationPresenter {
     required SchoolNotificationCategory category,
     required String title,
     required String body,
+    int? id,
+    NotificationTarget? target,
+    String? channelName,
   }) async {}
   @override
-  Future<SchoolNotificationCategory?> launchCategory() async => null;
+  Future<NotificationTarget?> launchTarget() async => null;
   @override
-  void onTap(void Function(SchoolNotificationCategory) callback) {}
+  void onTap(void Function(NotificationTarget) callback) {}
   @override
   Future<void> scheduleReminders(
     List<TestReminder> reminders, {

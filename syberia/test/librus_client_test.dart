@@ -8,8 +8,10 @@ import 'package:flutter_secure_storage/test/test_flutter_secure_storage_platform
 import 'package:flutter_secure_storage_platform_interface/flutter_secure_storage_platform_interface.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:syberia/src/data/librus/librus_client.dart';
+import 'package:syberia/src/data/librus/librus_logins.dart';
 import 'package:syberia/src/data/librus/reference_cache.dart';
 import 'package:syberia/src/data/snapshot_cache.dart';
+import 'package:syberia/src/debug/diagnostics.dart';
 import 'package:syberia/src/domain/librus_error.dart';
 import 'package:syberia/src/domain/models.dart';
 
@@ -158,6 +160,41 @@ void main() {
       expect(subjects(), 2, reason: 'old lists are fetched again');
     },
   );
+
+  test('the request log of a sign-in and a sync shows where each request '
+      'went, and nothing private', () async {
+    Diagnostics.instance.clear();
+    final dio = Dio()..httpClientAdapter = _FixtureAdapter(_successfulResponse);
+    final client = LibrusClient(
+      dio: dio,
+      secureStorage: const FlutterSecureStorage(),
+    );
+    await client.loginAndFetch(
+      username: 'parent@example.com',
+      password: 'secret',
+    );
+    final requests = Diagnostics.instance.requests;
+    expect(requests, isNotEmpty);
+    expect(
+      requests.map((request) => request.host).toSet(),
+      containsAll(['portal.librus.pl', 'api.librus.pl']),
+    );
+    final report = Diagnostics.instance.report(
+      about: const {},
+      private: const ['Uczeń Testowy'],
+      requests: Diagnostics.requestLimit,
+    );
+    for (final secret in [
+      'secret',
+      'parent@example.com',
+      'parent',
+      'test-student-login',
+      '?',
+      'Uczeń Testowy',
+    ]) {
+      expect(report, isNot(contains(secret)), reason: secret);
+    }
+  });
 
   test('uses Portal refresh flow and maps Librus modules', () async {
     final dio = Dio()..httpClientAdapter = _FixtureAdapter(_successfulResponse);
@@ -372,67 +409,142 @@ void main() {
     },
   );
 
-  test('uses the linked student login and preserves an explicit choice after Portal reauthentication', () async {
+  (int, Object)? twoStudents(RequestOptions options, List<String> fresh) {
+    if (options.uri.path.endsWith('/api/v3/SynergiaAccounts')) {
+      return (
+        200,
+        {
+          'accounts': [
+            {
+              'login': 'fixture-parent',
+              'group': 'parent',
+              'studentName': 'Uczeń',
+            },
+            {
+              'login': 'fixture-student-u',
+              'group': 'student',
+              'studentName': 'Uczeń',
+            },
+          ],
+        },
+      );
+    }
+    if (options.uri.path.contains('/SynergiaAccounts/fresh/')) {
+      fresh.add(options.uri.pathSegments.last);
+      return (200, {'accessToken': 'token-${options.uri.pathSegments.last}'});
+    }
+    return null;
+  }
+
+  bool isRefresh(RequestOptions options) =>
+      options.uri.path.endsWith('/oauth2/access_token') &&
+      options.data is FormData &&
+      (options.data as FormData).fields.any(
+        (entry) => entry.key == 'grant_type' && entry.value == 'refresh_token',
+      );
+
+  test('signing in lists the students, and each profile client keeps its own '
+      'student after Portal reauthentication', () async {
     var fixtureTime = DateTime(2026, 10, 16);
     var rejectRefresh = false;
     final freshLogins = <String>[];
-    final client = LibrusClient(
+    final dio = Dio()
+      ..httpClientAdapter = _FixtureAdapter((options) {
+        if (rejectRefresh && isRefresh(options)) {
+          return (400, {'error': 'invalid_grant'});
+        }
+        return twoStudents(options, freshLogins) ??
+            _successfulResponse(options);
+      });
+    final logins = LibrusLogins(clock: () => fixtureTime);
+    final found = await LibrusClient(
       clock: () => fixtureTime,
-      dio: Dio()
-        ..httpClientAdapter = _FixtureAdapter((options) {
-          if (rejectRefresh &&
-              options.uri.path.endsWith('/oauth2/access_token') &&
-              options.data is FormData &&
-              (options.data as FormData).fields.any(
-                (entry) =>
-                    entry.key == 'grant_type' && entry.value == 'refresh_token',
-              )) {
-            return (400, {'error': 'invalid_grant'});
-          }
-          if (options.uri.path.endsWith('/api/v3/SynergiaAccounts')) {
-            return (
-              200,
-              {
-                'accounts': [
-                  {
-                    'login': 'fixture-parent',
-                    'group': 'parent',
-                    'studentName': 'Uczeń',
-                  },
-                  {
-                    'login': 'fixture-student-u',
-                    'group': 'student',
-                    'studentName': 'Uczeń',
-                  },
-                ],
-              },
-            );
-          }
-          if (options.uri.path.contains('/SynergiaAccounts/fresh/')) {
-            freshLogins.add(options.uri.pathSegments.last);
-            return (200, {'accessToken': 'student-token'});
-          }
-          return _successfulResponse(options);
-        }),
-    );
-    await client.loginAndFetch(
-      username: 'parent@example.com',
-      password: 'secret',
-    );
-    expect(freshLogins.last, 'fixture-student-u');
-    final accounts = await client.fetchSynergiaAccounts();
+      dio: dio,
+      logins: logins,
+    ).signIn(username: 'parent@example.com', password: 'secret');
+    expect(found.account, LibrusLogin.keyOf('Parent@Example.com '));
     expect(
-      accounts.singleWhere((account) => account.selected).login,
-      'fixture-student-u',
+      [for (final student in found.students) student.login],
+      ['fixture-parent', 'fixture-student-u'],
     );
-    await client.selectSynergiaAccount('fixture-parent');
-    expect(freshLogins.last, 'fixture-parent');
+    expect(
+      [for (final student in found.students) student.parent],
+      [true, false],
+    );
+    expect(freshLogins, isEmpty, reason: 'no student is fetched yet');
+
+    LibrusClient profile(String login) => LibrusClient(
+      clock: () => fixtureTime,
+      dio: dio,
+      logins: logins,
+      account: found.account,
+      synergiaLogin: login,
+    );
+    final parent = profile('fixture-parent');
+    final student = profile('fixture-student-u');
+    await parent.restoreAndFetch();
+    await student.restoreAndFetch();
+    expect(freshLogins, ['fixture-parent', 'fixture-student-u']);
+    expect(
+      (await parent.fetchSynergiaAccounts())
+          .singleWhere((account) => account.selected)
+          .login,
+      'fixture-parent',
+    );
+
     freshLogins.clear();
     rejectRefresh = true;
     fixtureTime = fixtureTime.add(const Duration(hours: 7));
-    await client.fetchSnapshot();
-    expect(freshLogins, isNotEmpty);
-    expect(freshLogins.every((login) => login == 'fixture-parent'), isTrue);
+    await parent.fetchSnapshot();
+    await student.fetchSnapshot();
+    expect(freshLogins, ['fixture-parent', 'fixture-student-u']);
+  });
+
+  test('two profiles of one login renew its tokens once', () async {
+    var fixtureTime = DateTime(2026, 10, 16);
+    final freshLogins = <String>[];
+    var refreshes = 0;
+    var logins = 0;
+    final dio = Dio()
+      ..httpClientAdapter = _FixtureAdapter((options) {
+        if (isRefresh(options)) refreshes++;
+        if (options.method == 'POST' &&
+            options.uri.path.endsWith('/oauth2/access_token') &&
+            !isRefresh(options)) {
+          logins++;
+        }
+        return twoStudents(options, freshLogins) ??
+            _successfulResponse(options);
+      });
+    final shared = LibrusLogins(clock: () => fixtureTime);
+    final found = await LibrusClient(
+      clock: () => fixtureTime,
+      dio: dio,
+      logins: shared,
+    ).signIn(username: 'parent@example.com', password: 'secret');
+    expect(logins, 1);
+    LibrusClient profile(String login) => LibrusClient(
+      clock: () => fixtureTime,
+      dio: dio,
+      logins: shared,
+      account: found.account,
+      synergiaLogin: login,
+    );
+    final parent = profile('fixture-parent');
+    final student = profile('fixture-student-u');
+    await Future.wait([parent.restoreAndFetch(), student.restoreAndFetch()]);
+    expect(refreshes, 0, reason: 'the tokens of the sign-in are fresh');
+
+    fixtureTime = fixtureTime.add(const Duration(hours: 7));
+    await Future.wait([parent.fetchSnapshot(), student.fetchSnapshot()]);
+    expect(refreshes, 1);
+    expect(logins, 1);
+    expect(freshLogins.sublist(2).toSet(), {
+      'fixture-parent',
+      'fixture-student-u',
+    });
+    final saved = await shared.read(found.account);
+    expect(saved!.email, 'parent@example.com');
   });
 
   test(
@@ -652,6 +764,52 @@ void main() {
       expect(content.body, 'Dzień dobry\nTreść & szczegóły');
     },
   );
+
+  test('a message\'s links keep where they lead, from either mailbox', () async {
+    const html =
+        '<p>Plan: <a href="https://example.pl/a?x=1&amp;y=2" target="_blank">'
+        '<b>plan</b></a> i <a href="https://example.pl/">https://example.pl</a>,'
+        ' <a href="javascript:alert(1)">zły</a>,'
+        " <a href='mailto:sekretariat@example.pl'>sekretariat@example.pl</a></p>";
+    const expected =
+        'Plan: plan (https://example.pl/a?x=1&y=2) i https://example.pl, zły, '
+        'sekretariat@example.pl';
+    for (final xml in [true, false]) {
+      final client = LibrusClient(
+        dio: Dio()
+          ..httpClientAdapter = _FixtureAdapter((options) {
+            if (!xml && options.uri.path == '/wiadomosci2') {
+              return (403, 'Forbidden');
+            }
+            if (xml && options.uri.path.endsWith('/GetMessage')) {
+              final body = base64Encode(utf8.encode(html));
+              return (
+                200,
+                '<response><GetMessage><data><Message>$body</Message>'
+                    '</data></GetMessage></response>',
+              );
+            }
+            if (options.uri.path == '/wiadomosci/1/5/91/f0') {
+              return (
+                200,
+                '<table class="container-message"><tr><td>Message</td><td>'
+                    '<div class="container-message-content">$html</div>'
+                    '</td></tr></table>',
+              );
+            }
+            return _successfulResponse(options);
+          }),
+      );
+      final snapshot = await client.loginAndFetch(
+        username: 'parent@example.com',
+        password: 'secret',
+      );
+      final content = await client.fetchMessageContent(
+        snapshot.messages.single,
+      );
+      expect(content.body, expected, reason: xml ? 'XML mailbox' : 'web');
+    }
+  });
 
   test(
     'an authenticated empty inbox is different from a mailbox failure',
@@ -921,8 +1079,14 @@ void main() {
         expect(holiday.kind, FreeDayKind.school);
         expect(holiday.name, 'Ferie zimowe');
         expect(holiday.wholeDays, isTrue);
-        expect(holiday.covers(today.add(const Duration(days: 30))), isTrue);
-        expect(holiday.covers(today.add(const Duration(days: 44))), isFalse);
+        expect(
+          holiday.covers(DateTime(today.year, today.month, today.day + 30)),
+          isTrue,
+        );
+        expect(
+          holiday.covers(DateTime(today.year, today.month, today.day + 44)),
+          isFalse,
+        );
 
         final retreat = days['class-2']!;
         expect(retreat.kind, FreeDayKind.classDay);
@@ -946,6 +1110,63 @@ void main() {
         );
       },
     );
+
+    test("only the student's own class days off count", () async {
+      Map<String, Object> classDay(int id, int? forClass) => {
+        'Id': id,
+        'Class': ?(forClass == null ? null : {'Id': forClass}),
+        'Type': {'Id': 5},
+        'DateFrom': day(-20),
+        'DateTo': day(5),
+      };
+      Future<Set<String>> classDays({required int? ownClass}) async {
+        final client = LibrusClient(
+          referenceCache: _MemoryReferenceCache(),
+          dio: Dio()
+            ..httpClientAdapter = _FixtureAdapter((options) {
+              final path = options.uri.path;
+              if (path.endsWith('/2.0/Me')) {
+                return (
+                  200,
+                  {
+                    'Me': {
+                      'Account': {'Id': 7},
+                      'User': {'FirstName': 'Uczeń', 'LastName': 'Testowy'},
+                      'Class': ?(ownClass == null ? null : {'Id': ownClass}),
+                    },
+                  },
+                );
+              }
+              if (path.endsWith('/2.0/ClassFreeDays')) {
+                return (
+                  200,
+                  {
+                    'ClassFreeDays': [
+                      classDay(10, 50),
+                      // Another class's work placement.
+                      classDay(11, 51),
+                      classDay(12, null),
+                    ],
+                  },
+                );
+              }
+              return freeDays(options) ?? _successfulResponse(options);
+            }),
+        );
+        final snapshot = await client.loginAndFetch(
+          username: 'parent@example.com',
+          password: 'secret',
+        );
+        return {
+          for (final item in snapshot.freeDays)
+            if (item.kind == FreeDayKind.classDay) item.id,
+        };
+      }
+
+      expect(await classDays(ownClass: 50), {'class-10', 'class-12'});
+      // With no class known, only those named for no class.
+      expect(await classDays(ownClass: null), {'class-12'});
+    });
 
     test('without the lists of days off the sync still works', () async {
       final client = LibrusClient(

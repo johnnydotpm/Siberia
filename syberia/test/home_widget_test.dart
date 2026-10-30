@@ -305,7 +305,10 @@ class _RecordingBridge extends HomeWidgetBridge {
   var clears = 0;
 
   @override
-  Future<void> update(String payload) async => payloads.add(payload);
+  Future<void> update(
+    String payload, {
+    Map<String, String> profiles = const {},
+  }) async => payloads.add(payload);
 
   @override
   Future<void> clear() async => clears++;
@@ -344,5 +347,8 @@ class _Repository extends AppRepository {
 
   // The real one would reach Librus; the Today look-ahead asks for weeks.
   @override
-  Future<List<Lesson>> fetchTimetableWeek(DateTime day) async => const [];
+  Future<List<Lesson>> fetchTimetableWeek(
+    DateTime day, {
+    String? profileId,
+  }) async => const [];
 }

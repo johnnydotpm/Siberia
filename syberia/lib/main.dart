@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 
 import 'src/background_notifications.dart';
 import 'src/data/app_repository.dart';
+import 'src/debug/diagnostics.dart';
 import 'src/frame_rate.dart';
 import 'src/home_widget.dart';
 import 'src/school_notifications.dart';
@@ -16,6 +17,7 @@ import 'src/ui/glass/glass_platform.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  Diagnostics.instance.watchUncaught();
   if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
     FrameRateBooster().start();
   }
@@ -40,7 +42,9 @@ Future<AppController> _initializeApplication(AppRepository repository) async {
     backgroundScheduling: configureBackgroundNotifications,
     homeWidget: const HomeWidgetBridge(),
   );
-  notifications.onTap((category) => controller.selectTab(category.tabIndex));
+  notifications.onTap(
+    (target) => unawaited(controller.openNotification(target)),
+  );
   try {
     await Future.wait([
       if (defaultTargetPlatform == TargetPlatform.android)
@@ -50,8 +54,8 @@ Future<AppController> _initializeApplication(AppRepository repository) async {
       // The snapshot may raise notifications, so the plugin comes first.
       notifications.initialize().then((_) => controller.bootstrap()),
     ]);
-    final launchCategory = await notifications.launchCategory();
-    if (launchCategory != null) controller.selectTab(launchCategory.tabIndex);
+    final launchTarget = await notifications.launchTarget();
+    if (launchTarget != null) await controller.openNotification(launchTarget);
   } on Object {
     controller.dispose();
     rethrow;
@@ -81,6 +85,8 @@ Future<void> widgetConfigMain() async {
   final repository = AppRepository();
   final languageCode = await repository.loadLocale();
   final colorMode = await repository.loadColorMode();
+  final profiles = await repository.loadProfiles();
+  final defaultProfile = await repository.loadWidgetProfile();
   final widgetId = await bridge.configuringWidgetId();
   if (widgetId == null) {
     await bridge.finishConfiguring();
@@ -92,6 +98,8 @@ Future<void> widgetConfigMain() async {
       widgetId: widgetId,
       locale: languageCode == null ? null : Locale(languageCode),
       colorMode: colorMode,
+      profiles: profiles,
+      defaultProfileId: defaultProfile,
     ),
   );
 }

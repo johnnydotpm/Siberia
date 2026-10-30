@@ -73,6 +73,8 @@ class _NativeGlassBarButtonsState extends State<NativeGlassBarButtons> {
     'loading': button.loading,
     'prominent': button.prominent,
     'separated': button.separated,
+    'color': button.tint?.toARGB32(),
+    'badge': button.badge,
   };
 
   Future<void> _onCall(MethodCall call) async {

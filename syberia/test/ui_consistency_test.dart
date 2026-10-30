@@ -22,14 +22,14 @@ AppSnapshot _snapshot({List<AttendanceRecord>? attendance}) {
     id: id,
     title: 'Wpis $id',
     subject: 'fizyka',
-    date: today.add(Duration(days: days)),
+    date: DateTime(today.year, today.month, today.day + days),
     kind: EventKind.exam,
     typeLabel: type,
   );
   AttendanceRecord record(String id, AttendanceKind kind, int daysAgo) =>
       AttendanceRecord(
         id: id,
-        date: today.subtract(Duration(days: daysAgo)),
+        date: DateTime(today.year, today.month, today.day - daysAgo),
         lessonNumber: 1,
         subject: 'Fizyka',
         type: kind.name,
@@ -57,7 +57,7 @@ AppSnapshot _snapshot({List<AttendanceRecord>? attendance}) {
         id: 'hw1',
         title: 'Zadanie',
         subject: 'fizyka',
-        date: today.add(const Duration(days: 1)),
+        date: DateTime(today.year, today.month, today.day + 1),
         kind: EventKind.homework,
       ),
       event('e1', 'sprawdzian', 2),
@@ -113,7 +113,11 @@ Future<(AppController, _Repository)> _pump(
   AppSnapshot? data,
   double height = 2400,
 }) async {
-  SharedPreferences.setMockInitialValues({'app_design_v1': 'classic'});
+  SharedPreferences.setMockInitialValues({
+    'app_design_v1': 'classic',
+    // Past the first setup, which has tests of its own.
+    'onboarding_done_v1': true,
+  });
   tester.view.physicalSize = Size(400, height);
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
@@ -261,44 +265,59 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('settings-short-names')));
     await check('short names');
     await tester.tap(find.byKey(const ValueKey('settings-profile')));
+    await check('profiles');
+    await tester.tap(find.byKey(const ValueKey('settings-profile')));
     await tester.pumpAndSettle();
-    await tester.tap(find.byIcon(Icons.switch_account_rounded));
-    await check('Synergia accounts');
+    await tester.tap(find.byKey(const ValueKey('profiles-add')));
+    await check('add profile');
     await tester.pumpWidget(const SizedBox.shrink());
   });
 
-  testWidgets('the login form and an empty day do not scroll for nothing', (
-    tester,
-  ) async {
-    await _pump(
-      tester,
-      data: AppSnapshot(
-        profile: const StudentProfile(
-          id: '',
-          name: '',
-          school: '',
-          provider: '',
+  testWidgets(
+    'the login form stays still; an empty day only pulls to refresh',
+    (tester) async {
+      await _pump(
+        tester,
+        data: AppSnapshot(
+          profile: const StudentProfile(
+            id: '',
+            name: '',
+            school: '',
+            provider: '',
+          ),
+          lessons: const [],
+          grades: const [],
+          events: const [],
+          messages: const [],
+          attendance: const [],
+          announcements: const [],
+          notices: const [],
+          lastSync: DateTime.fromMillisecondsSinceEpoch(0),
         ),
-        lessons: const [],
-        grades: const [],
-        events: const [],
-        messages: const [],
-        attendance: const [],
-        announcements: const [],
-        notices: const [],
-        lastSync: DateTime.fromMillisecondsSinceEpoch(0),
-      ),
-    );
-    await tester.tap(find.byIcon(Icons.login_rounded));
-    await tester.pumpAndSettle();
-    _expectStill(tester, find.byType(BottomSheet), 'login');
-    await tester.pumpWidget(const SizedBox.shrink());
+      );
+      await tester.tap(find.byIcon(Icons.login_rounded));
+      await tester.pumpAndSettle();
+      _expectStill(tester, find.byType(BottomSheet), 'login');
+      await tester.pumpWidget(const SizedBox.shrink());
 
-    // A day with no lessons, as the timetable opens on one here.
-    await _pump(tester, tab: 1);
-    _expectStill(tester, find.byType(IndexedStack), 'empty day');
-    await tester.pumpWidget(const SizedBox.shrink());
-  });
+      // A day with no lessons, as the timetable opens on one here. It fits,
+      // and moves only to be pulled to refresh, as every other page.
+      await _pump(tester, tab: 1);
+      final day = find.byType(IndexedStack);
+      expect(
+        find.descendant(of: day, matching: find.byType(RefreshIndicator)),
+        findsOneWidget,
+      );
+      final position = tester
+          .stateList<ScrollableState>(
+            find.descendant(of: day, matching: find.byType(Scrollable)),
+          )
+          .map((state) => state.position)
+          .firstWhere((position) => position.axis == Axis.vertical);
+      expect(position.maxScrollExtent, 0, reason: 'empty day fits');
+      await tester.pumpWidget(const SizedBox.shrink());
+    },
+  );
 
   testWidgets('every page starts 16 from the edge', (tester) async {
     for (final tab in [0, 2, 3, 4, 6, 7, 8, 9]) {
@@ -355,7 +374,7 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('settings-timetable')));
     styles['timetable'] = await title('Timetable style');
     await tester.tap(find.byKey(const ValueKey('settings-profile')));
-    styles['account'] = await title('Demo Student');
+    styles['profiles'] = await title('Profiles');
     for (final MapEntry(key: sheet, value: style) in styles.entries) {
       expect(style.fontSize, expected.fontSize, reason: sheet);
       expect(style.fontWeight, FontWeight.w800, reason: sheet);
@@ -449,18 +468,16 @@ class _Repository extends AppRepository {
   }
 
   @override
-  Future<List<Lesson>> fetchTimetableWeek(DateTime day) async => const [];
-
-  @override
-  Future<List<LinkedSynergiaAccount>> fetchSynergiaAccounts() async => const [
-    LinkedSynergiaAccount(login: '1u', name: 'Demo Student', selected: true),
-    LinkedSynergiaAccount(login: '2u', name: 'Uczeń Testowy', selected: false),
-  ];
+  Future<List<Lesson>> fetchTimetableWeek(
+    DateTime day, {
+    String? profileId,
+  }) async => const [];
 
   @override
   Future<SchoolMessageContent> fetchMessageContent(
-    SchoolMessage message,
-  ) async => SchoolMessageContent(
+    SchoolMessage message, {
+    String? profileId,
+  }) async => SchoolMessageContent(
     id: message.id,
     sender: message.sender,
     subject: message.subject,

@@ -169,6 +169,17 @@ class _Slot extends StatelessWidget {
             child: Center(
               child: button.loading
                   ? CupertinoActivityIndicator(color: color)
+                  : button.avatar != null
+                  ? Opacity(
+                      opacity: enabled ? 1 : 0.3,
+                      // A round sign is 32 high; signs side by side may
+                      // take the button's width.
+                      child: SizedBox(
+                        width: GlassBarButton.size,
+                        height: 32,
+                        child: FittedBox(child: button.avatar),
+                      ),
+                    )
                   : Icon(
                       button.symbol.icon,
                       size: 26,
