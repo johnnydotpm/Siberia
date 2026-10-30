@@ -71,7 +71,7 @@ class _SetupSummary extends StatelessWidget {
       row(
         'profiles',
         Icons.switch_account_rounded,
-        context.tr('profiles'),
+        context.tr(controller.isParent ? 'children' : 'profiles'),
         profiles.isEmpty
             ? '—'
             : profiles.map((profile) => profile.displayName).join(', '),
@@ -90,6 +90,11 @@ class _SetupSummary extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _GroupLabel(context.tr('onboardingSummary'), accent: true),
+        if (controller.isParent)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: Text(context.tr('parentTip')),
+          ),
         Card(
           clipBehavior: Clip.antiAlias,
           child: Column(

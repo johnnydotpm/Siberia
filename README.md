@@ -16,6 +16,8 @@ SiberiaGB to w pełni funkcjonalny, wieloplatformowy klient Librus napisany w fr
 </p>
 <!-- download-badges:end -->
 
+Tryb rodzica jest dobierany z rodzaju konta Librus; można zmienić rolę interfejsu w ustawieniach profilu bez zmiany konta pocztowego. Panel rodzica pokazuje dzieci, koniec lekcji i nieusprawiedliwione nieobecności. Prośbę o usprawiedliwienie można przygotować w sekcji Frekwencja, sprawdzić w podglądzie i wysłać do samodzielnie wybranego wychowawcy. Historia rozróżnia wysłanie wiadomości od akceptacji szkoły; NB zmienia się na U dopiero po synchronizacji danych ze szkołą. Domyślne godziny ciszy to 21:00–07:00, a podsumowania — 19:00; telefon może opóźnić zaplanowane powiadomienia. Integracja z osobnym modułem e-Usprawiedliwień wymaga jeszcze zweryfikowania protokołu.
+
 ## Funkcje
 
 - Logowanie z niewygasającymi sesjami

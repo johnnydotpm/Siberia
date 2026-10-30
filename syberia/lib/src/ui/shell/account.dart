@@ -464,6 +464,15 @@ Future<void> _showProfileActions(
           ),
         ),
         ListTile(
+          key: const ValueKey('profile-role-settings'),
+          leading: const Icon(Icons.family_restroom_rounded),
+          title: Text(sheetContext.tr('profileRole')),
+          onTap: () {
+            Navigator.pop(sheetContext);
+            _showParentSettings(context, controller, profile: profile);
+          },
+        ),
+        ListTile(
           key: const ValueKey('profile-rename'),
           leading: const Icon(Icons.edit_rounded),
           title: Text(sheetContext.tr('renameProfile')),
@@ -844,7 +853,10 @@ class _ChooseStudents extends StatefulWidget {
 }
 
 class _ChooseStudentsState extends State<_ChooseStudents> {
-  late final Set<String> chosen = defaultStudentChoice(widget.students);
+  late Set<String> chosen = defaultStudentChoice(widget.students);
+  late ProfileRole role = widget.students.any((student) => !student.parent)
+      ? ProfileRole.student
+      : ProfileRole.parent;
 
   @override
   Widget build(BuildContext context) => ListView(
@@ -860,6 +872,28 @@ class _ChooseStudentsState extends State<_ChooseStudents> {
       Text(context.tr('chooseStudents'), style: _sheetTitleStyle(context)),
       const SizedBox(height: 8),
       Text(context.tr('chooseStudentsHelp')),
+      if (widget.students.any((student) => student.parent) &&
+          widget.students.any((student) => !student.parent)) ...[
+        const SizedBox(height: 12),
+        Text(context.tr('roleWho')),
+        SegmentedButton<ProfileRole>(
+          segments: [
+            ButtonSegment(
+              value: ProfileRole.student,
+              label: Text(context.tr('roleStudent')),
+            ),
+            ButtonSegment(
+              value: ProfileRole.parent,
+              label: Text(context.tr('roleParent')),
+            ),
+          ],
+          selected: {role},
+          onSelectionChanged: (value) => setState(() {
+            role = value.first;
+            chosen = defaultStudentChoice(widget.students, role: role);
+          }),
+        ),
+      ],
       const SizedBox(height: 12),
       for (final student in widget.students)
         CheckboxListTile(

@@ -48,6 +48,13 @@ class _AttendanceState extends State<_Attendance> {
       child: _PageList(
         padding: const EdgeInsets.all(_Space.page),
         children: [
+          if (widget.controller.isParent)
+            OutlinedButton.icon(
+              key: const ValueKey('attendance-justify'),
+              onPressed: () => _showAbsenceRequests(context, widget.controller),
+              icon: const Icon(Icons.edit_note_rounded),
+              label: Text(context.tr('doJustify')),
+            ),
           SizedBox(
             width: double.infinity,
             child: SegmentedButton<_AttendancePeriod>(

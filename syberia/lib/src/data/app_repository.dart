@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../domain/librus_error.dart';
 import '../domain/models.dart';
 import '../domain/profiles.dart';
+import '../domain/parent.dart';
 import '../homework_done.dart';
 import 'demo_data.dart';
 import 'librus/librus_client.dart';
@@ -127,6 +128,7 @@ class AppRepository {
 
   /// Starts an in-memory session without writing accounts or credentials.
   AppSnapshot enterDemo() {
+    _demoAbsenceRequests.clear();
     final regular = DemoData();
     final music = DemoData.music();
     _demoData
@@ -551,6 +553,53 @@ class AppRepository {
     );
   }
 
+  Future<void> setProfileRole(String id, ProfileRole? role) =>
+      _changeProfile(id, (saved) => saved.copyWith(roleOverride: () => role));
+  Future<void> setParentPreferences(String id, ParentPreferences preferences) =>
+      _changeProfile(
+        id,
+        (saved) => saved.copyWith(parentPreferences: preferences),
+      );
+  Future<void> setProfileTabs(String id, List<int> tabs) => _changeProfile(
+    id,
+    (saved) => saved.copyWith(tabs: List.unmodifiable(tabs)),
+  );
+  final _demoAbsenceRequests = <String, List<AbsenceRequest>>{};
+  Future<List<AbsenceRequest>> absenceRequests(String id) async {
+    if (_demo != null) return _demoAbsenceRequests[id] ?? const [];
+    final raw = (await _preferences).getString(
+      ProfileStore.key('absence_requests_v1', id),
+    );
+    if (raw == null) return const [];
+    try {
+      return (jsonDecode(raw) as List)
+          .map(AbsenceRequest.fromJson)
+          .whereType<AbsenceRequest>()
+          .toList();
+    } on Object {
+      return const [];
+    }
+  }
+
+  Future<void> recordAbsenceRequest(AbsenceRequest request) async {
+    if (!profiles.any((profile) => profile.id == request.profileId)) return;
+    final items = [
+      request,
+      ...[
+        for (final previous in await absenceRequests(request.profileId))
+          if (previous.id != request.id) previous,
+      ],
+    ].take(200).toList();
+    if (_demo != null) {
+      _demoAbsenceRequests[request.profileId] = items;
+      return;
+    }
+    await (await _preferences).setString(
+      ProfileStore.key('absence_requests_v1', request.profileId),
+      jsonEncode(items.map((item) => item.toJson()).toList()),
+    );
+  }
+
   Future<void> setProfileColor(String profileId, int color) => _changeProfile(
     profileId,
     (saved) => saved.copyWith(color: color % profileColorCount),
@@ -609,6 +658,7 @@ class AppRepository {
   /// goes when no profile is left in it. Returns the open profile's data,
   /// or none when no profile is left.
   Future<AppSnapshot> removeProfile(String profileId) async {
+    _demoAbsenceRequests.remove(profileId);
     if (_demo != null) {
       throw StateError('Demo profiles cannot be removed.');
     }
@@ -633,6 +683,9 @@ class AppRepository {
   }
 
   Future<void> _forget(SchoolProfile profile) async {
+    await (await _preferences).remove(
+      ProfileStore.key('absence_requests_v1', profile.id),
+    );
     try {
       await _clientFor(profile).forget();
     } on Object {
@@ -948,6 +1001,7 @@ class AppRepository {
 
   /// Signs out of every profile: their data, settings and logins go.
   Future<AppSnapshot> logout() async {
+    _demoAbsenceRequests.clear();
     if (_demo != null) {
       _demo = null;
       _demoProfiles = const [];

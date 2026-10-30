@@ -455,7 +455,13 @@ class _SubjectGradesRow extends StatelessWidget {
       ),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
-        onTap: () => _showSubjectGrades(context, subject, grades, settings),
+        onTap: () => _showSubjectGrades(
+          context,
+          subject,
+          grades,
+          settings,
+          canCalculate: _SubjectScope.allowsStudentTools(context),
+        ),
         child: Container(
           decoration: BoxDecoration(
             border: Border(left: BorderSide(color: accent, width: 4)),
@@ -565,19 +571,24 @@ class _SubjectGradesTile extends StatelessWidget {
           ),
           children: [
             for (final grade in grades) _GradeRow(grade, settings: settings),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
-              child: Align(
-                alignment: AlignmentDirectional.centerStart,
-                child: TextButton.icon(
-                  key: ValueKey('grade-calculator-open-$subject'),
-                  onPressed: () =>
-                      _showGradeCalculator(context, subject, grades, settings),
-                  icon: const Icon(Icons.calculate_rounded),
-                  label: Text(context.tr('gradeCalculator')),
+            if (_SubjectScope.allowsStudentTools(context))
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
+                child: Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: TextButton.icon(
+                    key: ValueKey('grade-calculator-open-$subject'),
+                    onPressed: () => _showGradeCalculator(
+                      context,
+                      subject,
+                      grades,
+                      settings,
+                    ),
+                    icon: const Icon(Icons.calculate_rounded),
+                    label: Text(context.tr('gradeCalculator')),
+                  ),
                 ),
               ),
-            ),
           ],
         ),
       ),
@@ -613,8 +624,9 @@ Future<void> _showSubjectGrades(
   BuildContext context,
   String subject,
   List<Grade> grades,
-  GradeAverageSettings settings,
-) => showAppSheet<void>(
+  GradeAverageSettings settings, {
+  bool canCalculate = true,
+}) => showAppSheet<void>(
   context: context,
   compact: true,
   showDragHandle: true,
@@ -659,16 +671,17 @@ Future<void> _showSubjectGrades(
                 ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 4, 20, 8),
-              child: FilledButton.tonalIcon(
-                key: const ValueKey('grade-calculator-open'),
-                onPressed: () =>
-                    _showGradeCalculator(context, subject, grades, settings),
-                icon: const Icon(Icons.calculate_rounded),
-                label: Text(context.tr('gradeCalculator')),
+            if (canCalculate)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 4, 20, 8),
+                child: FilledButton.tonalIcon(
+                  key: const ValueKey('grade-calculator-open'),
+                  onPressed: () =>
+                      _showGradeCalculator(context, subject, grades, settings),
+                  icon: const Icon(Icons.calculate_rounded),
+                  label: Text(context.tr('gradeCalculator')),
+                ),
               ),
-            ),
             Flexible(
               child: ListView(
                 shrinkWrap: true,
