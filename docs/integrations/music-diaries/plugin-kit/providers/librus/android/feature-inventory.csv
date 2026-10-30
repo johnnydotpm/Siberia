@@ -1,0 +1,196 @@
+id,module,feature,effect,capability_and_ui_gate
+LIB-UI-001,account,Authentication browser handoff,authentication-or-external-handoff,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-002,account,Portal account login and cancellation,authentication-or-external-handoff,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-003,account,Link additional Synergia account,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-004,account,Multiple linked diary accounts,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-005,account,Account repair and expired authorization,authentication-or-external-handoff,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-006,account,Parent/student context separation,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-007,account,Logout and local session removal,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-008,account-state,Broken account recovery,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-009,account-state,Unactivated account explanation,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-010,account-state,Technical maintenance state,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-011,account-state,Missing linked account state,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-012,account-state,LibrusGO candidate account limitation,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-013,timeline,Combined chronological timeline,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-014,timeline,Per-account timeline filtering,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-015,timeline,Grouped and hidden categories,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-016,timeline,New versus changed versus deleted records,potential-network-mutation; verify concrete request recipe,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-017,timeline,Open underlying detail from timeline,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-018,timeline,School-year transition entries,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-019,timeline,Offline timeline and retry,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-020,timeline,Monthly grade summary,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-021,timeline,Monthly grade trend summary,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-022,grades,Numeric standard grades,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-023,grades,Point-based grades,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-024,grades,Descriptive grades and comments,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-025,grades,Text grades,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-026,grades,Partial descriptive grades,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-027,grades,Behaviour grades,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-028,grades,Behaviour point grades,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-029,grades,Behaviour proposal and assessment,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-030,grades,Period and school-year selection,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-031,grades,Subject-level grade details,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-032,grades,Grade metadata and comments,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-033,grades,Weighted averages when supplied,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-034,grades,Period and subject averages,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-035,grades,LibrusGO grade presentation,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-036,attendance,Attendance list grouped by date,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-037,attendance,Attendance detail and category,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-038,attendance,Attendance totals and percentages,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-039,attendance,Unknown/unrecorded versus absent attendance,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-040,attendance,Attendance change notifications,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-041,justification,List electronic justifications,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. Original navigation marks this page premium for Synergia; LibrusGO has separate routing.
+LIB-UI-042,justification,Justification detail and status,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. Original navigation marks this page premium for Synergia; LibrusGO has separate routing.
+LIB-UI-043,justification,Select lessons for justification,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. Original navigation marks this page premium for Synergia; LibrusGO has separate routing.
+LIB-UI-044,justification,Create justification with reason,potential-network-mutation; verify concrete request recipe,Account active; exact role/module permissions and server acceptance must be verified. Original navigation marks this page premium for Synergia; LibrusGO has separate routing.
+LIB-UI-045,justification,Report invalid or unavailable justification window,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. Original navigation marks this page premium for Synergia; LibrusGO has separate routing.
+LIB-UI-046,timetable,Week timetable navigation,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-047,timetable,Calendar event list and detail,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-048,timetable,Substitutions and cancellations,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-049,timetable,Original versus changed lesson data,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-050,timetable,Classroom and teacher details,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-051,timetable,Class/teacher/school free days,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-052,timetable,Parent-teacher conference events,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-053,timetable,Kindergarten framework day plan,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-054,timetable,Kindergarten timetable changes,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-055,timetable,Individual learning path timetable,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-056,timetable,One-to-one learning plan timetable,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-057,timetable,Other activities timetable,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-058,timetable,Custom timetable events,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-059,timetable,Create custom timetable event,potential-network-mutation; verify concrete request recipe,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-060,timetable,Edit custom timetable event,potential-network-mutation; verify concrete request recipe,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-061,timetable,Delete custom timetable event,potential-network-mutation; verify concrete request recipe,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-062,timetable,Meal event overlay,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-063,lessons,Planned lesson list,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-064,lessons,Realized lesson list,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-065,lessons,Lesson topic and detail,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-066,lessons,Filter planned and realized lesson period,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-067,homework,Homework assignment list,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. Original navigation marks this page premium for Synergia; LibrusGO has separate routing.
+LIB-UI-068,homework,Homework detail and rich content,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. Original navigation marks this page premium for Synergia; LibrusGO has separate routing.
+LIB-UI-069,homework,Homework due dates and status,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. Original navigation marks this page premium for Synergia; LibrusGO has separate routing.
+LIB-UI-070,homework,Read assignment attachments,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. Original navigation marks this page premium for Synergia; LibrusGO has separate routing.
+LIB-UI-071,homework,Photo solution selection and upload,potential-network-mutation; verify concrete request recipe,Account active; exact role/module permissions and server acceptance must be verified. Original navigation marks this page premium for Synergia; LibrusGO has separate routing.
+LIB-UI-072,homework,Solution submission availability and restrictions,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. Original navigation marks this page premium for Synergia; LibrusGO has separate routing.
+LIB-UI-073,messages,Inbox and sent folders,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. Original navigation marks this page premium for Synergia; LibrusGO has separate routing.
+LIB-UI-074,messages,Message list and pagination,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. Original navigation marks this page premium for Synergia; LibrusGO has separate routing.
+LIB-UI-075,messages,Message detail and read acknowledgement,read-may-change-server-state,Account active; exact role/module permissions and server acceptance must be verified. Original navigation marks this page premium for Synergia; LibrusGO has separate routing.
+LIB-UI-076,messages,Recipient groups and subgroups,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. Original navigation marks this page premium for Synergia; LibrusGO has separate routing.
+LIB-UI-077,messages,Recipient search and selection,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. Original navigation marks this page premium for Synergia; LibrusGO has separate routing.
+LIB-UI-078,messages,Compose message,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. Original navigation marks this page premium for Synergia; LibrusGO has separate routing.
+LIB-UI-079,messages,Reply to message,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. Original navigation marks this page premium for Synergia; LibrusGO has separate routing.
+LIB-UI-080,messages,Delete message,potential-network-mutation; verify concrete request recipe,Account active; exact role/module permissions and server acceptance must be verified. Original navigation marks this page premium for Synergia; LibrusGO has separate routing.
+LIB-UI-081,messages,Attachment display and download,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. Original navigation marks this page premium for Synergia; LibrusGO has separate routing.
+LIB-UI-082,messages,Teacher off-duty banner and explanation,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. Original navigation marks this page premium for Synergia; LibrusGO has separate routing.
+LIB-UI-083,messages,Attachment upload restrictions,potential-network-mutation; verify concrete request recipe,Account active; exact role/module permissions and server acceptance must be verified. Original navigation marks this page premium for Synergia; LibrusGO has separate routing.
+LIB-UI-084,messages,Unread message counts,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. Original navigation marks this page premium for Synergia; LibrusGO has separate routing.
+LIB-UI-085,announcements,Announcement list,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-086,announcements,Announcement detail,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-087,announcements,Unread/new announcement presentation,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-088,notes,Notes list,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-089,notes,Note detail and author,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-090,notes,Positive/negative or categorized notes,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-091,dashboard,Dashboard module cards,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. Original navigation marks this page premium for Synergia; LibrusGO has separate routing.
+LIB-UI-092,dashboard,Dashboard grades,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. Original navigation marks this page premium for Synergia; LibrusGO has separate routing.
+LIB-UI-093,dashboard,Dashboard attendance,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. Original navigation marks this page premium for Synergia; LibrusGO has separate routing.
+LIB-UI-094,dashboard,Dashboard homework,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. Original navigation marks this page premium for Synergia; LibrusGO has separate routing.
+LIB-UI-095,dashboard,Dashboard messages,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. Original navigation marks this page premium for Synergia; LibrusGO has separate routing.
+LIB-UI-096,dashboard,Dashboard notes,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. Original navigation marks this page premium for Synergia; LibrusGO has separate routing.
+LIB-UI-097,dashboard,Dashboard announcements,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. Original navigation marks this page premium for Synergia; LibrusGO has separate routing.
+LIB-UI-098,dashboard,Dashboard planned and realized lessons,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. Original navigation marks this page premium for Synergia; LibrusGO has separate routing.
+LIB-UI-099,dashboard,Dashboard timetable,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. Original navigation marks this page premium for Synergia; LibrusGO has separate routing.
+LIB-UI-100,school,School details and contacts,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-101,school,Class and tutor information,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-102,school,LibrusGO additional school details,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-103,lucky-number,Lucky number current value,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-104,lucky-number,Lucky number timeline and notification,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-105,goals,Create personal grade goal,potential-network-mutation; verify concrete request recipe,Account active; exact role/module permissions and server acceptance must be verified. Original navigation marks this page premiumPlus.
+LIB-UI-106,goals,Edit personal grade goal,potential-network-mutation; verify concrete request recipe,Account active; exact role/module permissions and server acceptance must be verified. Original navigation marks this page premiumPlus.
+LIB-UI-107,goals,Subject selection for goal,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. Original navigation marks this page premiumPlus.
+LIB-UI-108,goals,Period-specific goal view,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. Original navigation marks this page premiumPlus.
+LIB-UI-109,goals,Grade potential and progress,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. Original navigation marks this page premiumPlus.
+LIB-UI-110,goals,Grade trend charts,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. Original navigation marks this page premiumPlus.
+LIB-UI-111,goals,Recent grade charts,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. Original navigation marks this page premiumPlus.
+LIB-UI-112,goals,Attendance chart,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. Original navigation marks this page premiumPlus.
+LIB-UI-113,goals,Unpreparedness per subject,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. Original navigation marks this page premiumPlus.
+LIB-UI-114,goals,Goal incentive timeline entries,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. Original navigation marks this page premiumPlus.
+LIB-UI-115,reminders,Reminder list,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. Original navigation marks this page premiumPlus.
+LIB-UI-116,reminders,Reminder detail,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. Original navigation marks this page premiumPlus.
+LIB-UI-117,reminders,Create reminder,potential-network-mutation; verify concrete request recipe,Account active; exact role/module permissions and server acceptance must be verified. Original navigation marks this page premiumPlus.
+LIB-UI-118,reminders,Edit reminder,potential-network-mutation; verify concrete request recipe,Account active; exact role/module permissions and server acceptance must be verified. Original navigation marks this page premiumPlus.
+LIB-UI-119,reminders,Delete reminder,potential-network-mutation; verify concrete request recipe,Account active; exact role/module permissions and server acceptance must be verified. Original navigation marks this page premiumPlus.
+LIB-UI-120,reminders,Predefined reminder times,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. Original navigation marks this page premiumPlus.
+LIB-UI-121,reminders,Reminder timeline integration,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. Original navigation marks this page premiumPlus.
+LIB-UI-122,go-messages,LibrusGO inbox and message detail,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. LibrusGO context only; do not apply Synergia token or DTO by analogy.
+LIB-UI-123,go-messages,LibrusGO recipient selection,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. LibrusGO context only; do not apply Synergia token or DTO by analogy.
+LIB-UI-124,go-messages,LibrusGO compose/reply,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. LibrusGO context only; do not apply Synergia token or DTO by analogy.
+LIB-UI-125,go-messages,LibrusGO unread and read state,read-may-change-server-state,Account active; exact role/module permissions and server acceptance must be verified. LibrusGO context only; do not apply Synergia token or DTO by analogy.
+LIB-UI-126,go-timetable,LibrusGO lesson/event detail,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. LibrusGO context only; do not apply Synergia token or DTO by analogy.
+LIB-UI-127,go-timetable,LibrusGO report absence,potential-network-mutation; verify concrete request recipe,Account active; exact role/module permissions and server acceptance must be verified. LibrusGO context only; do not apply Synergia token or DTO by analogy.
+LIB-UI-128,go-timetable,LibrusGO cancel absence,potential-network-mutation; verify concrete request recipe,Account active; exact role/module permissions and server acceptance must be verified. LibrusGO context only; do not apply Synergia token or DTO by analogy.
+LIB-UI-129,go-timetable,LibrusGO available catch-up dates,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. LibrusGO context only; do not apply Synergia token or DTO by analogy.
+LIB-UI-130,go-timetable,LibrusGO request catch-up,potential-network-mutation; verify concrete request recipe,Account active; exact role/module permissions and server acceptance must be verified. LibrusGO context only; do not apply Synergia token or DTO by analogy.
+LIB-UI-131,go-timetable,LibrusGO cancel catch-up,potential-network-mutation; verify concrete request recipe,Account active; exact role/module permissions and server acceptance must be verified. LibrusGO context only; do not apply Synergia token or DTO by analogy.
+LIB-UI-132,go-timetable,LibrusGO lesson cycle detail,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. LibrusGO context only; do not apply Synergia token or DTO by analogy.
+LIB-UI-133,go-documents,LibrusGO document list,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. LibrusGO context only; do not apply Synergia token or DTO by analogy.
+LIB-UI-134,go-documents,Document detail and fields,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. LibrusGO context only; do not apply Synergia token or DTO by analogy.
+LIB-UI-135,go-documents,Document download,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. LibrusGO context only; do not apply Synergia token or DTO by analogy.
+LIB-UI-136,go-documents,Document permissions state,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. LibrusGO context only; do not apply Synergia token or DTO by analogy.
+LIB-UI-137,go-legal,Legal approval decisions,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. LibrusGO context only; do not apply Synergia token or DTO by analogy.
+LIB-UI-138,go-legal,Legal approval detail and fields,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. LibrusGO context only; do not apply Synergia token or DTO by analogy.
+LIB-UI-139,go-legal,Submit approval decision,potential-network-mutation; verify concrete request recipe,Account active; exact role/module permissions and server acceptance must be verified. LibrusGO context only; do not apply Synergia token or DTO by analogy.
+LIB-UI-140,go-legal,Approval history list and detail,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. LibrusGO context only; do not apply Synergia token or DTO by analogy.
+LIB-UI-141,go-payments,LibrusGO liabilities list,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. LibrusGO context only; do not apply Synergia token or DTO by analogy.
+LIB-UI-142,go-payments,Payment detail and amounts,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. LibrusGO context only; do not apply Synergia token or DTO by analogy.
+LIB-UI-143,go-payments,Payment provider handoff,authentication-or-external-handoff,Account active; exact role/module permissions and server acceptance must be verified. LibrusGO context only; do not apply Synergia token or DTO by analogy.
+LIB-UI-144,go-payments,Payment status return and refresh,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. LibrusGO context only; do not apply Synergia token or DTO by analogy.
+LIB-UI-145,meals,Meal integration status,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. Menu requires integration status non-null and not UNSUITABLE_FOR_INTEGRATION; hidden for JST and LibrusGO.
+LIB-UI-146,meals,Meal calendar,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. Menu requires integration status non-null and not UNSUITABLE_FOR_INTEGRATION; hidden for JST and LibrusGO.
+LIB-UI-147,meals,Meal day detail,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. Menu requires integration status non-null and not UNSUITABLE_FOR_INTEGRATION; hidden for JST and LibrusGO.
+LIB-UI-148,meals,Meal selection and order actions,potential-network-mutation; verify concrete request recipe,Account active; exact role/module permissions and server acceptance must be verified. Menu requires integration status non-null and not UNSUITABLE_FOR_INTEGRATION; hidden for JST and LibrusGO.
+LIB-UI-149,meals,Meal balance display,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. Menu requires integration status non-null and not UNSUITABLE_FOR_INTEGRATION; hidden for JST and LibrusGO.
+LIB-UI-150,meals,Low balance timeline notifications,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. Menu requires integration status non-null and not UNSUITABLE_FOR_INTEGRATION; hidden for JST and LibrusGO.
+LIB-UI-151,meals,Meal unavailability and integration error,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. Menu requires integration status non-null and not UNSUITABLE_FOR_INTEGRATION; hidden for JST and LibrusGO.
+LIB-UI-152,school-photo,School ID photo requirements and examples,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-153,school-photo,Gallery or camera photo selection,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-154,school-photo,Crop/prepare ID photo,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-155,school-photo,Upload school ID photo,potential-network-mutation; verify concrete request recipe,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-156,school-photo,Uploaded photo status and details,potential-network-mutation; verify concrete request recipe,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-157,school-photo,Photo replacement/restriction feedback,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-158,content,Recommended articles,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. Original page descriptor requires subscription; video has an explicit preview exception in navigator validation.
+LIB-UI-159,content,Article external opening,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. Original page descriptor requires subscription; video has an explicit preview exception in navigator validation.
+LIB-UI-160,content,Subscription-gated content,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. Original page descriptor requires subscription; video has an explicit preview exception in navigator validation.
+LIB-UI-161,video,Video material list,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. Original page descriptor requires subscription; video has an explicit preview exception in navigator validation.
+LIB-UI-162,video,Video preview,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. Original page descriptor requires subscription; video has an explicit preview exception in navigator validation.
+LIB-UI-163,video,Portrait video player,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. Original page descriptor requires subscription; video has an explicit preview exception in navigator validation.
+LIB-UI-164,video,Playback controls and loading/error state,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified. Original page descriptor requires subscription; video has an explicit preview exception in navigator validation.
+LIB-UI-165,settings,Select theme and dark mode,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-166,settings,Calendar display settings,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-167,settings,Group/hide data categories,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-168,settings,Select avatar icon,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-169,settings,Select avatar photograph,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-170,settings,Notification category preferences,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-171,settings,LibrusGO notification preferences,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-172,settings,Quiet night preferences,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-173,settings,Ad display preference,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-174,settings,Voucher activation,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-175,settings,Subscription management,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-176,settings,Add linked diary account,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-177,settings,Force data refresh with cooldown,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-178,settings,Change app language,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-179,subscription,Subscription slot list,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-180,subscription,Assign account to subscription slot,potential-network-mutation; verify concrete request recipe,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-181,subscription,Deactivate assigned slot,potential-network-mutation; verify concrete request recipe,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-182,subscription,Premium/plus/subscription explanation,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-183,subscription,Purchase flow state and receipt handling,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-184,platform,App version and update requirement,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-185,platform,Help/support opening,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-186,platform,External account settings opening,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-187,platform,Accessibility labels and keyboard focus,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-188,platform,Native clipboard,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-189,platform,Native file/open/download handling,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-190,platform,Offline/connectivity detection,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-191,platform,Foreground resume update,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-192,platform,Push click account routing,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-193,platform,Notification permission handling,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-194,platform,Crash/analytics integration boundary,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.
+LIB-UI-195,platform,Developer-only diagnostic page,read-or-local-ui,Account active; exact role/module permissions and server acceptance must be verified.

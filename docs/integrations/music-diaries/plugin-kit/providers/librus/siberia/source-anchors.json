@@ -1,0 +1,963 @@
+{
+  "schema_version": 1,
+  "repository": "johnnydotpm/Siberia",
+  "source_commit": "fdd022da1759caf254873fbb6d8ffdea7e360b68",
+  "scope": "read-only current-main export on2026-10-30; anchors are not source patches",
+  "files": [
+    {
+      "repository_path": "syberia/lib/src/data/librus/librus_client.dart",
+      "sha256": "6300271a2906d3daeaf0ae2835a5eb91c534e96f7ffb084c7d7a17a547bd6b60",
+      "line_count": 2426,
+      "anchors": [
+        {
+          "literal": "class LibrusClient {",
+          "lines": [
+            31
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<LibrusSignIn> signIn({",
+          "lines": [
+            115
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<void> forget() async {",
+          "lines": [
+            154
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<List<LinkedSynergiaAccount>> _students(",
+          "lines": [
+            171
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<List<MessageRecipient>> fetchMessageRecipients()",
+          "lines": [
+            192
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<String> sendMessage({",
+          "lines": [
+            233
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<Uri> fetchMessageAttachmentUrl({",
+          "lines": [
+            285
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<SchoolMessageContent> _fetchXmlMessageContent(",
+          "lines": [
+            326
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<AppSnapshot> fetchSnapshot({",
+          "lines": [
+            390
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "static const _apiInboxEndpoint =",
+          "lines": [
+            530
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "static const _referenceEndpoints =",
+          "lines": [
+            535
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<_PortalSession> _loginWithPortal(",
+          "lines": [
+            598
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<void> _refreshPortalAndSynergia()",
+          "lines": [
+            659
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<LibrusLogin> _renewLogin(",
+          "lines": [
+            715
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<Map<String, dynamic>> _exchangeToken(",
+          "lines": [
+            753
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<Map<String, dynamic>> _apiGet(",
+          "lines": [
+            798
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<void> _openSynergiaWebSession()",
+          "lines": [
+            859
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<void> _openMessagesSession()",
+          "lines": [
+            895
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<XmlDocument> _messagesRequest(",
+          "lines": [
+            933
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<List<SchoolMessage>> _fetchXmlInbox()",
+          "lines": [
+            1113
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<List<SchoolMessage>> _fetchXmlOutbox()",
+          "lines": [
+            1148
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<List<SchoolMessage>> _fetchSynergiaInbox()",
+          "lines": [
+            1271
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<Response<Object?>> _request(",
+          "lines": [
+            1375
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "void _storeCookies(",
+          "lines": [
+            1443
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<void> _saveSession()",
+          "lines": [
+            1476
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<bool> _restoreSession()",
+          "lines": [
+            1483
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "static List<Lesson> _parseTimetable(",
+          "lines": [
+            1493
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "static List<Grade> _parseGrades(",
+          "lines": [
+            1552
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "static List<SchoolEvent> _parseHomework(",
+          "lines": [
+            1633
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "static List<AttendanceRecord> _parseAttendance(",
+          "lines": [
+            1664
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "static AttendanceKind _attendanceKind(",
+          "lines": [
+            1716
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "static List<SchoolAnnouncement> _parseAnnouncements(",
+          "lines": [
+            1739
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "static List<StudentNotice> _parseNotices(",
+          "lines": [
+            1761
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "static List<FreeDay> _parseFreeDays(",
+          "lines": [
+            1787
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "bool matches(Uri uri)",
+          "lines": [
+            2172
+          ],
+          "match_count": 1
+        }
+      ]
+    },
+    {
+      "repository_path": "syberia/lib/src/data/librus/librus_logins.dart",
+      "sha256": "5a5149fe447aa7aae7c4a1ac6b2c2a38bb8db8b39164937982c29c135b3aed00",
+      "line_count": 193,
+      "anchors": [
+        {
+          "literal": "class LibrusLogin {",
+          "lines": [
+            13
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "static String keyOf(",
+          "lines": [
+            28
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "class LibrusLogins {",
+          "lines": [
+            64
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "static const storageKey",
+          "lines": [
+            71
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "static const reuse",
+          "lines": [
+            80
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<LibrusLogin> renewed(",
+          "lines": [
+            130
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<void> remove(",
+          "lines": [
+            116
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<void> _change(",
+          "lines": [
+            171
+          ],
+          "match_count": 1
+        }
+      ]
+    },
+    {
+      "repository_path": "syberia/lib/src/data/app_repository.dart",
+      "sha256": "647fa789bea1c0f3d74f203e88f83cb8212f29e00ea795313da5607ceebf9aa0",
+      "line_count": 1408,
+      "anchors": [
+        {
+          "literal": "class AppRepository {",
+          "lines": [
+            24
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "LibrusClient _clientFor(",
+          "lines": [
+            223
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "SnapshotStore _storeFor(",
+          "lines": [
+            240
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<void> _migrate()",
+          "lines": [
+            279
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<AppSnapshot> switchProfile(",
+          "lines": [
+            427
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<LibrusSignIn> signIn({",
+          "lines": [
+            443
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<List<SchoolProfile>> addProfiles(",
+          "lines": [
+            505
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<AppSnapshot> removeProfile(",
+          "lines": [
+            611
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<AppSnapshot> syncProfile(",
+          "lines": [
+            691
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<List<(SchoolProfile, AppSnapshot)>> fetchBackgroundSnapshots(",
+          "lines": [
+            837
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<AppSnapshot?> _backgroundSnapshot(",
+          "lines": [
+            864
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<List<MessageRecipient>> fetchMessageRecipients(",
+          "lines": [
+            1278
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<SchoolMessage> sendMessage(",
+          "lines": [
+            1288
+          ],
+          "match_count": 1
+        }
+      ]
+    },
+    {
+      "repository_path": "syberia/lib/src/state/app_controller.dart",
+      "sha256": "12d399f36522673a47628a620776a3bcb9a4ac1606696967cd9dd4d0e5107de4",
+      "line_count": 1710,
+      "anchors": [
+        {
+          "literal": "class AppController extends ChangeNotifier {",
+          "lines": [
+            36
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<void> sendMessage({",
+          "lines": [
+            895
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<void> refreshSentMessages(",
+          "lines": [
+            929
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<SchoolMessageContent> fetchMessageContent(",
+          "lines": [
+            975
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<SchoolMessageContent> _fetchMessageContentOf(",
+          "lines": [
+            999
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<void> markAllMessagesRead()",
+          "lines": [
+            1034
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<void> switchProfile(",
+          "lines": [
+            1306
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<void> openTogether()",
+          "lines": [
+            555
+          ],
+          "match_count": 1
+        }
+      ]
+    },
+    {
+      "repository_path": "syberia/lib/src/domain/models.dart",
+      "sha256": "a5b0ded2692cb3097925444619783ead05bfb9b8f7cb7070979ab91034ba9f77",
+      "line_count": 867,
+      "anchors": [
+        {
+          "literal": "class LinkedSynergiaAccount {",
+          "lines": [
+            7
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "class StudentProfile {",
+          "lines": [
+            44
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "class Lesson {",
+          "lines": [
+            69
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "class Grade {",
+          "lines": [
+            128
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "class SchoolEvent {",
+          "lines": [
+            185
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "class SchoolMessage {",
+          "lines": [
+            226
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "class SchoolMessageContent {",
+          "lines": [
+            297
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "class MessageRecipient {",
+          "lines": [
+            334
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "class AttendanceRecord {",
+          "lines": [
+            553
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "class SchoolAnnouncement {",
+          "lines": [
+            694
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "class StudentNotice {",
+          "lines": [
+            733
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "class AppSnapshot {",
+          "lines": [
+            767
+          ],
+          "match_count": 1
+        }
+      ]
+    },
+    {
+      "repository_path": "syberia/lib/src/domain/profiles.dart",
+      "sha256": "ac5a9271399d9e7244d923d6d9b945b87e23904f2c7b8a580730dffabc7a2ab7",
+      "line_count": 233,
+      "anchors": [
+        {
+          "literal": "class SchoolProfile {",
+          "lines": [
+            10
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "static String idFor(",
+          "lines": [
+            71
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "static const maxProfiles",
+          "lines": [
+            76
+          ],
+          "match_count": 1
+        }
+      ]
+    },
+    {
+      "repository_path": "syberia/lib/src/domain/together.dart",
+      "sha256": "fbac3c68568fbafaab9c97b680820f36bb9d60f2bb998f7ccca07894c03d0765",
+      "line_count": 183,
+      "anchors": [
+        {
+          "literal": "String sourcedId(",
+          "lines": [
+            10
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "String localId(",
+          "lines": [
+            13
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "AppSnapshot mergeSnapshots(",
+          "lines": [
+            85
+          ],
+          "match_count": 1
+        }
+      ]
+    },
+    {
+      "repository_path": "syberia/lib/src/data/snapshot_store.dart",
+      "sha256": "5f07d68890494d1140b70bf3c50513b7758ef41d08484e75944389b1fb682fce",
+      "line_count": 138,
+      "anchors": [
+        {
+          "literal": "class SnapshotStore {",
+          "lines": [
+            19
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "SnapshotStore forProfile(",
+          "lines": [
+            35
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "String get _fileName",
+          "lines": [
+            44
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<void> adopt(",
+          "lines": [
+            103
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<void> _enqueue(",
+          "lines": [
+            111
+          ],
+          "match_count": 1
+        }
+      ]
+    },
+    {
+      "repository_path": "syberia/lib/src/data/profile_store.dart",
+      "sha256": "3a1f190d7ad2545f5a9e2bad1aa9a111069bd125e009bd0af7fdab24ed941a09",
+      "line_count": 87,
+      "anchors": [
+        {
+          "literal": "class ProfileStore {",
+          "lines": [
+            9
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "static const listKey",
+          "lines": [
+            12
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "static const activeKey",
+          "lines": [
+            13
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "static const newsKey",
+          "lines": [
+            17
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<void> setNews(",
+          "lines": [
+            74
+          ],
+          "match_count": 1
+        }
+      ]
+    },
+    {
+      "repository_path": "syberia/lib/src/data/librus/reference_cache.dart",
+      "sha256": "27d0c37d408bc357684c84d120a179499a9121fe993fd9e7cee58267089de4de",
+      "line_count": 183,
+      "anchors": [
+        {
+          "literal": "class LibrusReferenceCache {",
+          "lines": [
+            44
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "static String fileNameFor(",
+          "lines": [
+            51
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "static const maxAge",
+          "lines": [
+            57
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<LibrusReferences?> read(",
+          "lines": [
+            79
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<void> remove(",
+          "lines": [
+            155
+          ],
+          "match_count": 1
+        }
+      ]
+    },
+    {
+      "repository_path": "syberia/lib/src/data/snapshot_cache.dart",
+      "sha256": "a1164cc6a55fbb106dcfe0f6f6e1b69935da1973985b1bad8c8ccaaa09c8a610",
+      "line_count": 275,
+      "anchors": [
+        {
+          "literal": "class SnapshotCache {",
+          "lines": [
+            7
+          ],
+          "match_count": 1
+        }
+      ]
+    },
+    {
+      "repository_path": "syberia/lib/src/domain/librus_error.dart",
+      "sha256": "e734b4e4403b982bafca98e0a802b15564d85bad706338e07c2c27cb42ad087f",
+      "line_count": 63,
+      "anchors": [
+        {
+          "literal": "enum LibrusErrorCode {",
+          "lines": [
+            4
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "class AppError {",
+          "lines": [
+            49
+          ],
+          "match_count": 1
+        }
+      ]
+    },
+    {
+      "repository_path": "syberia/lib/src/debug/diagnostics.dart",
+      "sha256": "fb031bb801192c90ebb815307f55105b9056f9b5485ebb2afd7b01709a69d727",
+      "line_count": 316,
+      "anchors": [
+        {
+          "literal": "class Diagnostics {",
+          "lines": [
+            57
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "static String scrub(",
+          "lines": [
+            185
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "static const _beforeCodes",
+          "lines": [
+            228
+          ],
+          "match_count": 1
+        }
+      ]
+    },
+    {
+      "repository_path": "syberia/lib/src/homework_done.dart",
+      "sha256": "c9ae4cd8184a27f5fe9d1a58ff360eacb66f62f7f5ce4a0a48e27de988a6e322",
+      "line_count": 50,
+      "anchors": [
+        {
+          "literal": "class HomeworkDoneStore {",
+          "lines": [
+            6
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "static String keyFor(",
+          "lines": [
+            11
+          ],
+          "match_count": 1
+        }
+      ]
+    },
+    {
+      "repository_path": "syberia/lib/src/domain/calendar_days.dart",
+      "sha256": "eff23922941cfbf092b71e5d0147728017777e9f63cf103f209ea582749e9a9e",
+      "line_count": 10,
+      "anchors": []
+    },
+    {
+      "repository_path": "syberia/lib/src/background_notifications.dart",
+      "sha256": "2501f4e78882b80c717783def8a7e579ce373d0c9efe332424e240e279e03df7",
+      "line_count": 122,
+      "anchors": []
+    },
+    {
+      "repository_path": "syberia/lib/src/home_widget.dart",
+      "sha256": "3565966bd2f58d9fb88e7b24e592ccf9b0225cea73dbe7bbd953e0238d0a0ec2",
+      "line_count": 329,
+      "anchors": []
+    },
+    {
+      "repository_path": "syberia/lib/src/school_notifications.dart",
+      "sha256": "5f835d8ef077a56009701224d2f353217e7ae0adce68dfc6d2594ccec57f1fed",
+      "line_count": 795,
+      "anchors": []
+    },
+    {
+      "repository_path": "syberia/lib/src/ui/shell/messages.dart",
+      "sha256": "ba30d1ab5b07d07b9524053d698f9a26c9b475ca17c7389aa6db433e0a34089e",
+      "line_count": 1202,
+      "anchors": [
+        {
+          "literal": "enum _MessageFolder",
+          "lines": [
+            11
+          ],
+          "match_count": 1
+        }
+      ]
+    },
+    {
+      "repository_path": "syberia/lib/src/ui/shell/message_compose.dart",
+      "sha256": "f4ea198cf0d0c43db878eb3af32dbae1e78ed800ce1ec65b7f021cafaaaf25aa",
+      "line_count": 552,
+      "anchors": []
+    },
+    {
+      "repository_path": "syberia/lib/src/ui/shell/events_homework.dart",
+      "sha256": "30e1dcd2d8a7f6d3e01abf32d4cbf940bb16d8dddd919499f2429706cc1ee24f",
+      "line_count": 936,
+      "anchors": []
+    },
+    {
+      "repository_path": "syberia/lib/src/ui/shell/account.dart",
+      "sha256": "aa9edfd4679385f6c9680f3c41c33e53ed98728cd54da3277091b37b58b6d58e",
+      "line_count": 1050,
+      "anchors": []
+    },
+    {
+      "repository_path": "syberia/lib/src/ui/shell/onboarding_sign_in.dart",
+      "sha256": "a0cd96a90ee34cac1bcf5de2c16a99994226f6c5a353fc7eae2e34502599da32",
+      "line_count": 329,
+      "anchors": []
+    },
+    {
+      "repository_path": "syberia/lib/src/ui/shell/together.dart",
+      "sha256": "25fb535b770594c0b45b92855b67dfdce69f2e3f01bf31ef6c54615bcdf93be8",
+      "line_count": 158,
+      "anchors": []
+    },
+    {
+      "repository_path": "syberia/test/librus_client_test.dart",
+      "sha256": "766bdc4073b4550fd2a890430337a9d6b9b4fcb84d550d2af8a25a2d2097244b",
+      "line_count": 2195,
+      "anchors": []
+    },
+    {
+      "repository_path": "syberia/test/profiles_test.dart",
+      "sha256": "f15d38e71c28011adf74f07867dc34e8f636940133b0b2fe28b6f5f0152f7cf1",
+      "line_count": 432,
+      "anchors": []
+    },
+    {
+      "repository_path": "syberia/test/profile_notifications_test.dart",
+      "sha256": "f30a99b2739f43df92d4160cad8f93cf26960692ce1d06536d5712a6eb1f9ab0",
+      "line_count": 441,
+      "anchors": []
+    },
+    {
+      "repository_path": "syberia/test/together_test.dart",
+      "sha256": "417b676751513e738c2c140c8673441b84c2625eabe26c042380a0ac82b38d25",
+      "line_count": 558,
+      "anchors": []
+    },
+    {
+      "repository_path": "syberia/test/diagnostics_test.dart",
+      "sha256": "2a9af2a1c040a1a59d9e7313a8c0b770769809347962d14a95f11866e9997d59",
+      "line_count": 281,
+      "anchors": []
+    },
+    {
+      "repository_path": ".github/workflows/build.yml",
+      "sha256": "edb6fd5f64a6b1e5cd511375d559131f5a13aa747c2306ca07ebe10d825d420e",
+      "line_count": 181,
+      "anchors": [
+        {
+          "literal": "flutter-version: \"3.47.4\"",
+          "lines": [
+            47,
+            86,
+            163
+          ],
+          "match_count": 3
+        },
+        {
+          "literal": "flutter analyze --fatal-infos",
+          "lines": [
+            52
+          ],
+          "match_count": 1
+        }
+      ]
+    }
+  ],
+  "missing_anchors": []
+}

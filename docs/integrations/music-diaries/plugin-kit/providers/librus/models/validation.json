@@ -1,0 +1,10 @@
+{
+  "status": "passed",
+  "scope": "Offline static documentation/source-map consistency only; not client/runtime tests",
+  "model_sources": 62,
+  "field_line_anchors": 801,
+  "builder_sources": 52,
+  "workflow_source_anchors": 23,
+  "synthetic_cases": 32,
+  "issues": []
+}

@@ -2,6 +2,8 @@
 
 This is a documentation package for adding **Fryderyk and MobiReg support to SiberiaGB**. It contains specifications, evidence ledgers, illustrative snippets and future-agent tasks. It does not implement or register a plugin. The directory name `plugin-kit` describes its intended audience, not an executable package.
 
+**Librus supplement (2026-10-31):** the subsequently supplied Librus8.4.1 Android/iOS packages are documented in [the Librus handoff](providers/librus/README.md). It includes shared-source parity, service/auth contracts,195 feature rows,328 request-building functions, model/consumer tables and an updated integration plan against main `fdd022d`. Current Siberia already supports Librus and multi-profile storage; use that updated source plan for Librus rather than assuming the older source anchors below still apply.
+
 Read in this order:
 
 1. [Evidence and limits](VALIDATION-AND-GAPS.md): what was recovered, what was independently checked, and what still needs an account.

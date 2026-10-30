@@ -1,0 +1,19 @@
+{
+  "status": "passed",
+  "scope": "Offline documentation/source-identity consistency. No app execution, plugin implementation or authenticated server tests.",
+  "json_documents_checked": 20,
+  "local_markdown_links": 66,
+  "feature_rows": 195,
+  "feature_source_references": 223,
+  "operation_functions": 328,
+  "request_call_sites": 332,
+  "generated_request_positions_corroborated": 296,
+  "request_positions_unmapped": 36,
+  "triaged_operation_functions": 328,
+  "local_model_declarations": 62,
+  "local_model_field_anchors": 801,
+  "current_siberia_commit": "fdd022da1759caf254873fbb6d8ffdea7e360b68",
+  "current_siberia_source_files": 30,
+  "current_siberia_literal_anchors": 108,
+  "issues": []
+}

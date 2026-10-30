@@ -1,0 +1,3301 @@
+{
+  "schema_version": 1,
+  "source_commit": "fdd022da1759caf254873fbb6d8ffdea7e360b68",
+  "purpose": "Exhaustive documentation task routing for current official operation catalogue; static source-family triage, not claimed endpoint compatibility or enabled feature coverage",
+  "catalogue": "../operations.json",
+  "operation_count": 328,
+  "disposition_counts": {
+    "portal_personal_schedule_or_content_service_review": 20,
+    "remote_push_service_not_equivalent_to_local_poll_notifications": 15,
+    "service_or_account_infrastructure_compare_owner_auth": 42,
+    "separate_go_service_capability_and_auth_review": 31,
+    "additional_grade_system_requires_source_preserving_model": 64,
+    "mail_alternate_transport_or_additive_action_review": 22,
+    "existing_related_projection_compare_version_and_parameters": 52,
+    "additional_diary_module_requires_typed_capability_review": 70,
+    "homework_read_projection_or_new_server_write_review": 7,
+    "new_typed_attendance_justification_module": 5
+  },
+  "records": [
+    {
+      "operation_id": "LIB-6cf46ddcdc",
+      "function": "getAllGoals",
+      "official_source": "src/api/librus-api/librus-my-goals-rest.js",
+      "disposition": "portal_personal_schedule_or_content_service_review",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-a2edea0a28",
+      "function": "createGoal",
+      "official_source": "src/api/librus-api/librus-my-goals-rest.js",
+      "disposition": "portal_personal_schedule_or_content_service_review",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-5864ea0388",
+      "function": "updateGoal",
+      "official_source": "src/api/librus-api/librus-my-goals-rest.js",
+      "disposition": "portal_personal_schedule_or_content_service_review",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-8d2c69e44a",
+      "function": "removeGoal",
+      "official_source": "src/api/librus-api/librus-my-goals-rest.js",
+      "disposition": "portal_personal_schedule_or_content_service_review",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-42d66f1d0b",
+      "function": "registerDeviceForPushNotifications",
+      "official_source": "src/api/librus-api/librus-push-notifications-rest.js",
+      "disposition": "remote_push_service_not_equivalent_to_local_poll_notifications",
+      "implementation_task": "H-LIB-01/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-b2e62db335",
+      "function": "deleteRegistrationForPushNotifications",
+      "official_source": "src/api/librus-api/librus-push-notifications-rest.js",
+      "disposition": "remote_push_service_not_equivalent_to_local_poll_notifications",
+      "implementation_task": "H-LIB-01/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-405bc06106",
+      "function": "setIgnorePushTopics",
+      "official_source": "src/api/librus-api/librus-push-notifications-rest.js",
+      "disposition": "remote_push_service_not_equivalent_to_local_poll_notifications",
+      "implementation_task": "H-LIB-01/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-cc24386ad9",
+      "function": "getNotificationsByBindingId",
+      "official_source": "src/api/librus-api/librus-push-notifications-rest.js",
+      "disposition": "remote_push_service_not_equivalent_to_local_poll_notifications",
+      "implementation_task": "H-LIB-01/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-520338196a",
+      "function": "deleteNotificationsForBindingId",
+      "official_source": "src/api/librus-api/librus-push-notifications-rest.js",
+      "disposition": "remote_push_service_not_equivalent_to_local_poll_notifications",
+      "implementation_task": "H-LIB-01/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-1810521d00",
+      "function": "FOR_TESTS_ONLY_postTestPush",
+      "official_source": "src/api/librus-api/librus-push-notifications-rest.js",
+      "disposition": "remote_push_service_not_equivalent_to_local_poll_notifications",
+      "implementation_task": "H-LIB-01/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-01d619d633",
+      "function": "getAllReminders",
+      "official_source": "src/api/librus-api/librus-reminders-rest.js",
+      "disposition": "portal_personal_schedule_or_content_service_review",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-f72cbee015",
+      "function": "createReminder",
+      "official_source": "src/api/librus-api/librus-reminders-rest.js",
+      "disposition": "portal_personal_schedule_or_content_service_review",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-77282bf116",
+      "function": "updateReminder",
+      "official_source": "src/api/librus-api/librus-reminders-rest.js",
+      "disposition": "portal_personal_schedule_or_content_service_review",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-ef37ef62ab",
+      "function": "removeReminder",
+      "official_source": "src/api/librus-api/librus-reminders-rest.js",
+      "disposition": "portal_personal_schedule_or_content_service_review",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-ccbc9fb574",
+      "function": "getMe",
+      "official_source": "src/api/librus-api/librus-rest.js",
+      "disposition": "service_or_account_infrastructure_compare_owner_auth",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-04",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-670c682bf5",
+      "function": "getSynergiaAccounts",
+      "official_source": "src/api/librus-api/librus-rest.js",
+      "disposition": "service_or_account_infrastructure_compare_owner_auth",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-04",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-bb06476f50",
+      "function": "getSynergiaAccountByUsername",
+      "official_source": "src/api/librus-api/librus-rest.js",
+      "disposition": "service_or_account_infrastructure_compare_owner_auth",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-04",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-fef9ba04ad",
+      "function": "getFreshSynergiaAccountByUsername",
+      "official_source": "src/api/librus-api/librus-rest.js",
+      "disposition": "service_or_account_infrastructure_compare_owner_auth",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-04",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-3643ebc268",
+      "function": "getAutologinUrl",
+      "official_source": "src/api/librus-api/librus-rest.js",
+      "disposition": "service_or_account_infrastructure_compare_owner_auth",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-04",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-d36ef0e840",
+      "function": "getAutoLoggedWidgetUrl",
+      "official_source": "src/api/librus-api/librus-rest.js",
+      "disposition": "service_or_account_infrastructure_compare_owner_auth",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-04",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-582d0c801a",
+      "function": "getThemes",
+      "official_source": "src/api/librus-api/librus-rest.js",
+      "disposition": "service_or_account_infrastructure_compare_owner_auth",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-04",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-ff7a16fc01",
+      "function": "getAvatars",
+      "official_source": "src/api/librus-api/librus-rest.js",
+      "disposition": "service_or_account_infrastructure_compare_owner_auth",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-04",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-412fcd43bd",
+      "function": "postAvatarByUsername",
+      "official_source": "src/api/librus-api/librus-rest.js",
+      "disposition": "service_or_account_infrastructure_compare_owner_auth",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-04",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-affd6c6ec3",
+      "function": "postPurchaseIAP",
+      "official_source": "src/api/librus-api/librus-rest.js",
+      "disposition": "service_or_account_infrastructure_compare_owner_auth",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-04",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-56f8de8e9e",
+      "function": "postPurchaseSubscription",
+      "official_source": "src/api/librus-api/librus-rest.js",
+      "disposition": "service_or_account_infrastructure_compare_owner_auth",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-04",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-64e607cc5c",
+      "function": "postAdvertisements",
+      "official_source": "src/api/librus-api/librus-rest.js",
+      "disposition": "service_or_account_infrastructure_compare_owner_auth",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-04",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-df887f8f74",
+      "function": "getAdvertisementSettings",
+      "official_source": "src/api/librus-api/librus-rest.js",
+      "disposition": "service_or_account_infrastructure_compare_owner_auth",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-04",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-e05410a642",
+      "function": "postAdvertisementStatisticsDisplays",
+      "official_source": "src/api/librus-api/librus-rest.js",
+      "disposition": "service_or_account_infrastructure_compare_owner_auth",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-04",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-e4e3d06c4d",
+      "function": "activateMdByVoucher",
+      "official_source": "src/api/librus-api/librus-rest.js",
+      "disposition": "service_or_account_infrastructure_compare_owner_auth",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-04",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-b26391de4c",
+      "function": "isVoucherActivationEnabled",
+      "official_source": "src/api/librus-api/librus-rest.js",
+      "disposition": "service_or_account_infrastructure_compare_owner_auth",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-04",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-3254422e7a",
+      "function": "getMobileAppDemoPopup",
+      "official_source": "src/api/librus-api/librus-rest.js",
+      "disposition": "service_or_account_infrastructure_compare_owner_auth",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-04",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-4b0b491fd2",
+      "function": "postPremiumAccountDemo",
+      "official_source": "src/api/librus-api/librus-rest.js",
+      "disposition": "service_or_account_infrastructure_compare_owner_auth",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-04",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-c8914c8cda",
+      "function": "getMDPromo",
+      "official_source": "src/api/librus-api/librus-rest.js",
+      "disposition": "service_or_account_infrastructure_compare_owner_auth",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-04",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-d842341cb3",
+      "function": "getMDWidgetPrices",
+      "official_source": "src/api/librus-api/librus-rest.js",
+      "disposition": "service_or_account_infrastructure_compare_owner_auth",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-04",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-d183d7a41e",
+      "function": "getAppPermissions",
+      "official_source": "src/api/librus-api/librus-rest.js",
+      "disposition": "service_or_account_infrastructure_compare_owner_auth",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-04",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-567a8267ad",
+      "function": "grantAppPermissions",
+      "official_source": "src/api/librus-api/librus-rest.js",
+      "disposition": "service_or_account_infrastructure_compare_owner_auth",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-04",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-98e77ab170",
+      "function": "denyAppPermissions",
+      "official_source": "src/api/librus-api/librus-rest.js",
+      "disposition": "service_or_account_infrastructure_compare_owner_auth",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-04",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-365d719796",
+      "function": "getTermsAcceptanceStatus",
+      "official_source": "src/api/librus-api/librus-rest.js",
+      "disposition": "service_or_account_infrastructure_compare_owner_auth",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-04",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-4ac0c1565c",
+      "function": "getTimelineEvents",
+      "official_source": "src/api/librus-api/librus-rest.js",
+      "disposition": "service_or_account_infrastructure_compare_owner_auth",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-04",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-ea436c0899",
+      "function": "getAvatarImages",
+      "official_source": "src/api/librus-api/librus-rest.js",
+      "disposition": "service_or_account_infrastructure_compare_owner_auth",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-04",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-b7ddbb880e",
+      "function": "deleteAvatarImageById",
+      "official_source": "src/api/librus-api/librus-rest.js",
+      "disposition": "service_or_account_infrastructure_compare_owner_auth",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-04",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-eb7be54cdb",
+      "function": "postAvatarImage",
+      "official_source": "src/api/librus-api/librus-rest.js",
+      "disposition": "service_or_account_infrastructure_compare_owner_auth",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-04",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-cd7c806919",
+      "function": "putAvatarImagesTags",
+      "official_source": "src/api/librus-api/librus-rest.js",
+      "disposition": "service_or_account_infrastructure_compare_owner_auth",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-04",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-c7686a2db8",
+      "function": "getAccountDetails",
+      "official_source": "src/api/librus-api/librus-rest.js",
+      "disposition": "service_or_account_infrastructure_compare_owner_auth",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-04",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-daad5217bd",
+      "function": "postActivateSubscriptionSlot",
+      "official_source": "src/api/librus-api/librus-rest.js",
+      "disposition": "service_or_account_infrastructure_compare_owner_auth",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-04",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-8fc1418d11",
+      "function": "deleteActivateSubscriptionSlot",
+      "official_source": "src/api/librus-api/librus-rest.js",
+      "disposition": "service_or_account_infrastructure_compare_owner_auth",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-04",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-46f31c33af",
+      "function": "getAccountUUiDForApple",
+      "official_source": "src/api/librus-api/librus-rest.js",
+      "disposition": "service_or_account_infrastructure_compare_owner_auth",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-04",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-968b9bbdd1",
+      "function": "getAdsSettings",
+      "official_source": "src/api/librus-api/librus-rest.js",
+      "disposition": "service_or_account_infrastructure_compare_owner_auth",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-04",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-5eb551edcf",
+      "function": "setStandardAdsSetting",
+      "official_source": "src/api/librus-api/librus-rest.js",
+      "disposition": "service_or_account_infrastructure_compare_owner_auth",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-04",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 2
+    },
+    {
+      "operation_id": "LIB-7b161b9ff7",
+      "function": "setArticleAdsSetting",
+      "official_source": "src/api/librus-api/librus-rest.js",
+      "disposition": "service_or_account_infrastructure_compare_owner_auth",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-04",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 2
+    },
+    {
+      "operation_id": "LIB-a99dc424be",
+      "function": "getMobileAddonsProducts",
+      "official_source": "src/api/librus-api/librus-rest.js",
+      "disposition": "service_or_account_infrastructure_compare_owner_auth",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-04",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-19346623ab",
+      "function": "getPurchasesState",
+      "official_source": "src/api/librus-api/librus-rest.js",
+      "disposition": "service_or_account_infrastructure_compare_owner_auth",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-04",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-b97adb5b0a",
+      "function": "getTimetablesCustomEvents",
+      "official_source": "src/api/librus-api/librus-timetables-custom-events-rest.js",
+      "disposition": "portal_personal_schedule_or_content_service_review",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-4d2ae1b5e2",
+      "function": "getTimetablesCustomEventForSynergiaAccount",
+      "official_source": "src/api/librus-api/librus-timetables-custom-events-rest.js",
+      "disposition": "portal_personal_schedule_or_content_service_review",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-f00b3575a1",
+      "function": "getTimetablesCustomEventsById",
+      "official_source": "src/api/librus-api/librus-timetables-custom-events-rest.js",
+      "disposition": "portal_personal_schedule_or_content_service_review",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-3d30f3f2f8",
+      "function": "createCustomEvent",
+      "official_source": "src/api/librus-api/librus-timetables-custom-events-rest.js",
+      "disposition": "portal_personal_schedule_or_content_service_review",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-82571c329d",
+      "function": "putCustomEventById",
+      "official_source": "src/api/librus-api/librus-timetables-custom-events-rest.js",
+      "disposition": "portal_personal_schedule_or_content_service_review",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-7bbac58da1",
+      "function": "deleteCustomEvent",
+      "official_source": "src/api/librus-api/librus-timetables-custom-events-rest.js",
+      "disposition": "portal_personal_schedule_or_content_service_review",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-bbd865187d",
+      "function": "getCustomEventLog",
+      "official_source": "src/api/librus-api/librus-timetables-custom-events-rest.js",
+      "disposition": "portal_personal_schedule_or_content_service_review",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-2dc7e9b9d5",
+      "function": "getVideoTrainings",
+      "official_source": "src/api/librus-api/video-materials-rest.js",
+      "disposition": "portal_personal_schedule_or_content_service_review",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-501ea45af9",
+      "function": "getVideoTrainingById",
+      "official_source": "src/api/librus-api/video-materials-rest.js",
+      "disposition": "portal_personal_schedule_or_content_service_review",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-ee45e975de",
+      "function": "getVideoUrls",
+      "official_source": "src/api/librus-api/video-materials-rest.js",
+      "disposition": "portal_personal_schedule_or_content_service_review",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-0b9bd03d6c",
+      "function": "setVideoProgressTime",
+      "official_source": "src/api/librus-api/video-materials-rest.js",
+      "disposition": "portal_personal_schedule_or_content_service_review",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-81e2bcf8d8",
+      "function": "getVideoCategories",
+      "official_source": "src/api/librus-api/video-materials-rest.js",
+      "disposition": "portal_personal_schedule_or_content_service_review",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-8ce00db5f0",
+      "function": "getLibrusGoAvatarByLogin",
+      "official_source": "src/api/librus-go-api/librus-go-avatars-rest.js",
+      "disposition": "separate_go_service_capability_and_auth_review",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-dfd9823f32",
+      "function": "setLibrusGoAvatarForLogin",
+      "official_source": "src/api/librus-go-api/librus-go-avatars-rest.js",
+      "disposition": "separate_go_service_capability_and_auth_review",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-63dac3e30f",
+      "function": "getCandidateApplication",
+      "official_source": "src/api/librus-go-api/librus-go-candidates-rest.js",
+      "disposition": "separate_go_service_capability_and_auth_review",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-5e73275e71",
+      "function": "getLibrusGoChanges",
+      "official_source": "src/api/librus-go-api/librus-go-changes-rest.js",
+      "disposition": "separate_go_service_capability_and_auth_review",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-758c23a024",
+      "function": "getStudentDocuments",
+      "official_source": "src/api/librus-go-api/librus-go-documents.js",
+      "disposition": "separate_go_service_capability_and_auth_review",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-5ae831ca87",
+      "function": "getDocumentById",
+      "official_source": "src/api/librus-go-api/librus-go-documents.js",
+      "disposition": "separate_go_service_capability_and_auth_review",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-9b037ac0de",
+      "function": "getDocumentUrlById",
+      "official_source": "src/api/librus-go-api/librus-go-documents.js",
+      "disposition": "separate_go_service_capability_and_auth_review",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-a358f55e44",
+      "function": "signDocumentById",
+      "official_source": "src/api/librus-go-api/librus-go-documents.js",
+      "disposition": "separate_go_service_capability_and_auth_review",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-3e0c26b00d",
+      "function": "getActivityGroups",
+      "official_source": "src/api/librus-go-api/librus-go-grades-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-306b772d4d",
+      "function": "getGrades",
+      "official_source": "src/api/librus-go-api/librus-go-grades-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-937dfad0c4",
+      "function": "getGradeById",
+      "official_source": "src/api/librus-go-api/librus-go-grades-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-83a9f76d98",
+      "function": "getLegalApprovals",
+      "official_source": "src/api/librus-go-api/librus-go-legal-approvals.js",
+      "disposition": "separate_go_service_capability_and_auth_review",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-63fd17e13f",
+      "function": "getLegalApprovalsDecisionHistory",
+      "official_source": "src/api/librus-go-api/librus-go-legal-approvals.js",
+      "disposition": "separate_go_service_capability_and_auth_review",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-c2b1703c33",
+      "function": "getCurrentLegalApprovalById",
+      "official_source": "src/api/librus-go-api/librus-go-legal-approvals.js",
+      "disposition": "separate_go_service_capability_and_auth_review",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-753bc3843c",
+      "function": "getLegalApprovalVersionById",
+      "official_source": "src/api/librus-go-api/librus-go-legal-approvals.js",
+      "disposition": "separate_go_service_capability_and_auth_review",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-52011760e9",
+      "function": "makeLegalApprovalDecision",
+      "official_source": "src/api/librus-go-api/librus-go-legal-approvals.js",
+      "disposition": "separate_go_service_capability_and_auth_review",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-1e8202c081",
+      "function": "getLessons",
+      "official_source": "src/api/librus-go-api/librus-go-lessons-rest.js",
+      "disposition": "separate_go_service_capability_and_auth_review",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-9373e28e4b",
+      "function": "getLessonsByDate",
+      "official_source": "src/api/librus-go-api/librus-go-lessons-rest.js",
+      "disposition": "separate_go_service_capability_and_auth_review",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-301b384194",
+      "function": "getLessonById",
+      "official_source": "src/api/librus-go-api/librus-go-lessons-rest.js",
+      "disposition": "separate_go_service_capability_and_auth_review",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-3be7e13ff5",
+      "function": "getLessonAttendanceById",
+      "official_source": "src/api/librus-go-api/librus-go-lessons-rest.js",
+      "disposition": "separate_go_service_capability_and_auth_review",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-388c628806",
+      "function": "getReportedAbsenceById",
+      "official_source": "src/api/librus-go-api/librus-go-lessons-rest.js",
+      "disposition": "separate_go_service_capability_and_auth_review",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-264082ee9a",
+      "function": "getAbsenceCapabilitiesById",
+      "official_source": "src/api/librus-go-api/librus-go-lessons-rest.js",
+      "disposition": "separate_go_service_capability_and_auth_review",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-019b177a51",
+      "function": "getCatchUpById",
+      "official_source": "src/api/librus-go-api/librus-go-lessons-rest.js",
+      "disposition": "separate_go_service_capability_and_auth_review",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-0d411e082b",
+      "function": "getCatchUpSuggestionsById",
+      "official_source": "src/api/librus-go-api/librus-go-lessons-rest.js",
+      "disposition": "separate_go_service_capability_and_auth_review",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-6d86e6d65a",
+      "function": "reportAbsence",
+      "official_source": "src/api/librus-go-api/librus-go-lessons-rest.js",
+      "disposition": "separate_go_service_capability_and_auth_review",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-246906b7a0",
+      "function": "getCycleDetailsById",
+      "official_source": "src/api/librus-go-api/librus-go-lessons-rest.js",
+      "disposition": "separate_go_service_capability_and_auth_review",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-082d5e75aa",
+      "function": "getSentMessages",
+      "official_source": "src/api/librus-go-api/librus-go-messages-rest.js",
+      "disposition": "mail_alternate_transport_or_additive_action_review",
+      "implementation_task": "H-LIB-06/H-LIB-07",
+      "related_host_surface": "SchoolMessage summary/detail/send; API2/XML/HTML paths; no current general pin/delete/folder model",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-662e9b073a",
+      "function": "getSentMessagesById",
+      "official_source": "src/api/librus-go-api/librus-go-messages-rest.js",
+      "disposition": "mail_alternate_transport_or_additive_action_review",
+      "implementation_task": "H-LIB-06/H-LIB-07",
+      "related_host_surface": "SchoolMessage summary/detail/send; API2/XML/HTML paths; no current general pin/delete/folder model",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-15e1d30fb0",
+      "function": "getReceivedMessages",
+      "official_source": "src/api/librus-go-api/librus-go-messages-rest.js",
+      "disposition": "mail_alternate_transport_or_additive_action_review",
+      "implementation_task": "H-LIB-06/H-LIB-07",
+      "related_host_surface": "SchoolMessage summary/detail/send; API2/XML/HTML paths; no current general pin/delete/folder model",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-5ceb5664ff",
+      "function": "getReceivedMessagesById",
+      "official_source": "src/api/librus-go-api/librus-go-messages-rest.js",
+      "disposition": "mail_alternate_transport_or_additive_action_review",
+      "implementation_task": "H-LIB-06/H-LIB-07",
+      "related_host_surface": "SchoolMessage summary/detail/send; API2/XML/HTML paths; no current general pin/delete/folder model",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-5ced477c30",
+      "function": "sendNewMessage",
+      "official_source": "src/api/librus-go-api/librus-go-messages-rest.js",
+      "disposition": "mail_alternate_transport_or_additive_action_review",
+      "implementation_task": "H-LIB-06/H-LIB-07",
+      "related_host_surface": "SchoolMessage summary/detail/send; API2/XML/HTML paths; no current general pin/delete/folder model",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-09fe7bc870",
+      "function": "getRecipients",
+      "official_source": "src/api/librus-go-api/librus-go-messages-rest.js",
+      "disposition": "mail_alternate_transport_or_additive_action_review",
+      "implementation_task": "H-LIB-06/H-LIB-07",
+      "related_host_surface": "SchoolMessage summary/detail/send; API2/XML/HTML paths; no current general pin/delete/folder model",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-1171743a2f",
+      "function": "markReceivedMessageAsRead",
+      "official_source": "src/api/librus-go-api/librus-go-messages-rest.js",
+      "disposition": "mail_alternate_transport_or_additive_action_review",
+      "implementation_task": "H-LIB-06/H-LIB-07",
+      "related_host_surface": "SchoolMessage summary/detail/send; API2/XML/HTML paths; no current general pin/delete/folder model",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-e1a1a6e588",
+      "function": "getUnreadCount",
+      "official_source": "src/api/librus-go-api/librus-go-messages-rest.js",
+      "disposition": "mail_alternate_transport_or_additive_action_review",
+      "implementation_task": "H-LIB-06/H-LIB-07",
+      "related_host_surface": "SchoolMessage summary/detail/send; API2/XML/HTML paths; no current general pin/delete/folder model",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-d303ab3d92",
+      "function": "getAttachment",
+      "official_source": "src/api/librus-go-api/librus-go-messages-rest.js",
+      "disposition": "mail_alternate_transport_or_additive_action_review",
+      "implementation_task": "H-LIB-06/H-LIB-07",
+      "related_host_surface": "SchoolMessage summary/detail/send; API2/XML/HTML paths; no current general pin/delete/folder model",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-51d67f04b1",
+      "function": "getPayments",
+      "official_source": "src/api/librus-go-api/librus-go-payments-rest.js",
+      "disposition": "separate_go_service_capability_and_auth_review",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-d4865812bf",
+      "function": "initOnlinePayment",
+      "official_source": "src/api/librus-go-api/librus-go-payments-rest.js",
+      "disposition": "separate_go_service_capability_and_auth_review",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-21d173b1d3",
+      "function": "getPaymentsIntegrationStatus",
+      "official_source": "src/api/librus-go-api/librus-go-payments-rest.js",
+      "disposition": "separate_go_service_capability_and_auth_review",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-70c20a374d",
+      "function": "createInvoiceFileRequest",
+      "official_source": "src/api/librus-go-api/librus-go-payments-rest.js",
+      "disposition": "separate_go_service_capability_and_auth_review",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-43ebb0e823",
+      "function": "getInvoiceFileRequestStatus",
+      "official_source": "src/api/librus-go-api/librus-go-payments-rest.js",
+      "disposition": "separate_go_service_capability_and_auth_review",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-517fdabf2f",
+      "function": "getInvoiceFileRequestUrl",
+      "official_source": "src/api/librus-go-api/librus-go-payments-rest.js",
+      "disposition": "separate_go_service_capability_and_auth_review",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-c4d9d97953",
+      "function": "getDueConfirmation",
+      "official_source": "src/api/librus-go-api/librus-go-payments-rest.js",
+      "disposition": "separate_go_service_capability_and_auth_review",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-9d3790846a",
+      "function": "registerDeviceForPushNotifications",
+      "official_source": "src/api/librus-go-api/librus-go-push-notifications-rest.js",
+      "disposition": "remote_push_service_not_equivalent_to_local_poll_notifications",
+      "implementation_task": "H-LIB-01/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-b0d1c8d8dc",
+      "function": "getRegistrationForPushNotifications",
+      "official_source": "src/api/librus-go-api/librus-go-push-notifications-rest.js",
+      "disposition": "remote_push_service_not_equivalent_to_local_poll_notifications",
+      "implementation_task": "H-LIB-01/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-2dcd892bc5",
+      "function": "getAllRegistrationsForPushNotifications",
+      "official_source": "src/api/librus-go-api/librus-go-push-notifications-rest.js",
+      "disposition": "remote_push_service_not_equivalent_to_local_poll_notifications",
+      "implementation_task": "H-LIB-01/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-98f35fbd83",
+      "function": "updateRegistrationForPushNotifications",
+      "official_source": "src/api/librus-go-api/librus-go-push-notifications-rest.js",
+      "disposition": "remote_push_service_not_equivalent_to_local_poll_notifications",
+      "implementation_task": "H-LIB-01/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-eb8b9aa10a",
+      "function": "deleteRegistrationForPushNotifications",
+      "official_source": "src/api/librus-go-api/librus-go-push-notifications-rest.js",
+      "disposition": "remote_push_service_not_equivalent_to_local_poll_notifications",
+      "implementation_task": "H-LIB-01/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-dd31827252",
+      "function": "getSchool",
+      "official_source": "src/api/librus-go-api/librus-go-schools-rest.js",
+      "disposition": "separate_go_service_capability_and_auth_review",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-0295785ace",
+      "function": "getAnnouncements",
+      "official_source": "src/api/raw-rest-api/synergia-announcements-rest.js",
+      "disposition": "existing_related_projection_compare_version_and_parameters",
+      "implementation_task": "H-LIB-02/H-LIB-05",
+      "related_host_surface": "SchoolAnnouncement / announcements_notices UI",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-47fde9ff5d",
+      "function": "getAnnouncementsById",
+      "official_source": "src/api/raw-rest-api/synergia-announcements-rest.js",
+      "disposition": "existing_related_projection_compare_version_and_parameters",
+      "implementation_task": "H-LIB-02/H-LIB-05",
+      "related_host_surface": "SchoolAnnouncement / announcements_notices UI",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-dfa2d60ec2",
+      "function": "getAnnouncementsByIds",
+      "official_source": "src/api/raw-rest-api/synergia-announcements-rest.js",
+      "disposition": "existing_related_projection_compare_version_and_parameters",
+      "implementation_task": "H-LIB-02/H-LIB-05",
+      "related_host_surface": "SchoolAnnouncement / announcements_notices UI",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-2bb67079fd",
+      "function": "getAttendances",
+      "official_source": "src/api/raw-rest-api/synergia-attendances-rest.js",
+      "disposition": "existing_related_projection_compare_version_and_parameters",
+      "implementation_task": "H-LIB-02/H-LIB-05",
+      "related_host_surface": "AttendanceRecord / attendance UI",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-820a40c82d",
+      "function": "getAttendancesById",
+      "official_source": "src/api/raw-rest-api/synergia-attendances-rest.js",
+      "disposition": "existing_related_projection_compare_version_and_parameters",
+      "implementation_task": "H-LIB-02/H-LIB-05",
+      "related_host_surface": "AttendanceRecord / attendance UI",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-dfe05fdad9",
+      "function": "getAttendancesByIds",
+      "official_source": "src/api/raw-rest-api/synergia-attendances-rest.js",
+      "disposition": "existing_related_projection_compare_version_and_parameters",
+      "implementation_task": "H-LIB-02/H-LIB-05",
+      "related_host_surface": "AttendanceRecord / attendance UI",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-f0f72687e5",
+      "function": "getAttendancesTypes",
+      "official_source": "src/api/raw-rest-api/synergia-attendances-types-rest.js",
+      "disposition": "existing_related_projection_compare_version_and_parameters",
+      "implementation_task": "H-LIB-02/H-LIB-05",
+      "related_host_surface": "AttendanceRecord type references",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-ff00b597a6",
+      "function": "getAttendancesTypesById",
+      "official_source": "src/api/raw-rest-api/synergia-attendances-types-rest.js",
+      "disposition": "existing_related_projection_compare_version_and_parameters",
+      "implementation_task": "H-LIB-02/H-LIB-05",
+      "related_host_surface": "AttendanceRecord type references",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-28e83acef9",
+      "function": "getMultipleAttendancesTypesById",
+      "official_source": "src/api/raw-rest-api/synergia-attendances-types-rest.js",
+      "disposition": "existing_related_projection_compare_version_and_parameters",
+      "implementation_task": "H-LIB-02/H-LIB-05",
+      "related_host_surface": "AttendanceRecord type references",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-2b78f9d62c",
+      "function": "getGradesCategories",
+      "official_source": "src/api/raw-rest-api/synergia-behaviour-grades-point-category-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-cc73add69a",
+      "function": "getGradesCategoriesById",
+      "official_source": "src/api/raw-rest-api/synergia-behaviour-grades-point-category-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-9b66bed970",
+      "function": "getMultipleGradesCategoriesById",
+      "official_source": "src/api/raw-rest-api/synergia-behaviour-grades-point-category-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-18c43c907a",
+      "function": "getGrades",
+      "official_source": "src/api/raw-rest-api/synergia-behaviour-grades-point-comments-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-c26808c973",
+      "function": "getGradeCommentById",
+      "official_source": "src/api/raw-rest-api/synergia-behaviour-grades-point-comments-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-58714ba4da",
+      "function": "getMultipleGradeCommentById",
+      "official_source": "src/api/raw-rest-api/synergia-behaviour-grades-point-comments-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-917b66ed45",
+      "function": "getGrades",
+      "official_source": "src/api/raw-rest-api/synergia-behaviour-grades-point-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-9ed61bdf78",
+      "function": "getGradeById",
+      "official_source": "src/api/raw-rest-api/synergia-behaviour-grades-point-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-e8fc55f691",
+      "function": "getGradeByIds",
+      "official_source": "src/api/raw-rest-api/synergia-behaviour-grades-point-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-2da63ad311",
+      "function": "getGrades",
+      "official_source": "src/api/raw-rest-api/synergia-behaviour-grades-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-7fd382da4c",
+      "function": "getGradeById",
+      "official_source": "src/api/raw-rest-api/synergia-behaviour-grades-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-10f52db375",
+      "function": "getGradeByIds",
+      "official_source": "src/api/raw-rest-api/synergia-behaviour-grades-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-2c124583b9",
+      "function": "getGrades",
+      "official_source": "src/api/raw-rest-api/synergia-behaviour-grades-system-proposal-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-92e36f4206",
+      "function": "getGradeById",
+      "official_source": "src/api/raw-rest-api/synergia-behaviour-grades-system-proposal-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-721f82d5d2",
+      "function": "getGradeByIds",
+      "official_source": "src/api/raw-rest-api/synergia-behaviour-grades-system-proposal-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-f59f7581cd",
+      "function": "getTypes",
+      "official_source": "src/api/raw-rest-api/synergia-behaviour-grades-types-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-5a09b80b1b",
+      "function": "getTypesById",
+      "official_source": "src/api/raw-rest-api/synergia-behaviour-grades-types-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-7d7e8e17cb",
+      "function": "getMultipleTypesById",
+      "official_source": "src/api/raw-rest-api/synergia-behaviour-grades-types-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-604b9f713c",
+      "function": "getCalendarEventsCategories",
+      "official_source": "src/api/raw-rest-api/synergia-calendar-events-categories-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-471173f109",
+      "function": "getCalendarEventsCategoriesById",
+      "official_source": "src/api/raw-rest-api/synergia-calendar-events-categories-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-3d4864d5fd",
+      "function": "getMultipleCalendarEventsCategoriesById",
+      "official_source": "src/api/raw-rest-api/synergia-calendar-events-categories-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-44a5ea31e8",
+      "function": "getCalendarEvents",
+      "official_source": "src/api/raw-rest-api/synergia-calendar-events-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-4bf802633b",
+      "function": "getCalendarEventsById",
+      "official_source": "src/api/raw-rest-api/synergia-calendar-events-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-0610f444da",
+      "function": "getMultipleCalendarEventsById",
+      "official_source": "src/api/raw-rest-api/synergia-calendar-events-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-e63a3eb76c",
+      "function": "getCalendar",
+      "official_source": "src/api/raw-rest-api/synergia-calendar-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-50cda5e9f6",
+      "function": "getCalendarById",
+      "official_source": "src/api/raw-rest-api/synergia-calendar-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-aee39f137d",
+      "function": "getCalendarByIdInDate",
+      "official_source": "src/api/raw-rest-api/synergia-calendar-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-e5ca96af34",
+      "function": "registerChangeRegister",
+      "official_source": "src/api/raw-rest-api/synergia-changes-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-25bf444e35",
+      "function": "getChangeRegister",
+      "official_source": "src/api/raw-rest-api/synergia-changes-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-b139bdb4cd",
+      "function": "updateChangeRegister",
+      "official_source": "src/api/raw-rest-api/synergia-changes-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-adc9f1c5c1",
+      "function": "deleteChangeRegister",
+      "official_source": "src/api/raw-rest-api/synergia-changes-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-3457be9fc0",
+      "function": "getChanges",
+      "official_source": "src/api/raw-rest-api/synergia-changes-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-e38b6e70f9",
+      "function": "deleteChanges",
+      "official_source": "src/api/raw-rest-api/synergia-changes-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-1a41090434",
+      "function": "getClassFreeDays",
+      "official_source": "src/api/raw-rest-api/synergia-class-free-days-rest.js",
+      "disposition": "existing_related_projection_compare_version_and_parameters",
+      "implementation_task": "H-LIB-02/H-LIB-05",
+      "related_host_surface": "FreeDay / free_days UI",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-c4b1eabcea",
+      "function": "getClassFreeDaysById",
+      "official_source": "src/api/raw-rest-api/synergia-class-free-days-rest.js",
+      "disposition": "existing_related_projection_compare_version_and_parameters",
+      "implementation_task": "H-LIB-02/H-LIB-05",
+      "related_host_surface": "FreeDay / free_days UI",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-8f672ae29e",
+      "function": "getMultipleClassFreeDaysById",
+      "official_source": "src/api/raw-rest-api/synergia-class-free-days-rest.js",
+      "disposition": "existing_related_projection_compare_version_and_parameters",
+      "implementation_task": "H-LIB-02/H-LIB-05",
+      "related_host_surface": "FreeDay / free_days UI",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-606ee95ecc",
+      "function": "getClassFreeDaysTypes",
+      "official_source": "src/api/raw-rest-api/synergia-class-free-days-types-rest.js",
+      "disposition": "existing_related_projection_compare_version_and_parameters",
+      "implementation_task": "H-LIB-02/H-LIB-05",
+      "related_host_surface": "FreeDay class type references",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-be2a99b7d0",
+      "function": "getClassFreeDaysTypesById",
+      "official_source": "src/api/raw-rest-api/synergia-class-free-days-types-rest.js",
+      "disposition": "existing_related_projection_compare_version_and_parameters",
+      "implementation_task": "H-LIB-02/H-LIB-05",
+      "related_host_surface": "FreeDay class type references",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-2fb5c19e20",
+      "function": "getMultipleClassFreeDaysTypesById",
+      "official_source": "src/api/raw-rest-api/synergia-class-free-days-types-rest.js",
+      "disposition": "existing_related_projection_compare_version_and_parameters",
+      "implementation_task": "H-LIB-02/H-LIB-05",
+      "related_host_surface": "FreeDay class type references",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-fedf813693",
+      "function": "getClasses",
+      "official_source": "src/api/raw-rest-api/synergia-classes-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-7a0a3d68b6",
+      "function": "getClassById",
+      "official_source": "src/api/raw-rest-api/synergia-classes-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-81637f5a7a",
+      "function": "getMultipleClassById",
+      "official_source": "src/api/raw-rest-api/synergia-classes-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-d9954d456b",
+      "function": "getClassrooms",
+      "official_source": "src/api/raw-rest-api/synergia-classrooms-rest.js",
+      "disposition": "existing_related_projection_compare_version_and_parameters",
+      "implementation_task": "H-LIB-02/H-LIB-05",
+      "related_host_surface": "Lesson room references",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-0cf29a1ee9",
+      "function": "getMultipleClassroomsById",
+      "official_source": "src/api/raw-rest-api/synergia-classrooms-rest.js",
+      "disposition": "existing_related_projection_compare_version_and_parameters",
+      "implementation_task": "H-LIB-02/H-LIB-05",
+      "related_host_surface": "Lesson room references",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-c25d9c7032",
+      "function": "getGradesComments",
+      "official_source": "src/api/raw-rest-api/synergia-descriptive-grades-comments-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-0ef9f7d00a",
+      "function": "getGradeCommentById",
+      "official_source": "src/api/raw-rest-api/synergia-descriptive-grades-comments-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-1298fc3be2",
+      "function": "getMultipleGradeCommentById",
+      "official_source": "src/api/raw-rest-api/synergia-descriptive-grades-comments-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-2c6f07c782",
+      "function": "getGrades",
+      "official_source": "src/api/raw-rest-api/synergia-descriptive-grades-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-0565c270cc",
+      "function": "getGradeById",
+      "official_source": "src/api/raw-rest-api/synergia-descriptive-grades-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-5bb1f2930c",
+      "function": "getGradeByIds",
+      "official_source": "src/api/raw-rest-api/synergia-descriptive-grades-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-ff11609c59",
+      "function": "getCategories",
+      "official_source": "src/api/raw-rest-api/synergia-descriptive-grades-text-categories-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-d650f5c0ab",
+      "function": "getCategoryById",
+      "official_source": "src/api/raw-rest-api/synergia-descriptive-grades-text-categories-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-2509218c4b",
+      "function": "getMultipleCategoriesById",
+      "official_source": "src/api/raw-rest-api/synergia-descriptive-grades-text-categories-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-9c56625e53",
+      "function": "getGrades",
+      "official_source": "src/api/raw-rest-api/synergia-descriptive-grades-text-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-b2285d4342",
+      "function": "getMultipleGradeByGradeGroupId",
+      "official_source": "src/api/raw-rest-api/synergia-descriptive-grades-text-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-8d185548c8",
+      "function": "getMultipleGradeById",
+      "official_source": "src/api/raw-rest-api/synergia-descriptive-grades-text-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-75e873615d",
+      "function": "getGrades",
+      "official_source": "src/api/raw-rest-api/synergia-descriptive-text-grades-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-e2703e04c1",
+      "function": "getGradeById",
+      "official_source": "src/api/raw-rest-api/synergia-descriptive-text-grades-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-1823eb2e62",
+      "function": "getGradeByIds",
+      "official_source": "src/api/raw-rest-api/synergia-descriptive-text-grades-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-d8dc1e29eb",
+      "function": "getGradesSkills",
+      "official_source": "src/api/raw-rest-api/synergia-desctiptive-grades-skills-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-0da991ae44",
+      "function": "getGradesSkillById",
+      "official_source": "src/api/raw-rest-api/synergia-desctiptive-grades-skills-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-88f2b8fae1",
+      "function": "getMultipleGradesSkillById",
+      "official_source": "src/api/raw-rest-api/synergia-desctiptive-grades-skills-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-6879918a6b",
+      "function": "getGradesSkills",
+      "official_source": "src/api/raw-rest-api/synergia-desctiptive-text-grades-skills-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-5c816abed6",
+      "function": "getGradesSkillById",
+      "official_source": "src/api/raw-rest-api/synergia-desctiptive-text-grades-skills-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-baf0c796de",
+      "function": "getMultipleGradesSkillById",
+      "official_source": "src/api/raw-rest-api/synergia-desctiptive-text-grades-skills-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-7fe9cb63d4",
+      "function": "getFileTransfersRestrictions",
+      "official_source": "src/api/raw-rest-api/synergia-file-transfers-restrictions-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-97492f741f",
+      "function": "getFrameworkDayPlan",
+      "official_source": "src/api/raw-rest-api/synergia-framework-day-plan-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-2171c78659",
+      "function": "getFrameworkDayPlanById",
+      "official_source": "src/api/raw-rest-api/synergia-framework-day-plan-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-72b8b1f073",
+      "function": "getFrameworkDayPlanByIds",
+      "official_source": "src/api/raw-rest-api/synergia-framework-day-plan-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-1a0cae00a9",
+      "function": "getGradesAverages",
+      "official_source": "src/api/raw-rest-api/synergia-grades-averages-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-16c08b62d7",
+      "function": "getGradeAverageById",
+      "official_source": "src/api/raw-rest-api/synergia-grades-averages-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-f08a8e4c23",
+      "function": "getGradeAverageBySubjectId",
+      "official_source": "src/api/raw-rest-api/synergia-grades-averages-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-d2ecdcb673",
+      "function": "getGradesCategories",
+      "official_source": "src/api/raw-rest-api/synergia-grades-categories-rest.js",
+      "disposition": "existing_related_projection_compare_version_and_parameters",
+      "implementation_task": "H-LIB-02/H-LIB-05",
+      "related_host_surface": "Grade category/weight references",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-105cba8659",
+      "function": "getGradesCategoryById",
+      "official_source": "src/api/raw-rest-api/synergia-grades-categories-rest.js",
+      "disposition": "existing_related_projection_compare_version_and_parameters",
+      "implementation_task": "H-LIB-02/H-LIB-05",
+      "related_host_surface": "Grade category/weight references",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-49ddaadd1a",
+      "function": "getMultipleGradesCategoriesById",
+      "official_source": "src/api/raw-rest-api/synergia-grades-categories-rest.js",
+      "disposition": "existing_related_projection_compare_version_and_parameters",
+      "implementation_task": "H-LIB-02/H-LIB-05",
+      "related_host_surface": "Grade category/weight references",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-c4a16d231d",
+      "function": "getGradesComments",
+      "official_source": "src/api/raw-rest-api/synergia-grades-comments-rest.js",
+      "disposition": "existing_related_projection_compare_version_and_parameters",
+      "implementation_task": "H-LIB-02/H-LIB-05",
+      "related_host_surface": "Grade description references",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-c075f88900",
+      "function": "getGradeCommentById",
+      "official_source": "src/api/raw-rest-api/synergia-grades-comments-rest.js",
+      "disposition": "existing_related_projection_compare_version_and_parameters",
+      "implementation_task": "H-LIB-02/H-LIB-05",
+      "related_host_surface": "Grade description references",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-455ce875b4",
+      "function": "getMultipleGradeCommentById",
+      "official_source": "src/api/raw-rest-api/synergia-grades-comments-rest.js",
+      "disposition": "existing_related_projection_compare_version_and_parameters",
+      "implementation_task": "H-LIB-02/H-LIB-05",
+      "related_host_surface": "Grade description references",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-2ad0dabbef",
+      "function": "getGrades",
+      "official_source": "src/api/raw-rest-api/synergia-grades-rest.js",
+      "disposition": "existing_related_projection_compare_version_and_parameters",
+      "implementation_task": "H-LIB-02/H-LIB-05",
+      "related_host_surface": "Grade / grades UI",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-999ca52c01",
+      "function": "getGradeById",
+      "official_source": "src/api/raw-rest-api/synergia-grades-rest.js",
+      "disposition": "existing_related_projection_compare_version_and_parameters",
+      "implementation_task": "H-LIB-02/H-LIB-05",
+      "related_host_surface": "Grade / grades UI",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-600e467f01",
+      "function": "getGradeByIds",
+      "official_source": "src/api/raw-rest-api/synergia-grades-rest.js",
+      "disposition": "existing_related_projection_compare_version_and_parameters",
+      "implementation_task": "H-LIB-02/H-LIB-05",
+      "related_host_surface": "Grade / grades UI",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-199dc9b5aa",
+      "function": "getStudentIdByParentId",
+      "official_source": "src/api/raw-rest-api/synergia-grades-standard-with-averages-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-94e263bf50",
+      "function": "getGradesStandardWithAverages",
+      "official_source": "src/api/raw-rest-api/synergia-grades-standard-with-averages-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-1c65068e95",
+      "function": "getUserIdentifier",
+      "official_source": "src/api/raw-rest-api/synergia-grades-standard-with-averages-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-690fb689ad",
+      "function": "getHomeworkAssignment",
+      "official_source": "src/api/raw-rest-api/synergia-homework-assignments-rest.js",
+      "disposition": "homework_read_projection_or_new_server_write_review",
+      "implementation_task": "H-LIB-05/H-LIB-07",
+      "related_host_surface": "SchoolEvent homework projection; local HomeworkDoneStore separate from server read/done/answer",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-b61861af33",
+      "function": "getHomeworkAssignmentById",
+      "official_source": "src/api/raw-rest-api/synergia-homework-assignments-rest.js",
+      "disposition": "homework_read_projection_or_new_server_write_review",
+      "implementation_task": "H-LIB-05/H-LIB-07",
+      "related_host_surface": "SchoolEvent homework projection; local HomeworkDoneStore separate from server read/done/answer",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-dd7b129c36",
+      "function": "getHomeworkAssignmentByIds",
+      "official_source": "src/api/raw-rest-api/synergia-homework-assignments-rest.js",
+      "disposition": "homework_read_projection_or_new_server_write_review",
+      "implementation_task": "H-LIB-05/H-LIB-07",
+      "related_host_surface": "SchoolEvent homework projection; local HomeworkDoneStore separate from server read/done/answer",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-5364579332",
+      "function": "getAttachment",
+      "official_source": "src/api/raw-rest-api/synergia-homework-assignments-rest.js",
+      "disposition": "homework_read_projection_or_new_server_write_review",
+      "implementation_task": "H-LIB-05/H-LIB-07",
+      "related_host_surface": "SchoolEvent homework projection; local HomeworkDoneStore separate from server read/done/answer",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-cff39b7eaf",
+      "function": "setHomeworkAssignmentAsRead",
+      "official_source": "src/api/raw-rest-api/synergia-homework-assignments-rest.js",
+      "disposition": "homework_read_projection_or_new_server_write_review",
+      "implementation_task": "H-LIB-05/H-LIB-07",
+      "related_host_surface": "SchoolEvent homework projection; local HomeworkDoneStore separate from server read/done/answer",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-f5d68310b2",
+      "function": "setHomeworkAssignmentAsDone",
+      "official_source": "src/api/raw-rest-api/synergia-homework-assignments-rest.js",
+      "disposition": "homework_read_projection_or_new_server_write_review",
+      "implementation_task": "H-LIB-05/H-LIB-07",
+      "related_host_surface": "SchoolEvent homework projection; local HomeworkDoneStore separate from server read/done/answer",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-5709c24cac",
+      "function": "sendHomeworkAssignmentAnswerAttachment",
+      "official_source": "src/api/raw-rest-api/synergia-homework-assignments-rest.js",
+      "disposition": "homework_read_projection_or_new_server_write_review",
+      "implementation_task": "H-LIB-05/H-LIB-07",
+      "related_host_surface": "SchoolEvent homework projection; local HomeworkDoneStore separate from server read/done/answer",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-578f012a09",
+      "function": "getIndividualLearningPath",
+      "official_source": "src/api/raw-rest-api/synergia-individual-learning-path-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-19d1a8e406",
+      "function": "getIndividualLearningPathById",
+      "official_source": "src/api/raw-rest-api/synergia-individual-learning-path-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-0b1224d9c5",
+      "function": "getIndividualLearningPathByIds",
+      "official_source": "src/api/raw-rest-api/synergia-individual-learning-path-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-620d57fd4a",
+      "function": "getJustifications",
+      "official_source": "src/api/raw-rest-api/synergia-justifications-rest.js",
+      "disposition": "new_typed_attendance_justification_module",
+      "implementation_task": "H-LIB-05/H-LIB-07",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-319044758e",
+      "function": "getJustificationsById",
+      "official_source": "src/api/raw-rest-api/synergia-justifications-rest.js",
+      "disposition": "new_typed_attendance_justification_module",
+      "implementation_task": "H-LIB-05/H-LIB-07",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-32615b9f68",
+      "function": "getJustificationsByIds",
+      "official_source": "src/api/raw-rest-api/synergia-justifications-rest.js",
+      "disposition": "new_typed_attendance_justification_module",
+      "implementation_task": "H-LIB-05/H-LIB-07",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-b6a379281d",
+      "function": "getJustificationsAttachmentAvailableFlag",
+      "official_source": "src/api/raw-rest-api/synergia-justifications-rest.js",
+      "disposition": "new_typed_attendance_justification_module",
+      "implementation_task": "H-LIB-05/H-LIB-07",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-6d1b9b729d",
+      "function": "postJustification",
+      "official_source": "src/api/raw-rest-api/synergia-justifications-rest.js",
+      "disposition": "new_typed_attendance_justification_module",
+      "implementation_task": "H-LIB-05/H-LIB-07",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-19a1862545",
+      "function": "getMultipleClassroomsById",
+      "official_source": "src/api/raw-rest-api/synergia-kindergarten-classrooms-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-7cdbc43382",
+      "function": "getKindergartenGroupById",
+      "official_source": "src/api/raw-rest-api/synergia-kindergartens-groups-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-ba6bf46c5d",
+      "function": "getKindergartenLearningPeriods",
+      "official_source": "src/api/raw-rest-api/synergia-kindergartens-groups-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-fac8c15f0b",
+      "function": "getKindergartenerIdByParentId",
+      "official_source": "src/api/raw-rest-api/synergia-kindergartens-groups-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-045ce1f283",
+      "function": "getKindergartnerActivityTypes",
+      "official_source": "src/api/raw-rest-api/synergia-kindergatens-activity-type-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-12780ec3f9",
+      "function": "getKindergartnersTimetable",
+      "official_source": "src/api/raw-rest-api/synergia-kindergatens-timetables-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-ed52b8c759",
+      "function": "getKindergartnersTimetableByIds",
+      "official_source": "src/api/raw-rest-api/synergia-kindergatens-timetables-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-ff48721bf5",
+      "function": "getLessonAssignments",
+      "official_source": "src/api/raw-rest-api/synergia-lesson-assignments-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-dbaf518c76",
+      "function": "getUserInfo",
+      "official_source": "src/api/raw-rest-api/synergia-lesson-assignments-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-a2bed24219",
+      "function": "getLessons",
+      "official_source": "src/api/raw-rest-api/synergia-lesson-types-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-c0a783fb13",
+      "function": "getLessonsById",
+      "official_source": "src/api/raw-rest-api/synergia-lesson-types-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-ab926d6f3d",
+      "function": "getMultipleLessonsById",
+      "official_source": "src/api/raw-rest-api/synergia-lesson-types-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-8afa616da0",
+      "function": "getLuckyNumbers",
+      "official_source": "src/api/raw-rest-api/synergia-lucky-numbers-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 2
+    },
+    {
+      "operation_id": "LIB-252c8f2b55",
+      "function": "getMenus",
+      "official_source": "src/api/raw-rest-api/synergia-meal-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-64fcd3d003",
+      "function": "getMeals",
+      "official_source": "src/api/raw-rest-api/synergia-meal-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-ffe9454318",
+      "function": "getMealDetailsForDay",
+      "official_source": "src/api/raw-rest-api/synergia-meal-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-8715d4d76c",
+      "function": "getMealUpdates",
+      "official_source": "src/api/raw-rest-api/synergia-meal-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-0644f3d740",
+      "function": "getMealUpdateById",
+      "official_source": "src/api/raw-rest-api/synergia-meal-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-e88d292371",
+      "function": "getMealAccountBalance",
+      "official_source": "src/api/raw-rest-api/synergia-meal-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-2bf1a0743e",
+      "function": "cancelMealOrder",
+      "official_source": "src/api/raw-rest-api/synergia-meal-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-438612d6b6",
+      "function": "checkMealIntegrationStatus",
+      "official_source": "src/api/raw-rest-api/synergia-meal-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-a739622b41",
+      "function": "getMessages",
+      "official_source": "src/api/raw-rest-api/synergia-messages-rest.js",
+      "disposition": "mail_alternate_transport_or_additive_action_review",
+      "implementation_task": "H-LIB-06/H-LIB-07",
+      "related_host_surface": "SchoolMessage summary/detail/send; API2/XML/HTML paths; no current general pin/delete/folder model",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-5f92bcd856",
+      "function": "getMessagesById",
+      "official_source": "src/api/raw-rest-api/synergia-messages-rest.js",
+      "disposition": "mail_alternate_transport_or_additive_action_review",
+      "implementation_task": "H-LIB-06/H-LIB-07",
+      "related_host_surface": "SchoolMessage summary/detail/send; API2/XML/HTML paths; no current general pin/delete/folder model",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-3afe9aa850",
+      "function": "removeMessage",
+      "official_source": "src/api/raw-rest-api/synergia-messages-rest.js",
+      "disposition": "mail_alternate_transport_or_additive_action_review",
+      "implementation_task": "H-LIB-06/H-LIB-07",
+      "related_host_surface": "SchoolMessage summary/detail/send; API2/XML/HTML paths; no current general pin/delete/folder model",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-a129b5ae01",
+      "function": "pinMessage",
+      "official_source": "src/api/raw-rest-api/synergia-messages-rest.js",
+      "disposition": "mail_alternate_transport_or_additive_action_review",
+      "implementation_task": "H-LIB-06/H-LIB-07",
+      "related_host_surface": "SchoolMessage summary/detail/send; API2/XML/HTML paths; no current general pin/delete/folder model",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-8fecffc4b7",
+      "function": "getUnread",
+      "official_source": "src/api/raw-rest-api/synergia-messages-rest.js",
+      "disposition": "mail_alternate_transport_or_additive_action_review",
+      "implementation_task": "H-LIB-06/H-LIB-07",
+      "related_host_surface": "SchoolMessage summary/detail/send; API2/XML/HTML paths; no current general pin/delete/folder model",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-caac9756cd",
+      "function": "getOutOfWorkMessage",
+      "official_source": "src/api/raw-rest-api/synergia-messages-rest.js",
+      "disposition": "mail_alternate_transport_or_additive_action_review",
+      "implementation_task": "H-LIB-06/H-LIB-07",
+      "related_host_surface": "SchoolMessage summary/detail/send; API2/XML/HTML paths; no current general pin/delete/folder model",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-a11ee0128a",
+      "function": "sendNewMessage",
+      "official_source": "src/api/raw-rest-api/synergia-messages-rest.js",
+      "disposition": "mail_alternate_transport_or_additive_action_review",
+      "implementation_task": "H-LIB-06/H-LIB-07",
+      "related_host_surface": "SchoolMessage summary/detail/send; API2/XML/HTML paths; no current general pin/delete/folder model",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-430651b04e",
+      "function": "getAttachment",
+      "official_source": "src/api/raw-rest-api/synergia-messages-rest.js",
+      "disposition": "mail_alternate_transport_or_additive_action_review",
+      "implementation_task": "H-LIB-06/H-LIB-07",
+      "related_host_surface": "SchoolMessage summary/detail/send; API2/XML/HTML paths; no current general pin/delete/folder model",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-fa9d8111bc",
+      "function": "getUsers",
+      "official_source": "src/api/raw-rest-api/synergia-messages-users-rest.js",
+      "disposition": "mail_alternate_transport_or_additive_action_review",
+      "implementation_task": "H-LIB-06/H-LIB-07",
+      "related_host_surface": "SchoolMessage summary/detail/send; API2/XML/HTML paths; no current general pin/delete/folder model",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-03d5fa0782",
+      "function": "getUserById",
+      "official_source": "src/api/raw-rest-api/synergia-messages-users-rest.js",
+      "disposition": "mail_alternate_transport_or_additive_action_review",
+      "implementation_task": "H-LIB-06/H-LIB-07",
+      "related_host_surface": "SchoolMessage summary/detail/send; API2/XML/HTML paths; no current general pin/delete/folder model",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-7530c7009e",
+      "function": "getMultipleUsersById",
+      "official_source": "src/api/raw-rest-api/synergia-messages-users-rest.js",
+      "disposition": "mail_alternate_transport_or_additive_action_review",
+      "implementation_task": "H-LIB-06/H-LIB-07",
+      "related_host_surface": "SchoolMessage summary/detail/send; API2/XML/HTML paths; no current general pin/delete/folder model",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-c7bd3af0c2",
+      "function": "getReceiverGroups",
+      "official_source": "src/api/raw-rest-api/synergia-messages-users-rest.js",
+      "disposition": "mail_alternate_transport_or_additive_action_review",
+      "implementation_task": "H-LIB-06/H-LIB-07",
+      "related_host_surface": "SchoolMessage summary/detail/send; API2/XML/HTML paths; no current general pin/delete/folder model",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-43cdb4b10c",
+      "function": "getReceiverGroupsById",
+      "official_source": "src/api/raw-rest-api/synergia-messages-users-rest.js",
+      "disposition": "mail_alternate_transport_or_additive_action_review",
+      "implementation_task": "H-LIB-06/H-LIB-07",
+      "related_host_surface": "SchoolMessage summary/detail/send; API2/XML/HTML paths; no current general pin/delete/folder model",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-9986391cb8",
+      "function": "getNotesCategories",
+      "official_source": "src/api/raw-rest-api/synergia-notes-categories-rest.js",
+      "disposition": "existing_related_projection_compare_version_and_parameters",
+      "implementation_task": "H-LIB-02/H-LIB-05",
+      "related_host_surface": "StudentNotice category references",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-08e0af28d4",
+      "function": "getNotesCategoriesById",
+      "official_source": "src/api/raw-rest-api/synergia-notes-categories-rest.js",
+      "disposition": "existing_related_projection_compare_version_and_parameters",
+      "implementation_task": "H-LIB-02/H-LIB-05",
+      "related_host_surface": "StudentNotice category references",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-d3b3691925",
+      "function": "getMultipleNotesCategoriesById",
+      "official_source": "src/api/raw-rest-api/synergia-notes-categories-rest.js",
+      "disposition": "existing_related_projection_compare_version_and_parameters",
+      "implementation_task": "H-LIB-02/H-LIB-05",
+      "related_host_surface": "StudentNotice category references",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-83dd76f0e7",
+      "function": "getNotes",
+      "official_source": "src/api/raw-rest-api/synergia-notes-rest.js",
+      "disposition": "existing_related_projection_compare_version_and_parameters",
+      "implementation_task": "H-LIB-02/H-LIB-05",
+      "related_host_surface": "StudentNotice / announcements_notices UI",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-dd0e170e21",
+      "function": "getNotesById",
+      "official_source": "src/api/raw-rest-api/synergia-notes-rest.js",
+      "disposition": "existing_related_projection_compare_version_and_parameters",
+      "implementation_task": "H-LIB-02/H-LIB-05",
+      "related_host_surface": "StudentNotice / announcements_notices UI",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-58ac3f896f",
+      "function": "getNotesByIds",
+      "official_source": "src/api/raw-rest-api/synergia-notes-rest.js",
+      "disposition": "existing_related_projection_compare_version_and_parameters",
+      "implementation_task": "H-LIB-02/H-LIB-05",
+      "related_host_surface": "StudentNotice / announcements_notices UI",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-b88e19d2da",
+      "function": "getOneToOneLearningPlan",
+      "official_source": "src/api/raw-rest-api/synergia-one-to-one-learning-plan-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-348a92b495",
+      "function": "getOneToOneLearningPlanById",
+      "official_source": "src/api/raw-rest-api/synergia-one-to-one-learning-plan-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-96d52a6590",
+      "function": "getOneToOneLearningPlanByIds",
+      "official_source": "src/api/raw-rest-api/synergia-one-to-one-learning-plan-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-af3c538811",
+      "function": "getOtherActivitiesRegister",
+      "official_source": "src/api/raw-rest-api/synergia-other-activities-register-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-6f1b0ff6f0",
+      "function": "getOtherActivitiesRegisterById",
+      "official_source": "src/api/raw-rest-api/synergia-other-activities-register-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-77203218df",
+      "function": "getOtherActivitiesRegisterByIds",
+      "official_source": "src/api/raw-rest-api/synergia-other-activities-register-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-8ed5d76fb4",
+      "function": "getMultipleParentTeacherConferencesById",
+      "official_source": "src/api/raw-rest-api/synergia-parent-teacher-conferences-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-7883bef4f0",
+      "function": "getPartialGradesPage",
+      "official_source": "src/api/raw-rest-api/synergia-partial-descriptive-grades-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-e926ff8d2a",
+      "function": "getStudentIdPhoto",
+      "official_source": "src/api/raw-rest-api/synergia-photos-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-5066559392",
+      "function": "sendStudentIdPhoto",
+      "official_source": "src/api/raw-rest-api/synergia-photos-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-9c3dfbded7",
+      "function": "replaceStudentIdPhoto",
+      "official_source": "src/api/raw-rest-api/synergia-photos-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-372c6a0b60",
+      "function": "requestPhotoRemoval",
+      "official_source": "src/api/raw-rest-api/synergia-photos-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-934f97ab15",
+      "function": "getPlannedLessons",
+      "official_source": "src/api/raw-rest-api/synergia-planned-lessons-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-7d61fc7d9d",
+      "function": "getPlannedLessonsById",
+      "official_source": "src/api/raw-rest-api/synergia-planned-lessons-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-ee7f14e1ab",
+      "function": "getMultiplePlannedLessonsById",
+      "official_source": "src/api/raw-rest-api/synergia-planned-lessons-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-5e5d225e8e",
+      "function": "getAttachment",
+      "official_source": "src/api/raw-rest-api/synergia-planned-lessons-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-c61ae7d349",
+      "function": "getGradesAverages",
+      "official_source": "src/api/raw-rest-api/synergia-point-grades-averages-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-ee29727eb1",
+      "function": "getGradeAverageById",
+      "official_source": "src/api/raw-rest-api/synergia-point-grades-averages-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-ad6f28ff2d",
+      "function": "getGradeAverageBySubjectId",
+      "official_source": "src/api/raw-rest-api/synergia-point-grades-averages-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-3196924a96",
+      "function": "getGradesCategories",
+      "official_source": "src/api/raw-rest-api/synergia-point-grades-categories-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-d0e0a1d3ec",
+      "function": "getGradesCategoryById",
+      "official_source": "src/api/raw-rest-api/synergia-point-grades-categories-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-7febf1e191",
+      "function": "getMultipleGradesCategoriesById",
+      "official_source": "src/api/raw-rest-api/synergia-point-grades-categories-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-e37e67ad65",
+      "function": "getGradesComments",
+      "official_source": "src/api/raw-rest-api/synergia-point-grades-comments-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-ba3519aa83",
+      "function": "getGradeCommentById",
+      "official_source": "src/api/raw-rest-api/synergia-point-grades-comments-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-dee5f2fc7b",
+      "function": "getMultipleGradeCommentById",
+      "official_source": "src/api/raw-rest-api/synergia-point-grades-comments-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-2eeae2ef51",
+      "function": "getGrades",
+      "official_source": "src/api/raw-rest-api/synergia-point-grades-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-d09cc00881",
+      "function": "getGradeById",
+      "official_source": "src/api/raw-rest-api/synergia-point-grades-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-d440edc91f",
+      "function": "getGradeByIds",
+      "official_source": "src/api/raw-rest-api/synergia-point-grades-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-eac2778dec",
+      "function": "getPushConfiguration",
+      "official_source": "src/api/raw-rest-api/synergia-push-configuration-rest.js",
+      "disposition": "remote_push_service_not_equivalent_to_local_poll_notifications",
+      "implementation_task": "H-LIB-01/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 2
+    },
+    {
+      "operation_id": "LIB-89de2fe3a5",
+      "function": "sendPushConfiguration",
+      "official_source": "src/api/raw-rest-api/synergia-push-configuration-rest.js",
+      "disposition": "remote_push_service_not_equivalent_to_local_poll_notifications",
+      "implementation_task": "H-LIB-01/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-094daeadad",
+      "function": "updatePushConfiguration",
+      "official_source": "src/api/raw-rest-api/synergia-push-configuration-rest.js",
+      "disposition": "remote_push_service_not_equivalent_to_local_poll_notifications",
+      "implementation_task": "H-LIB-01/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-d59573e164",
+      "function": "deletePushConfiguration",
+      "official_source": "src/api/raw-rest-api/synergia-push-configuration-rest.js",
+      "disposition": "remote_push_service_not_equivalent_to_local_poll_notifications",
+      "implementation_task": "H-LIB-01/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-e4bf8c2c02",
+      "function": "getRealizedLessons",
+      "official_source": "src/api/raw-rest-api/synergia-realized-lessons-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-9e7d31cbd3",
+      "function": "getRealizedLessonsById",
+      "official_source": "src/api/raw-rest-api/synergia-realized-lessons-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-8e36801937",
+      "function": "getMultipleRealizedLessonsById",
+      "official_source": "src/api/raw-rest-api/synergia-realized-lessons-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-e47afdfaf4",
+      "function": "getSchoolFreeDays",
+      "official_source": "src/api/raw-rest-api/synergia-schools-free-days-rest.js",
+      "disposition": "existing_related_projection_compare_version_and_parameters",
+      "implementation_task": "H-LIB-02/H-LIB-05",
+      "related_host_surface": "FreeDay / free_days UI",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-bef4b405a3",
+      "function": "getSchoolFreeDaysById",
+      "official_source": "src/api/raw-rest-api/synergia-schools-free-days-rest.js",
+      "disposition": "existing_related_projection_compare_version_and_parameters",
+      "implementation_task": "H-LIB-02/H-LIB-05",
+      "related_host_surface": "FreeDay / free_days UI",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-32721eb542",
+      "function": "getMultipleSchoolFreeDaysById",
+      "official_source": "src/api/raw-rest-api/synergia-schools-free-days-rest.js",
+      "disposition": "existing_related_projection_compare_version_and_parameters",
+      "implementation_task": "H-LIB-02/H-LIB-05",
+      "related_host_surface": "FreeDay / free_days UI",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-63f67f9a0c",
+      "function": "getSchools",
+      "official_source": "src/api/raw-rest-api/synergia-schools-rest.js",
+      "disposition": "existing_related_projection_compare_version_and_parameters",
+      "implementation_task": "H-LIB-02/H-LIB-05",
+      "related_host_surface": "StudentProfile.school",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-3e0a2ef89d",
+      "function": "getSchoolById",
+      "official_source": "src/api/raw-rest-api/synergia-schools-rest.js",
+      "disposition": "existing_related_projection_compare_version_and_parameters",
+      "implementation_task": "H-LIB-02/H-LIB-05",
+      "related_host_surface": "StudentProfile.school",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-9a69e57642",
+      "function": "getSubjects",
+      "official_source": "src/api/raw-rest-api/synergia-subjects-rest.js",
+      "disposition": "existing_related_projection_compare_version_and_parameters",
+      "implementation_task": "H-LIB-02/H-LIB-05",
+      "related_host_surface": "Subject display references",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-42b75fe518",
+      "function": "getSubjectById",
+      "official_source": "src/api/raw-rest-api/synergia-subjects-rest.js",
+      "disposition": "existing_related_projection_compare_version_and_parameters",
+      "implementation_task": "H-LIB-02/H-LIB-05",
+      "related_host_surface": "Subject display references",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-049eeaf90b",
+      "function": "getMultipleSubjectById",
+      "official_source": "src/api/raw-rest-api/synergia-subjects-rest.js",
+      "disposition": "existing_related_projection_compare_version_and_parameters",
+      "implementation_task": "H-LIB-02/H-LIB-05",
+      "related_host_surface": "Subject display references",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-e377fa7990",
+      "function": "getSubstitutions",
+      "official_source": "src/api/raw-rest-api/synergia-substitusions-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-0c5ced501f",
+      "function": "getSubstitutionsById",
+      "official_source": "src/api/raw-rest-api/synergia-substitusions-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-aeb3e0f923",
+      "function": "getMultipleSubstitutionsById",
+      "official_source": "src/api/raw-rest-api/synergia-substitusions-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-5ff16111f4",
+      "function": "getTeacherFreeDays",
+      "official_source": "src/api/raw-rest-api/synergia-teacher-free-days-rest.js",
+      "disposition": "existing_related_projection_compare_version_and_parameters",
+      "implementation_task": "H-LIB-02/H-LIB-05",
+      "related_host_surface": "FreeDay teacher absence",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-12af11af87",
+      "function": "getTeacherFreeDaysById",
+      "official_source": "src/api/raw-rest-api/synergia-teacher-free-days-rest.js",
+      "disposition": "existing_related_projection_compare_version_and_parameters",
+      "implementation_task": "H-LIB-02/H-LIB-05",
+      "related_host_surface": "FreeDay teacher absence",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-611b4d8f8b",
+      "function": "getMultipleTeacherFreeDaysById",
+      "official_source": "src/api/raw-rest-api/synergia-teacher-free-days-rest.js",
+      "disposition": "existing_related_projection_compare_version_and_parameters",
+      "implementation_task": "H-LIB-02/H-LIB-05",
+      "related_host_surface": "FreeDay teacher absence",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-fd46c14ae1",
+      "function": "getGrades",
+      "official_source": "src/api/raw-rest-api/synergia-text-grades-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-56d24f258f",
+      "function": "getGradeById",
+      "official_source": "src/api/raw-rest-api/synergia-text-grades-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-daa16d4b48",
+      "function": "getGradeByIds",
+      "official_source": "src/api/raw-rest-api/synergia-text-grades-rest.js",
+      "disposition": "additional_grade_system_requires_source_preserving_model",
+      "implementation_task": "H-LIB-05",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-b7e302355d",
+      "function": "getTimetables",
+      "official_source": "src/api/raw-rest-api/synergia-timetables-rest.js",
+      "disposition": "existing_related_projection_compare_version_and_parameters",
+      "implementation_task": "H-LIB-02/H-LIB-05",
+      "related_host_surface": "Lesson / timetable UI",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-82df41da87",
+      "function": "getTimetablesByDate",
+      "official_source": "src/api/raw-rest-api/synergia-timetables-rest.js",
+      "disposition": "existing_related_projection_compare_version_and_parameters",
+      "implementation_task": "H-LIB-02/H-LIB-05",
+      "related_host_surface": "Lesson / timetable UI",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-824da08372",
+      "function": "getTimetablesFromSingleDay",
+      "official_source": "src/api/raw-rest-api/synergia-timetables-rest.js",
+      "disposition": "existing_related_projection_compare_version_and_parameters",
+      "implementation_task": "H-LIB-02/H-LIB-05",
+      "related_host_surface": "Lesson / timetable UI",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-45032b3d90",
+      "function": "getTimetableEntryById",
+      "official_source": "src/api/raw-rest-api/synergia-timetables-rest.js",
+      "disposition": "existing_related_projection_compare_version_and_parameters",
+      "implementation_task": "H-LIB-02/H-LIB-05",
+      "related_host_surface": "Lesson / timetable UI",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-5125a620ba",
+      "function": "getTimetableEntryByIds",
+      "official_source": "src/api/raw-rest-api/synergia-timetables-rest.js",
+      "disposition": "existing_related_projection_compare_version_and_parameters",
+      "implementation_task": "H-LIB-02/H-LIB-05",
+      "related_host_surface": "Lesson / timetable UI",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-dd28ecd151",
+      "function": "getUsers",
+      "official_source": "src/api/raw-rest-api/synergia-users-rest.js",
+      "disposition": "existing_related_projection_compare_version_and_parameters",
+      "implementation_task": "H-LIB-02/H-LIB-05",
+      "related_host_surface": "Teacher/author/recipient references",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-518209a9c4",
+      "function": "getUserById",
+      "official_source": "src/api/raw-rest-api/synergia-users-rest.js",
+      "disposition": "existing_related_projection_compare_version_and_parameters",
+      "implementation_task": "H-LIB-02/H-LIB-05",
+      "related_host_surface": "Teacher/author/recipient references",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-50c94d0714",
+      "function": "getMultipleUsersById",
+      "official_source": "src/api/raw-rest-api/synergia-users-rest.js",
+      "disposition": "existing_related_projection_compare_version_and_parameters",
+      "implementation_task": "H-LIB-02/H-LIB-05",
+      "related_host_surface": "Teacher/author/recipient references",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-85717a6fcb",
+      "function": "getMultipleUsersByUuid",
+      "official_source": "src/api/raw-rest-api/synergia-users-rest.js",
+      "disposition": "existing_related_projection_compare_version_and_parameters",
+      "implementation_task": "H-LIB-02/H-LIB-05",
+      "related_host_surface": "Teacher/author/recipient references",
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-48233752ea",
+      "function": "getVirtualClasses",
+      "official_source": "src/api/raw-rest-api/synergia-virtual-classes-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-8639c65a32",
+      "function": "getVirtualClassesById",
+      "official_source": "src/api/raw-rest-api/synergia-virtual-classes-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-165548cb61",
+      "function": "getMultipleVirtualClassesById",
+      "official_source": "src/api/raw-rest-api/synergia-virtual-classes-rest.js",
+      "disposition": "additional_diary_module_requires_typed_capability_review",
+      "implementation_task": "H-LIB-01/H-LIB-05/H-LIB-08",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-dec179e0b3",
+      "function": "getMe",
+      "official_source": "src/api/synergia-rest.js",
+      "disposition": "service_or_account_infrastructure_compare_owner_auth",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-04",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-246604c570",
+      "function": "getSystemData",
+      "official_source": "src/api/synergia-rest.js",
+      "disposition": "service_or_account_infrastructure_compare_owner_auth",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-04",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-2722c97829",
+      "function": "getNotificationCenter",
+      "official_source": "src/api/synergia-rest.js",
+      "disposition": "service_or_account_infrastructure_compare_owner_auth",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-04",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    },
+    {
+      "operation_id": "LIB-64ef561254",
+      "function": "getAutologinToken",
+      "official_source": "src/api/synergia-rest.js",
+      "disposition": "service_or_account_infrastructure_compare_owner_auth",
+      "implementation_task": "H-LIB-01/H-LIB-03/H-LIB-04",
+      "related_host_surface": null,
+      "compatibility": "not established by this triage; compare exact builder and decoder, selected axios owner, role and live policy",
+      "request_count": 1
+    }
+  ]
+}

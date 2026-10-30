@@ -1,0 +1,304 @@
+{
+  "inputs": [
+    {
+      "filename": "pl.librus.synergiaDru2.apk",
+      "size": 27719172,
+      "sha256": "b99a5d84b57947ccb78637038abe7c47b04f3c294e3d9f3383fc3f0d66b1609b"
+    },
+    {
+      "filename": "Librus.ipa",
+      "size": 14424768,
+      "sha256": "9929925792b64f6a17fe4bf4998f1d1c382f3977d6ace1f046349a91d1ee39f5"
+    }
+  ],
+  "ios_bundle": {
+    "CFBundleIdentifier": "pl.librus.synergiaDru",
+    "CFBundleShortVersionString": "8.4.1",
+    "CFBundleVersion": "6487",
+    "CFBundleExecutable": "Librus",
+    "MinimumOSVersion": "15.0",
+    "CFBundleURLTypes": [
+      {
+        "CFBundleURLSchemes": [
+          "librus"
+        ]
+      },
+      {
+        "CFBundleURLSchemes": [
+          "app"
+        ]
+      },
+      {
+        "CFBundleTypeRole": "Editor",
+        "CFBundleURLSchemes": [
+          "app-1-924698418710-ios-40a4d000d4e2626f",
+          "app-1-513056078587-ios-40a4d000d4e2626f"
+        ]
+      }
+    ]
+  },
+  "ios_executable": {
+    "sha256": "fa96139ebd8d85fb563008bdc1f9c96caa9795ef056664b4c5e8b2c9136817bd",
+    "size": 4295232,
+    "encryption_commands": [
+      {
+        "command": "LC_ENCRYPTION_INFO_64",
+        "load_command_file_offset": 5136,
+        "cryptoff": 16384,
+        "cryptsize": 3358720,
+        "cryptid": 0
+      }
+    ]
+  },
+  "ios_main_bundle": {
+    "path": "static\\js\\app.2d1e7947b1442a92cb06.js",
+    "sha256": "aec1fd2375f68c6c86e8e84fbfea79045954e9cb64453f53abe091920a311c0b"
+  },
+  "packaged_environment": [
+    {
+      "key": "redirectUrl",
+      "occurrences": [
+        {
+          "utf8_byte_offset": 227660,
+          "value_expression": "\"app://librus\""
+        },
+        {
+          "utf8_byte_offset": 228797,
+          "value_expression": "\"app://librus\""
+        },
+        {
+          "utf8_byte_offset": 995316,
+          "value_expression": "\"app://librus\""
+        },
+        {
+          "utf8_byte_offset": 996133,
+          "value_expression": "\"app://librus\""
+        },
+        {
+          "utf8_byte_offset": 996943,
+          "value_expression": "\"app://librus\""
+        },
+        {
+          "utf8_byte_offset": 997758,
+          "value_expression": "\"app://librus\""
+        }
+      ]
+    },
+    {
+      "key": "librusEndpoint",
+      "occurrences": [
+        {
+          "utf8_byte_offset": 227687,
+          "value_expression": "\"https://portal.librus.pl\""
+        },
+        {
+          "utf8_byte_offset": 228824,
+          "value_expression": "\"https://portal.librus.pl\""
+        },
+        {
+          "utf8_byte_offset": 995343,
+          "value_expression": "\"https://portal.librus.pl\""
+        },
+        {
+          "utf8_byte_offset": 996160,
+          "value_expression": "\"https://portal.librus.pl\""
+        },
+        {
+          "utf8_byte_offset": 996970,
+          "value_expression": "\"https://portal.librus.pl\""
+        },
+        {
+          "utf8_byte_offset": 997785,
+          "value_expression": "\"https://portal.librus.pl\""
+        }
+      ]
+    },
+    {
+      "key": "librusEndpointApiVersion",
+      "occurrences": [
+        {
+          "utf8_byte_offset": 227729,
+          "value_expression": "\"/api/v3\""
+        },
+        {
+          "utf8_byte_offset": 228866,
+          "value_expression": "\"/api/v3\""
+        },
+        {
+          "utf8_byte_offset": 995385,
+          "value_expression": "\"/api/v3\""
+        },
+        {
+          "utf8_byte_offset": 996202,
+          "value_expression": "\"/api/v3\""
+        },
+        {
+          "utf8_byte_offset": 997012,
+          "value_expression": "\"/api/v3\""
+        },
+        {
+          "utf8_byte_offset": 997827,
+          "value_expression": "\"/api/v3\""
+        }
+      ]
+    },
+    {
+      "key": "gatewayEndpoint",
+      "occurrences": [
+        {
+          "utf8_byte_offset": 227810,
+          "value_expression": "\"https://personalschedule.librus.pl\""
+        },
+        {
+          "utf8_byte_offset": 228947,
+          "value_expression": "\"https://personalschedule.librus.pl\""
+        },
+        {
+          "utf8_byte_offset": 995466,
+          "value_expression": "\"https://personalschedule.librus.pl\""
+        },
+        {
+          "utf8_byte_offset": 996283,
+          "value_expression": "\"https://personalschedule.librus.pl\""
+        },
+        {
+          "utf8_byte_offset": 997093,
+          "value_expression": "\"https://personalschedule.librus.pl\""
+        },
+        {
+          "utf8_byte_offset": 997908,
+          "value_expression": "\"https://personalschedule.librus.pl\""
+        }
+      ]
+    },
+    {
+      "key": "synergiaEndpoint",
+      "occurrences": [
+        {
+          "utf8_byte_offset": 227863,
+          "value_expression": "\"https://api.librus.pl\""
+        },
+        {
+          "utf8_byte_offset": 229000,
+          "value_expression": "\"https://api.librus.pl\""
+        },
+        {
+          "utf8_byte_offset": 995519,
+          "value_expression": "\"https://api.librus.pl\""
+        },
+        {
+          "utf8_byte_offset": 996336,
+          "value_expression": "\"https://api.librus.pl\""
+        },
+        {
+          "utf8_byte_offset": 997146,
+          "value_expression": "\"https://api.librus.pl\""
+        },
+        {
+          "utf8_byte_offset": 997961,
+          "value_expression": "\"https://api.librus.pl\""
+        }
+      ]
+    },
+    {
+      "key": "synergiaNotifyCenter",
+      "occurrences": [
+        {
+          "utf8_byte_offset": 227904,
+          "value_expression": "\"https://synergia.librus.pl\""
+        },
+        {
+          "utf8_byte_offset": 229041,
+          "value_expression": "\"https://synergia.librus.pl\""
+        },
+        {
+          "utf8_byte_offset": 995560,
+          "value_expression": "\"https://synergia.librus.pl\""
+        },
+        {
+          "utf8_byte_offset": 996377,
+          "value_expression": "\"https://synergia.librus.pl\""
+        },
+        {
+          "utf8_byte_offset": 997187,
+          "value_expression": "\"https://synergia.librus.pl\""
+        },
+        {
+          "utf8_byte_offset": 998002,
+          "value_expression": "\"https://synergia.librus.pl\""
+        }
+      ]
+    },
+    {
+      "key": "synergiaGatewayEndpoint",
+      "occurrences": []
+    },
+    {
+      "key": "librusGoEndpoint",
+      "occurrences": [
+        {
+          "utf8_byte_offset": 227999,
+          "value_expression": "\"https://librusgo.pl/api\""
+        },
+        {
+          "utf8_byte_offset": 229136,
+          "value_expression": "\"https://librusgo.pl/api\""
+        },
+        {
+          "utf8_byte_offset": 995655,
+          "value_expression": "\"https://librusgo.pl/api\""
+        },
+        {
+          "utf8_byte_offset": 996472,
+          "value_expression": "\"https://librusgo.pl/api\""
+        },
+        {
+          "utf8_byte_offset": 997282,
+          "value_expression": "\"https://librusgo.pl/api\""
+        },
+        {
+          "utf8_byte_offset": 998097,
+          "value_expression": "\"https://librusgo.pl/api\""
+        }
+      ]
+    },
+    {
+      "key": "refreshTime",
+      "occurrences": [
+        {
+          "utf8_byte_offset": 228079,
+          "value_expression": "180"
+        },
+        {
+          "utf8_byte_offset": 229216,
+          "value_expression": "180"
+        },
+        {
+          "utf8_byte_offset": 995735,
+          "value_expression": "180"
+        },
+        {
+          "utf8_byte_offset": 996552,
+          "value_expression": "180"
+        },
+        {
+          "utf8_byte_offset": 997362,
+          "value_expression": "180"
+        },
+        {
+          "utf8_byte_offset": 998177,
+          "value_expression": "180"
+        }
+      ]
+    }
+  ],
+  "evidence": {
+    "archive_inventory": "ev_f18efbf8550ee0eeedfd5a1fbefd47564bec2d8289c1d465994b46d821f448db",
+    "archive_extraction": "ev_e02d4b05441d5f5b5866e1345743fbd07fa09298f8f969d8d1059f6b7d627813"
+  },
+  "limits": [
+    "Static artifact inspection only. No original app execution or authenticated backend requests.",
+    "Environment values are compiled artifact facts, not independently confirmed current service availability.",
+    "Offsets use UTF8 bytes in original compiled JavaScript, not Python character positions."
+  ]
+}

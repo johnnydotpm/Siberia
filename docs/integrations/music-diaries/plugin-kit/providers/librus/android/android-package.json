@@ -1,0 +1,285 @@
+{
+  "schema_version": 1,
+  "apk_sha256": "b99a5d84b57947ccb78637038abe7c47b04f3c294e3d9f3383fc3f0d66b1609b",
+  "identity": {
+    "package_name": "pl.librus.synergiaDru2",
+    "version_name": "8.4.1",
+    "version_code": "64872",
+    "min_sdk": "26",
+    "target_sdk": "36",
+    "class_count": 8085,
+    "resource_count": 1425,
+    "permissions": [
+      "android.permission.INTERNET",
+      "android.permission.WRITE_EXTERNAL_STORAGE",
+      "android.permission.ACCESS_NETWORK_STATE",
+      "android.permission.WAKE_LOCK",
+      "android.permission.POST_NOTIFICATIONS",
+      "android.permission.READ_PHONE_STATE",
+      "com.android.vending.BILLING",
+      "android.permission.VIBRATE",
+      "pl.librus.synergiaDru2.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION",
+      "com.google.android.c2dm.permission.RECEIVE",
+      "com.google.android.gms.permission.AD_ID",
+      "android.permission.ACCESS_ADSERVICES_ATTRIBUTION",
+      "android.permission.ACCESS_ADSERVICES_AD_ID",
+      "com.google.android.finsky.permission.BIND_GET_INSTALL_REFERRER_SERVICE"
+    ]
+  },
+  "evidence_id": "ev_1a0a194cff866b904259633374f27e3047749bcee22362128451fe6a8558d2eb",
+  "evidence_type": "REA inspect_android_package shipped-artifact observed; signatures not verified",
+  "manifest_flags": {
+    "requiredSplitTypes": "base__abi,base__density",
+    "splitTypes": "",
+    "allowBackup": "false",
+    "usesCleartextTraffic": null,
+    "networkSecurityConfig": "@xml/network_security_config"
+  },
+  "components": [
+    {
+      "type": "activity",
+      "name": "pl.librus.synergiaDru2.MainActivity",
+      "exported": "true",
+      "authorities": null,
+      "intent_actions": [
+        "android.intent.action.MAIN",
+        "android.intent.action.VIEW",
+        "android.intent.action.VIEW",
+        "android.intent.action.VIEW"
+      ],
+      "schemes": [
+        "librus",
+        "app",
+        " "
+      ]
+    },
+    {
+      "type": "activity",
+      "name": "org.apache.cordova.firebasex.OnNotificationReceiverActivity",
+      "exported": "true",
+      "authorities": null,
+      "intent_actions": [],
+      "schemes": []
+    },
+    {
+      "type": "activity",
+      "name": "com.android.billingclient.api.ProxyBillingActivity",
+      "exported": "false",
+      "authorities": null,
+      "intent_actions": [],
+      "schemes": []
+    },
+    {
+      "type": "activity",
+      "name": "com.android.billingclient.api.ProxyBillingActivityV2",
+      "exported": "false",
+      "authorities": null,
+      "intent_actions": [],
+      "schemes": []
+    },
+    {
+      "type": "activity",
+      "name": "com.google.android.gms.tagmanager.TagManagerPreviewActivity",
+      "exported": "true",
+      "authorities": null,
+      "intent_actions": [
+        "android.intent.action.VIEW"
+      ],
+      "schemes": [
+        "tagmanager.c.pl.librus.synergiaDru2"
+      ]
+    },
+    {
+      "type": "activity",
+      "name": "com.google.android.gms.common.api.GoogleApiActivity",
+      "exported": "false",
+      "authorities": null,
+      "intent_actions": [],
+      "schemes": []
+    },
+    {
+      "type": "service",
+      "name": "com.google.android.gms.measurement.AppMeasurementService",
+      "exported": "false",
+      "authorities": null,
+      "intent_actions": [],
+      "schemes": []
+    },
+    {
+      "type": "service",
+      "name": "org.apache.cordova.firebasex.FirebasexMessagingService",
+      "exported": "false",
+      "authorities": null,
+      "intent_actions": [
+        "com.google.firebase.MESSAGING_EVENT"
+      ],
+      "schemes": []
+    },
+    {
+      "type": "service",
+      "name": "com.google.firebase.components.ComponentDiscoveryService",
+      "exported": "false",
+      "authorities": null,
+      "intent_actions": [],
+      "schemes": []
+    },
+    {
+      "type": "service",
+      "name": "com.google.firebase.messaging.FirebaseMessagingService",
+      "exported": "false",
+      "authorities": null,
+      "intent_actions": [
+        "com.google.firebase.MESSAGING_EVENT"
+      ],
+      "schemes": []
+    },
+    {
+      "type": "service",
+      "name": "com.google.android.gms.tagmanager.TagManagerService",
+      "exported": "false",
+      "authorities": null,
+      "intent_actions": [],
+      "schemes": []
+    },
+    {
+      "type": "service",
+      "name": "com.google.firebase.sessions.SessionLifecycleService",
+      "exported": "false",
+      "authorities": null,
+      "intent_actions": [],
+      "schemes": []
+    },
+    {
+      "type": "service",
+      "name": "com.google.android.gms.measurement.AppMeasurementJobService",
+      "exported": "false",
+      "authorities": null,
+      "intent_actions": [],
+      "schemes": []
+    },
+    {
+      "type": "service",
+      "name": "com.google.android.datatransport.runtime.backends.TransportBackendDiscovery",
+      "exported": "false",
+      "authorities": null,
+      "intent_actions": [],
+      "schemes": []
+    },
+    {
+      "type": "service",
+      "name": "com.google.android.datatransport.runtime.scheduling.jobscheduling.JobInfoSchedulerService",
+      "exported": "false",
+      "authorities": null,
+      "intent_actions": [],
+      "schemes": []
+    },
+    {
+      "type": "receiver",
+      "name": "org.apache.cordova.firebasex.OnNotificationOpenReceiver",
+      "exported": null,
+      "authorities": null,
+      "intent_actions": [],
+      "schemes": []
+    },
+    {
+      "type": "receiver",
+      "name": "com.google.firebase.iid.FirebaseInstanceIdReceiver",
+      "exported": "true",
+      "authorities": null,
+      "intent_actions": [
+        "com.google.android.c2dm.intent.RECEIVE"
+      ],
+      "schemes": []
+    },
+    {
+      "type": "receiver",
+      "name": "com.google.android.gms.measurement.AppMeasurementReceiver",
+      "exported": "false",
+      "authorities": null,
+      "intent_actions": [],
+      "schemes": []
+    },
+    {
+      "type": "receiver",
+      "name": "androidx.profileinstaller.ProfileInstallReceiver",
+      "exported": "true",
+      "authorities": null,
+      "intent_actions": [
+        "androidx.profileinstaller.action.INSTALL_PROFILE",
+        "androidx.profileinstaller.action.SKIP_FILE",
+        "androidx.profileinstaller.action.SAVE_PROFILE",
+        "androidx.profileinstaller.action.BENCHMARK_OPERATION"
+      ],
+      "schemes": []
+    },
+    {
+      "type": "receiver",
+      "name": "com.google.android.datatransport.runtime.scheduling.jobscheduling.AlarmManagerSchedulerBroadcastReceiver",
+      "exported": "false",
+      "authorities": null,
+      "intent_actions": [],
+      "schemes": []
+    },
+    {
+      "type": "provider",
+      "name": "androidx.core.content.FileProvider",
+      "exported": "false",
+      "authorities": "pl.librus.synergiaDru2.cdv.core.file.provider",
+      "intent_actions": [],
+      "schemes": []
+    },
+    {
+      "type": "provider",
+      "name": "org.apache.cordova.camera.FileProvider",
+      "exported": "false",
+      "authorities": "pl.librus.synergiaDru2.cordova.plugin.camera.provider",
+      "intent_actions": [],
+      "schemes": []
+    },
+    {
+      "type": "provider",
+      "name": "com.google.firebase.provider.FirebaseInitProvider",
+      "exported": "false",
+      "authorities": "pl.librus.synergiaDru2.firebaseinitprovider",
+      "intent_actions": [],
+      "schemes": []
+    },
+    {
+      "type": "provider",
+      "name": "androidx.startup.InitializationProvider",
+      "exported": "false",
+      "authorities": "pl.librus.synergiaDru2.androidx-startup",
+      "intent_actions": [],
+      "schemes": []
+    }
+  ],
+  "cordova_plugins": {
+    "cordova-clipboard": "1.3.0",
+    "cordova-plugin-appavailability": "0.4.2",
+    "cordova-plugin-camera": "7.0.1-dev",
+    "cordova-plugin-customurlscheme": "5.0.2",
+    "cordova-plugin-device": "2.1.0",
+    "cordova-plugin-file": "8.1.3",
+    "cordova-plugin-firebasex-core": "2.0.1",
+    "cordova-plugin-firebasex-analytics": "2.0.2",
+    "cordova-plugin-firebasex-crashlytics": "2.0.2",
+    "cordova-plugin-firebasex-messaging": "2.0.3",
+    "cordova-plugin-inappbrowser": "7.0.0",
+    "cordova-plugin-ionic-keyboard": "2.2.0",
+    "cordova-plugin-migrate-localstorage": "0.0.2",
+    "cordova-plugin-nativestorage": "2.3.2",
+    "cordova-plugin-network-information": "2.0.2",
+    "cordova-plugin-purchase": "13.17.2",
+    "cordova-plugin-safariviewcontroller": "2.0.0",
+    "cordova-plugin-statusbar": "4.0.0-dev",
+    "cordova-plugin-theme-detection": "1.3.0",
+    "cordova-plugin-vibration": "3.1.1",
+    "phonegap-plugin-mobile-accessibility": "1.0.5-dev"
+  },
+  "limits": [
+    "Supplied archive is base APK and declares required ABI/density splits; runtime installability is not demonstrated.",
+    "No original app was executed; no production network calls.",
+    "Most Java classes belong to Cordova/third-party SDKs. Diary code is shipped JavaScript with sourcesContent.",
+    "JADX1.5.6 bulk pass reported107decompilation errors; relevant methods require focused REA/bytecode checks where needed."
+  ]
+}

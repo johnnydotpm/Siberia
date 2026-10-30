@@ -1,0 +1,44 @@
+{
+  "status": "passed",
+  "scope": "Offline source-map/metadata/documentation consistency; no app execution or server calls",
+  "feature_rows": 195,
+  "original_vue_components": 308,
+  "source_content_reference_checks": 1405,
+  "cross_platform_shared_app_source_content_equal": 1331,
+  "native_REA_evidence": [
+    {
+      "operation": "inspect_android_package",
+      "evidence_id": "ev_1a0a194cff866b904259633374f27e3047749bcee22362128451fe6a8558d2eb",
+      "confidence": "observed",
+      "limitations": [
+        "Static decompiler observations do not establish runtime behavior; the APK is never executed.",
+        "Method signatures use provider display types; exact DEX descriptors and instruction offsets are unavailable. Overload indices are local to this engine and artifact.",
+        "Class inventories use parsed metadata before code generation, including synthetic members that may be omitted from decompiled source. Source positions remain unknown.",
+        "Manifest summary fields are extracted by the upstream engine; decoded XML is retained for verification. APK signatures, split APKs, native libraries and Android runtime capture are not verified by this provider."
+      ]
+    },
+    {
+      "operation": "inspect_android_method",
+      "evidence_id": "ev_6e4231e14576a08494245480cd942e4d963a8710eb84a19d485f5fffb3006b33",
+      "confidence": "derived",
+      "limitations": [
+        "Static decompiler observations do not establish runtime behavior; the APK is never executed.",
+        "Method signatures use provider display types; exact DEX descriptors and instruction offsets are unavailable. Overload indices are local to this engine and artifact.",
+        "Class inventories use parsed metadata before code generation, including synthetic members that may be omitted from decompiled source. Source positions remain unknown.",
+        "Manifest summary fields are extracted by the upstream engine; decoded XML is retained for verification. APK signatures, split APKs, native libraries and Android runtime capture are not verified by this provider."
+      ]
+    },
+    {
+      "operation": "inspect_android_method",
+      "evidence_id": "ev_19607e4b56f26a4a04412baf596a36f75bb8fed87463a63fecb527960186acd6",
+      "confidence": "derived",
+      "limitations": [
+        "Static decompiler observations do not establish runtime behavior; the APK is never executed.",
+        "Method signatures use provider display types; exact DEX descriptors and instruction offsets are unavailable. Overload indices are local to this engine and artifact.",
+        "Class inventories use parsed metadata before code generation, including synthetic members that may be omitted from decompiled source. Source positions remain unknown.",
+        "Manifest summary fields are extracted by the upstream engine; decoded XML is retained for verification. APK signatures, split APKs, native libraries and Android runtime capture are not verified by this provider."
+      ]
+    }
+  ],
+  "issues": []
+}

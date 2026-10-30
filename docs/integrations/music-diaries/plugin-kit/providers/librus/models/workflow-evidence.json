@@ -1,0 +1,212 @@
+{
+  "scope": "iOS8.4.1 sourcesContent static evidence; source strings read without executing app",
+  "source_records": [
+    {
+      "source_path": "src/pages/main-pages/messages-page/components/SendMessageView.vue",
+      "source_name": "webpack://librus/src/pages/main-pages/messages-page/components/SendMessageView.vue",
+      "map_path": "static\\js\\app.2d1e7947b1442a92cb06.js.map",
+      "source_index": 1130,
+      "source_content_sha256": "48c954be990566fa619565f9d3d1eefa4b29d0f73d1b7d9f0450932922d85c31",
+      "anchor": "sendMessage() {",
+      "line": 190
+    },
+    {
+      "source_path": "src/pages/main-pages/messages-page/librus-go/SendMessageLibrusGoView.vue",
+      "source_name": "webpack://librus/src/pages/main-pages/messages-page/librus-go/SendMessageLibrusGoView.vue",
+      "map_path": "static\\js\\app.2d1e7947b1442a92cb06.js.map",
+      "source_index": 1144,
+      "source_content_sha256": "21a13c9730345fbf1a8ecf964545f9d6877165e50e516694b29dc733dfeea41a",
+      "anchor": "sendMessage() {",
+      "line": 38
+    },
+    {
+      "source_path": "src/pages/main-pages/justifications-page/components/NewJustificationView.vue",
+      "source_name": "webpack://librus/src/pages/main-pages/justifications-page/components/NewJustificationView.vue",
+      "map_path": "static\\js\\app.2d1e7947b1442a92cb06.js.map",
+      "source_index": 1072,
+      "source_content_sha256": "07c8b35cd1774dcf36098a8053f55b7859929c27c90f76ce89b3dce49726077c",
+      "anchor": "sendJustification() {",
+      "line": 334
+    },
+    {
+      "source_path": "src/pages/main-pages/homework-assignments-page/components/HomeworkAssignmentDetail.vue",
+      "source_name": "webpack://librus/src/pages/main-pages/homework-assignments-page/components/HomeworkAssignmentDetail.vue",
+      "map_path": "static\\js\\app.2d1e7947b1442a92cb06.js.map",
+      "source_index": 1066,
+      "source_content_sha256": "452b220d71ea79891ef076bf81b66a5a179b21013746f33f2bcea0b572aac919",
+      "anchor": "async sendAnswerFile(",
+      "line": 401
+    },
+    {
+      "source_path": "src/pages/main-pages/meal-pages/components/MealDayDetailView.vue",
+      "source_name": "webpack://librus/src/pages/main-pages/meal-pages/components/MealDayDetailView.vue",
+      "map_path": "static\\js\\app.2d1e7947b1442a92cb06.js.map",
+      "source_index": 186,
+      "source_content_sha256": "d5b8e4ff91d9c9a0e1396af65ef0bf9f1c10df7247ace77ae1ec942e0db821d4",
+      "anchor": "proceedToOrder() {",
+      "line": 363
+    },
+    {
+      "source_path": "src/api/raw-rest-api/synergia-messages-rest.js",
+      "source_name": "webpack://librus/./src/api/raw-rest-api/synergia-messages-rest.js",
+      "map_path": "static\\js\\app.2d1e7947b1442a92cb06.js.map",
+      "source_index": 15,
+      "source_content_sha256": "25895430e8dbcd8304c0362f66bad0ac6c8199271219058cb391b138f442072c",
+      "anchor": "export async function getMessages(",
+      "line": 15
+    },
+    {
+      "source_path": "src/api/raw-rest-api/synergia-homework-assignments-rest.js",
+      "source_name": "webpack://librus/./src/api/raw-rest-api/synergia-homework-assignments-rest.js",
+      "map_path": "static\\js\\app.2d1e7947b1442a92cb06.js.map",
+      "source_index": 12,
+      "source_content_sha256": "36114135d31f7bdc0f30c67e0ab03d0e43b76dd908696ccd7c5d7baad345798f",
+      "anchor": "export function sendHomeworkAssignmentAnswerAttachment(",
+      "line": 65
+    },
+    {
+      "source_path": "src/api/raw-rest-api/synergia-justifications-rest.js",
+      "source_name": "webpack://librus/./src/api/raw-rest-api/synergia-justifications-rest.js",
+      "map_path": "static\\js\\app.2d1e7947b1442a92cb06.js.map",
+      "source_index": 701,
+      "source_content_sha256": "95732b818b829cdd705b4feb78bc5598ea8de53b66cbd9de79f098139d45191d",
+      "anchor": "export function postJustification(",
+      "line": 48
+    },
+    {
+      "source_path": "src/api/raw-rest-api/synergia-meal-rest.js",
+      "source_name": "webpack://librus/./src/api/raw-rest-api/synergia-meal-rest.js",
+      "map_path": "static\\js\\app.2d1e7947b1442a92cb06.js.map",
+      "source_index": 58,
+      "source_content_sha256": "558d922d7c62467a04a7647cc1c10927f312eca3ded07ab73b175fd2139ef0e4",
+      "anchor": "export function cancelMealOrder(",
+      "line": 265
+    },
+    {
+      "source_path": "src/api/librus-go-api/librus-go-payments-rest.js",
+      "source_name": "webpack://librus/./src/api/librus-go-api/librus-go-payments-rest.js",
+      "map_path": "static\\js\\app.2d1e7947b1442a92cb06.js.map",
+      "source_index": 6,
+      "source_content_sha256": "db463a225f08a9167f6803a75c0a358781ba96c05ac8ba48f464a07a7d083dfe",
+      "anchor": "export function createInvoiceFileRequest(",
+      "line": 44
+    },
+    {
+      "source_path": "src/api/librus-go-api/librus-go-messages-rest.js",
+      "source_name": "webpack://librus/./src/api/librus-go-api/librus-go-messages-rest.js",
+      "map_path": "static\\js\\app.2d1e7947b1442a92cb06.js.map",
+      "source_index": 5,
+      "source_content_sha256": "910cf72dc4d43be8a2c9dcc0e24663dffb2c110747f717423a2c55667fa3ae20",
+      "anchor": "export function sendNewMessage(",
+      "line": 65
+    },
+    {
+      "source_path": "src/api/raw-rest-api/synergia-changes-rest.js",
+      "source_name": "webpack://librus/./src/api/raw-rest-api/synergia-changes-rest.js",
+      "map_path": "static\\js\\app.2d1e7947b1442a92cb06.js.map",
+      "source_index": 132,
+      "source_content_sha256": "e0c49e7ffa05b5df7b4f92c8d125fabf85b7ed961227f208daf418a6e2d8e1c0",
+      "anchor": "export function registerChangeRegister(",
+      "line": 19
+    },
+    {
+      "source_path": "src/store/modules/view-store/payments-store.js",
+      "source_name": "webpack://librus/./src/store/modules/view-store/payments-store.js",
+      "map_path": "static\\js\\app.2d1e7947b1442a92cb06.js.map",
+      "source_index": 741,
+      "source_content_sha256": "8a7a6a7dc0c53210548ade9d883b4881121cfbb33fdf54a95e39de13e5866106",
+      "anchor": "downloadInvoice(",
+      "line": 96
+    },
+    {
+      "source_path": "src/store/modules/view-store/meal-orders-store.js",
+      "source_name": "webpack://librus/./src/store/modules/view-store/meal-orders-store.js",
+      "map_path": "static\\js\\app.2d1e7947b1442a92cb06.js.map",
+      "source_index": 723,
+      "source_content_sha256": "fc5a81484e173167dd9c7876e0c23e5623756cb48d18a0560b390fe2871c1d5d",
+      "anchor": "openZpRedirect(",
+      "line": 287
+    },
+    {
+      "source_path": "src/store/modules/view-store/messages-store.js",
+      "source_name": "webpack://librus/./src/store/modules/view-store/messages-store.js",
+      "map_path": "static\\js\\app.2d1e7947b1442a92cb06.js.map",
+      "source_index": 728,
+      "source_content_sha256": "3ebc72cfc97d84b3940ceffbcb9e4d05402e12644201a9567e24a2f6188b4144",
+      "anchor": "getViewModel(",
+      "line": 121
+    },
+    {
+      "source_path": "src/store/modules/view-store/homework-assignments-store.js",
+      "source_name": "webpack://librus/./src/store/modules/view-store/homework-assignments-store.js",
+      "map_path": "static\\js\\app.2d1e7947b1442a92cb06.js.map",
+      "source_index": 697,
+      "source_content_sha256": "e8953ce473615b73d750493c17cbcc09e61ebc0dcce73fc18611793860854e1e",
+      "anchor": "markAsDone(",
+      "line": 127
+    },
+    {
+      "source_path": "src/store/modules/view-store/justifications-store.js",
+      "source_name": "webpack://librus/./src/store/modules/view-store/justifications-store.js",
+      "map_path": "static\\js\\app.2d1e7947b1442a92cb06.js.map",
+      "source_index": 702,
+      "source_content_sha256": "f6ae555875e9b9baf95374c2566b08380af2160c53a935d43800ab51638a92ee",
+      "anchor": "sendJustification(",
+      "line": 168
+    },
+    {
+      "source_path": "src/store/modules/change-register-store/change-register-store.js",
+      "source_name": "webpack://librus/./src/store/modules/change-register-store/change-register-store.js",
+      "map_path": "static\\js\\app.2d1e7947b1442a92cb06.js.map",
+      "source_index": 133,
+      "source_content_sha256": "24da0749fde538f9e3ad1dfda9fa0759497790d6877006ba87ba3771853f105f",
+      "anchor": "function deleteChangesForUser(",
+      "line": 184
+    },
+    {
+      "source_path": "src/store/modules/helpers/change-processor.js",
+      "source_name": "webpack://librus/./src/store/modules/helpers/change-processor.js",
+      "map_path": "static\\js\\app.2d1e7947b1442a92cb06.js.map",
+      "source_index": 49,
+      "source_content_sha256": "e20919940dc7e4f764c4e621d5bc412e6add211fbcc013845e5e192d5b73be46",
+      "anchor": "function processGrades(",
+      "line": 81
+    },
+    {
+      "source_path": "src/store/modules/helpers/event-frame-processor.js",
+      "source_name": "webpack://librus/./src/store/modules/helpers/event-frame-processor.js",
+      "map_path": "static\\js\\app.2d1e7947b1442a92cb06.js.map",
+      "source_index": 46,
+      "source_content_sha256": "13a0dc2c101f2bca55299e1f33abf30dd028d5af2487c265a92e7c9f651fe96a",
+      "anchor": "function processCycle(",
+      "line": 47
+    },
+    {
+      "source_path": "src/api/view-builders/event-frame-builder.js",
+      "source_name": "webpack://librus/./src/api/view-builders/event-frame-builder.js",
+      "map_path": "static\\js\\app.2d1e7947b1442a92cb06.js.map",
+      "source_index": 47,
+      "source_content_sha256": "72f02514cc9ebfba43c380acd24a4ab24f37305852755c9eef8f9134ff4e2eb7",
+      "anchor": "function processNewEventFrames(",
+      "line": 26
+    },
+    {
+      "source_path": "src/helpers/promise-helper.js",
+      "source_name": "webpack://librus/./src/helpers/promise-helper.js",
+      "map_path": "static\\js\\app.2d1e7947b1442a92cb06.js.map",
+      "source_index": 95,
+      "source_content_sha256": "2ed60555f3e07124fd7ebba229a198ea3e7f5d29aafe40bbe04f63cf4f777649",
+      "anchor": "export function afterAllAlways(",
+      "line": 17
+    },
+    {
+      "source_path": "src/store/modules/vuex-orm-modules/offline-orm-store-extension.js",
+      "source_name": "webpack://librus/./src/store/modules/vuex-orm-modules/offline-orm-store-extension.js",
+      "map_path": "static\\js\\app.2d1e7947b1442a92cb06.js.map",
+      "source_index": 773,
+      "source_content_sha256": "1f0a2f47de39fe67b05a0ef8e69f90cf02c23856ce9a572f1ae692a723919ab8",
+      "anchor": "function applyModuleState(",
+      "line": 15
+    }
+  ]
+}
