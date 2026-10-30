@@ -1,0 +1,31 @@
+name: Diary plugins
+
+on:
+  push:
+    paths:
+      - 'plugins/**'
+      - '.github/workflows/plugins.yml'
+  pull_request:
+    paths:
+      - 'plugins/**'
+      - '.github/workflows/plugins.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: plugins/sdk
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: '3.13.3'
+      - run: dart pub get --enforce-lockfile
+      - run: dart format --output=none --set-exit-if-changed lib test tool ../examples
+      - run: dart analyze --fatal-infos
+      - run: dart test
+      - run: dart run tool/validate_catalog.dart
