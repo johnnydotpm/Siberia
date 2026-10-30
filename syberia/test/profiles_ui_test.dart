@@ -215,7 +215,7 @@ void main() {
   });
 
   testWidgets('signing in to a login with a parent and a student account asks '
-      'who to add, the student\'s own account checked', (tester) async {
+      'who uses the app, and checks that one\'s account', (tester) async {
     SharedPreferences.setMockInitialValues({
       'app_design_v1': 'classic',
       'onboarding_done_v1': true,
@@ -235,20 +235,66 @@ void main() {
     await tester.pump(const Duration(seconds: 1));
 
     expect(find.text('Who to add?'), findsOneWidget);
+    expect(find.text('Who will use the app?'), findsOneWidget);
     CheckboxListTile choice(String login) =>
         tester.widget(find.byKey(ValueKey('choose-$login')));
+    FilledButton add() =>
+        tester.widget(find.byKey(const ValueKey('choose-students-add')));
     expect(choice('child-parent').value, isFalse);
+    expect(choice('child-u').value, isFalse);
+    expect(add().onPressed, isNull, reason: 'who uses it is not said yet');
+
+    await tester.tap(find.byKey(const ValueKey('choose-role-student')));
+    await tester.pump();
     expect(choice('child-u').value, isTrue);
-    expect(find.text('Parent account'), findsOneWidget);
+    expect(choice('child-parent').value, isFalse);
+    await tester.tap(find.byKey(const ValueKey('choose-role-parent')));
+    await tester.pump();
+    expect(choice('child-parent').value, isTrue);
+    expect(choice('child-u').value, isFalse);
     await tester.tap(find.byKey(const ValueKey('choose-students-add')));
     await tester.pumpAndSettle();
 
-    expect(controller.profiles.map((profile) => profile.synergiaLogin), [
-      'child-u',
-    ]);
-    expect(controller.snapshot.profile.id, 's-child');
+    final added = controller.profiles.single;
+    expect(added.synergiaLogin, 'child-parent');
+    expect(added.usedBy, ProfileRole.parent);
+    expect(controller.parentView, isTrue);
     expect(find.text('Connect Librus account'), findsNothing);
     expect(tester.takeException(), isNull);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
+  testWidgets('a login of two students asks nothing about who uses the app', (
+    tester,
+  ) async {
+    SharedPreferences.setMockInitialValues({
+      'app_design_v1': 'classic',
+      'onboarding_done_v1': true,
+    });
+    final controller = AppController(
+      FakeLibrusWorld().repository(),
+      updatesEnabled: false,
+    );
+    await controller.bootstrap();
+    await tester.pumpWidget(SyberiaApp(controller: controller));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Connect Librus account'));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextFormField).first, familyEmail);
+    await tester.enterText(find.byType(TextFormField).last, 'secret');
+    await tester.tap(find.text('Sign in and sync'));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    expect(find.text('Who to add?'), findsOneWidget);
+    expect(find.text('Who will use the app?'), findsNothing);
+    expect(
+      tester
+          .widget<FilledButton>(
+            find.byKey(const ValueKey('choose-students-add')),
+          )
+          .onPressed,
+      isNotNull,
+    );
     await tester.pumpWidget(const SizedBox.shrink());
   });
 
@@ -392,6 +438,30 @@ void main() {
         'u',
       });
       expect(defaultStudentChoice([account('p', parent: true)]), {'p'});
+      // A parent gets the parent's account of the child, and the student's
+      // own only of a child with no parent's account.
+      final parent = ProfileRole.parent;
+      expect(
+        defaultStudentChoice([
+          account('p', parent: true),
+          account('u'),
+        ], role: parent),
+        {'p'},
+      );
+      expect(
+        defaultStudentChoice([
+          account('p', parent: true, name: 'Pierwsze Dziecko'),
+          account('u', name: 'Drugie Dziecko'),
+        ], role: parent),
+        {'p', 'u'},
+      );
+      expect(
+        defaultStudentChoice([
+          account('p', parent: true),
+          account('u'),
+        ], role: ProfileRole.student),
+        {'u'},
+      );
       expect(
         defaultStudentChoice([
           account('p', parent: true, name: 'Pierwsze Dziecko'),

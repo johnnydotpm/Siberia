@@ -423,6 +423,72 @@ class _ProfileTogetherSwitch extends StatelessWidget {
   );
 }
 
+/// "Student" or "Parent", none picked until [role] is.
+class _RolePicker extends StatelessWidget {
+  const _RolePicker({
+    required this.role,
+    required this.onChanged,
+    required this.prefix,
+  });
+  final ProfileRole? role;
+  final ValueChanged<ProfileRole> onChanged;
+
+  /// Begins the keys of the two choices.
+  final String prefix;
+
+  @override
+  Widget build(BuildContext context) => SegmentedButton<ProfileRole>(
+    segments: [
+      for (final (value, label, icon) in [
+        (ProfileRole.student, 'roleStudent', Icons.school_outlined),
+        (ProfileRole.parent, 'roleParent', Icons.family_restroom_rounded),
+      ])
+        ButtonSegment(
+          value: value,
+          label: Text(
+            context.tr(label),
+            key: ValueKey('$prefix-${value.name}'),
+          ),
+          icon: Icon(icon),
+        ),
+    ],
+    selected: {?role},
+    emptySelectionAllowed: role == null,
+    showSelectedIcon: false,
+    onSelectionChanged: (selection) {
+      if (selection.isNotEmpty) onChanged(selection.first);
+    },
+  );
+}
+
+/// Who uses [profile], as the app follows it.
+class _ProfileRoleRow extends StatelessWidget {
+  const _ProfileRoleRow({required this.controller, required this.profile});
+  final AppController controller;
+  final SchoolProfile profile;
+
+  @override
+  Widget build(BuildContext context) => ListenableBuilder(
+    listenable: controller,
+    builder: (context, _) => Padding(
+      key: const ValueKey('profile-role'),
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(context.tr('profileRole')),
+          const SizedBox(height: 8),
+          _RolePicker(
+            role: (controller.profileOf(profile.id) ?? profile).usedBy,
+            onChanged: (role) => controller.setProfileRole(profile.id, role),
+            prefix: 'profile-role',
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
 /// Renaming, recolouring and removing one profile.
 Future<void> _showProfileActions(
   BuildContext context,
@@ -481,6 +547,7 @@ Future<void> _showProfileActions(
             _showProfileColors(context, controller, profile);
           },
         ),
+        _ProfileRoleRow(controller: controller, profile: profile),
         if (controller.profiles.length > 1)
           _ProfileTogetherSwitch(controller: controller, profile: profile),
         if (!controller.isDemo)
@@ -844,7 +911,22 @@ class _ChooseStudents extends StatefulWidget {
 }
 
 class _ChooseStudentsState extends State<_ChooseStudents> {
-  late final Set<String> chosen = defaultStudentChoice(widget.students);
+  /// Both a child's own account and a parent's are offered: who uses the
+  /// app decides which are checked.
+  late final bool askRole =
+      widget.students.any((student) => student.parent) &&
+      widget.students.any((student) => !student.parent);
+  ProfileRole? role;
+  late final Set<String> chosen = askRole
+      ? <String>{}
+      : defaultStudentChoice(widget.students);
+
+  void pickRole(ProfileRole value) => setState(() {
+    role = value;
+    chosen
+      ..clear()
+      ..addAll(defaultStudentChoice(widget.students, role: value));
+  });
 
   @override
   Widget build(BuildContext context) => ListView(
@@ -861,6 +943,15 @@ class _ChooseStudentsState extends State<_ChooseStudents> {
       const SizedBox(height: 8),
       Text(context.tr('chooseStudentsHelp')),
       const SizedBox(height: 12),
+      if (askRole) ...[
+        Text(
+          context.tr('chooseRoleQuestion'),
+          style: Theme.of(context).textTheme.titleSmall,
+        ),
+        const SizedBox(height: 8),
+        _RolePicker(role: role, onChanged: pickRole, prefix: 'choose-role'),
+        const SizedBox(height: 8),
+      ],
       for (final student in widget.students)
         CheckboxListTile(
           key: ValueKey('choose-${student.login}'),
@@ -882,7 +973,7 @@ class _ChooseStudentsState extends State<_ChooseStudents> {
       FilledButton(
         key: const ValueKey('choose-students-add'),
         style: _wideButton,
-        onPressed: chosen.isEmpty
+        onPressed: chosen.isEmpty || (askRole && role == null)
             ? null
             : () => Navigator.pop(context, [
                 for (final student in widget.students)

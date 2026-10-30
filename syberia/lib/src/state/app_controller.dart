@@ -1537,6 +1537,25 @@ class AppController extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Who uses the profile [profileId]: the one its account says is kept as
+  /// null, so a role never goes stale.
+  Future<void> setProfileRole(String profileId, ProfileRole role) async {
+    final profile = profileOf(profileId);
+    if (profile == null) return;
+    final own = profile.parent ? ProfileRole.parent : ProfileRole.student;
+    await _repository.setProfileRole(profileId, role == own ? null : role);
+    _profiles = _repository.profiles;
+    notifyListeners();
+  }
+
+  /// Whether a parent looks at what is open: the open profile is used by a
+  /// parent, or, all together, every profile in the view is.
+  bool get parentView {
+    final shown = _together ? togetherProfiles : [?activeProfile];
+    return shown.isNotEmpty &&
+        shown.every((profile) => profile.usedBy == ProfileRole.parent);
+  }
+
   Future<void> setProfileNotify(String profileId, bool notify) async {
     await _repository.setProfileNotify(profileId, notify);
     _profiles = _repository.profiles;

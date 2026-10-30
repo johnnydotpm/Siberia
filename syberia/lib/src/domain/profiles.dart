@@ -3,6 +3,9 @@ import 'package:flutter/foundation.dart';
 import 'models.dart';
 import 'stable_hash.dart';
 
+/// Who uses a profile: the student, or a parent who follows the child.
+enum ProfileRole { student, parent }
+
 /// One student at one school: a Librus Synergia account kept on the phone.
 /// A parent with two children, or a student at two schools, has two, and
 /// each keeps its own data, marks and settings.
@@ -21,6 +24,7 @@ class SchoolProfile {
     this.studentId,
     this.parent = false,
     this.together = true,
+    this.role,
   });
 
   /// Names the profile's own data on the phone. It never changes.
@@ -60,6 +64,14 @@ class SchoolProfile {
   /// Whether it is in the view of every profile together.
   final bool together;
 
+  /// Who the user said uses the profile; null leaves it to the account.
+  final ProfileRole? role;
+
+  /// Who uses the profile: as the user said, or a parent on a parent's
+  /// account and the student on the student's.
+  ProfileRole get usedBy =>
+      role ?? (parent ? ProfileRole.parent : ProfileRole.student);
+
   /// The name to show: the user's own, or the student's.
   String get displayName {
     final own = label?.trim() ?? '';
@@ -85,6 +97,7 @@ class SchoolProfile {
     String? studentId,
     bool? parent,
     bool? together,
+    ProfileRole? Function()? role,
   }) => SchoolProfile(
     id: id,
     account: account,
@@ -98,6 +111,7 @@ class SchoolProfile {
     studentId: studentId ?? this.studentId,
     parent: parent ?? this.parent,
     together: together ?? this.together,
+    role: role == null ? this.role : role(),
   );
 
   Map<String, Object?> toJson() => {
@@ -113,6 +127,7 @@ class SchoolProfile {
     'studentId': studentId,
     'parent': parent,
     'together': together,
+    'role': role?.name,
   };
 
   /// Null for anything that is not a saved profile.
@@ -136,6 +151,9 @@ class SchoolProfile {
       studentId: text(json['studentId']),
       parent: json['parent'] == true,
       together: json['together'] != false,
+      role: ProfileRole.values
+          .where((role) => role.name == json['role'])
+          .firstOrNull,
     );
   }
 
@@ -153,7 +171,8 @@ class SchoolProfile {
       other.notify == notify &&
       other.studentId == studentId &&
       other.parent == parent &&
-      other.together == together;
+      other.together == together &&
+      other.role == role;
 
   @override
   int get hashCode => Object.hash(
@@ -169,6 +188,7 @@ class SchoolProfile {
     studentId,
     parent,
     together,
+    role,
   );
 
   @override
@@ -215,19 +235,25 @@ int freeProfileColor(
   return best;
 }
 
-/// The logins of [students] a sign-in offers checked: every one, except a
-/// parent's account whose child has an account of its own in the list too.
-/// Those two are one child, and the student's own account is the one the
+/// The logins of [students] a sign-in offers checked. Every one, except
+/// one of the two accounts of the same child: for the [role] of the user,
+/// the parent's or the student's own; without it, the student's own, as the
 /// app has always opened.
-Set<String> defaultStudentChoice(List<LinkedSynergiaAccount> students) {
+Set<String> defaultStudentChoice(
+  List<LinkedSynergiaAccount> students, {
+  ProfileRole? role,
+}) {
   String key(String name) => name.trim().toLowerCase();
-  final ownAccounts = {
+  final parents = role == ProfileRole.parent;
+  // The children who have an account of the kind the user wants.
+  final wanted = {
     for (final student in students)
-      if (!student.parent && key(student.name).isNotEmpty) key(student.name),
+      if (student.parent == parents && key(student.name).isNotEmpty)
+        key(student.name),
   };
   return {
     for (final student in students)
-      if (!student.parent || !ownAccounts.contains(key(student.name)))
+      if (student.parent == parents || !wanted.contains(key(student.name)))
         student.login,
   };
 }

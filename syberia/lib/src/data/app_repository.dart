@@ -560,6 +560,10 @@ class AppRepository {
   Future<void> setProfileNotify(String profileId, bool notify) =>
       _changeProfile(profileId, (saved) => saved.copyWith(notify: notify));
 
+  /// Who uses the profile [profileId]; null leaves it to its account.
+  Future<void> setProfileRole(String profileId, ProfileRole? role) =>
+      _changeProfile(profileId, (saved) => saved.copyWith(role: () => role));
+
   /// Whether the profile [profileId] is in the view of every profile
   /// together.
   Future<void> setProfileTogether(String profileId, bool together) =>
