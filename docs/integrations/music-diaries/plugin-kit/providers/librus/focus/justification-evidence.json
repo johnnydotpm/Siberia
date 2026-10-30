@@ -1,0 +1,2005 @@
+{
+  "schema_version": 1,
+  "scope": "Supplied Android/iOS8.4.1 shared source-content; static only, no live school account",
+  "apk_sha256": "b99a5d84b57947ccb78637038abe7c47b04f3c294e3d9f3383fc3f0d66b1609b",
+  "sources": {
+    "new": {
+      "source_url": "webpack://librus/src/pages/main-pages/justifications-page/components/NewJustificationView.vue",
+      "map_member": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 1072,
+      "source_content_sha256": "07c8b35cd1774dcf36098a8053f55b7859929c27c90f76ce89b3dce49726077c",
+      "line_count": 551
+    },
+    "container": {
+      "source_url": "webpack://librus/src/pages/main-pages/justifications-page/JustificationsContainer.vue",
+      "map_member": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 314,
+      "source_content_sha256": "50ecb44638aa2eabfe0a6e9e082577fd423c8f86923066c283dce064f9da891d",
+      "line_count": 185
+    },
+    "item": {
+      "source_url": "webpack://librus/src/pages/main-pages/justifications-page/components/JustificationItem.vue",
+      "map_member": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 311,
+      "source_content_sha256": "db7ebec73fa76615b50b8901ce6c208e5e13f293e450222773c13654725a8042",
+      "line_count": 166
+    },
+    "detail": {
+      "source_url": "webpack://librus/src/pages/main-pages/justifications-page/components/JustificationDetail.vue",
+      "map_member": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 1069,
+      "source_content_sha256": "3ffaa0c3f4d38bffb9e84d5c1ddbbaaa7352cad3a23c9fa1065f38e5e91a0f7a",
+      "line_count": 290
+    },
+    "page": {
+      "source_url": "webpack://librus/src/pages/main-pages/justifications-page/JustificationsPage.vue",
+      "map_member": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 316,
+      "source_content_sha256": "b9b5846ea223759c6d757d19598e5552241a4c32d5a44f534f7ca4bece03fa27",
+      "line_count": 39
+    },
+    "feed": {
+      "source_url": "webpack://librus/src/pages/main-pages/feed-page/components/FeedJustificationItem.vue",
+      "map_member": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 978,
+      "source_content_sha256": "97fe8ec6c7e583c00084b255a06870e2be78b7ea8b32e2153c30617941e91f3f",
+      "line_count": 146
+    },
+    "store": {
+      "source_url": "webpack://librus/./src/store/modules/view-store/justifications-store.js",
+      "map_member": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 702,
+      "source_content_sha256": "f6ae555875e9b9baf95374c2566b08380af2160c53a935d43800ab51638a92ee",
+      "line_count": 205
+    },
+    "builder": {
+      "source_url": "webpack://librus/./src/api/view-builders/justifications-builder.js",
+      "map_member": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 700,
+      "source_content_sha256": "c3942ea1b220fc5f52c3954d57897d3de1e13937a3e4e3fd5e23f7c215d56156",
+      "line_count": 82
+    },
+    "dto": {
+      "source_url": "webpack://librus/./src/viewmodels/justifications.js",
+      "map_member": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 810,
+      "source_content_sha256": "b4cd1e6c538d6bdee6658293b2bb0748ef8ffee2167506d9430c3fd1a565c1c8",
+      "line_count": 40
+    },
+    "raw": {
+      "source_url": "webpack://librus/./src/api/raw-rest-api/synergia-justifications-rest.js",
+      "map_member": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 701,
+      "source_content_sha256": "95732b818b829cdd705b4feb78bc5598ea8de53b66cbd9de79f098139d45191d",
+      "line_count": 50
+    },
+    "core": {
+      "source_url": "webpack://librus/./src/api/synergia-rest-core.js",
+      "map_member": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 23,
+      "source_content_sha256": "bf33e071b320e43224c9bb3656cf6da283b6eb566df12a5866da2c92f9cd845c",
+      "line_count": 62
+    },
+    "types": {
+      "source_url": "webpack://librus/./src/helpers/user-utils.js",
+      "map_member": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 103,
+      "source_content_sha256": "6a801bba197f8f96970f873867154ba3fac0ba11272580c2304c9b0e9d2ce252",
+      "line_count": 64
+    },
+    "card": {
+      "source_url": "webpack://librus/src/pages/main-pages/attendances-page/components/AttendanceCard.vue",
+      "map_member": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 296,
+      "source_content_sha256": "dd8d54833042d88c503bb29bbe57f8b0b8258b496869358f15da0a8cb50612f6",
+      "line_count": 236
+    },
+    "day": {
+      "source_url": "webpack://librus/src/pages/main-pages/attendances-page/components/AttendanceDateGroupContainer.vue",
+      "map_member": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 302,
+      "source_content_sha256": "70c118efdfafed1d890c736a80e5756960f8948e1c778643afa0364b7ac69d5a",
+      "line_count": 179
+    },
+    "attendanceDetail": {
+      "source_url": "webpack://librus/src/pages/main-pages/attendances-page/components/AttendanceDetail.vue",
+      "map_member": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 882,
+      "source_content_sha256": "f71abf965907c580bdd36a949a85a706379a0b31ea55ae834ac62cb5aa5eebd2",
+      "line_count": 351
+    },
+    "ttstore": {
+      "source_url": "webpack://librus/./src/store/modules/view-store/timetables-store.js",
+      "map_member": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 768,
+      "source_content_sha256": "f72b408d7a08b2974020a3ddeccaca3ddc2f2b56600a65a1f28fc18445376ec4",
+      "line_count": 374
+    },
+    "ttbuilder": {
+      "source_url": "webpack://librus/./src/api/view-builders/timetables-builder.js",
+      "map_member": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 767,
+      "source_content_sha256": "b164a6a68e2d2e6362568c9db48ff708861d6b5762a15d0235c3bb58c1e9d914",
+      "line_count": 569
+    },
+    "ttraw": {
+      "source_url": "webpack://librus/./src/api/raw-rest-api/synergia-timetables-rest.js",
+      "map_member": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 21,
+      "source_content_sha256": "b8b6895d32f42d3b5c94ef653f0616691b6e6f12b6023dafa299d3876e44829c",
+      "line_count": 44
+    },
+    "changes": {
+      "source_url": "webpack://librus/./src/store/modules/helpers/change-processor.js",
+      "map_member": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 49,
+      "source_content_sha256": "e20919940dc7e4f764c4e621d5bc412e6add211fbcc013845e5e192d5b73be46",
+      "line_count": 1103
+    },
+    "nav": {
+      "source_url": "webpack://librus/./src/store/modules/navigator-store/navigator-pages.js",
+      "map_member": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 591,
+      "source_content_sha256": "bf101c150b4101af626f312a96c7cfdf263a895ee3939c08e30e992e72b84bb7",
+      "line_count": 308
+    },
+    "shell": {
+      "source_url": "webpack://librus/src/pages/main-pages/shared-components/DetailContainerPage.vue",
+      "map_member": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 1197,
+      "source_content_sha256": "641ec1c2391a4e6558bbc858705cc70976f66d881021a62ce7f21930a8fd5409",
+      "line_count": 478
+    },
+    "axios": {
+      "source_url": "webpack://librus/./src/store/modules/helpers/axios-helper.js",
+      "map_member": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 139,
+      "source_content_sha256": "9c9aeb5ae05a7609298ca45e5e9e9e680cfd833295ca8913ae5796c8107c0af3",
+      "line_count": 44
+    }
+  },
+  "facts": [
+    {
+      "id": "J-01",
+      "claim": "Justification page descriptor is premium; container refuses fetch for broken, student or nonpremium current account.",
+      "evidence_type": "static caller/branch observation",
+      "references": [
+        {
+          "source_key": "nav",
+          "line": 89,
+          "anchor": "export const justifications"
+        },
+        {
+          "source_key": "container",
+          "line": 80,
+          "anchor": "if (this.$store.getters['user/isCurrentBroken']"
+        }
+      ],
+      "runtime_verified": false
+    },
+    {
+      "id": "J-02",
+      "claim": "Student helper tests group 8 or student; null/missing group returns false. This negative helper is not a positive complete parent authorization check.",
+      "evidence_type": "static caller/branch observation",
+      "references": [
+        {
+          "source_key": "types",
+          "line": 44,
+          "anchor": "export function isAccountTypeStudent"
+        },
+        {
+          "source_key": "types",
+          "line": 38,
+          "anchor": "return (group === 8 || group === 'student')"
+        }
+      ],
+      "runtime_verified": false
+    },
+    {
+      "id": "J-03",
+      "claim": "Attendance per-lesson shortcut requires TypeId exact string1 plus nonstudent and available module; JST nonpremium hides it. Click redirects nonpremium to purchase.",
+      "evidence_type": "static caller/branch observation",
+      "references": [
+        {
+          "source_key": "card",
+          "line": 52,
+          "anchor": "showJustificationOption()"
+        },
+        {
+          "source_key": "card",
+          "line": 64,
+          "anchor": "return this.componentProps.TypeId &&"
+        },
+        {
+          "source_key": "card",
+          "line": 102,
+          "anchor": "createNewJustificationForSelectedLesson()"
+        }
+      ],
+      "runtime_verified": false
+    },
+    {
+      "id": "J-04",
+      "claim": "Day shortcut is offered when any entry has TypeId string1 and passes role/availability gates; it preselects whole selected day.",
+      "evidence_type": "static caller/branch observation",
+      "references": [
+        {
+          "source_key": "day",
+          "line": 51,
+          "anchor": "showJustificationOption()"
+        },
+        {
+          "source_key": "day",
+          "line": 63,
+          "anchor": "return this.componentProps.some"
+        },
+        {
+          "source_key": "day",
+          "line": 105,
+          "anchor": "attendanceChosenDay: this.date"
+        }
+      ],
+      "runtime_verified": false
+    },
+    {
+      "id": "J-05",
+      "claim": "Detail shortcut uses explicit detail synergiaAccountId for role, premium, availability and composer accountLogin.",
+      "evidence_type": "static caller/branch observation",
+      "references": [
+        {
+          "source_key": "attendanceDetail",
+          "line": 147,
+          "anchor": "showJustificationOption()"
+        },
+        {
+          "source_key": "attendanceDetail",
+          "line": 235,
+          "anchor": "accountLogin: this.detailProps.synergiaAccountId"
+        }
+      ],
+      "runtime_verified": false
+    },
+    {
+      "id": "J-06",
+      "claim": "Composer defaults ChosenDays, empty text/checkedLessons, sendNotification false and current local-offset date for all three date fields.",
+      "evidence_type": "static caller/branch observation",
+      "references": [
+        {
+          "source_key": "new",
+          "line": 234,
+          "anchor": "datePickerSelected: 'ChosenDays'"
+        },
+        {
+          "source_key": "new",
+          "line": 248,
+          "anchor": "sendNotification: false"
+        },
+        {
+          "source_key": "new",
+          "line": 257,
+          "anchor": "const now = moment().toISOString(true)"
+        }
+      ],
+      "runtime_verified": false
+    },
+    {
+      "id": "J-07",
+      "claim": "Whole-day shortcut sets start/end/single same date. Attendance shortcut chooses ChosenLessons and strict-matches timetable lessonNo against attendance.Lesson; mismatch falls back ChosenDays.",
+      "evidence_type": "static caller/branch observation",
+      "references": [
+        {
+          "source_key": "new",
+          "line": 270,
+          "anchor": "if (this.attendanceChosenDay"
+        },
+        {
+          "source_key": "new",
+          "line": 276,
+          "anchor": "} else if (this.attendanceObjectRef)"
+        },
+        {
+          "source_key": "new",
+          "line": 279,
+          "anchor": ".some((x) => x.lessonNo === this.attendanceObjectRef.Lesson)"
+        }
+      ],
+      "runtime_verified": false
+    },
+    {
+      "id": "J-08",
+      "claim": "Date values use local datepicker and YYYY-MM-DD formatting. End date min is start; on start>=end, end is replaced by start.",
+      "evidence_type": "static caller/branch observation",
+      "references": [
+        {
+          "source_key": "new",
+          "line": 181,
+          "anchor": "value-zone=\"local\""
+        },
+        {
+          "source_key": "new",
+          "line": 187,
+          "anchor": ":min-datetime=\"startDate\""
+        },
+        {
+          "source_key": "new",
+          "line": 372,
+          "anchor": "onStartDatePicked()"
+        },
+        {
+          "source_key": "new",
+          "line": 305,
+          "anchor": "moment(this.startDate).format('YYYY-MM-DD')"
+        }
+      ],
+      "runtime_verified": false
+    },
+    {
+      "id": "J-09",
+      "claim": "Explicit validation requires chosen lesson(s)/single date or start/end with end not before start. No maximum days/backdating bound or nonempty body check exists in this validator.",
+      "evidence_type": "bounded negative observation over complete validator/date controls",
+      "references": [
+        {
+          "source_key": "new",
+          "line": 415,
+          "anchor": "validateAndShowConfirmDialog()"
+        },
+        {
+          "source_key": "new",
+          "line": 423,
+          "anchor": "if (moment(this.endDate).isBefore"
+        }
+      ],
+      "runtime_verified": false
+    },
+    {
+      "id": "J-10",
+      "claim": "Reason textarea has maxlength1000 but is not checked for nonempty by send confirmation validator.",
+      "evidence_type": "static caller/branch observation",
+      "references": [
+        {
+          "source_key": "new",
+          "line": 102,
+          "anchor": "maxlength=\"1000\""
+        },
+        {
+          "source_key": "new",
+          "line": 415,
+          "anchor": "validateAndShowConfirmDialog()"
+        }
+      ],
+      "runtime_verified": false
+    },
+    {
+      "id": "J-11",
+      "claim": "Selected-day request goes through timetables store and getTimetablesFromSingleDay, GET /Timetables?day={date}; composer maps every returned view item subject/lessonNo without absence-type or cancellation filtering.",
+      "evidence_type": "static caller/branch observation",
+      "references": [
+        {
+          "source_key": "new",
+          "line": 393,
+          "anchor": "this.$store.dispatch('timetables/getViewModelFromSingleDayForLogin'"
+        },
+        {
+          "source_key": "new",
+          "line": 402,
+          "anchor": "this.lessonsForSelectedDay = timetableView.map"
+        },
+        {
+          "source_key": "ttstore",
+          "line": 269,
+          "anchor": "getViewModelFromSingleDayForLogin("
+        },
+        {
+          "source_key": "ttraw",
+          "line": 28,
+          "anchor": "export function getTimetablesFromSingleDay"
+        }
+      ],
+      "runtime_verified": false
+    },
+    {
+      "id": "J-12",
+      "claim": "Timetable lessonNo can contain original/new lesson numbers separated by the U+F2EE icon; composer parseInt(base10) can retain only numeric prefix. Submitted lessons are lesson numbers, not record IDs.",
+      "evidence_type": "static caller/branch observation",
+      "references": [
+        {
+          "source_key": "ttbuilder",
+          "line": 185,
+          "anchor": "function getLessonNo(event)"
+        },
+        {
+          "source_key": "new",
+          "line": 344,
+          "anchor": "lessons: this.checkedLessons.map"
+        }
+      ],
+      "runtime_verified": false
+    },
+    {
+      "id": "J-13",
+      "claim": "Changing single date clears checked lessons, starts async lookup and maps result; no request-generation guard appears in this composer handler.",
+      "evidence_type": "bounded negative observation over complete onSingleDatePicked handler",
+      "references": [
+        {
+          "source_key": "new",
+          "line": 299,
+          "anchor": "onSingleDatePicked()"
+        },
+        {
+          "source_key": "new",
+          "line": 392,
+          "anchor": "this.checkedLessons = []"
+        },
+        {
+          "source_key": "new",
+          "line": 402,
+          "anchor": "this.lessonsForSelectedDay = timetableView.map"
+        }
+      ],
+      "runtime_verified": false
+    },
+    {
+      "id": "J-14",
+      "claim": "Notification checkbox appears when today is same/before last day of ChosenDays range, or same/before single chosen day. Past-only submission forces sendNotify false; default is false.",
+      "evidence_type": "static caller/branch observation",
+      "references": [
+        {
+          "source_key": "new",
+          "line": 322,
+          "anchor": "shouldAskForNotification()"
+        },
+        {
+          "source_key": "new",
+          "line": 325,
+          "anchor": "now.isSameOrBefore(moment(this.endDate), 'day')"
+        },
+        {
+          "source_key": "new",
+          "line": 341,
+          "anchor": "sendNotify: this.shouldAskForNotification ? this.sendNotification : false"
+        }
+      ],
+      "runtime_verified": false
+    },
+    {
+      "id": "J-15",
+      "claim": "ChosenDays POST contains messageFromParent, lessons empty array, dateFrom, dateTo, sendNotify. ChosenLessons uses identical keys with parseInt lesson-number array and equal date bounds.",
+      "evidence_type": "static caller/branch observation",
+      "references": [
+        {
+          "source_key": "new",
+          "line": 336,
+          "anchor": "const justification = this.datePickerSelected"
+        },
+        {
+          "source_key": "new",
+          "line": 338,
+          "anchor": "lessons: [],"
+        },
+        {
+          "source_key": "new",
+          "line": 344,
+          "anchor": "lessons: this.checkedLessons.map"
+        }
+      ],
+      "runtime_verified": false
+    },
+    {
+      "id": "J-16",
+      "claim": "Create is POST /Justifications, returning response.data. Synergia helper JSON-stringifies truthy object data; this path does not set sendFile or multipart.",
+      "evidence_type": "static caller/branch observation",
+      "references": [
+        {
+          "source_key": "raw",
+          "line": 48,
+          "anchor": "export function postJustification"
+        },
+        {
+          "source_key": "core",
+          "line": 21,
+          "anchor": "if (config.data && !config.sendFile)"
+        },
+        {
+          "source_key": "core",
+          "line": 22,
+          "anchor": "requestConfig.data = JSON.stringify(config.data)"
+        }
+      ],
+      "runtime_verified": false
+    },
+    {
+      "id": "J-17",
+      "claim": "Store chooses linked-account axios by login, POSTs, then reads response.Id uppercase to GET detail. UI reports success only when both POST and detail flow resolve.",
+      "evidence_type": "static caller/branch observation",
+      "references": [
+        {
+          "source_key": "store",
+          "line": 168,
+          "anchor": "sendJustification({ rootGetters"
+        },
+        {
+          "source_key": "store",
+          "line": 171,
+          "anchor": "id: response.Id"
+        },
+        {
+          "source_key": "new",
+          "line": 354,
+          "anchor": ".toast('Usprawiedliwienie zostało wysłane.'"
+        }
+      ],
+      "runtime_verified": false
+    },
+    {
+      "id": "J-18",
+      "claim": "Any rejection in POST-plus-detail chain produces server Message if provided or generic not-sent UI. This does not establish whether POST reached server.",
+      "evidence_type": "static caller/branch observation",
+      "references": [
+        {
+          "source_key": "new",
+          "line": 358,
+          "anchor": "if (e.response && e.response.data && e.response.data.Message)"
+        },
+        {
+          "source_key": "new",
+          "line": 362,
+          "anchor": "this.infoDialogMessage = 'Usprawiedliwienie nie zostało wysłane."
+        }
+      ],
+      "runtime_verified": false
+    },
+    {
+      "id": "J-19",
+      "claim": "List GET dateFrom/dateTo and detail GET /{id} both consume response.data.data. Multi-ID wrapper normalizes singleton data to array.",
+      "evidence_type": "static caller/branch observation",
+      "references": [
+        {
+          "source_key": "raw",
+          "line": 14,
+          "anchor": "export function getJustifications("
+        },
+        {
+          "source_key": "raw",
+          "line": 22,
+          "anchor": "export function getJustificationsById("
+        },
+        {
+          "source_key": "raw",
+          "line": 32,
+          "anchor": "if (Array.isArray(response.data.data))"
+        }
+      ],
+      "runtime_verified": false
+    },
+    {
+      "id": "J-20",
+      "claim": "Attachment flag GET exists, consuming response.data.canSendAttachment, but composer state, control and call are commented; no active import/caller/upload construction found in this bounded firstparty source search.",
+      "evidence_type": "bounded call-site search plus commented-source observation",
+      "references": [
+        {
+          "source_key": "raw",
+          "line": 40,
+          "anchor": "export function getJustificationsAttachmentAvailableFlag"
+        },
+        {
+          "source_key": "new",
+          "line": 106,
+          "anchor": "<!-- <div class=\"justification-option option-padding\" v-if=\"canSendAttachments\">"
+        },
+        {
+          "source_key": "new",
+          "line": 261,
+          "anchor": "/* const axiosGetter"
+        },
+        {
+          "source_key": "new",
+          "line": 230,
+          "anchor": "// canSendAttachments: false"
+        }
+      ],
+      "runtime_verified": false
+    },
+    {
+      "id": "J-21",
+      "claim": "Builder maps11 response fields plus account login; messageFromParent falsey values become null, while ORM declares string defaults. DTO primary key is account login plus Id.",
+      "evidence_type": "static caller/branch observation",
+      "references": [
+        {
+          "source_key": "builder",
+          "line": 11,
+          "anchor": "function getViewModel("
+        },
+        {
+          "source_key": "builder",
+          "line": 19,
+          "anchor": "MessageFromParent: j.messageFromParent ?"
+        },
+        {
+          "source_key": "dto",
+          "line": 18,
+          "anchor": "static primaryKey = ['SynergiaAccountId', 'Id']"
+        },
+        {
+          "source_key": "dto",
+          "line": 23,
+          "anchor": "static fields()"
+        }
+      ],
+      "runtime_verified": false
+    },
+    {
+      "id": "J-22",
+      "claim": "Container lists send in sent group, accept/reject in processed group. Other statuses match neither group; detail/item fallback labels every non-send/non-accept status rejected.",
+      "evidence_type": "static caller/branch observation",
+      "references": [
+        {
+          "source_key": "container",
+          "line": 68,
+          "anchor": "x.JustificationStatus === 'send'"
+        },
+        {
+          "source_key": "container",
+          "line": 71,
+          "anchor": "x.JustificationStatus === 'accept'"
+        },
+        {
+          "source_key": "detail",
+          "line": 132,
+          "anchor": "return 'Odrzucone'"
+        },
+        {
+          "source_key": "item",
+          "line": 59,
+          "anchor": "return 'Odrzucone'"
+        }
+      ],
+      "runtime_verified": false
+    },
+    {
+      "id": "J-23",
+      "claim": "Detail displays date interval/status/count/reason/attachment boolean/post date, not attached file bytes. Literal string null and null reason are hidden.",
+      "evidence_type": "static caller/branch observation",
+      "references": [
+        {
+          "source_key": "detail",
+          "line": 52,
+          "anchor": "detailProps.justification.MessageFromParent !== 'null'"
+        },
+        {
+          "source_key": "detail",
+          "line": 45,
+          "anchor": "detailProps.justification.JustifiedAbsences"
+        },
+        {
+          "source_key": "detail",
+          "line": 135,
+          "anchor": "return this.detailProps.justification.Attachment ? 'Dodany'"
+        }
+      ],
+      "runtime_verified": false
+    },
+    {
+      "id": "J-24",
+      "claim": "Detail loads first class teacher display name for message prefill. Generic envelope can open mail composer; this is a follow-up message, not justification acceptance/edit.",
+      "evidence_type": "static caller/branch observation",
+      "references": [
+        {
+          "source_key": "detail",
+          "line": 114,
+          "anchor": "this.$store.dispatch('classAndSchoolInfo/getViewModel')"
+        },
+        {
+          "source_key": "detail",
+          "line": 191,
+          "anchor": "getMessageParams()"
+        },
+        {
+          "source_key": "shell",
+          "line": 280,
+          "anchor": "this.$store.dispatch('navigator/getSendMessagesPage'"
+        }
+      ],
+      "runtime_verified": false
+    },
+    {
+      "id": "J-25",
+      "claim": "Cached nonempty clean list is returned by login and Deleted false. Cold date bounds use prior schoolyear Sep1 through school end; missing end fallback is2000-09-01 to2999-01-01.",
+      "evidence_type": "static caller/branch observation",
+      "references": [
+        {
+          "source_key": "store",
+          "line": 59,
+          "anchor": "if (state.isDirty[currentAccountLogin] === false)"
+        },
+        {
+          "source_key": "store",
+          "line": 72,
+          "anchor": "const startYear = moment(endYearDate || '2001-01-01').year() - 1"
+        },
+        {
+          "source_key": "store",
+          "line": 74,
+          "anchor": "const dateTo = endYearDate || '2999-01-01'"
+        }
+      ],
+      "runtime_verified": false
+    },
+    {
+      "id": "J-26",
+      "claim": "403 detection inspects error.message text and marks module unavailable per login; other errors do not imply denied. UI sorts PostDate descending after retrieval.",
+      "evidence_type": "static caller/branch observation",
+      "references": [
+        {
+          "source_key": "store",
+          "line": 89,
+          "anchor": "if (error.message.indexOf('403') !== -1)"
+        },
+        {
+          "source_key": "container",
+          "line": 87,
+          "anchor": "m.sort(sortByDateDesc('PostDate'))"
+        }
+      ],
+      "runtime_verified": false
+    },
+    {
+      "id": "J-27",
+      "claim": "Module availability check uses one module-global promise, not a per-login map. When another check is active, it returns resolved promise without joining owner-specific result.",
+      "evidence_type": "static caller/branch observation",
+      "references": [
+        {
+          "source_key": "store",
+          "line": 12,
+          "anchor": "let updateAvailabilityPromise = null"
+        },
+        {
+          "source_key": "store",
+          "line": 174,
+          "anchor": "requestModuleAvailabilityCheck("
+        },
+        {
+          "source_key": "store",
+          "line": 186,
+          "anchor": "return Promise.resolve();"
+        }
+      ],
+      "runtime_verified": false
+    },
+    {
+      "id": "J-28",
+      "claim": "Local markAsSeen saves model only. Local delete marks Deleted; no HTTP deletion in these store actions.",
+      "evidence_type": "static caller/branch observation",
+      "references": [
+        {
+          "source_key": "store",
+          "line": 142,
+          "anchor": "markAsSeen({ dispatch }, model)"
+        },
+        {
+          "source_key": "store",
+          "line": 146,
+          "anchor": "deleteViewModel({ dispatch }, { login, id })"
+        },
+        {
+          "source_key": "store",
+          "line": 151,
+          "anchor": "justification.Deleted = true"
+        }
+      ],
+      "runtime_verified": false
+    },
+    {
+      "id": "J-29",
+      "claim": "Justification changes produce feed events, resolving by login+resource ID; Edit is described as processed and other types as added.",
+      "evidence_type": "static caller/branch observation",
+      "references": [
+        {
+          "source_key": "changes",
+          "line": 807,
+          "anchor": "function processJustification(change)"
+        },
+        {
+          "source_key": "changes",
+          "line": 819,
+          "anchor": "EventActionType: change.Type === 'Edit'"
+        }
+      ],
+      "runtime_verified": false
+    },
+    {
+      "id": "J-30",
+      "claim": "Page key includes current linked login and lastChange so ordinary create/detail cache updates remount list; this does not prove attendance has been justified.",
+      "evidence_type": "static caller/branch observation",
+      "references": [
+        {
+          "source_key": "page",
+          "line": 26,
+          "anchor": "return `justifications_"
+        },
+        {
+          "source_key": "store",
+          "line": 172,
+          "anchor": ".then(() => commit('setLastChange'))"
+        }
+      ],
+      "runtime_verified": false
+    }
+  ],
+  "operation_references": [
+    {
+      "id": "LIB-620d57fd4a",
+      "function": "getJustifications",
+      "source": "src/api/raw-rest-api/synergia-justifications-rest.js"
+    },
+    {
+      "id": "LIB-319044758e",
+      "function": "getJustificationsById",
+      "source": "src/api/raw-rest-api/synergia-justifications-rest.js"
+    },
+    {
+      "id": "LIB-32615b9f68",
+      "function": "getJustificationsByIds",
+      "source": "src/api/raw-rest-api/synergia-justifications-rest.js"
+    },
+    {
+      "id": "LIB-b6a379281d",
+      "function": "getJustificationsAttachmentAvailableFlag",
+      "source": "src/api/raw-rest-api/synergia-justifications-rest.js"
+    },
+    {
+      "id": "LIB-6d1b9b729d",
+      "function": "postJustification",
+      "source": "src/api/raw-rest-api/synergia-justifications-rest.js"
+    },
+    {
+      "id": "LIB-824da08372",
+      "function": "getTimetablesFromSingleDay",
+      "source": "src/api/raw-rest-api/synergia-timetables-rest.js"
+    }
+  ],
+  "synthetic_examples": [
+    {
+      "id": "JX-DAYS",
+      "synthetic": true,
+      "kind": "exact-body-shape-example",
+      "method": "POST",
+      "url_template": "{synergiaBase}/Justifications",
+      "body": {
+        "messageFromParent": "Synthetic reason only",
+        "lessons": [],
+        "dateFrom": "2030-03-04",
+        "dateTo": "2030-03-06",
+        "sendNotify": false
+      }
+    },
+    {
+      "id": "JX-LESSONS",
+      "synthetic": true,
+      "kind": "exact-body-shape-example",
+      "method": "POST",
+      "url_template": "{synergiaBase}/Justifications",
+      "body": {
+        "messageFromParent": "Synthetic reason only",
+        "lessons": [
+          2,
+          4
+        ],
+        "dateFrom": "2030-03-04",
+        "dateTo": "2030-03-04",
+        "sendNotify": true
+      }
+    },
+    {
+      "id": "JX-POST-RECEIPT",
+      "synthetic": true,
+      "kind": "consumed-field-subset-not-complete-server-schema",
+      "body": {
+        "Id": 901
+      },
+      "expected": "GET /Justifications/901; do not submit again if detail fails"
+    },
+    {
+      "id": "JX-DETAIL",
+      "synthetic": true,
+      "kind": "illustrative-lowercase-wire-fields-not-captured",
+      "body": {
+        "data": {
+          "id": "901",
+          "lessons": [
+            2,
+            4
+          ],
+          "attachment": false,
+          "messageFromParent": "Synthetic reason only",
+          "postDate": "2030-03-04T08:00:00",
+          "justificationStatus": "send",
+          "justifiedAbsences": 0,
+          "dateFrom": "2030-03-04",
+          "dateTo": "2030-03-04",
+          "notifiedTeachers": []
+        }
+      },
+      "expected": "Preserve send as pending/sent; count0 is not a proof of failure or acceptance"
+    }
+  ],
+  "acceptance_cases": [
+    {
+      "id": "J-T01",
+      "input": "Parent active/premium + module available",
+      "expected": "Composer/list available only for matching owner",
+      "synthetic": true,
+      "executed_against_server": false
+    },
+    {
+      "id": "J-T02",
+      "input": "group8 or student",
+      "expected": "Original container prevents fetch; show role unavailable, not empty success",
+      "synthetic": true,
+      "executed_against_server": false
+    },
+    {
+      "id": "J-T03",
+      "input": "unknown/null/group14",
+      "expected": "Do not infer parent permission merely because original isAccountTypeStudent returns false",
+      "synthetic": true,
+      "executed_against_server": false
+    },
+    {
+      "id": "J-T04",
+      "input": "403 vs timeout vs malformed response",
+      "expected": "Denied/unavailable, stale transport and protocol errors remain distinct",
+      "synthetic": true,
+      "executed_against_server": false
+    },
+    {
+      "id": "J-T05",
+      "input": "ChosenDays start=end",
+      "expected": "Send empty lessons array and same date bounds; valid local form",
+      "synthetic": true,
+      "executed_against_server": false
+    },
+    {
+      "id": "J-T06",
+      "input": "end before start or missing endpoint date",
+      "expected": "Prevent confirmation; preserve entered text",
+      "synthetic": true,
+      "executed_against_server": false
+    },
+    {
+      "id": "J-T07",
+      "input": "range longer than guessed7/14/30days",
+      "expected": "No such original limit recovered; do not invent fixedmaximum",
+      "synthetic": true,
+      "executed_against_server": false
+    },
+    {
+      "id": "J-T08",
+      "input": "empty or whitespace-only reason",
+      "expected": "Original validation permits; mark chosen stricter client policy separately",
+      "synthetic": true,
+      "executed_against_server": false
+    },
+    {
+      "id": "J-T09",
+      "input": "1000UTF16units vs1001",
+      "expected": "Mirror textarea limit as UI policy; server byte/length limits require fixture",
+      "synthetic": true,
+      "executed_against_server": false
+    },
+    {
+      "id": "J-T10",
+      "input": "lessons2and4 selected",
+      "expected": "JSON integers[2,4], not timetable IDs/attendance IDs",
+      "synthetic": true,
+      "executed_against_server": false
+    },
+    {
+      "id": "J-T11",
+      "input": "moved lessonNo starts2 then U+F2EE4",
+      "expected": "SourceparseInt yields2; new implementation must resolve raw canonical number deliberately",
+      "synthetic": true,
+      "executed_against_server": false
+    },
+    {
+      "id": "J-T12",
+      "input": "nonnumeric lessonNo",
+      "expected": "Do not emit NaN/null; explicit protocol/selection error",
+      "synthetic": true,
+      "executed_against_server": false
+    },
+    {
+      "id": "J-T13",
+      "input": "attendance.Lesson string2 but timetable lessonNo integer2",
+      "expected": "Strict source comparison fails and falls back whole days; test proposed normalized numeric identity",
+      "synthetic": true,
+      "executed_against_server": false
+    },
+    {
+      "id": "J-T14",
+      "input": "canceled or present timetable lessons",
+      "expected": "Composer originally does not filter; server eligibility must not be invented from attendance type",
+      "synthetic": true,
+      "executed_against_server": false
+    },
+    {
+      "id": "J-T15",
+      "input": "date changes while timetable request pending",
+      "expected": "Old result cannot populate newdate selection",
+      "synthetic": true,
+      "executed_against_server": false
+    },
+    {
+      "id": "J-T16",
+      "input": "all-past selected date and notification flagtrue",
+      "expected": "Serialized sendNotify false",
+      "synthetic": true,
+      "executed_against_server": false
+    },
+    {
+      "id": "J-T17",
+      "input": "today date or startpast/endfuture",
+      "expected": "Checkbox may appear; true only when user selects it",
+      "synthetic": true,
+      "executed_against_server": false
+    },
+    {
+      "id": "J-T18",
+      "input": "Attachment available returns true",
+      "expected": "No active upload UI/recipe; remain unavailable until recovered and authorized",
+      "synthetic": true,
+      "executed_against_server": false
+    },
+    {
+      "id": "J-T19",
+      "input": "POST returns Id but detailGET fails",
+      "expected": "Keep confirmed receipt901; retry safe detail only",
+      "synthetic": true,
+      "executed_against_server": false
+    },
+    {
+      "id": "J-T20",
+      "input": "POST timeout after bytes sent",
+      "expected": "Uncertain; reconcile list/detail before manual retry; no blind automatic replay",
+      "synthetic": true,
+      "executed_against_server": false
+    },
+    {
+      "id": "J-T21",
+      "input": "unknown statusqueued",
+      "expected": "Preserve rawqueued and unknown display; do not hide or label rejected",
+      "synthetic": true,
+      "executed_against_server": false
+    },
+    {
+      "id": "J-T22",
+      "input": "send/accept/reject with count0/nonzero",
+      "expected": "Preserve status and count independently; refresh attendance separately",
+      "synthetic": true,
+      "executed_against_server": false
+    },
+    {
+      "id": "J-T23",
+      "input": "two sibling/module availability requests",
+      "expected": "Owner-scoped results; no global in-flight false completion",
+      "synthetic": true,
+      "executed_against_server": false
+    },
+    {
+      "id": "J-T24",
+      "input": "logout/profile switch during post/detail",
+      "expected": "No stale result publication or credential resurrection",
+      "synthetic": true,
+      "executed_against_server": false
+    },
+    {
+      "id": "J-T25",
+      "input": "same justificationid across accounts",
+      "expected": "Composite identity keeps responses and actions isolated",
+      "synthetic": true,
+      "executed_against_server": false
+    },
+    {
+      "id": "J-T26",
+      "input": "fresh empty list after old cachedrecords",
+      "expected": "Successful empty reconciles covered scope; failure retains stale records",
+      "synthetic": true,
+      "executed_against_server": false
+    },
+    {
+      "id": "J-T27",
+      "input": "read detail or mark seen",
+      "expected": "No attendance edit/server read-ack invented",
+      "synthetic": true,
+      "executed_against_server": false
+    },
+    {
+      "id": "J-T28",
+      "input": "response.Id absent/malformed",
+      "expected": "Protocol outcome with possible server creation; never GET undefined or replay automatically",
+      "synthetic": true,
+      "executed_against_server": false
+    }
+  ],
+  "remaining_gates": [
+    "Current role/license/school/class permission and server period limits",
+    "Actual Id and lowercase detail schema/type fixtures, errorcodes and optional defaults",
+    "Canonical lesson numbering for moved/canceled/overlapping lessons",
+    "Date inclusivity and schooltimezone/DST",
+    "Server duplicate/idempotency behavior and uncertain POST reconciliation",
+    "Any future justification attachment send/download workflow; boolean/getter is not upload proof"
+  ],
+  "source_records": [
+    {
+      "fact_id": "J-01",
+      "source_name": "webpack://librus/./src/store/modules/navigator-store/navigator-pages.js",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 591,
+      "source_content_sha256": "bf101c150b4101af626f312a96c7cfdf263a895ee3939c08e30e992e72b84bb7",
+      "anchor": "export const justifications",
+      "line": 89
+    },
+    {
+      "fact_id": "J-01",
+      "source_name": "webpack://librus/src/pages/main-pages/justifications-page/JustificationsContainer.vue",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 314,
+      "source_content_sha256": "50ecb44638aa2eabfe0a6e9e082577fd423c8f86923066c283dce064f9da891d",
+      "anchor": "if (this.$store.getters['user/isCurrentBroken']",
+      "line": 80
+    },
+    {
+      "fact_id": "J-02",
+      "source_name": "webpack://librus/./src/helpers/user-utils.js",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 103,
+      "source_content_sha256": "6a801bba197f8f96970f873867154ba3fac0ba11272580c2304c9b0e9d2ce252",
+      "anchor": "export function isAccountTypeStudent",
+      "line": 44
+    },
+    {
+      "fact_id": "J-02",
+      "source_name": "webpack://librus/./src/helpers/user-utils.js",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 103,
+      "source_content_sha256": "6a801bba197f8f96970f873867154ba3fac0ba11272580c2304c9b0e9d2ce252",
+      "anchor": "return (group === 8 || group === 'student')",
+      "line": 38
+    },
+    {
+      "fact_id": "J-03",
+      "source_name": "webpack://librus/src/pages/main-pages/attendances-page/components/AttendanceCard.vue",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 296,
+      "source_content_sha256": "dd8d54833042d88c503bb29bbe57f8b0b8258b496869358f15da0a8cb50612f6",
+      "anchor": "showJustificationOption()",
+      "line": 52
+    },
+    {
+      "fact_id": "J-03",
+      "source_name": "webpack://librus/src/pages/main-pages/attendances-page/components/AttendanceCard.vue",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 296,
+      "source_content_sha256": "dd8d54833042d88c503bb29bbe57f8b0b8258b496869358f15da0a8cb50612f6",
+      "anchor": "return this.componentProps.TypeId &&",
+      "line": 64
+    },
+    {
+      "fact_id": "J-03",
+      "source_name": "webpack://librus/src/pages/main-pages/attendances-page/components/AttendanceCard.vue",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 296,
+      "source_content_sha256": "dd8d54833042d88c503bb29bbe57f8b0b8258b496869358f15da0a8cb50612f6",
+      "anchor": "createNewJustificationForSelectedLesson()",
+      "line": 102
+    },
+    {
+      "fact_id": "J-04",
+      "source_name": "webpack://librus/src/pages/main-pages/attendances-page/components/AttendanceDateGroupContainer.vue",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 302,
+      "source_content_sha256": "70c118efdfafed1d890c736a80e5756960f8948e1c778643afa0364b7ac69d5a",
+      "anchor": "showJustificationOption()",
+      "line": 51
+    },
+    {
+      "fact_id": "J-04",
+      "source_name": "webpack://librus/src/pages/main-pages/attendances-page/components/AttendanceDateGroupContainer.vue",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 302,
+      "source_content_sha256": "70c118efdfafed1d890c736a80e5756960f8948e1c778643afa0364b7ac69d5a",
+      "anchor": "return this.componentProps.some",
+      "line": 63
+    },
+    {
+      "fact_id": "J-04",
+      "source_name": "webpack://librus/src/pages/main-pages/attendances-page/components/AttendanceDateGroupContainer.vue",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 302,
+      "source_content_sha256": "70c118efdfafed1d890c736a80e5756960f8948e1c778643afa0364b7ac69d5a",
+      "anchor": "attendanceChosenDay: this.date",
+      "line": 105
+    },
+    {
+      "fact_id": "J-05",
+      "source_name": "webpack://librus/src/pages/main-pages/attendances-page/components/AttendanceDetail.vue",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 882,
+      "source_content_sha256": "f71abf965907c580bdd36a949a85a706379a0b31ea55ae834ac62cb5aa5eebd2",
+      "anchor": "showJustificationOption()",
+      "line": 147
+    },
+    {
+      "fact_id": "J-05",
+      "source_name": "webpack://librus/src/pages/main-pages/attendances-page/components/AttendanceDetail.vue",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 882,
+      "source_content_sha256": "f71abf965907c580bdd36a949a85a706379a0b31ea55ae834ac62cb5aa5eebd2",
+      "anchor": "accountLogin: this.detailProps.synergiaAccountId",
+      "line": 235
+    },
+    {
+      "fact_id": "J-06",
+      "source_name": "webpack://librus/src/pages/main-pages/justifications-page/components/NewJustificationView.vue",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 1072,
+      "source_content_sha256": "07c8b35cd1774dcf36098a8053f55b7859929c27c90f76ce89b3dce49726077c",
+      "anchor": "datePickerSelected: 'ChosenDays'",
+      "line": 234
+    },
+    {
+      "fact_id": "J-06",
+      "source_name": "webpack://librus/src/pages/main-pages/justifications-page/components/NewJustificationView.vue",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 1072,
+      "source_content_sha256": "07c8b35cd1774dcf36098a8053f55b7859929c27c90f76ce89b3dce49726077c",
+      "anchor": "sendNotification: false",
+      "line": 248
+    },
+    {
+      "fact_id": "J-06",
+      "source_name": "webpack://librus/src/pages/main-pages/justifications-page/components/NewJustificationView.vue",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 1072,
+      "source_content_sha256": "07c8b35cd1774dcf36098a8053f55b7859929c27c90f76ce89b3dce49726077c",
+      "anchor": "const now = moment().toISOString(true)",
+      "line": 257
+    },
+    {
+      "fact_id": "J-07",
+      "source_name": "webpack://librus/src/pages/main-pages/justifications-page/components/NewJustificationView.vue",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 1072,
+      "source_content_sha256": "07c8b35cd1774dcf36098a8053f55b7859929c27c90f76ce89b3dce49726077c",
+      "anchor": "if (this.attendanceChosenDay",
+      "line": 270
+    },
+    {
+      "fact_id": "J-07",
+      "source_name": "webpack://librus/src/pages/main-pages/justifications-page/components/NewJustificationView.vue",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 1072,
+      "source_content_sha256": "07c8b35cd1774dcf36098a8053f55b7859929c27c90f76ce89b3dce49726077c",
+      "anchor": "} else if (this.attendanceObjectRef)",
+      "line": 276
+    },
+    {
+      "fact_id": "J-07",
+      "source_name": "webpack://librus/src/pages/main-pages/justifications-page/components/NewJustificationView.vue",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 1072,
+      "source_content_sha256": "07c8b35cd1774dcf36098a8053f55b7859929c27c90f76ce89b3dce49726077c",
+      "anchor": ".some((x) => x.lessonNo === this.attendanceObjectRef.Lesson)",
+      "line": 279
+    },
+    {
+      "fact_id": "J-08",
+      "source_name": "webpack://librus/src/pages/main-pages/justifications-page/components/NewJustificationView.vue",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 1072,
+      "source_content_sha256": "07c8b35cd1774dcf36098a8053f55b7859929c27c90f76ce89b3dce49726077c",
+      "anchor": "value-zone=\"local\"",
+      "line": 181
+    },
+    {
+      "fact_id": "J-08",
+      "source_name": "webpack://librus/src/pages/main-pages/justifications-page/components/NewJustificationView.vue",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 1072,
+      "source_content_sha256": "07c8b35cd1774dcf36098a8053f55b7859929c27c90f76ce89b3dce49726077c",
+      "anchor": ":min-datetime=\"startDate\"",
+      "line": 187
+    },
+    {
+      "fact_id": "J-08",
+      "source_name": "webpack://librus/src/pages/main-pages/justifications-page/components/NewJustificationView.vue",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 1072,
+      "source_content_sha256": "07c8b35cd1774dcf36098a8053f55b7859929c27c90f76ce89b3dce49726077c",
+      "anchor": "onStartDatePicked()",
+      "line": 372
+    },
+    {
+      "fact_id": "J-08",
+      "source_name": "webpack://librus/src/pages/main-pages/justifications-page/components/NewJustificationView.vue",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 1072,
+      "source_content_sha256": "07c8b35cd1774dcf36098a8053f55b7859929c27c90f76ce89b3dce49726077c",
+      "anchor": "moment(this.startDate).format('YYYY-MM-DD')",
+      "line": 305
+    },
+    {
+      "fact_id": "J-09",
+      "source_name": "webpack://librus/src/pages/main-pages/justifications-page/components/NewJustificationView.vue",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 1072,
+      "source_content_sha256": "07c8b35cd1774dcf36098a8053f55b7859929c27c90f76ce89b3dce49726077c",
+      "anchor": "validateAndShowConfirmDialog()",
+      "line": 415
+    },
+    {
+      "fact_id": "J-09",
+      "source_name": "webpack://librus/src/pages/main-pages/justifications-page/components/NewJustificationView.vue",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 1072,
+      "source_content_sha256": "07c8b35cd1774dcf36098a8053f55b7859929c27c90f76ce89b3dce49726077c",
+      "anchor": "if (moment(this.endDate).isBefore",
+      "line": 423
+    },
+    {
+      "fact_id": "J-10",
+      "source_name": "webpack://librus/src/pages/main-pages/justifications-page/components/NewJustificationView.vue",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 1072,
+      "source_content_sha256": "07c8b35cd1774dcf36098a8053f55b7859929c27c90f76ce89b3dce49726077c",
+      "anchor": "maxlength=\"1000\"",
+      "line": 102
+    },
+    {
+      "fact_id": "J-10",
+      "source_name": "webpack://librus/src/pages/main-pages/justifications-page/components/NewJustificationView.vue",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 1072,
+      "source_content_sha256": "07c8b35cd1774dcf36098a8053f55b7859929c27c90f76ce89b3dce49726077c",
+      "anchor": "validateAndShowConfirmDialog()",
+      "line": 415
+    },
+    {
+      "fact_id": "J-11",
+      "source_name": "webpack://librus/src/pages/main-pages/justifications-page/components/NewJustificationView.vue",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 1072,
+      "source_content_sha256": "07c8b35cd1774dcf36098a8053f55b7859929c27c90f76ce89b3dce49726077c",
+      "anchor": "this.$store.dispatch('timetables/getViewModelFromSingleDayForLogin'",
+      "line": 393
+    },
+    {
+      "fact_id": "J-11",
+      "source_name": "webpack://librus/src/pages/main-pages/justifications-page/components/NewJustificationView.vue",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 1072,
+      "source_content_sha256": "07c8b35cd1774dcf36098a8053f55b7859929c27c90f76ce89b3dce49726077c",
+      "anchor": "this.lessonsForSelectedDay = timetableView.map",
+      "line": 402
+    },
+    {
+      "fact_id": "J-11",
+      "source_name": "webpack://librus/./src/store/modules/view-store/timetables-store.js",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 768,
+      "source_content_sha256": "f72b408d7a08b2974020a3ddeccaca3ddc2f2b56600a65a1f28fc18445376ec4",
+      "anchor": "getViewModelFromSingleDayForLogin(",
+      "line": 269
+    },
+    {
+      "fact_id": "J-11",
+      "source_name": "webpack://librus/./src/api/raw-rest-api/synergia-timetables-rest.js",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 21,
+      "source_content_sha256": "b8b6895d32f42d3b5c94ef653f0616691b6e6f12b6023dafa299d3876e44829c",
+      "anchor": "export function getTimetablesFromSingleDay",
+      "line": 28
+    },
+    {
+      "fact_id": "J-12",
+      "source_name": "webpack://librus/./src/api/view-builders/timetables-builder.js",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 767,
+      "source_content_sha256": "b164a6a68e2d2e6362568c9db48ff708861d6b5762a15d0235c3bb58c1e9d914",
+      "anchor": "function getLessonNo(event)",
+      "line": 185
+    },
+    {
+      "fact_id": "J-12",
+      "source_name": "webpack://librus/src/pages/main-pages/justifications-page/components/NewJustificationView.vue",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 1072,
+      "source_content_sha256": "07c8b35cd1774dcf36098a8053f55b7859929c27c90f76ce89b3dce49726077c",
+      "anchor": "lessons: this.checkedLessons.map",
+      "line": 344
+    },
+    {
+      "fact_id": "J-13",
+      "source_name": "webpack://librus/src/pages/main-pages/justifications-page/components/NewJustificationView.vue",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 1072,
+      "source_content_sha256": "07c8b35cd1774dcf36098a8053f55b7859929c27c90f76ce89b3dce49726077c",
+      "anchor": "onSingleDatePicked()",
+      "line": 299
+    },
+    {
+      "fact_id": "J-13",
+      "source_name": "webpack://librus/src/pages/main-pages/justifications-page/components/NewJustificationView.vue",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 1072,
+      "source_content_sha256": "07c8b35cd1774dcf36098a8053f55b7859929c27c90f76ce89b3dce49726077c",
+      "anchor": "this.checkedLessons = []",
+      "line": 392
+    },
+    {
+      "fact_id": "J-13",
+      "source_name": "webpack://librus/src/pages/main-pages/justifications-page/components/NewJustificationView.vue",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 1072,
+      "source_content_sha256": "07c8b35cd1774dcf36098a8053f55b7859929c27c90f76ce89b3dce49726077c",
+      "anchor": "this.lessonsForSelectedDay = timetableView.map",
+      "line": 402
+    },
+    {
+      "fact_id": "J-14",
+      "source_name": "webpack://librus/src/pages/main-pages/justifications-page/components/NewJustificationView.vue",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 1072,
+      "source_content_sha256": "07c8b35cd1774dcf36098a8053f55b7859929c27c90f76ce89b3dce49726077c",
+      "anchor": "shouldAskForNotification()",
+      "line": 322
+    },
+    {
+      "fact_id": "J-14",
+      "source_name": "webpack://librus/src/pages/main-pages/justifications-page/components/NewJustificationView.vue",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 1072,
+      "source_content_sha256": "07c8b35cd1774dcf36098a8053f55b7859929c27c90f76ce89b3dce49726077c",
+      "anchor": "now.isSameOrBefore(moment(this.endDate), 'day')",
+      "line": 325
+    },
+    {
+      "fact_id": "J-14",
+      "source_name": "webpack://librus/src/pages/main-pages/justifications-page/components/NewJustificationView.vue",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 1072,
+      "source_content_sha256": "07c8b35cd1774dcf36098a8053f55b7859929c27c90f76ce89b3dce49726077c",
+      "anchor": "sendNotify: this.shouldAskForNotification ? this.sendNotification : false",
+      "line": 341
+    },
+    {
+      "fact_id": "J-15",
+      "source_name": "webpack://librus/src/pages/main-pages/justifications-page/components/NewJustificationView.vue",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 1072,
+      "source_content_sha256": "07c8b35cd1774dcf36098a8053f55b7859929c27c90f76ce89b3dce49726077c",
+      "anchor": "const justification = this.datePickerSelected",
+      "line": 336
+    },
+    {
+      "fact_id": "J-15",
+      "source_name": "webpack://librus/src/pages/main-pages/justifications-page/components/NewJustificationView.vue",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 1072,
+      "source_content_sha256": "07c8b35cd1774dcf36098a8053f55b7859929c27c90f76ce89b3dce49726077c",
+      "anchor": "lessons: [],",
+      "line": 338
+    },
+    {
+      "fact_id": "J-15",
+      "source_name": "webpack://librus/src/pages/main-pages/justifications-page/components/NewJustificationView.vue",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 1072,
+      "source_content_sha256": "07c8b35cd1774dcf36098a8053f55b7859929c27c90f76ce89b3dce49726077c",
+      "anchor": "lessons: this.checkedLessons.map",
+      "line": 344
+    },
+    {
+      "fact_id": "J-16",
+      "source_name": "webpack://librus/./src/api/raw-rest-api/synergia-justifications-rest.js",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 701,
+      "source_content_sha256": "95732b818b829cdd705b4feb78bc5598ea8de53b66cbd9de79f098139d45191d",
+      "anchor": "export function postJustification",
+      "line": 48
+    },
+    {
+      "fact_id": "J-16",
+      "source_name": "webpack://librus/./src/api/synergia-rest-core.js",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 23,
+      "source_content_sha256": "bf33e071b320e43224c9bb3656cf6da283b6eb566df12a5866da2c92f9cd845c",
+      "anchor": "if (config.data && !config.sendFile)",
+      "line": 21
+    },
+    {
+      "fact_id": "J-16",
+      "source_name": "webpack://librus/./src/api/synergia-rest-core.js",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 23,
+      "source_content_sha256": "bf33e071b320e43224c9bb3656cf6da283b6eb566df12a5866da2c92f9cd845c",
+      "anchor": "requestConfig.data = JSON.stringify(config.data)",
+      "line": 22
+    },
+    {
+      "fact_id": "J-17",
+      "source_name": "webpack://librus/./src/store/modules/view-store/justifications-store.js",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 702,
+      "source_content_sha256": "f6ae555875e9b9baf95374c2566b08380af2160c53a935d43800ab51638a92ee",
+      "anchor": "sendJustification({ rootGetters",
+      "line": 168
+    },
+    {
+      "fact_id": "J-17",
+      "source_name": "webpack://librus/./src/store/modules/view-store/justifications-store.js",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 702,
+      "source_content_sha256": "f6ae555875e9b9baf95374c2566b08380af2160c53a935d43800ab51638a92ee",
+      "anchor": "id: response.Id",
+      "line": 171
+    },
+    {
+      "fact_id": "J-17",
+      "source_name": "webpack://librus/src/pages/main-pages/justifications-page/components/NewJustificationView.vue",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 1072,
+      "source_content_sha256": "07c8b35cd1774dcf36098a8053f55b7859929c27c90f76ce89b3dce49726077c",
+      "anchor": ".toast('Usprawiedliwienie zostało wysłane.'",
+      "line": 354
+    },
+    {
+      "fact_id": "J-18",
+      "source_name": "webpack://librus/src/pages/main-pages/justifications-page/components/NewJustificationView.vue",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 1072,
+      "source_content_sha256": "07c8b35cd1774dcf36098a8053f55b7859929c27c90f76ce89b3dce49726077c",
+      "anchor": "if (e.response && e.response.data && e.response.data.Message)",
+      "line": 358
+    },
+    {
+      "fact_id": "J-18",
+      "source_name": "webpack://librus/src/pages/main-pages/justifications-page/components/NewJustificationView.vue",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 1072,
+      "source_content_sha256": "07c8b35cd1774dcf36098a8053f55b7859929c27c90f76ce89b3dce49726077c",
+      "anchor": "this.infoDialogMessage = 'Usprawiedliwienie nie zostało wysłane.",
+      "line": 362
+    },
+    {
+      "fact_id": "J-19",
+      "source_name": "webpack://librus/./src/api/raw-rest-api/synergia-justifications-rest.js",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 701,
+      "source_content_sha256": "95732b818b829cdd705b4feb78bc5598ea8de53b66cbd9de79f098139d45191d",
+      "anchor": "export function getJustifications(",
+      "line": 14
+    },
+    {
+      "fact_id": "J-19",
+      "source_name": "webpack://librus/./src/api/raw-rest-api/synergia-justifications-rest.js",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 701,
+      "source_content_sha256": "95732b818b829cdd705b4feb78bc5598ea8de53b66cbd9de79f098139d45191d",
+      "anchor": "export function getJustificationsById(",
+      "line": 22
+    },
+    {
+      "fact_id": "J-19",
+      "source_name": "webpack://librus/./src/api/raw-rest-api/synergia-justifications-rest.js",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 701,
+      "source_content_sha256": "95732b818b829cdd705b4feb78bc5598ea8de53b66cbd9de79f098139d45191d",
+      "anchor": "if (Array.isArray(response.data.data))",
+      "line": 32
+    },
+    {
+      "fact_id": "J-20",
+      "source_name": "webpack://librus/./src/api/raw-rest-api/synergia-justifications-rest.js",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 701,
+      "source_content_sha256": "95732b818b829cdd705b4feb78bc5598ea8de53b66cbd9de79f098139d45191d",
+      "anchor": "export function getJustificationsAttachmentAvailableFlag",
+      "line": 40
+    },
+    {
+      "fact_id": "J-20",
+      "source_name": "webpack://librus/src/pages/main-pages/justifications-page/components/NewJustificationView.vue",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 1072,
+      "source_content_sha256": "07c8b35cd1774dcf36098a8053f55b7859929c27c90f76ce89b3dce49726077c",
+      "anchor": "<!-- <div class=\"justification-option option-padding\" v-if=\"canSendAttachments\">",
+      "line": 106
+    },
+    {
+      "fact_id": "J-20",
+      "source_name": "webpack://librus/src/pages/main-pages/justifications-page/components/NewJustificationView.vue",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 1072,
+      "source_content_sha256": "07c8b35cd1774dcf36098a8053f55b7859929c27c90f76ce89b3dce49726077c",
+      "anchor": "/* const axiosGetter",
+      "line": 261
+    },
+    {
+      "fact_id": "J-20",
+      "source_name": "webpack://librus/src/pages/main-pages/justifications-page/components/NewJustificationView.vue",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 1072,
+      "source_content_sha256": "07c8b35cd1774dcf36098a8053f55b7859929c27c90f76ce89b3dce49726077c",
+      "anchor": "// canSendAttachments: false",
+      "line": 230
+    },
+    {
+      "fact_id": "J-21",
+      "source_name": "webpack://librus/./src/api/view-builders/justifications-builder.js",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 700,
+      "source_content_sha256": "c3942ea1b220fc5f52c3954d57897d3de1e13937a3e4e3fd5e23f7c215d56156",
+      "anchor": "function getViewModel(",
+      "line": 11
+    },
+    {
+      "fact_id": "J-21",
+      "source_name": "webpack://librus/./src/api/view-builders/justifications-builder.js",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 700,
+      "source_content_sha256": "c3942ea1b220fc5f52c3954d57897d3de1e13937a3e4e3fd5e23f7c215d56156",
+      "anchor": "MessageFromParent: j.messageFromParent ?",
+      "line": 19
+    },
+    {
+      "fact_id": "J-21",
+      "source_name": "webpack://librus/./src/viewmodels/justifications.js",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 810,
+      "source_content_sha256": "b4cd1e6c538d6bdee6658293b2bb0748ef8ffee2167506d9430c3fd1a565c1c8",
+      "anchor": "static primaryKey = ['SynergiaAccountId', 'Id']",
+      "line": 18
+    },
+    {
+      "fact_id": "J-21",
+      "source_name": "webpack://librus/./src/viewmodels/justifications.js",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 810,
+      "source_content_sha256": "b4cd1e6c538d6bdee6658293b2bb0748ef8ffee2167506d9430c3fd1a565c1c8",
+      "anchor": "static fields()",
+      "line": 23
+    },
+    {
+      "fact_id": "J-22",
+      "source_name": "webpack://librus/src/pages/main-pages/justifications-page/JustificationsContainer.vue",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 314,
+      "source_content_sha256": "50ecb44638aa2eabfe0a6e9e082577fd423c8f86923066c283dce064f9da891d",
+      "anchor": "x.JustificationStatus === 'send'",
+      "line": 68
+    },
+    {
+      "fact_id": "J-22",
+      "source_name": "webpack://librus/src/pages/main-pages/justifications-page/JustificationsContainer.vue",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 314,
+      "source_content_sha256": "50ecb44638aa2eabfe0a6e9e082577fd423c8f86923066c283dce064f9da891d",
+      "anchor": "x.JustificationStatus === 'accept'",
+      "line": 71
+    },
+    {
+      "fact_id": "J-22",
+      "source_name": "webpack://librus/src/pages/main-pages/justifications-page/components/JustificationDetail.vue",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 1069,
+      "source_content_sha256": "3ffaa0c3f4d38bffb9e84d5c1ddbbaaa7352cad3a23c9fa1065f38e5e91a0f7a",
+      "anchor": "return 'Odrzucone'",
+      "line": 132
+    },
+    {
+      "fact_id": "J-22",
+      "source_name": "webpack://librus/src/pages/main-pages/justifications-page/components/JustificationItem.vue",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 311,
+      "source_content_sha256": "db7ebec73fa76615b50b8901ce6c208e5e13f293e450222773c13654725a8042",
+      "anchor": "return 'Odrzucone'",
+      "line": 59
+    },
+    {
+      "fact_id": "J-23",
+      "source_name": "webpack://librus/src/pages/main-pages/justifications-page/components/JustificationDetail.vue",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 1069,
+      "source_content_sha256": "3ffaa0c3f4d38bffb9e84d5c1ddbbaaa7352cad3a23c9fa1065f38e5e91a0f7a",
+      "anchor": "detailProps.justification.MessageFromParent !== 'null'",
+      "line": 52
+    },
+    {
+      "fact_id": "J-23",
+      "source_name": "webpack://librus/src/pages/main-pages/justifications-page/components/JustificationDetail.vue",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 1069,
+      "source_content_sha256": "3ffaa0c3f4d38bffb9e84d5c1ddbbaaa7352cad3a23c9fa1065f38e5e91a0f7a",
+      "anchor": "detailProps.justification.JustifiedAbsences",
+      "line": 45
+    },
+    {
+      "fact_id": "J-23",
+      "source_name": "webpack://librus/src/pages/main-pages/justifications-page/components/JustificationDetail.vue",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 1069,
+      "source_content_sha256": "3ffaa0c3f4d38bffb9e84d5c1ddbbaaa7352cad3a23c9fa1065f38e5e91a0f7a",
+      "anchor": "return this.detailProps.justification.Attachment ? 'Dodany'",
+      "line": 135
+    },
+    {
+      "fact_id": "J-24",
+      "source_name": "webpack://librus/src/pages/main-pages/justifications-page/components/JustificationDetail.vue",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 1069,
+      "source_content_sha256": "3ffaa0c3f4d38bffb9e84d5c1ddbbaaa7352cad3a23c9fa1065f38e5e91a0f7a",
+      "anchor": "this.$store.dispatch('classAndSchoolInfo/getViewModel')",
+      "line": 114
+    },
+    {
+      "fact_id": "J-24",
+      "source_name": "webpack://librus/src/pages/main-pages/justifications-page/components/JustificationDetail.vue",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 1069,
+      "source_content_sha256": "3ffaa0c3f4d38bffb9e84d5c1ddbbaaa7352cad3a23c9fa1065f38e5e91a0f7a",
+      "anchor": "getMessageParams()",
+      "line": 191
+    },
+    {
+      "fact_id": "J-24",
+      "source_name": "webpack://librus/src/pages/main-pages/shared-components/DetailContainerPage.vue",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 1197,
+      "source_content_sha256": "641ec1c2391a4e6558bbc858705cc70976f66d881021a62ce7f21930a8fd5409",
+      "anchor": "this.$store.dispatch('navigator/getSendMessagesPage'",
+      "line": 280
+    },
+    {
+      "fact_id": "J-25",
+      "source_name": "webpack://librus/./src/store/modules/view-store/justifications-store.js",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 702,
+      "source_content_sha256": "f6ae555875e9b9baf95374c2566b08380af2160c53a935d43800ab51638a92ee",
+      "anchor": "if (state.isDirty[currentAccountLogin] === false)",
+      "line": 59
+    },
+    {
+      "fact_id": "J-25",
+      "source_name": "webpack://librus/./src/store/modules/view-store/justifications-store.js",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 702,
+      "source_content_sha256": "f6ae555875e9b9baf95374c2566b08380af2160c53a935d43800ab51638a92ee",
+      "anchor": "const startYear = moment(endYearDate || '2001-01-01').year() - 1",
+      "line": 72
+    },
+    {
+      "fact_id": "J-25",
+      "source_name": "webpack://librus/./src/store/modules/view-store/justifications-store.js",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 702,
+      "source_content_sha256": "f6ae555875e9b9baf95374c2566b08380af2160c53a935d43800ab51638a92ee",
+      "anchor": "const dateTo = endYearDate || '2999-01-01'",
+      "line": 74
+    },
+    {
+      "fact_id": "J-26",
+      "source_name": "webpack://librus/./src/store/modules/view-store/justifications-store.js",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 702,
+      "source_content_sha256": "f6ae555875e9b9baf95374c2566b08380af2160c53a935d43800ab51638a92ee",
+      "anchor": "if (error.message.indexOf('403') !== -1)",
+      "line": 89
+    },
+    {
+      "fact_id": "J-26",
+      "source_name": "webpack://librus/src/pages/main-pages/justifications-page/JustificationsContainer.vue",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 314,
+      "source_content_sha256": "50ecb44638aa2eabfe0a6e9e082577fd423c8f86923066c283dce064f9da891d",
+      "anchor": "m.sort(sortByDateDesc('PostDate'))",
+      "line": 87
+    },
+    {
+      "fact_id": "J-27",
+      "source_name": "webpack://librus/./src/store/modules/view-store/justifications-store.js",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 702,
+      "source_content_sha256": "f6ae555875e9b9baf95374c2566b08380af2160c53a935d43800ab51638a92ee",
+      "anchor": "let updateAvailabilityPromise = null",
+      "line": 12
+    },
+    {
+      "fact_id": "J-27",
+      "source_name": "webpack://librus/./src/store/modules/view-store/justifications-store.js",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 702,
+      "source_content_sha256": "f6ae555875e9b9baf95374c2566b08380af2160c53a935d43800ab51638a92ee",
+      "anchor": "requestModuleAvailabilityCheck(",
+      "line": 174
+    },
+    {
+      "fact_id": "J-27",
+      "source_name": "webpack://librus/./src/store/modules/view-store/justifications-store.js",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 702,
+      "source_content_sha256": "f6ae555875e9b9baf95374c2566b08380af2160c53a935d43800ab51638a92ee",
+      "anchor": "return Promise.resolve();",
+      "line": 186
+    },
+    {
+      "fact_id": "J-28",
+      "source_name": "webpack://librus/./src/store/modules/view-store/justifications-store.js",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 702,
+      "source_content_sha256": "f6ae555875e9b9baf95374c2566b08380af2160c53a935d43800ab51638a92ee",
+      "anchor": "markAsSeen({ dispatch }, model)",
+      "line": 142
+    },
+    {
+      "fact_id": "J-28",
+      "source_name": "webpack://librus/./src/store/modules/view-store/justifications-store.js",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 702,
+      "source_content_sha256": "f6ae555875e9b9baf95374c2566b08380af2160c53a935d43800ab51638a92ee",
+      "anchor": "deleteViewModel({ dispatch }, { login, id })",
+      "line": 146
+    },
+    {
+      "fact_id": "J-28",
+      "source_name": "webpack://librus/./src/store/modules/view-store/justifications-store.js",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 702,
+      "source_content_sha256": "f6ae555875e9b9baf95374c2566b08380af2160c53a935d43800ab51638a92ee",
+      "anchor": "justification.Deleted = true",
+      "line": 151
+    },
+    {
+      "fact_id": "J-29",
+      "source_name": "webpack://librus/./src/store/modules/helpers/change-processor.js",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 49,
+      "source_content_sha256": "e20919940dc7e4f764c4e621d5bc412e6add211fbcc013845e5e192d5b73be46",
+      "anchor": "function processJustification(change)",
+      "line": 807
+    },
+    {
+      "fact_id": "J-29",
+      "source_name": "webpack://librus/./src/store/modules/helpers/change-processor.js",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 49,
+      "source_content_sha256": "e20919940dc7e4f764c4e621d5bc412e6add211fbcc013845e5e192d5b73be46",
+      "anchor": "EventActionType: change.Type === 'Edit'",
+      "line": 819
+    },
+    {
+      "fact_id": "J-30",
+      "source_name": "webpack://librus/src/pages/main-pages/justifications-page/JustificationsPage.vue",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 316,
+      "source_content_sha256": "b9b5846ea223759c6d757d19598e5552241a4c32d5a44f534f7ca4bece03fa27",
+      "anchor": "return `justifications_",
+      "line": 26
+    },
+    {
+      "fact_id": "J-30",
+      "source_name": "webpack://librus/./src/store/modules/view-store/justifications-store.js",
+      "map_path": "assets/www/static/js/app.4f2632438e1de389e6b3.js.map",
+      "map_sha256": "8b853e1f2492ffcccae46f137c7c73a0c805fc243f74a65b0d5c658d53e9a22d",
+      "source_index": 702,
+      "source_content_sha256": "f6ae555875e9b9baf95374c2566b08380af2160c53a935d43800ab51638a92ee",
+      "anchor": ".then(() => commit('setLastChange'))",
+      "line": 172
+    }
+  ]
+}

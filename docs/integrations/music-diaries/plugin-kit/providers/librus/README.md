@@ -2,6 +2,8 @@
 
 This package extends the music-diary research with the supplied **Librus Android APK and iOS IPA**. It contains documentation, evidence references, synthetic examples and illustrative snippets. It does not implement a new provider or change Siberia's application code.
 
+**Requested priorities:** [statistics and e‑Usprawiedliwienia](focus/README.md) now have a focused supplement with exact calculation rules, submission behavior, examples and an ordered Siberia work plan.
+
 Start with [SPEC.md](SPEC.md), then [authentication and transport](AUTH-AND-TRANSPORT.md), the [operation table](OPERATIONS.md) / [structured request contracts](operations.json), [model mapping and workflows](models/README.md), [Android/platform and cross-platform evidence](android/README.md), and the [Siberia integration runbook](siberia/README.md). [Verification and remaining work](VALIDATION-AND-GAPS.md) defines what can and cannot be claimed from the static evidence.
 
 The two supplied clients are Cordova applications with shipped JavaScript source maps. This makes source-content-level request and consumer analysis possible; it is substantially more precise than guessing endpoints from native strings. Their first-party source parity is independently checked in the Android subtree. Original packages, full recovered application sources, source maps, SDK dumps and the large REA graph remain local research inputs and are not included in this documentation.

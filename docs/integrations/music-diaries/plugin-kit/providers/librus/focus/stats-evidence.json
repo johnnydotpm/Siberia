@@ -1,0 +1,622 @@
+{
+  "schema_version": 1,
+  "provider": "librus",
+  "scope": "iOS8.4.1 build6487 shippedsource-mapstatics;Androidparityseparatelydocumented",
+  "no_runtime_or_backend_calls": true,
+  "source_records": [
+    {
+      "source_url": "webpack://librus/./src/helpers/chart-helpers.js",
+      "source_name": "webpack://librus/./src/helpers/chart-helpers.js",
+      "source_path": "src/helpers/chart-helpers.js",
+      "map_path": "static\\js\\app.2d1e7947b1442a92cb06.js.map",
+      "source_index": 83,
+      "source_content_sha256": "e8badfbb41af8e01450f4319df9ed50c504042289316c03c8378c804608c49fc",
+      "anchor": "export const gradesWhiteList",
+      "line": 8,
+      "supports": "exact18stringwhitelist;fixedmonth/weekhelpers;displayonly INFO_CONTENT",
+      "evidence_type": "shipped-source-map static inspection"
+    },
+    {
+      "source_url": "webpack://librus/./src/helpers/my-goal-calculator.js",
+      "source_name": "webpack://librus/./src/helpers/my-goal-calculator.js",
+      "source_path": "src/helpers/my-goal-calculator.js",
+      "map_path": "static\\js\\app.2d1e7947b1442a92cb06.js.map",
+      "source_index": 89,
+      "source_content_sha256": "60b4b85923b574140e1c36aa69acc01fabd4c74459f98ab44c29116bb83ece66",
+      "anchor": "export default function calculateAverage(",
+      "line": 5,
+      "supports": "plus050minus025 unweighted;optional AddDate cutoff",
+      "evidence_type": "shipped-source-map static inspection"
+    },
+    {
+      "source_url": "webpack://librus/src/pages/main-pages/my-goals/MyGoalPeriod.vue",
+      "source_name": "webpack://librus/src/pages/main-pages/my-goals/MyGoalPeriod.vue",
+      "source_path": "src/pages/main-pages/my-goals/MyGoalPeriod.vue",
+      "map_path": "static\\js\\app.2d1e7947b1442a92cb06.js.map",
+      "source_index": 552,
+      "source_content_sha256": "bff3608ea6b28b5ba5e6e5a1fa8e88e2c283dd20565db6547d6068075dfc8873",
+      "anchor": "async initialize()",
+      "line": 118,
+      "supports": "premiumPlusgate,kindergartenexclusion,subjectsperiodscope",
+      "evidence_type": "shipped-source-map static inspection"
+    },
+    {
+      "source_url": "webpack://librus/src/pages/main-pages/my-goals/components/GradeTrendChart.vue",
+      "source_name": "webpack://librus/src/pages/main-pages/my-goals/components/GradeTrendChart.vue",
+      "source_path": "src/pages/main-pages/my-goals/components/GradeTrendChart.vue",
+      "map_path": "static\\js\\app.2d1e7947b1442a92cb06.js.map",
+      "source_index": 518,
+      "source_content_sha256": "e2639085dad0a7911952b02f8dc3467c2a5c081dfc132c93ab04d532baa01b87",
+      "anchor": "calculateAverage(currentPeriodGrades",
+      "line": 383,
+      "supports": "bucketandcumulativearithmeticunweighted",
+      "evidence_type": "shipped-source-map static inspection"
+    },
+    {
+      "source_url": "webpack://librus/src/pages/main-pages/my-goals/components/YourGradesChart.vue",
+      "source_name": "webpack://librus/src/pages/main-pages/my-goals/components/YourGradesChart.vue",
+      "source_path": "src/pages/main-pages/my-goals/components/YourGradesChart.vue",
+      "map_path": "static\\js\\app.2d1e7947b1442a92cb06.js.map",
+      "source_index": 539,
+      "source_content_sha256": "9f779661ebc20088010b052501b0ae893e837a0f5c4b6a0c765d0946671aac35",
+      "anchor": "    prepareData() {",
+      "line": 355,
+      "supports": "basehistogramanddetailpercentdenominator",
+      "evidence_type": "shipped-source-map static inspection"
+    },
+    {
+      "source_url": "webpack://librus/src/pages/main-pages/my-goals/components/AttendanceChart.vue",
+      "source_name": "webpack://librus/src/pages/main-pages/my-goals/components/AttendanceChart.vue",
+      "source_path": "src/pages/main-pages/my-goals/components/AttendanceChart.vue",
+      "map_path": "static\\js\\app.2d1e7947b1442a92cb06.js.map",
+      "source_index": 515,
+      "source_content_sha256": "62fc8a8ff884b5678109bc984215d9aced2d3b05e8faeffde0fa73016d0b4a9a",
+      "anchor": "    prepareData() {",
+      "line": 281,
+      "supports": "customstandardmappingandcounts1/2/3/4,nopercentdenominator",
+      "evidence_type": "shipped-source-map static inspection"
+    },
+    {
+      "source_url": "webpack://librus/src/pages/main-pages/my-goals/components/YourPotentialCard.vue",
+      "source_name": "webpack://librus/src/pages/main-pages/my-goals/components/YourPotentialCard.vue",
+      "source_path": "src/pages/main-pages/my-goals/components/YourPotentialCard.vue",
+      "map_path": "static\\js\\app.2d1e7947b1442a92cb06.js.map",
+      "source_index": 546,
+      "source_content_sha256": "fcdd9a4cbe9935ffc87da662a9fce09b0b2f9e451de79810630f34bec4977cdd",
+      "anchor": "calculateAverage(subject)",
+      "line": 130,
+      "supports": "personalrankingofsubjectmeans",
+      "evidence_type": "shipped-source-map static inspection"
+    },
+    {
+      "source_url": "webpack://librus/src/pages/main-pages/my-goals/components/UnpreparednessCard.vue",
+      "source_name": "webpack://librus/src/pages/main-pages/my-goals/components/UnpreparednessCard.vue",
+      "source_path": "src/pages/main-pages/my-goals/components/UnpreparednessCard.vue",
+      "map_path": "static\\js\\app.2d1e7947b1442a92cb06.js.map",
+      "source_index": 527,
+      "source_content_sha256": "1a65b05fdb8a564d5cef3ec87abb94745c319331bb7282688e7ea50fb5791477",
+      "anchor": "async initialize()",
+      "line": 59,
+      "supports": "exactnpcount;upstreamperioddependent",
+      "evidence_type": "shipped-source-map static inspection"
+    },
+    {
+      "source_url": "webpack://librus/src/pages/main-pages/my-goals/components/LastGradesCard.vue",
+      "source_name": "webpack://librus/src/pages/main-pages/my-goals/components/LastGradesCard.vue",
+      "source_path": "src/pages/main-pages/my-goals/components/LastGradesCard.vue",
+      "map_path": "static\\js\\app.2d1e7947b1442a92cb06.js.map",
+      "source_index": 535,
+      "source_content_sha256": "fedc906f4eee08b195776a58ffc2aadfd9dfee99084f056bfd767b2dc65d2ba0",
+      "anchor": "async initialize()",
+      "line": 122,
+      "supports": "semesterfilterandDatekeydescendinggroups",
+      "evidence_type": "shipped-source-map static inspection"
+    },
+    {
+      "source_url": "webpack://librus/src/pages/main-pages/my-goals/components/AddEditMyGoal.vue",
+      "source_name": "webpack://librus/src/pages/main-pages/my-goals/components/AddEditMyGoal.vue",
+      "source_path": "src/pages/main-pages/my-goals/components/AddEditMyGoal.vue",
+      "map_path": "static\\js\\app.2d1e7947b1442a92cb06.js.map",
+      "source_index": 1146,
+      "source_content_sha256": "95a2d66ee8143019b3d1fc279d03de2447c9a5353cd3a1cf40054717568b0a54",
+      "anchor": "addEditGoal()",
+      "line": 263,
+      "supports": "goalmaprefId,type,period,properties",
+      "evidence_type": "shipped-source-map static inspection"
+    },
+    {
+      "source_url": "webpack://librus/src/pages/main-pages/grades-page/PeriodAveragesTab.vue",
+      "source_name": "webpack://librus/src/pages/main-pages/grades-page/PeriodAveragesTab.vue",
+      "source_path": "src/pages/main-pages/grades-page/PeriodAveragesTab.vue",
+      "map_path": "static\\js\\app.2d1e7947b1442a92cb06.js.map",
+      "source_index": 217,
+      "source_content_sha256": "b55cb1d83937c161d75a84d53a19ebb129f25b980c5f34d90dc175cf522b87b2",
+      "anchor": "averages()",
+      "line": 44,
+      "supports": "first/secondsemesterannualfinaltotalkeys",
+      "evidence_type": "shipped-source-map static inspection"
+    },
+    {
+      "source_url": "webpack://librus/src/pages/main-pages/grades-page/SubjectAveragesCard.vue",
+      "source_name": "webpack://librus/src/pages/main-pages/grades-page/SubjectAveragesCard.vue",
+      "source_path": "src/pages/main-pages/grades-page/SubjectAveragesCard.vue",
+      "map_path": "static\\js\\app.2d1e7947b1442a92cb06.js.map",
+      "source_index": 215,
+      "source_content_sha256": "e92eb4eb920ec9e707ed3ca3dea04ef7b020cc2935d93d0ed3c90665bb739cd6",
+      "anchor": "    setAveragesAndPeriodicalGrades() {",
+      "line": 54,
+      "supports": "serveraverageandassessmentselection",
+      "evidence_type": "shipped-source-map static inspection"
+    },
+    {
+      "source_url": "webpack://librus/./src/helpers/averagesHelpers.js",
+      "source_name": "webpack://librus/./src/helpers/averagesHelpers.js",
+      "source_path": "src/helpers/averagesHelpers.js",
+      "map_path": "static\\js\\app.2d1e7947b1442a92cb06.js.map",
+      "source_index": 214,
+      "source_content_sha256": "7a3ccf47de658ea8a1808717dcc6812e3abd8984983e915d97a64d62a2f57d98",
+      "anchor": "getPeriod1AverageGrade(subject)",
+      "line": 20,
+      "supports": "standard/pointaveragetypeandperiodselection",
+      "evidence_type": "shipped-source-map static inspection"
+    },
+    {
+      "source_url": "webpack://librus/./src/api/raw-rest-api/synergia-grades-standard-with-averages-rest.js",
+      "source_name": "webpack://librus/./src/api/raw-rest-api/synergia-grades-standard-with-averages-rest.js",
+      "source_path": "src/api/raw-rest-api/synergia-grades-standard-with-averages-rest.js",
+      "map_path": "static\\js\\app.2d1e7947b1442a92cb06.js.map",
+      "source_index": 11,
+      "source_content_sha256": "46b33d2bdc1ad905fd377956760c6b74f5103b551c3263e86a5e18e54ad7e89d",
+      "anchor": "export function getGradesStandardWithAverages(",
+      "line": 22,
+      "supports": "POSTstudenttotalbodylimit1andresponsepath",
+      "evidence_type": "shipped-source-map static inspection"
+    },
+    {
+      "source_url": "webpack://librus/./src/api/raw-rest-api/synergia-grades-averages-rest.js",
+      "source_name": "webpack://librus/./src/api/raw-rest-api/synergia-grades-averages-rest.js",
+      "source_path": "src/api/raw-rest-api/synergia-grades-averages-rest.js",
+      "map_path": "static\\js\\app.2d1e7947b1442a92cb06.js.map",
+      "source_index": 51,
+      "source_content_sha256": "0f092e2e42422e7a78c99a6581d7bd7373f808dbd9242e1e91cb770b64571a22",
+      "anchor": "export function getGradeAverageBySubjectId(",
+      "line": 29,
+      "supports": "schooldisabledaveragesundefined",
+      "evidence_type": "shipped-source-map static inspection"
+    },
+    {
+      "source_url": "webpack://librus/./src/api/view-builders/grades-builder.js",
+      "source_name": "webpack://librus/./src/api/view-builders/grades-builder.js",
+      "source_path": "src/api/view-builders/grades-builder.js",
+      "map_path": "static\\js\\app.2d1e7947b1442a92cb06.js.map",
+      "source_index": 53,
+      "source_content_sha256": "fcafa085f10b4dae757d5991c5c2a260851c52e5c9024ed3a719401405746ba1",
+      "anchor": "export async function getTotalAveragesForAccount(",
+      "line": 519,
+      "supports": "TokenInfoparentmappingstudentidentifierflow",
+      "evidence_type": "shipped-source-map static inspection"
+    },
+    {
+      "source_url": "webpack://librus/./src/store/modules/view-store/grades-store.js",
+      "source_name": "webpack://librus/./src/store/modules/view-store/grades-store.js",
+      "source_path": "src/store/modules/view-store/grades-store.js",
+      "map_path": "static\\js\\app.2d1e7947b1442a92cb06.js.map",
+      "source_index": 695,
+      "source_content_sha256": "55eb592d78995eb38ee5049f496e3fd52969aadf5e033295f527a78a7a8bf7d0",
+      "anchor": "getTotalAveragesForCurrentAccount(",
+      "line": 199,
+      "supports": "totalscachebylogin",
+      "evidence_type": "shipped-source-map static inspection"
+    },
+    {
+      "source_url": "webpack://librus/./src/store/modules/view-store/subjects-store.js",
+      "source_name": "webpack://librus/./src/store/modules/view-store/subjects-store.js",
+      "source_path": "src/store/modules/view-store/subjects-store.js",
+      "map_path": "static\\js\\app.2d1e7947b1442a92cb06.js.map",
+      "source_index": 758,
+      "source_content_sha256": "f301a160deb069f9c99a70ee06a4aaa4c434d1fc8998a8639442d1ec4cea8fee",
+      "anchor": "const findAllSubjects",
+      "line": 88,
+      "supports": "accountdeletedsemesterfiltering",
+      "evidence_type": "shipped-source-map static inspection"
+    },
+    {
+      "source_url": "webpack://librus/./src/store/modules/view-store/my-goals-store.js",
+      "source_name": "webpack://librus/./src/store/modules/view-store/my-goals-store.js",
+      "source_path": "src/store/modules/view-store/my-goals-store.js",
+      "map_path": "static\\js\\app.2d1e7947b1442a92cb06.js.map",
+      "source_index": 730,
+      "source_content_sha256": "310df744370d37c9effc3397b8e4c1fd67129f6322ca09204ee4fcb81df85fbd",
+      "anchor": "async updateLastAverages(",
+      "line": 161,
+      "supports": "lastAverage/lastTrendpersistenceeffects",
+      "evidence_type": "shipped-source-map static inspection"
+    },
+    {
+      "source_url": "webpack://librus/./src/store/modules/user-config/synergia/user-account-synergia-store_getters.js",
+      "source_name": "webpack://librus/./src/store/modules/user-config/synergia/user-account-synergia-store_getters.js",
+      "source_path": "src/store/modules/user-config/synergia/user-account-synergia-store_getters.js",
+      "map_path": "static\\js\\app.2d1e7947b1442a92cb06.js.map",
+      "source_index": 636,
+      "source_content_sha256": "e03b4c838b121af89dd814fcb83b0db7ead6efbe672ced19a629772f26c6217d",
+      "anchor": "export function isCurrentPremiumPlus(",
+      "line": 204,
+      "supports": "MDPlusflaggetter",
+      "evidence_type": "shipped-source-map static inspection"
+    },
+    {
+      "source_url": "webpack://librus/./src/api/view-builders/my-goals-summary-builder.js",
+      "source_name": "webpack://librus/./src/api/view-builders/my-goals-summary-builder.js",
+      "source_path": "src/api/view-builders/my-goals-summary-builder.js",
+      "map_path": "static\\js\\app.2d1e7947b1442a92cb06.js.map",
+      "source_index": 731,
+      "source_content_sha256": "8a6c0d755b73c46e85f1539c33db6f60261b4005269917bdd08c75ffb6e5c6ba",
+      "anchor": "export function generateGradesSummary(",
+      "line": 54,
+      "supports": "summaryhistogramdate[start,end)",
+      "evidence_type": "shipped-source-map static inspection"
+    },
+    {
+      "source_url": "webpack://librus/./src/store/modules/view-store/my-goals-summaries-store.js",
+      "source_name": "webpack://librus/./src/store/modules/view-store/my-goals-summaries-store.js",
+      "source_path": "src/store/modules/view-store/my-goals-summaries-store.js",
+      "map_path": "static\\js\\app.2d1e7947b1442a92cb06.js.map",
+      "source_index": 732,
+      "source_content_sha256": "a66ae19777866ef6314e7690610eb879ac7561a7abf270a11c5837b5149ee536",
+      "anchor": "getSummaryGenerateData(",
+      "line": 159,
+      "supports": "notificationtriggersandaccountgates/dedup/historydelete",
+      "evidence_type": "shipped-source-map static inspection"
+    },
+    {
+      "source_url": "webpack://librus/./src/api/view-builders/event-my-goals-helper.js",
+      "source_name": "webpack://librus/./src/api/view-builders/event-my-goals-helper.js",
+      "source_path": "src/api/view-builders/event-my-goals-helper.js",
+      "map_path": "static\\js\\app.2d1e7947b1442a92cb06.js.map",
+      "source_index": 48,
+      "source_content_sha256": "bd49405d1cc0753161794bd8fcb5cfff3797648ec3ef8a3a3c7c0fd7025f30f4",
+      "anchor": "async prepareAttendancesData(",
+      "line": 95,
+      "supports": "feedattendancefourcountsummary",
+      "evidence_type": "shipped-source-map static inspection"
+    },
+    {
+      "source_url": "webpack://librus/./src/api/librus-api/librus-my-goals-rest.js",
+      "source_name": "webpack://librus/./src/api/librus-api/librus-my-goals-rest.js",
+      "source_path": "src/api/librus-api/librus-my-goals-rest.js",
+      "map_path": "static\\js\\app.2d1e7947b1442a92cb06.js.map",
+      "source_index": 729,
+      "source_content_sha256": "4cd29fcf167579ee3e402bfadd600f1a1b71ff96b6f90612e765156be55f5c66",
+      "anchor": "export async function getAllGoals(",
+      "line": 16,
+      "supports": "PortalgoalCRUDpathfamily",
+      "evidence_type": "shipped-source-map static inspection"
+    },
+    {
+      "source_url": "webpack://librus/./src/api/librus-api/librus-push-notifications-rest.js",
+      "source_name": "webpack://librus/./src/api/librus-api/librus-push-notifications-rest.js",
+      "source_path": "src/api/librus-api/librus-push-notifications-rest.js",
+      "map_path": "static\\js\\app.2d1e7947b1442a92cb06.js.map",
+      "source_index": 0,
+      "source_content_sha256": "2c47afb18b74b2b45e1f60e9ddb9f5e7403bd817f92d72d311e30642e7836c97",
+      "anchor": "export function getNotificationsByBindingId(",
+      "line": 45,
+      "supports": "Portalsummarynotificationreadanddelete",
+      "evidence_type": "shipped-source-map static inspection"
+    },
+    {
+      "source_url": "webpack://librus/./src/helpers/school-year-date-helper.js",
+      "source_name": "webpack://librus/./src/helpers/school-year-date-helper.js",
+      "source_path": "src/helpers/school-year-date-helper.js",
+      "map_path": "static\\js\\app.2d1e7947b1442a92cb06.js.map",
+      "source_index": 99,
+      "source_content_sha256": "1a734e3c2f2774f9bc96151642685435fa2aa1c3e171cdb768c9311696a3aa28",
+      "anchor": "export function getCurrentSchoolYearStartDate(",
+      "line": 23,
+      "supports": "fixedSept1schoolyearhelper",
+      "evidence_type": "shipped-source-map static inspection"
+    },
+    {
+      "source_url": "webpack://librus/./node_modules/vue-cal/dist/vuecal.common.js",
+      "source_name": "webpack://librus/./node_modules/vue-cal/dist/vuecal.common.js",
+      "source_path": "node_modules/vue-cal/dist/vuecal.common.js",
+      "map_path": "static/js/vuecal-common.9ec0bc7956e2f9928ef3.js.map",
+      "source_index": 0,
+      "source_content_sha256": "7a6882d95f5bdd9885d9b7f8c0bc7b4d4ed217d202b8dbf7dd2c2cf4a5766174",
+      "anchor": "Date.prototype.getWeek = function () {",
+      "line": 6344,
+      "supports": "ISO-style week number from local date, UTC Thursday anchor; numeric week only. Conditional initializer at line6377 requires Date and absent Date.prototype.addDays.",
+      "evidence_type": "shipped third-party dependency source-content; original app execution not observed"
+    }
+  ],
+  "algorithm_facts": {
+    "grade_whitelist": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "1+",
+      "2+",
+      "3+",
+      "4+",
+      "5+",
+      "6+",
+      "1-",
+      "2-",
+      "3-",
+      "4-",
+      "5-",
+      "6-"
+    ],
+    "plus_modifier": 0.5,
+    "minus_modifier": -0.25,
+    "personal_average_weighted": false,
+    "personal_average_filters_CountToTheAverage": false,
+    "personal_average_filters_final_flags": false,
+    "histogram_denominator": "countoffilteredeligiblestandardgraderecords",
+    "attendance_chart_denominator": null,
+    "attendance_chart_standard_types": {
+      "1": "unexcused",
+      "2": "late",
+      "3": "excused",
+      "4": "exempted"
+    },
+    "trend_line": "cumulativeunweightedmeanofgradesinemittedbucketstodate,notregression",
+    "unpreparedness_exact_value": "np",
+    "class_cohort_comparison": "notestablishedinreviewedpaths",
+    "current_client_premiumplus_flag": "me.PremiumAddonscontainsMDPlus",
+    "summary_generation_additional_flag": "me.IsPremium",
+    "period_months_zero_based": {
+      "1": [
+        8,
+        9,
+        10,
+        11,
+        0
+      ],
+      "2": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    }
+  },
+  "server_averages_contracts": [
+    {
+      "method": "GET",
+      "path": "/Grades/Averages",
+      "response": "response.data.Averages"
+    },
+    {
+      "method": "GET",
+      "path": "/Grades/Averages?subject={id}",
+      "response": "Averages or [Average], undefined if school disabled"
+    },
+    {
+      "method": "GET",
+      "path": "/Auth/TokenInfo",
+      "response": "response.data.UserIdentifier"
+    },
+    {
+      "method": "GET",
+      "path": "/Auth/UserInfo/{parentId}",
+      "response": "response.data.IdentifierOfStudentAssignedWithUser"
+    },
+    {
+      "method": "POST",
+      "path": "/Auth/Grades/StandardWithAverages/Students/{studentId}",
+      "json_body": {
+        "limit": 1
+      },
+      "response": "response.data.data.averages.total",
+      "keys": [
+        "firstSemesterFinalGrades",
+        "secondSemesterFinalGrades",
+        "annualFinalGrades"
+      ]
+    }
+  ],
+  "synthetic_examples": [
+    {
+      "id": "ST-EX-01",
+      "kind": "synthetic arithmetic",
+      "input": [
+        "5+",
+        "4-",
+        "3",
+        "np"
+      ],
+      "converted_eligible": [
+        5.5,
+        3.75,
+        3
+      ],
+      "excluded": [
+        "np"
+      ],
+      "sum": 12.25,
+      "count": 3,
+      "unweighted_mean": 4.083333333333333
+    },
+    {
+      "id": "ST-EX-02",
+      "kind": "synthetic distinctmethodologies",
+      "input": [
+        {
+          "Grade": "5",
+          "Weight": 1,
+          "CountToTheAverage": true
+        },
+        {
+          "Grade": "2",
+          "Weight": 4,
+          "CountToTheAverage": false
+        }
+      ],
+      "original_personal_mean": 3.5,
+      "weighted_if_both_included": 2.6,
+      "included_only_mean": 5,
+      "note": "Originalpersonalcalculatorignoresbothweightandinclusionflag;othermeansexplainwhynotinterchangeable."
+    },
+    {
+      "id": "ST-EX-03",
+      "kind": "synthetic histogram",
+      "input": [
+        "5+",
+        "5",
+        "4-",
+        "np"
+      ],
+      "N": 3,
+      "base_counts": {
+        "5": 2,
+        "4": 1
+      },
+      "base_percent": {
+        "5": 66.66666666666667,
+        "4": 33.333333333333336
+      },
+      "detail_counts": {
+        "5+": 1,
+        "5": 1,
+        "4-": 1
+      },
+      "detail_percent_each": 33.333333333333336
+    },
+    {
+      "id": "ST-EX-04",
+      "kind": "synthetic trend",
+      "bucket_grades": [
+        [
+          "2",
+          "4"
+        ],
+        [
+          "6"
+        ],
+        [],
+        [
+          "3"
+        ]
+      ],
+      "bars": [
+        3,
+        6,
+        "N/A",
+        3
+      ],
+      "cumulative_line": [
+        3,
+        4,
+        4,
+        3.75
+      ]
+    },
+    {
+      "id": "ST-EX-05",
+      "kind": "synthetic attendancecount",
+      "standard_types": [
+        1,
+        1,
+        2,
+        3,
+        4,
+        3
+      ],
+      "counts": {
+        "unexcused": 2,
+        "late": 1,
+        "excused": 2,
+        "exempted": 1
+      },
+      "attendance_percent": "not established; no eligiblelesson denominator"
+    },
+    {
+      "id": "ST-EX-06",
+      "kind": "synthetic unpreparedness",
+      "subjectA": [
+        "np",
+        "np",
+        "5"
+      ],
+      "subjectB": [
+        "NP",
+        "4"
+      ],
+      "counts": {
+        "A": 2,
+        "B": 0
+      },
+      "remaining_allowance": "not established"
+    },
+    {
+      "id": "ST-EX-07",
+      "kind": "synthetic strictwhitelist",
+      "input": [
+        "5",
+        5,
+        "4.5",
+        "6+",
+        "1-"
+      ],
+      "eligible_values": [
+        5,
+        6.5,
+        0.75
+      ],
+      "excluded": [
+        5,
+        "4.5"
+      ],
+      "mean": 4.083333333333333,
+      "note": "The numeric5inputisexcludedbyexactstringwhitelist;eligible_valuesnumbersareconvertedoutputs."
+    },
+    {
+      "id": "ST-EX-08",
+      "kind": "synthetic missingdata",
+      "input": [],
+      "recommended_outcome": "nodata,nullmean;neverNaNorfabricated0"
+    },
+    {
+      "id": "ST-EX-09",
+      "kind": "synthetic schoolversuspersonal",
+      "school_reported": 4.7,
+      "personal_unweighted": 4.083333333333333,
+      "expected": "Bothdisplaywithdistinctmethodology/source;neitheroverwritestheother."
+    },
+    {
+      "id": "ST-EX-10",
+      "kind": "synthetic dateboundary",
+      "start": "2026-10-01",
+      "end": "2026-11-01",
+      "records": [
+        "2026-10-01",
+        "2026-10-31",
+        "2026-11-01"
+      ],
+      "summary_distribution_included": [
+        "2026-10-01",
+        "2026-10-31"
+      ],
+      "semantics": "startinclusive,endexclusive"
+    }
+  ],
+  "remaining_gates": [
+    "Currentserverserviceacceptanceandaccountentitlements",
+    "Schoolofficialaveragesformulaandinclusionconfiguration",
+    "Class/cohortcomparisoncontractnotrecovered",
+    "ISO-week grouping versus Moment locale week labels and conditional prototype initialization order",
+    "School-specificsemesterboundariesversushardcodedchartmonths",
+    "OriginalbugsversusintentionalcorrectedSiberiadesign"
+  ],
+  "validation": {
+    "source_hashes_checked": 27,
+    "line_anchors_checked": 27,
+    "synthetic_arithmetic_checked": "independentPythoncalculations,notexecutedoriginalapp"
+  },
+  "documentation_only": true
+}

@@ -1,0 +1,9 @@
+{
+  "status": "passed",
+  "scope": "Offline documentation/source checks only; no real justification or other backend request sent.",
+  "source_strings": 49,
+  "original_line_anchors": 112,
+  "current_source_files": 4,
+  "current_source_anchors": 9,
+  "issues": []
+}

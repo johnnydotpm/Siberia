@@ -1,0 +1,94 @@
+{
+  "scope": "Inspected current main, not the application tree on the documentation branch",
+  "source_commit": "fdd022da1759caf254873fbb6d8ffdea7e360b68",
+  "files": [
+    {
+      "repository_path": "syberia/lib/src/domain/models.dart",
+      "sha256": "a5b0ded2692cb3097925444619783ead05bfb9b8f7cb7070979ab91034ba9f77",
+      "anchors": [
+        {
+          "literal": "class GradeAverageSettings {",
+          "lines": [
+            456
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "double? valueOf(String label) {",
+          "lines": [
+            479
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "double? average(Iterable<Grade> grades) {",
+          "lines": [
+            506
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "extension AttendanceKindDetails on AttendanceKind {",
+          "lines": [
+            538
+          ],
+          "match_count": 1
+        }
+      ]
+    },
+    {
+      "repository_path": "syberia/lib/src/ui/shell/grades.dart",
+      "sha256": "fcd98f01c5e92e7d94d0fbf695aa50459cbb7c60ffb236ec4e4870fc544a9df9",
+      "anchors": [
+        {
+          "literal": "class _GradesOverview extends StatelessWidget {",
+          "lines": [
+            119
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "final bucket = value.round().clamp(1, 6);",
+          "lines": [
+            134
+          ],
+          "match_count": 1
+        }
+      ]
+    },
+    {
+      "repository_path": "syberia/lib/src/ui/shell/attendance.dart",
+      "sha256": "eae5f1ddec38d5c1dd510e89a3b7899419aacd9b578a68571294ff1f8d67adbf",
+      "anchors": [
+        {
+          "literal": "class _AttendanceState extends State<_Attendance> {",
+          "lines": [
+            12
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "final records = widget.controller.snapshot.attendance",
+          "lines": [
+            27
+          ],
+          "match_count": 1
+        }
+      ]
+    },
+    {
+      "repository_path": "syberia/lib/src/data/librus/librus_client.dart",
+      "sha256": "6300271a2906d3daeaf0ae2835a5eb91c534e96f7ffb084c7d7a17a547bd6b60",
+      "anchors": [
+        {
+          "literal": "weight: item['CountToTheAverage'] == true",
+          "lines": [
+            1910
+          ],
+          "match_count": 1
+        }
+      ]
+    }
+  ],
+  "implementation_included": false
+}

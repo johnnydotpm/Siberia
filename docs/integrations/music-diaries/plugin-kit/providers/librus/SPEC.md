@@ -23,6 +23,8 @@ The official code contains JST/Huawei/development/widget variants alongside ordi
 
 ## Grades and assessment
 
+For the requested deeper statistical analysis, use [STATS.md](focus/STATS.md): it separates local Moje cele calculations from server-reported averages and documents formulas, filters and chart pitfalls.
+
 The app supports separate standard/numeric, point, text, descriptive, descriptive-text, partial descriptive, behavior, behavior-point and system-proposal families. Their APIs, comments, categories, weights, averages, final/semester/proposed flags and skill trees are distinct. The operation table includes list, single and batch variants for those families. Do not compress everything into an integer grade or return0 when a descriptive or unavailable value cannot be averaged.
 
 The standard builder joins grades with subjects, users, categories, comments and averages. Missing category/name defaults are presentation behavior, not authoritative server values. Improvement/resit links form relationships that need cycle/missing-reference handling. Averages can be school-computed; do not replace them with a client arithmetic average unless a declared grading policy supports it. Retain source grade family in comment identity to prevent cross-family ID collision.
@@ -40,6 +42,8 @@ Personal custom timetable cycles use the personal-schedule service with the Port
 Use school-local dates for date-only requests. Source Moment-format strings and date helper expressions are recorded at their callers; do not copy date-format letters blindly between JavaScript and Dart. DST, full-day intervals, weekends and academic period bounds require dedicated fixtures.
 
 ## Attendance and justifications
+
+The dedicated [e‑Usprawiedliwienia protocol guide](focus/E-USPRAWIEDLIWIENIA.md) expands the form, role/date gates, status strings, notifications, attachments and uncertain-submission handling.
 
 Attendance list/detail/batch requests consume `Attendances`/`Attendance`; type definitions determine symbols and normalized meaning. An unknown ID must remain unknown, not present. A justification request is a proposal/workflow rather than an immediate edit of official attendance.
 
