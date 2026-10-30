@@ -642,17 +642,18 @@ class _HomeworkCard extends StatelessWidget {
                     label: context.tr('open'),
                     run: () => _showHomeworkDetails(context, item),
                   ),
-                  (
-                    key: ValueKey('homework-action-done-${item.id}'),
-                    icon: done
-                        ? Icons.remove_done_rounded
-                        : Icons.task_alt_rounded,
-                    label: context.tr(
-                      done ? 'homeworkMarkNotDone' : 'homeworkMarkDone',
+                  if (controller.canUseStudentToolsFor(item.source))
+                    (
+                      key: ValueKey('homework-action-done-${item.id}'),
+                      icon: done
+                          ? Icons.remove_done_rounded
+                          : Icons.task_alt_rounded,
+                      label: context.tr(
+                        done ? 'homeworkMarkNotDone' : 'homeworkMarkDone',
+                      ),
+                      run: () =>
+                          _setHomeworkDone(context, controller, item, !done),
                     ),
-                    run: () =>
-                        _setHomeworkDone(context, controller, item, !done),
-                  ),
                 ],
               ),
         child: Container(
@@ -664,7 +665,9 @@ class _HomeworkCard extends StatelessWidget {
           padding: controller == null
               ? const EdgeInsetsDirectional.fromSTEB(12, 12, 16, 12)
               : const EdgeInsetsDirectional.fromSTEB(4, 12, 16, 12),
-          child: controller == null
+          child:
+              controller == null ||
+                  !controller.canUseStudentToolsFor(item.source)
               ? content
               : Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -716,6 +719,7 @@ void _setHomeworkDone(
   SchoolEvent item,
   bool done,
 ) {
+  if (!controller.canUseStudentToolsFor(item.source)) return;
   unawaited(controller.setHomeworkDone(item, done));
   // Marked after the card left the screen: nothing to show the message on.
   if (!done || !context.mounted) return;
@@ -903,6 +907,9 @@ void _showHomeworkDetails(BuildContext context, SchoolEvent item) {
                 ListenableBuilder(
                   listenable: controller,
                   builder: (context, _) {
+                    if (!controller.canUseStudentToolsFor(item.source)) {
+                      return const SizedBox.shrink();
+                    }
                     final done = controller.isHomeworkDone(item);
                     final button = done
                         ? OutlinedButton.icon(

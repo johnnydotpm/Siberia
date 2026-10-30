@@ -110,6 +110,7 @@ class _TodayState extends State<_Today> {
       child: _PageList(
         padding: const EdgeInsets.all(_Space.page),
         children: [
+          if (controller.isParent) _ParentDashboard(controller),
           if (controller.updateAvailable) ...[
             _UpdateBanner(controller),
             const SizedBox(height: _Space.card),

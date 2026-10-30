@@ -25,6 +25,7 @@ import '../domain/grade_calculator.dart';
 import '../domain/librus_error.dart';
 import '../domain/models.dart';
 import '../domain/profiles.dart';
+import '../domain/parent.dart';
 import '../domain/sync_news.dart';
 import '../domain/together.dart' show togetherId;
 import '../home_widget.dart';
@@ -61,6 +62,7 @@ part 'shell/settings.dart';
 part 'shell/settings_previews.dart';
 part 'shell/notification_settings.dart';
 part 'shell/account.dart';
+part 'shell/parent.dart';
 part 'shell/onboarding.dart';
 part 'shell/onboarding_intro.dart';
 part 'shell/onboarding_motion.dart';
@@ -207,6 +209,7 @@ class _AppShellState extends State<AppShell> {
                 : _pages[index] ?? const SizedBox.shrink(),
         ];
         final body = _SubjectScope(
+          studentTools: controller.canUseStudentTools,
           names: controller.subjectShortNames,
           colors: _subjectColors(),
           child: _FreeDaysScope(
@@ -267,7 +270,7 @@ class _AppShellState extends State<AppShell> {
             ),
           );
         }
-        const bottomTabs = [0, 1, 2, 5];
+        final bottomTabs = controller.bottomTabs;
         final selected = bottomTabs.indexOf(controller.tabIndex);
         if (glass) {
           return GlassShell(
@@ -275,26 +278,24 @@ class _AppShellState extends State<AppShell> {
             title: _title(context, controller.tabIndex),
             largeTitle: controller.tabIndex != 1,
             tabs: [
-              GlassTab(
-                label: context.tr('today'),
-                symbol: GlassSymbol.house,
-                selectedSymbol: GlassSymbol.houseFill,
-              ),
-              GlassTab(
-                label: context.tr('timetable'),
-                symbol: GlassSymbol.calendar,
-              ),
-              GlassTab(
-                label: context.tr('grades'),
-                symbol: GlassSymbol.graduationCap,
-                selectedSymbol: GlassSymbol.graduationCapFill,
-              ),
-              GlassTab(
-                label: context.tr('messages'),
-                symbol: GlassSymbol.envelope,
-                selectedSymbol: GlassSymbol.envelopeFill,
-                badge: controller.snapshot.unreadMessages,
-              ),
+              for (final tab in bottomTabs)
+                GlassTab(
+                  label: _title(context, tab),
+                  symbol: switch (tab) {
+                    0 => GlassSymbol.house,
+                    1 => GlassSymbol.calendar,
+                    2 => GlassSymbol.graduationCap,
+                    5 => GlassSymbol.envelope,
+                    _ => GlassSymbol("checklist", _tabIcon(tab, false)),
+                  },
+                  selectedSymbol: switch (tab) {
+                    0 => GlassSymbol.houseFill,
+                    2 => GlassSymbol.graduationCapFill,
+                    5 => GlassSymbol.envelopeFill,
+                    _ => null,
+                  },
+                  badge: tab == 5 ? controller.snapshot.unreadMessages : 0,
+                ),
             ],
             selectedTab: selected < 0 ? null : selected,
             onTabSelected: (index) => controller.selectTab(bottomTabs[index]),
@@ -381,27 +382,13 @@ class _AppShellState extends State<AppShell> {
                 }
               },
               destinations: [
-                _destination(
-                  Icons.home_outlined,
-                  selected < 0 ? Icons.home_outlined : Icons.home_rounded,
-                  context.tr('today'),
-                ),
-                _destination(
-                  Icons.calendar_view_week_outlined,
-                  Icons.calendar_view_week_rounded,
-                  context.tr('timetable'),
-                ),
-                _destination(
-                  Icons.school_outlined,
-                  Icons.school_rounded,
-                  context.tr('grades'),
-                ),
-                _destination(
-                  Icons.mail_outline_rounded,
-                  Icons.mail_rounded,
-                  context.tr('messages'),
-                  badge: controller.snapshot.unreadMessages,
-                ),
+                for (final tab in bottomTabs)
+                  _destination(
+                    _tabIcon(tab, false),
+                    _tabIcon(tab, selected >= 0),
+                    _title(context, tab),
+                    badge: tab == 5 ? controller.snapshot.unreadMessages : 0,
+                  ),
               ],
             ),
           ),
@@ -420,6 +407,19 @@ class _Reselect extends ChangeNotifier {
     notifyListeners();
   }
 }
+
+IconData _tabIcon(int tab, bool selected) => switch (tab) {
+  0 => selected ? Icons.home_rounded : Icons.home_outlined,
+  1 => Icons.calendar_view_week_rounded,
+  2 => selected ? Icons.school_rounded : Icons.school_outlined,
+  3 => Icons.event_note_rounded,
+  4 => Icons.assignment_rounded,
+  5 => selected ? Icons.mail_rounded : Icons.mail_outline_rounded,
+  6 => Icons.fact_check_rounded,
+  7 => Icons.campaign_rounded,
+  8 => Icons.chat_bubble_rounded,
+  _ => Icons.settings_rounded,
+};
 
 NavigationDestination _destination(
   IconData icon,

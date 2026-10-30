@@ -324,7 +324,13 @@ class _AveragePreview extends StatelessWidget {
     return ListTile(
       key: const ValueKey('settings-average-preview'),
       leading: const _SettingsIcon(Icons.calculate_rounded),
-      title: Text(context.tr('averagePreview')),
+      title: Text(
+        controller.isParent
+            ? context.trArgs('parentAverage', {
+                'child': controller.activeProfile?.name ?? '',
+              })
+            : context.tr('averagePreview'),
+      ),
       subtitle: Text(
         own != null
             ? context.tr('averagePreviewOwn')

@@ -18,11 +18,18 @@ double _systemButtonsRoom(BuildContext context) {
 /// Short subject names and subject colours, for the pages of the shell.
 class _SubjectScope extends InheritedWidget {
   const _SubjectScope({
+    this.studentTools = true,
     required this.names,
     required this.colors,
     required super.child,
   });
 
+  final bool studentTools;
+  static bool allowsStudentTools(BuildContext context) =>
+      context
+          .dependOnInheritedWidgetOfExactType<_SubjectScope>()
+          ?.studentTools ??
+      true;
   final Map<String, String> names;
   final SubjectColors colors;
 
@@ -38,7 +45,9 @@ class _SubjectScope extends InheritedWidget {
 
   @override
   bool updateShouldNotify(_SubjectScope oldWidget) =>
-      names != oldWidget.names || colors != oldWidget.colors;
+      names != oldWidget.names ||
+      colors != oldWidget.colors ||
+      studentTools != oldWidget.studentTools;
 }
 
 class _Heading extends StatelessWidget {
