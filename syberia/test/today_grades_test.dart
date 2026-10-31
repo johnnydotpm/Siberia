@@ -233,7 +233,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(controller.todayLayout.visible, isNot(contains(TodayBlock.grades)));
     expect(
-      (await AppRepository().loadTodayLayout()).visible,
+      (await AppRepository().loadTodayLayout())!.visible,
       isNot(contains(TodayBlock.grades)),
     );
     Navigator.of(

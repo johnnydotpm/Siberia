@@ -565,7 +565,7 @@ class _HomeworkCard extends StatelessWidget {
     // Due today or tomorrow: the one to do first.
     final soon = days == 0 || days == 1;
     final due = _dueLabel(context, item.date, now);
-    final controller = _ControllerScope.maybeOf(context);
+    final controller = _markingController(context);
     final done = controller?.isHomeworkDone(item) ?? false;
     final content = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -844,7 +844,7 @@ void _showHomeworkDetails(BuildContext context, SchoolEvent item) {
   );
   final details = _homeworkDetails(item);
   final screen = MediaQuery.sizeOf(context);
-  final controller = _ControllerScope.maybeOf(context);
+  final controller = _markingController(context);
   showAppSheet<void>(
     context: context,
     compact: true,
@@ -933,4 +933,11 @@ void _showHomeworkDetails(BuildContext context, SchoolEvent item) {
       ),
     ),
   );
+}
+
+/// The controller to mark homework done with; none for a parent, who only
+/// looks at the child's homework.
+AppController? _markingController(BuildContext context) {
+  final controller = _ControllerScope.maybeOf(context);
+  return controller == null || controller.parentView ? null : controller;
 }

@@ -160,7 +160,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byKey(const ValueKey('today-current-lesson')), findsNothing);
       expect(
-        (await AppRepository().loadTodayLayout()).visible,
+        (await AppRepository().loadTodayLayout())!.visible,
         isNot(contains(TodayBlock.currentLesson)),
       );
       await settings(tester, controller, 'settings-today-screen');

@@ -1131,10 +1131,27 @@ class AppRepository {
     return id == null ? HomeworkDoneStore.key : HomeworkDoneStore.keyFor(id);
   }
 
-  Future<TodayLayout> loadTodayLayout() async {
+  /// The Today layout the user arranged; null until they do.
+  Future<TodayLayout?> loadTodayLayout() async {
     final saved = (await _preferences).getStringList(_todayLayoutKey);
-    return saved == null ? TodayLayout.defaults : TodayLayout.decode(saved);
+    return saved == null ? null : TodayLayout.decode(saved);
   }
+
+  /// The three tabs the user put beside Today on the bottom bar; null
+  /// until they choose, or when what was saved does not fit.
+  Future<List<int>?> loadBottomTabs() async {
+    final saved = (await _preferences).getStringList('bottom_tabs_v1');
+    final tabs = saved?.map(int.tryParse).nonNulls.toSet().toList();
+    if (tabs == null ||
+        tabs.length != 3 ||
+        tabs.any((tab) => tab < 1 || tab > 8)) {
+      return null;
+    }
+    return tabs..sort();
+  }
+
+  Future<void> saveBottomTabs(List<int> tabs) async => (await _preferences)
+      .setStringList('bottom_tabs_v1', [for (final tab in tabs) '$tab']);
 
   Future<void> saveTodayLayout(TodayLayout layout) async =>
       (await _preferences).setStringList(_todayLayoutKey, layout.encode());

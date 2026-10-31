@@ -379,6 +379,13 @@ enum TodayBlock {
   homework,
   events,
   messages,
+  // A parent's: absences to excuse, notes, parents' meetings.
+  toExcuse,
+  notices,
+  meetings;
+
+  /// The blocks only a parent's Today has.
+  static const parents = {toExcuse, notices, meetings};
 }
 
 /// Which Today blocks show, and in what order.
@@ -393,6 +400,20 @@ class TodayLayout {
     (block: TodayBlock.homework, visible: true),
     (block: TodayBlock.events, visible: true),
     (block: TodayBlock.messages, visible: true),
+  ]);
+
+  /// A parent's Today: what to excuse first, homework last.
+  static const parentDefaults = TodayLayout([
+    (block: TodayBlock.currentLesson, visible: true),
+    (block: TodayBlock.freeDays, visible: true),
+    (block: TodayBlock.toExcuse, visible: true),
+    (block: TodayBlock.summary, visible: true),
+    (block: TodayBlock.grades, visible: true),
+    (block: TodayBlock.notices, visible: true),
+    (block: TodayBlock.meetings, visible: true),
+    (block: TodayBlock.events, visible: true),
+    (block: TodayBlock.messages, visible: true),
+    (block: TodayBlock.homework, visible: true),
   ]);
 
   final List<({TodayBlock block, bool visible})> blocks;

@@ -112,6 +112,19 @@ class _Settings extends StatelessWidget {
               onTap: () => _showTodayLayoutSheet(context, controller),
             ),
             ListTile(
+              key: const ValueKey('settings-bottom-tabs'),
+              leading: const _SettingsIcon(Icons.space_dashboard_rounded),
+              title: Text(context.tr('settingsBottomTabs')),
+              subtitle: Text(
+                [
+                  for (final tab in controller.bottomTabs)
+                    context.tr(_tabLooks[tab].label),
+                ].join(' · '),
+              ),
+              trailing: const _Chevron(),
+              onTap: () => _showBottomTabsSheet(context, controller),
+            ),
+            ListTile(
               key: const ValueKey('settings-timetable'),
               leading: const _SettingsIcon(Icons.calendar_view_week_rounded),
               title: Text(context.tr('timetable')),
@@ -768,4 +781,76 @@ Future<void> _confirmResetSettings(
   if (!context.mounted) return;
   ScaffoldMessenger.of(context)
       .showSnackBar(SnackBar(content: Text(context.tr('resetSettingsDone'))));
+}
+
+/// The three tabs beside Today on the bottom bar.
+Future<void> _showBottomTabsSheet(
+  BuildContext context,
+  AppController controller,
+) => showAppSheet<void>(
+  context: context,
+  useSafeArea: true,
+  isScrollControlled: true,
+  showDragHandle: true,
+  builder: (_) => _BottomTabsSheet(controller),
+);
+
+class _BottomTabsSheet extends StatefulWidget {
+  const _BottomTabsSheet(this.controller);
+  final AppController controller;
+
+  @override
+  State<_BottomTabsSheet> createState() => _BottomTabsSheetState();
+}
+
+class _BottomTabsSheetState extends State<_BottomTabsSheet> {
+  late final Set<int> chosen = {...widget.controller.bottomTabs.skip(1)};
+
+  @override
+  Widget build(BuildContext context) => ListView(
+    shrinkWrap: true,
+    primary: false,
+    padding: EdgeInsets.fromLTRB(
+      _Space.sheet,
+      0,
+      _Space.sheet,
+      24 + MediaQuery.viewPaddingOf(context).bottom,
+    ),
+    children: [
+      Text(context.tr('settingsBottomTabs'), style: _sheetTitleStyle(context)),
+      const SizedBox(height: 8),
+      Text(context.tr('settingsBottomTabsText')),
+      const SizedBox(height: 8),
+      for (var tab = 1; tab <= 8; tab++)
+        CheckboxListTile(
+          key: ValueKey('bottom-tab-$tab'),
+          contentPadding: EdgeInsets.zero,
+          secondary: Icon(_tabLooks[tab].selectedIcon),
+          title: Text(context.tr(_tabLooks[tab].label)),
+          value: chosen.contains(tab),
+          // Three at most: one comes off before another goes on.
+          onChanged: chosen.contains(tab) || chosen.length < 3
+              ? (value) => setState(() {
+                  if (value ?? false) {
+                    chosen.add(tab);
+                  } else {
+                    chosen.remove(tab);
+                  }
+                })
+              : null,
+        ),
+      const SizedBox(height: 16),
+      FilledButton(
+        key: const ValueKey('bottom-tabs-save'),
+        style: _wideButton,
+        onPressed: chosen.length == 3
+            ? () {
+                widget.controller.setBottomTabs([...chosen]);
+                Navigator.pop(context);
+              }
+            : null,
+        child: Text(context.tr('widgetSave')),
+      ),
+    ],
+  );
 }

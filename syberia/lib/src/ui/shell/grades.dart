@@ -565,19 +565,25 @@ class _SubjectGradesTile extends StatelessWidget {
           ),
           children: [
             for (final grade in grades) _GradeRow(grade, settings: settings),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
-              child: Align(
-                alignment: AlignmentDirectional.centerStart,
-                child: TextButton.icon(
-                  key: ValueKey('grade-calculator-open-$subject'),
-                  onPressed: () =>
-                      _showGradeCalculator(context, subject, grades, settings),
-                  icon: const Icon(Icons.calculate_rounded),
-                  label: Text(context.tr('gradeCalculator')),
+            // A parent has no grades to plan for.
+            if (!(_ControllerScope.maybeOf(context)?.parentView ?? false))
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
+                child: Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: TextButton.icon(
+                    key: ValueKey('grade-calculator-open-$subject'),
+                    onPressed: () => _showGradeCalculator(
+                      context,
+                      subject,
+                      grades,
+                      settings,
+                    ),
+                    icon: const Icon(Icons.calculate_rounded),
+                    label: Text(context.tr('gradeCalculator')),
+                  ),
                 ),
               ),
-            ),
           ],
         ),
       ),
@@ -614,80 +620,90 @@ Future<void> _showSubjectGrades(
   String subject,
   List<Grade> grades,
   GradeAverageSettings settings,
-) => showAppSheet<void>(
-  context: context,
-  compact: true,
-  showDragHandle: true,
-  isScrollControlled: true,
-  builder: (context) {
-    final theme = Theme.of(context);
-    return SafeArea(
-      child: ConstrainedBox(
-        key: const ValueKey('subject-grades-sheet'),
-        constraints: BoxConstraints(
-          maxHeight: MediaQuery.sizeOf(context).height * 0.85,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Whole, not shortened, with a capital letter.
-                        Text(
-                          displaySubject(subject, const {}),
-                          style: _sheetTitleStyle(context),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          '${context.tr('averageGrade')} · ${_plural(context, grades.length, 'grades')}',
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: theme.colorScheme.onSurfaceVariant,
+) {
+  // The sheet stands above the page: whose grades they are is read here.
+  final parent = _ControllerScope.maybeOf(context)?.parentView ?? false;
+  return showAppSheet<void>(
+    context: context,
+    compact: true,
+    showDragHandle: true,
+    isScrollControlled: true,
+    builder: (context) {
+      final theme = Theme.of(context);
+      return SafeArea(
+        child: ConstrainedBox(
+          key: const ValueKey('subject-grades-sheet'),
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.sizeOf(context).height * 0.85,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Whole, not shortened, with a capital letter.
+                          Text(
+                            displaySubject(subject, const {}),
+                            style: _sheetTitleStyle(context),
                           ),
-                        ),
-                      ],
+                          const SizedBox(height: 4),
+                          Text(
+                            '${context.tr('averageGrade')} · ${_plural(context, grades.length, 'grades')}',
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: theme.colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
+                    const SizedBox(width: 12),
+                    _AveragePill(settings.average(grades), large: true),
+                  ],
+                ),
+              ),
+              // A parent has no grades to plan for.
+              if (!parent)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 4, 20, 8),
+                  child: FilledButton.tonalIcon(
+                    key: const ValueKey('grade-calculator-open'),
+                    onPressed: () => _showGradeCalculator(
+                      context,
+                      subject,
+                      grades,
+                      settings,
+                    ),
+                    icon: const Icon(Icons.calculate_rounded),
+                    label: Text(context.tr('gradeCalculator')),
                   ),
-                  const SizedBox(width: 12),
-                  _AveragePill(settings.average(grades), large: true),
-                ],
+                ),
+              Flexible(
+                child: ListView(
+                  shrinkWrap: true,
+                  // Scrolls only when it does not fit; a sheet that fits moves as a whole.
+                  primary: false,
+                  // The rows' own 16 makes the sheet's 20.
+                  padding: const EdgeInsets.fromLTRB(4, 0, 4, 16),
+                  children: [
+                    for (final grade in grades)
+                      _GradeRow(grade, settings: settings),
+                  ],
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 4, 20, 8),
-              child: FilledButton.tonalIcon(
-                key: const ValueKey('grade-calculator-open'),
-                onPressed: () =>
-                    _showGradeCalculator(context, subject, grades, settings),
-                icon: const Icon(Icons.calculate_rounded),
-                label: Text(context.tr('gradeCalculator')),
-              ),
-            ),
-            Flexible(
-              child: ListView(
-                shrinkWrap: true,
-                // Scrolls only when it does not fit; a sheet that fits moves as a whole.
-                primary: false,
-                // The rows' own 16 makes the sheet's 20.
-                padding: const EdgeInsets.fromLTRB(4, 0, 4, 16),
-                children: [
-                  for (final grade in grades)
-                    _GradeRow(grade, settings: settings),
-                ],
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
-    );
-  },
-);
+      );
+    },
+  );
+}
 
 Future<void> _showGradeDetails(BuildContext context, Grade grade) {
   final controller = _ControllerScope.maybeOf(context);

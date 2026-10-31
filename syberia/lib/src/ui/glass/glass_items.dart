@@ -60,6 +60,37 @@ class GlassSymbol {
     'envelope.fill',
     CupertinoIcons.envelope_fill,
   );
+  static const list = GlassSymbol(
+    'list.bullet.rectangle',
+    CupertinoIcons.square_list,
+  );
+  static const listFill = GlassSymbol(
+    'list.bullet.rectangle.fill',
+    CupertinoIcons.square_list_fill,
+  );
+  static const book = GlassSymbol('book', CupertinoIcons.book);
+  static const bookFill = GlassSymbol('book.fill', CupertinoIcons.book_fill);
+  static const checkmark = GlassSymbol(
+    'checkmark.square',
+    CupertinoIcons.checkmark_square,
+  );
+  static const checkmarkFill = GlassSymbol(
+    'checkmark.square.fill',
+    CupertinoIcons.checkmark_square_fill,
+  );
+  static const megaphone = GlassSymbol('megaphone', CupertinoIcons.speaker_2);
+  static const megaphoneFill = GlassSymbol(
+    'megaphone.fill',
+    CupertinoIcons.speaker_2_fill,
+  );
+  static const textBubble = GlassSymbol(
+    'text.bubble',
+    CupertinoIcons.chat_bubble_text,
+  );
+  static const textBubbleFill = GlassSymbol(
+    'text.bubble.fill',
+    CupertinoIcons.chat_bubble_text_fill,
+  );
   static const menu = GlassSymbol(
     'line.3.horizontal',
     CupertinoIcons.line_horizontal_3,

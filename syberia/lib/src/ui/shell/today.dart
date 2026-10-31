@@ -265,6 +265,102 @@ class _TodayState extends State<_Today> {
           ),
           key: const ValueKey('today-messages'),
         );
+      case TodayBlock.toExcuse:
+        if (!controller.parentView) return null;
+        // Absences not excused yet, from the last two weeks: what a parent
+        // still has time to excuse.
+        final since = today.subtract(const Duration(days: 14));
+        final byDay = <DateTime, List<AttendanceRecord>>{};
+        for (final record in data.attendance) {
+          if (record.kind != AttendanceKind.absent ||
+              record.date.isBefore(since)) {
+            continue;
+          }
+          final day = DateTime(
+            record.date.year,
+            record.date.month,
+            record.date.day,
+          );
+          byDay.putIfAbsent(day, () => []).add(record);
+        }
+        if (byDay.isEmpty) return null;
+        final days = byDay.keys.toList()..sort((a, b) => b.compareTo(a));
+        final lessons = byDay.values.fold(0, (sum, day) => sum + day.length);
+        return section(
+          context.tr('todayToExcuse'),
+          6,
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(_Space.inset),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '${_lessonCount(context, lessons)} · '
+                    '${_plural(context, days.length, 'days')}',
+                    key: const ValueKey('today-to-excuse-count'),
+                    style: _rowTitleStyle(context),
+                  ),
+                  for (final day in days.take(3))
+                    Padding(
+                      padding: const EdgeInsets.only(top: 6),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              '${_shortWeekday(context, day)} '
+                              '${_shortDate(context, day)} · '
+                              '${_lessonCount(context, byDay[day]!.length)}',
+                              style: _metaStyle(context),
+                            ),
+                          ),
+                          for (final source in {
+                            for (final record in byDay[day]!) record.source,
+                          })
+                            if (source != null)
+                              Flexible(child: _ProfileMark(source)),
+                        ],
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
+          key: const ValueKey('today-to-excuse'),
+        );
+      case TodayBlock.notices:
+        if (!controller.parentView) return null;
+        final since = today.subtract(const Duration(days: 14));
+        final recent =
+            data.notices.where((item) => !item.date.isBefore(since)).toList()
+              ..sort((a, b) => b.date.compareTo(a.date));
+        if (recent.isEmpty) return null;
+        return section(
+          context.tr('todayNotices'),
+          8,
+          spaced(recent.take(2).map((item) => (item.id, _NoticeCard(item)))),
+          key: const ValueKey('today-notices'),
+        );
+      case TodayBlock.meetings:
+        if (!controller.parentView) return null;
+        final until = today.add(const Duration(days: 30));
+        final meetings =
+            data.events
+                .where(
+                  (item) =>
+                      !item.date.isBefore(today) &&
+                      !item.date.isAfter(until) &&
+                      _eventType(item).type == _EventType.meeting,
+                )
+                .toList()
+              ..sort((a, b) => a.date.compareTo(b.date));
+        if (meetings.isEmpty) return null;
+        return section(
+          context.tr('todayMeetings'),
+          3,
+          spaced(meetings.take(1).map((item) => (item.id, _EventTile(item)))),
+          key: const ValueKey('today-meetings'),
+        );
     }
   }
 }
@@ -382,7 +478,13 @@ class _NowCard extends StatelessWidget {
 
     // The line at the bottom: what follows.
     String? footer;
-    if (current != null) {
+    if (current != null && controller.parentView) {
+      // A parent wants to know when the day ends, more than what is next.
+      final last = laterToday.lastOrNull ?? current;
+      footer = context.trArgs('todayLessonsUntil', {
+        'time': _time(last.lesson.end),
+      });
+    } else if (current != null) {
       final next = laterToday.firstOrNull;
       footer = next == null
           ? context.tr('todayLastLesson')
@@ -768,6 +870,12 @@ Future<void> _showTodayLayoutSheet(
     listenable: controller,
     builder: (context, _) {
       final layout = controller.todayLayout;
+      final defaults = controller.parentView
+          ? TodayLayout.parentDefaults
+          : TodayLayout.defaults;
+      // A student's Today has no parent's blocks to arrange.
+      bool shown(TodayBlock block) =>
+          controller.parentView || !TodayBlock.parents.contains(block);
       void update(List<({TodayBlock block, bool visible})> blocks) =>
           controller.setTodayLayout(TodayLayout(List.unmodifiable(blocks)));
       return SafeArea(
@@ -789,10 +897,9 @@ Future<void> _showTodayLayoutSheet(
                       ),
                     ),
                     TextButton(
-                      onPressed: layout == TodayLayout.defaults
+                      onPressed: layout == defaults
                           ? null
-                          : () =>
-                                controller.setTodayLayout(TodayLayout.defaults),
+                          : () => controller.setTodayLayout(defaults),
                       child: Text(context.tr('resetDefaults')),
                     ),
                   ],
@@ -813,35 +920,36 @@ Future<void> _showTodayLayoutSheet(
                   },
                   children: [
                     for (final (index, entry) in layout.blocks.indexed)
-                      ListTile(
-                        key: ValueKey('today-block-${entry.block.name}'),
-                        leading: ReorderableDragStartListener(
-                          index: index,
-                          child: const Icon(Icons.drag_indicator_rounded),
-                        ),
-                        title: Row(
-                          children: [
-                            Icon(_todayBlockIcon(entry.block), size: 20),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Text(
-                                context.tr(_todayBlockLabel(entry.block)),
+                      if (shown(entry.block))
+                        ListTile(
+                          key: ValueKey('today-block-${entry.block.name}'),
+                          leading: ReorderableDragStartListener(
+                            index: index,
+                            child: const Icon(Icons.drag_indicator_rounded),
+                          ),
+                          title: Row(
+                            children: [
+                              Icon(_todayBlockIcon(entry.block), size: 20),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Text(
+                                  context.tr(_todayBlockLabel(entry.block)),
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
+                          trailing: Switch.adaptive(
+                            value: entry.visible,
+                            onChanged: (visible) {
+                              final blocks = [...layout.blocks];
+                              blocks[index] = (
+                                block: entry.block,
+                                visible: visible,
+                              );
+                              update(blocks);
+                            },
+                          ),
                         ),
-                        trailing: Switch.adaptive(
-                          value: entry.visible,
-                          onChanged: (visible) {
-                            final blocks = [...layout.blocks];
-                            blocks[index] = (
-                              block: entry.block,
-                              visible: visible,
-                            );
-                            update(blocks);
-                          },
-                        ),
-                      ),
                   ],
                 ),
               ),
@@ -861,6 +969,9 @@ String _todayBlockLabel(TodayBlock block) => switch (block) {
   TodayBlock.homework => 'homework',
   TodayBlock.events => 'todayExams',
   TodayBlock.messages => 'todayUnreadMessages',
+  TodayBlock.toExcuse => 'todayToExcuse',
+  TodayBlock.notices => 'todayNotices',
+  TodayBlock.meetings => 'todayMeetings',
 };
 
 IconData _todayBlockIcon(TodayBlock block) => switch (block) {
@@ -871,6 +982,9 @@ IconData _todayBlockIcon(TodayBlock block) => switch (block) {
   TodayBlock.homework => Icons.assignment_rounded,
   TodayBlock.events => Icons.event_note_rounded,
   TodayBlock.messages => Icons.mail_rounded,
+  TodayBlock.toExcuse => Icons.edit_note_rounded,
+  TodayBlock.notices => Icons.chat_bubble_rounded,
+  TodayBlock.meetings => Icons.groups_rounded,
 };
 
 class _UpdateBanner extends StatelessWidget {

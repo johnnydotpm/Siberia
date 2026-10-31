@@ -76,7 +76,9 @@ class AppController extends ChangeNotifier {
   bool _showTimetableBreaks = false;
   MessageListStyle _messageListStyle = MessageListStyle.list;
   GradesView _gradesView = GradesView.compact;
-  TodayLayout _todayLayout = TodayLayout.defaults;
+
+  /// Null until the user arranges Today: then it follows the role.
+  TodayLayout? _todayLayout;
   Map<String, DateTime> _doneHomework = const {};
   SyncNews? _syncNews;
   Timer? _homeWidgetDebounce;
@@ -270,7 +272,9 @@ class AppController extends ChangeNotifier {
   bool get showTimetableBreaks => _showTimetableBreaks;
   MessageListStyle get messageListStyle => _messageListStyle;
   GradesView get gradesView => _gradesView;
-  TodayLayout get todayLayout => _todayLayout;
+  TodayLayout get todayLayout =>
+      _todayLayout ??
+      (parentView ? TodayLayout.parentDefaults : TodayLayout.defaults);
 
   /// What the last sync brought, until it is seen or dismissed.
   SyncNews? get syncNews => _syncNews;
@@ -339,6 +343,7 @@ class AppController extends ChangeNotifier {
     _messageListStyle = await _repository.loadMessageListStyle();
     _gradesView = await _repository.loadGradesView();
     _todayLayout = await _repository.loadTodayLayout();
+    _bottomTabs = await _repository.loadBottomTabs();
     _autoSyncOnOpen = await _repository.loadAutoSyncOnOpen();
     if (notifications != null) {
       _notificationSettings = await notifications!.loadSettings();
@@ -1269,6 +1274,26 @@ class AppController extends ChangeNotifier {
     notifyListeners();
     await _repository.saveDoneHomework(_doneHomework);
     await _updateReminders();
+  }
+
+  List<int>? _bottomTabs;
+
+  /// The bottom bar: Today, then three tabs: the user's, in the app's
+  /// order, or until they choose, a student's timetable, grades and
+  /// messages, and a parent's attendance first, then grades and messages.
+  List<int> get bottomTabs => [
+    0,
+    ...(_bottomTabs ?? (parentView ? const [6, 2, 5] : const [1, 2, 5])),
+  ];
+
+  /// Puts the three [tabs] beside Today, in the app's order.
+  Future<void> setBottomTabs(List<int> tabs) async {
+    final chosen = {...tabs}.where((tab) => tab >= 1 && tab <= 8).toList()
+      ..sort();
+    if (chosen.length != 3) return;
+    _bottomTabs = chosen;
+    notifyListeners();
+    await _repository.saveBottomTabs(chosen);
   }
 
   Future<void> setTodayLayout(TodayLayout layout) async {

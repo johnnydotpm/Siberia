@@ -267,7 +267,7 @@ class _AppShellState extends State<AppShell> {
             ),
           );
         }
-        const bottomTabs = [0, 1, 2, 5];
+        final bottomTabs = controller.bottomTabs;
         final selected = bottomTabs.indexOf(controller.tabIndex);
         if (glass) {
           return GlassShell(
@@ -275,26 +275,13 @@ class _AppShellState extends State<AppShell> {
             title: _title(context, controller.tabIndex),
             largeTitle: controller.tabIndex != 1,
             tabs: [
-              GlassTab(
-                label: context.tr('today'),
-                symbol: GlassSymbol.house,
-                selectedSymbol: GlassSymbol.houseFill,
-              ),
-              GlassTab(
-                label: context.tr('timetable'),
-                symbol: GlassSymbol.calendar,
-              ),
-              GlassTab(
-                label: context.tr('grades'),
-                symbol: GlassSymbol.graduationCap,
-                selectedSymbol: GlassSymbol.graduationCapFill,
-              ),
-              GlassTab(
-                label: context.tr('messages'),
-                symbol: GlassSymbol.envelope,
-                selectedSymbol: GlassSymbol.envelopeFill,
-                badge: controller.snapshot.unreadMessages,
-              ),
+              for (final tab in bottomTabs)
+                GlassTab(
+                  label: context.tr(_tabLooks[tab].label),
+                  symbol: _tabLooks[tab].symbol,
+                  selectedSymbol: _tabLooks[tab].selectedSymbol,
+                  badge: tab == 5 ? controller.snapshot.unreadMessages : 0,
+                ),
             ],
             selectedTab: selected < 0 ? null : selected,
             onTabSelected: (index) => controller.selectTab(bottomTabs[index]),
@@ -381,27 +368,16 @@ class _AppShellState extends State<AppShell> {
                 }
               },
               destinations: [
-                _destination(
-                  Icons.home_outlined,
-                  selected < 0 ? Icons.home_outlined : Icons.home_rounded,
-                  context.tr('today'),
-                ),
-                _destination(
-                  Icons.calendar_view_week_outlined,
-                  Icons.calendar_view_week_rounded,
-                  context.tr('timetable'),
-                ),
-                _destination(
-                  Icons.school_outlined,
-                  Icons.school_rounded,
-                  context.tr('grades'),
-                ),
-                _destination(
-                  Icons.mail_outline_rounded,
-                  Icons.mail_rounded,
-                  context.tr('messages'),
-                  badge: controller.snapshot.unreadMessages,
-                ),
+                for (final tab in bottomTabs)
+                  _destination(
+                    _tabLooks[tab].icon,
+                    // Off the bar, Today stands selected only for show.
+                    tab == 0 && selected < 0
+                        ? _tabLooks[tab].icon
+                        : _tabLooks[tab].selectedIcon,
+                    context.tr(_tabLooks[tab].label),
+                    badge: tab == 5 ? controller.snapshot.unreadMessages : 0,
+                  ),
               ],
             ),
           ),
@@ -410,6 +386,83 @@ class _AppShellState extends State<AppShell> {
     ),
   );
 }
+
+/// How each page shows on the bottom bar: its name, Material icons for the
+/// classic bar and symbols for the glass one.
+const List<
+  ({
+    String label,
+    IconData icon,
+    IconData selectedIcon,
+    GlassSymbol symbol,
+    GlassSymbol? selectedSymbol,
+  })
+>
+_tabLooks = [
+  (
+    label: 'today',
+    icon: Icons.home_outlined,
+    selectedIcon: Icons.home_rounded,
+    symbol: GlassSymbol.house,
+    selectedSymbol: GlassSymbol.houseFill,
+  ),
+  (
+    label: 'timetable',
+    icon: Icons.calendar_view_week_outlined,
+    selectedIcon: Icons.calendar_view_week_rounded,
+    symbol: GlassSymbol.calendar,
+    selectedSymbol: null,
+  ),
+  (
+    label: 'grades',
+    icon: Icons.school_outlined,
+    selectedIcon: Icons.school_rounded,
+    symbol: GlassSymbol.graduationCap,
+    selectedSymbol: GlassSymbol.graduationCapFill,
+  ),
+  (
+    label: 'calendar',
+    icon: Icons.event_note_outlined,
+    selectedIcon: Icons.event_note_rounded,
+    symbol: GlassSymbol.list,
+    selectedSymbol: GlassSymbol.listFill,
+  ),
+  (
+    label: 'homework',
+    icon: Icons.assignment_outlined,
+    selectedIcon: Icons.assignment_rounded,
+    symbol: GlassSymbol.book,
+    selectedSymbol: GlassSymbol.bookFill,
+  ),
+  (
+    label: 'messages',
+    icon: Icons.mail_outline_rounded,
+    selectedIcon: Icons.mail_rounded,
+    symbol: GlassSymbol.envelope,
+    selectedSymbol: GlassSymbol.envelopeFill,
+  ),
+  (
+    label: 'attendance',
+    icon: Icons.fact_check_outlined,
+    selectedIcon: Icons.fact_check_rounded,
+    symbol: GlassSymbol.checkmark,
+    selectedSymbol: GlassSymbol.checkmarkFill,
+  ),
+  (
+    label: 'announcements',
+    icon: Icons.campaign_outlined,
+    selectedIcon: Icons.campaign_rounded,
+    symbol: GlassSymbol.megaphone,
+    selectedSymbol: GlassSymbol.megaphoneFill,
+  ),
+  (
+    label: 'notices',
+    icon: Icons.chat_bubble_outline_rounded,
+    selectedIcon: Icons.chat_bubble_rounded,
+    symbol: GlassSymbol.textBubble,
+    selectedSymbol: GlassSymbol.textBubbleFill,
+  ),
+];
 
 /// Tells a page that its tab was tapped while it was open.
 class _Reselect extends ChangeNotifier {

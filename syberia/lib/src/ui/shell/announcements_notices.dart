@@ -84,90 +84,93 @@ class _Notices extends StatelessWidget {
         icon: Icons.chat_bubble_rounded,
       );
     }
-    final brightness = Theme.of(context).brightness;
     return _Refresh(
       controller: controller,
       child: _PageList(
         padding: const EdgeInsets.all(_Space.page),
-        children: _spaced(
-          notices.map((item) {
-            // The tones of the calendar's kinds, so they suit the theme.
-            final tone = switch (item.tone) {
-              NoticeTone.positive => SubjectColors.tone(135, brightness),
-              NoticeTone.neutral => SubjectColors.grade(null, brightness),
-              NoticeTone.negative => SubjectColors.tone(4, brightness),
-            };
-            final icon = switch (item.tone) {
-              NoticeTone.positive => Icons.thumb_up_alt_rounded,
-              NoticeTone.neutral => Icons.chat_bubble_rounded,
-              NoticeTone.negative => Icons.report_rounded,
-            };
-            final toneLabel = context.tr(switch (item.tone) {
-              NoticeTone.positive => 'noticePositive',
-              NoticeTone.neutral => 'noticeNeutral',
-              NoticeTone.negative => 'noticeNegative',
-            });
-            return Card(
-              clipBehavior: Clip.antiAlias,
-              child: ExpansionTile(
-                shape: const Border(),
-                collapsedShape: const Border(),
-                tilePadding: const EdgeInsets.symmetric(
-                  horizontal: _Space.inset,
-                ),
-                leading: _IconTile(
-                  icon: icon,
-                  background: tone.background,
-                  foreground: tone.foreground,
-                ),
-                // What the note is, "Pochwała", says more than its tone,
-                // which the colour and the symbol show already.
-                title: _MarkedTitle(
-                  Text(
-                    item.category.isEmpty
-                        ? toneLabel
-                        : _capitalize(item.category),
-                    style: _rowTitleStyle(context)
-                        ?.copyWith(color: tone.accent),
-                  ),
-                  item.source,
-                ),
-                subtitle: Text(item.teacher),
-                trailing: Text(
-                  _shortDate(context, item.date),
-                  style: _metaStyle(context),
-                ),
+        children: _spaced(notices.map(_NoticeCard.new)),
+      ),
+    );
+  }
+}
+
+/// One note from a teacher: its kind in its tone, the teacher and the day;
+/// a tap unfolds the text.
+class _NoticeCard extends StatelessWidget {
+  const _NoticeCard(this.item);
+  final StudentNotice item;
+
+  @override
+  Widget build(BuildContext context) {
+    final brightness = Theme.of(context).brightness;
+    // The tones of the calendar's kinds, so they suit the theme.
+    final tone = switch (item.tone) {
+      NoticeTone.positive => SubjectColors.tone(135, brightness),
+      NoticeTone.neutral => SubjectColors.grade(null, brightness),
+      NoticeTone.negative => SubjectColors.tone(4, brightness),
+    };
+    final icon = switch (item.tone) {
+      NoticeTone.positive => Icons.thumb_up_alt_rounded,
+      NoticeTone.neutral => Icons.chat_bubble_rounded,
+      NoticeTone.negative => Icons.report_rounded,
+    };
+    final toneLabel = context.tr(switch (item.tone) {
+      NoticeTone.positive => 'noticePositive',
+      NoticeTone.neutral => 'noticeNeutral',
+      NoticeTone.negative => 'noticeNegative',
+    });
+    return Card(
+      clipBehavior: Clip.antiAlias,
+      child: ExpansionTile(
+        shape: const Border(),
+        collapsedShape: const Border(),
+        tilePadding: const EdgeInsets.symmetric(horizontal: _Space.inset),
+        leading: _IconTile(
+          icon: icon,
+          background: tone.background,
+          foreground: tone.foreground,
+        ),
+        // What the note is, "Pochwała", says more than its tone,
+        // which the colour and the symbol show already.
+        title: _MarkedTitle(
+          Text(
+            item.category.isEmpty ? toneLabel : _capitalize(item.category),
+            style: _rowTitleStyle(context)?.copyWith(color: tone.accent),
+          ),
+          item.source,
+        ),
+        subtitle: Text(item.teacher),
+        trailing: Text(
+          _shortDate(context, item.date),
+          style: _metaStyle(context),
+        ),
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(
+              _Space.inset,
+              0,
+              _Space.inset,
+              _Space.inset,
+            ),
+            child: Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(
-                      _Space.inset,
-                      0,
-                      _Space.inset,
-                      _Space.inset,
+                  if (item.category.isNotEmpty) ...[
+                    Text(
+                      toneLabel,
+                      style: Theme.of(context).textTheme.labelLarge
+                          ?.copyWith(color: tone.accent),
                     ),
-                    child: Align(
-                      alignment: AlignmentDirectional.centerStart,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          if (item.category.isNotEmpty) ...[
-                            Text(
-                              toneLabel,
-                              style: Theme.of(context).textTheme.labelLarge
-                                  ?.copyWith(color: tone.accent),
-                            ),
-                            const SizedBox(height: 6),
-                          ],
-                          SelectableText(item.text),
-                        ],
-                      ),
-                    ),
-                  ),
+                    const SizedBox(height: 6),
+                  ],
+                  SelectableText(item.text),
                 ],
               ),
-            );
-          }),
-        ),
+            ),
+          ),
+        ],
       ),
     );
   }
