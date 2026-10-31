@@ -11,6 +11,9 @@ import '../domain/parent.dart';
 import '../homework_done.dart';
 import 'demo_data.dart';
 import 'diary_plugins.dart';
+import 'diary_plugin.dart';
+import 'diary_plugin_registry.dart';
+import 'librus/librus_plugin.dart';
 import 'librus/librus_client.dart';
 import 'librus/librus_logins.dart';
 import 'librus/reference_cache.dart';
@@ -179,7 +182,21 @@ class AppRepository {
   final Dio _githubClient;
   final DiaryPlugins _plugins;
 
-  final _clients = <String, LibrusClient>{};
+  DiaryPluginRegistry? _registry;
+  DiaryPluginRegistry get _diaries => _registry ??= DiaryPluginRegistry(
+    bundled: [
+      LibrusDiaryPlugin(
+        logins: _logins,
+        references: _references,
+        client: _sharedClient,
+        clients: _clientFactory,
+      ),
+    ],
+    downloads: _plugins,
+    defaultId: LibrusDiaryPlugin.descriptor.id,
+  );
+  List<DiaryDefinition> get bundledDiaries => _diaries.bundled;
+  DiaryDefinition get defaultDiary => _diaries.defaultPlugin.definition;
   final _stores = <String, SnapshotStore>{};
   List<SchoolProfile> _profiles = const [];
   String? _activeId;
@@ -229,22 +246,8 @@ class AppRepository {
     await _profileStore.setNews(profileId, news);
   }
 
-  LibrusClient _clientFor(SchoolProfile profile) {
-    final shared = _sharedClient;
-    if (shared != null) return shared;
-    final factory = _clientFactory;
-    return _clients.putIfAbsent(
-      profile.id,
-      () =>
-          factory?.call(profile) ??
-          LibrusClient(
-            logins: _logins,
-            referenceCache: _references,
-            account: profile.account.isEmpty ? null : profile.account,
-            synergiaLogin: profile.synergiaLogin,
-          ),
-    );
-  }
+  DiarySession _sessionFor(SchoolProfile profile) =>
+      _diaries.forProfile(profile).session(profile);
 
   SnapshotStore _storeFor(String profileId) => _stores.putIfAbsent(
     profileId,
@@ -425,13 +428,15 @@ class AppRepository {
         _emptySnapshot(_studentOf(profile));
   }
 
-  static StudentProfile _studentOf(SchoolProfile profile) => profile.isPlugin
+  static StudentProfile _studentOf(SchoolProfile profile) =>
+      profile.usesDownloadedPlugin
       ? DiaryPlugins.student(profile)
       : StudentProfile(
           id: profile.studentId ?? profile.id,
           name: profile.name,
           school: profile.school,
           provider: 'Librus Synergia',
+          pluginId: 'librus',
         );
 
   /// Opens the profile [profileId] with its saved data.
@@ -465,16 +470,21 @@ class AppRepository {
       await _logins.clear();
       await _logins.removeLegacy();
     }
-    final client =
-        _sharedClient ??
-        _clientFactory?.call(null) ??
-        LibrusClient(logins: _logins, referenceCache: _references);
-    final found = await client.signIn(username: username, password: password);
+    final found = await _diaries.defaultPlugin.signIn({
+      'username': username,
+      'password': password,
+    });
     return LibrusSignIn(
       account: found.account,
       students: [
-        for (final student in found.students)
-          student.copyWith(selected: _hasProfile(found.account, student.login)),
+        for (final student in found.children)
+          LinkedSynergiaAccount(
+            login: student.id,
+            name: student.name,
+            account: found.account,
+            parent: student.parent,
+            selected: _hasProfile(found.account, student.id),
+          ),
       ],
     );
   }
@@ -492,15 +502,18 @@ class AppRepository {
     Object? failure;
     final accounts = <String>{};
     for (final profile in _profiles) {
-      if (profile.isPlugin) continue;
+      if (profile.usesDownloadedPlugin) continue;
       if (profile.account.isEmpty || !accounts.add(profile.account)) continue;
       try {
-        for (final student in await _clientFor(
-          profile,
-        ).fetchSynergiaAccounts()) {
+        for (final student
+            in await _diaries.forProfile(profile).children(profile)) {
           students.add(
-            student.copyWith(
-              selected: _hasProfile(profile.account, student.login),
+            LinkedSynergiaAccount(
+              login: student.id,
+              name: student.name,
+              account: profile.account,
+              parent: student.parent,
+              selected: _hasProfile(profile.account, student.id),
             ),
           );
         }
@@ -562,7 +575,11 @@ class AppRepository {
       throw StateError('Exit demo mode before connecting an account.');
     }
     await _ensureReady();
-    return _plugins.connect(manifest, fields);
+    final login = await _diaries.download(manifest).signIn(fields);
+    return PluginSignIn(login.account, manifest, [
+      for (final child in login.children)
+        PluginStudent(child.id, child.name, child.school, child.parent),
+    ]);
   }
 
   Future<List<SchoolProfile>> addPluginProfiles(
@@ -709,11 +726,7 @@ class AppRepository {
   Future<void> discardLogin(String account) async {
     await _ensureReady();
     if (_profiles.any((profile) => profile.account == account)) return;
-    if (account.startsWith('plugin-')) {
-      await _plugins.forget(account);
-    } else {
-      await _logins.remove(account);
-    }
+    await _diaries.forgetUnclaimedAccount(account);
   }
 
   /// Removes the profile [profileId] with its data and settings; its login
@@ -726,43 +739,22 @@ class AppRepository {
     }
     await _ensureReady();
     final profile = _profile(profileId);
-    if (profile.isPlugin) {
-      final rest = [
-        for (final other in _profiles)
-          if (other.id != profile.id) other,
-      ];
-      // Publish removal before waiting for an account lease: an old sync must
-      // not re-create this child's cache while credentials are being removed.
-      _profiles = List.unmodifiable(rest);
-      await _profileStore.write(_profiles);
-      if (_activeId == profile.id) {
-        _activeId = rest.firstOrNull?.id;
-        await _profileStore.writeActive(_activeId);
-      }
-      await _forget(profile);
-      if (!rest.any((p) => p.account == profile.account)) {
-        await _plugins.forget(profile.account);
-      }
-      return load();
-    }
-    await _forget(profile);
     final rest = [
       for (final other in _profiles)
         if (other.id != profile.id) other,
     ];
-    if (profile.account.isNotEmpty &&
-        !rest.any((other) => other.account == profile.account)) {
-      if (profile.isPlugin) {
-        await _plugins.forget(profile.account);
-      } else {
-        await _logins.remove(profile.account);
-      }
-    }
+    // Publish removal before any adapter cleanup: a late sync must not restore
+    // this child's cache, regardless of how its plugin is distributed.
     _profiles = List.unmodifiable(rest);
     await _profileStore.write(_profiles);
     if (_activeId == profile.id) {
-      _activeId = rest.isEmpty ? null : rest.first.id;
+      _activeId = rest.firstOrNull?.id;
       await _profileStore.writeActive(_activeId);
+    }
+    await _forget(profile);
+    if (profile.account.isNotEmpty &&
+        !rest.any((p) => p.account == profile.account)) {
+      await _diaries.forProfile(profile).forgetAccount(profile.account);
     }
     return load();
   }
@@ -772,11 +764,10 @@ class AppRepository {
       ProfileStore.key('absence_requests_v1', profile.id),
     );
     try {
-      if (!profile.isPlugin) await _clientFor(profile).forget();
+      await _diaries.forProfile(profile).forgetProfile(profile);
     } on Object {
       // Its lists are fetched again if it ever comes back.
     }
-    _clients.remove(profile.id);
     await _storeFor(profile.id).clear();
     _stores.remove(profile.id);
     final preferences = await _preferences;
@@ -837,26 +828,13 @@ class AppRepository {
   }
 
   Future<AppSnapshot> _sync(SchoolProfile profile, AppSnapshot? current) async {
-    if (profile.isPlugin) {
-      final result = await _plugins.sync(
-        profile,
-        current ?? _emptySnapshot(_studentOf(profile)),
-      );
-      if (!_profiles.any((p) => p.id == profile.id)) {
-        throw StateError('Profile removed');
-      }
-      final kept = _keepSent(
-        _keepLaterWeeks(result, current, DateTime.now()),
-        current,
-      );
-      await _storeFor(profile.id).write(kept);
-      await _remember(profile, kept, null);
-      return kept;
-    }
-    final client = _clientFor(profile);
-    final snapshot = await client.restoreAndFetch();
+    final session = _sessionFor(profile);
+    final snapshot = await session.sync(current);
     if (snapshot == null) {
       throw const LibrusException(LibrusErrorCode.sessionExpired);
+    }
+    if (!_profiles.any((p) => p.id == profile.id)) {
+      throw StateError('Profile removed');
     }
     final withMessages =
         current != null &&
@@ -869,7 +847,7 @@ class AppRepository {
       current,
     );
     await _storeFor(profile.id).write(result);
-    await _remember(profile, result, client);
+    await _remember(profile, result, session);
     await _replaceStale(profile.id, result.profile.id);
     return result;
   }
@@ -921,7 +899,7 @@ class AppRepository {
   Future<void> _remember(
     SchoolProfile profile,
     AppSnapshot snapshot,
-    LibrusClient? client,
+    DiarySession session,
   ) async {
     final fetched = snapshot.profile;
     if (!fetched.connected) return;
@@ -929,7 +907,9 @@ class AppRepository {
       name: saved.name.isEmpty ? fetched.name : null,
       school: fetched.school.isEmpty ? null : fetched.school,
       studentId: fetched.id,
-      synergiaLogin: saved.synergiaLogin ?? client?.synergiaLogin,
+      synergiaLogin:
+          saved.synergiaLogin ??
+          (saved.usesDownloadedPlugin ? null : session.studentKey),
     );
     final known = _profiles
         .where((saved) => saved.id == profile.id)
@@ -980,7 +960,7 @@ class AppRepository {
   /// The background check of the open profile. [parts] are what
   /// notifications are on for; the rest is kept from the saved snapshot
   /// instead of being downloaded.
-  Future<AppSnapshot?> fetchBackgroundSnapshot({Set<LibrusPart>? parts}) async {
+  Future<AppSnapshot?> fetchBackgroundSnapshot({Set<DiaryPart>? parts}) async {
     await _ensureReady();
     final profile = activeProfile;
     return profile == null ? null : _backgroundSnapshot(profile, parts);
@@ -989,7 +969,7 @@ class AppRepository {
   /// The background check of every profile with notifications on. A profile
   /// that cannot be fetched is left out.
   Future<List<(SchoolProfile, AppSnapshot)>> fetchBackgroundSnapshots({
-    Set<LibrusPart>? parts,
+    Set<DiaryPart>? parts,
   }) async {
     await _ensureReady();
     final results = <(SchoolProfile, AppSnapshot)>[];
@@ -1017,7 +997,7 @@ class AppRepository {
 
   Future<AppSnapshot?> _backgroundSnapshot(
     SchoolProfile profile,
-    Set<LibrusPart>? parts,
+    Set<DiaryPart>? parts,
   ) async {
     if (_demo != null) return null;
     if (!await loadAutoSyncOnOpen()) return null;
@@ -1030,20 +1010,9 @@ class AppRepository {
     }
     // Without a saved snapshot there is nothing to keep, so all of it comes.
     final wanted = previous == null ? null : parts;
-    final client = profile.isPlugin ? null : _clientFor(profile);
-    final fetched = profile.isPlugin
-        ? await _plugins.sync(
-            profile,
-            previous ?? _emptySnapshot(_studentOf(profile)),
-            parts: wanted,
-          )
-        : await client!.restoreAndFetch(parts: wanted);
-    if (fetched == null) return null;
-    final merged = previous == null || wanted == null
-        ? fetched
-        : profile.isPlugin
-        ? fetched
-        : _keepUnfetchedParts(fetched, previous, wanted);
+    final session = _sessionFor(profile);
+    final merged = await session.sync(previous, parts: wanted);
+    if (merged == null) return null;
     final preserved =
         merged.messagesError != null &&
             previous != null &&
@@ -1055,51 +1024,14 @@ class AppRepository {
     if (!stillThere.any((saved) => saved.id == profile.id)) return null;
     // Kept lessons already include the later weeks.
     final live = _keepSent(
-      wanted == null || wanted.contains(LibrusPart.timetable)
+      wanted == null || wanted.contains(DiaryPart.timetable)
           ? _keepLaterWeeks(preserved, previous, DateTime.now())
           : preserved,
       previous,
     );
     await store.write(live);
-    await _remember(profile, live, client);
+    await _remember(profile, live, session);
     return live;
-  }
-
-  AppSnapshot _keepUnfetchedParts(
-    AppSnapshot fetched,
-    AppSnapshot previous,
-    Set<LibrusPart> parts,
-  ) {
-    T pick<T>(LibrusPart part, T current, T kept) =>
-        parts.contains(part) ? current : kept;
-    final messages = parts.contains(LibrusPart.messages);
-    return AppSnapshot(
-      profile: fetched.profile,
-      lessons: pick(LibrusPart.timetable, fetched.lessons, previous.lessons),
-      grades: pick(LibrusPart.grades, fetched.grades, previous.grades),
-      // Events and homework share one list and are fetched together.
-      events:
-          parts.contains(LibrusPart.events) ||
-              parts.contains(LibrusPart.homework)
-          ? fetched.events
-          : previous.events,
-      messages: messages ? fetched.messages : previous.messages,
-      messagesError: messages ? fetched.messagesError : previous.messagesError,
-      attendance: pick(
-        LibrusPart.attendance,
-        fetched.attendance,
-        previous.attendance,
-      ),
-      announcements: pick(
-        LibrusPart.announcements,
-        fetched.announcements,
-        previous.announcements,
-      ),
-      notices: pick(LibrusPart.notices, fetched.notices, previous.notices),
-      // Teachers' absences come with the timetable.
-      freeDays: pick(LibrusPart.timetable, fetched.freeDays, previous.freeDays),
-      lastSync: fetched.lastSync,
-    );
   }
 
   Future<bool> loadAutoSyncOnOpen() async =>
@@ -1127,9 +1059,11 @@ class AppRepository {
     for (final profile in forgotten) {
       await _forget(profile);
     }
-    for (final owner
-        in forgotten.where((p) => p.isPlugin).map((p) => p.account).toSet()) {
-      await _plugins.forget(owner);
+    final owners = <String>{};
+    for (final profile in forgotten) {
+      if (owners.add(profile.account)) {
+        await _diaries.forProfile(profile).forgetAccount(profile.account);
+      }
     }
     await _logins.clear();
     await _references.clear();
@@ -1449,9 +1383,7 @@ class AppRepository {
     if (_demo != null) return DemoData.recipients;
     await _ensureReady();
     final profile = _accountOf(profileId);
-    return profile.isPlugin
-        ? _plugins.recipients(profile)
-        : _clientFor(profile).fetchMessageRecipients();
+    return _sessionFor(profile).recipients();
   }
 
   /// Sends a message from the profile [profileId], or the open one, and
@@ -1471,13 +1403,8 @@ class AppRepository {
     final names = {
       for (final recipient in recipients) recipient.id: recipient.name,
     };
-    final id = profile.isPlugin
-        ? await _plugins.send(profile, recipients, subject, body)
-        : await _clientFor(profile).sendMessage(
-            recipientIds: names.keys.cast<int>().toList(),
-            subject: subject,
-            body: body,
-          );
+    final id = await _sessionFor(profile)
+        .send(recipients: recipients, subject: subject, body: body);
     final message = SchoolMessage(
       id: id,
       sender: '',
@@ -1497,25 +1424,16 @@ class AppRepository {
     if (_demo != null) return _demoOf(profileId).snapshot.sentMessages;
     await _ensureReady();
     final profile = _accountOf(profileId);
-    if (profile.isPlugin) {
-      final (sent, module) = await _plugins.sent(profile);
-      final cached = await _storeFor(profile.id).read();
-      if (cached != null && _profiles.any((p) => p.id == profile.id)) {
-        final raw = jsonDecode(
-          SnapshotCache.encode(cached.copyWith(sentMessages: sent)),
-        ) as Map<String, dynamic>;
-        raw['providerData'] = {...cached.providerData, 'sentMessages': module};
-        await _storeFor(profile.id)
-            .write(SnapshotCache.decode(jsonEncode(raw))!);
-      }
-      return sent;
-    }
-    final sent = await _clientFor(profile).fetchSentMessages();
-    await _updateCached(
-      profile.id,
-      (cached) => cached.copyWith(sentMessages: sent),
-    );
-    return sent;
+    final folder = await _sessionFor(profile).sent();
+    await _updateCached(profile.id, (cached) {
+      final updated = cached.copyWith(sentMessages: folder.messages);
+      if (folder.providerData.isEmpty) return updated;
+      final raw =
+          jsonDecode(SnapshotCache.encode(updated)) as Map<String, dynamic>;
+      raw['providerData'] = {...cached.providerData, ...folder.providerData};
+      return SnapshotCache.decode(jsonEncode(raw))!;
+    });
+    return folder.messages;
   }
 
   /// Opens [message] of the profile [profileId], or the open one.
@@ -1526,13 +1444,8 @@ class AppRepository {
     if (_demo != null) return _demoOf(profileId).openMessage(message);
     await _ensureReady();
     final profile = _accountOf(profileId);
-    final content = profile.isPlugin
-        ? await _plugins.message(
-            profile,
-            message,
-            await loadProfileSnapshot(profile.id),
-          )
-        : await _clientFor(profile).fetchMessageContent(message);
+    final content = await _sessionFor(profile)
+        .message(message, await loadProfileSnapshot(profile.id));
     await _updateCached(
       profile.id,
       (cached) => cached.withOpened(message, content),
@@ -1563,13 +1476,8 @@ class AppRepository {
     }
     await _ensureReady();
     final profile = _accountOf(profileId);
-    if (profile.isPlugin) {
-      throw const LibrusException(LibrusErrorCode.attachmentFetchFailed);
-    }
-    return _clientFor(profile).fetchMessageAttachmentUrl(
-      messageId: messageId,
-      attachmentId: attachmentId,
-    );
+    return _sessionFor(profile)
+        .attachment(messageId: messageId, attachmentId: attachmentId);
   }
 
   /// The lessons of the week of [day] of the profile [profileId], or the
@@ -1581,9 +1489,7 @@ class AppRepository {
     if (_demo != null) return _demoOf(profileId).timetableWeek(day);
     await _ensureReady();
     final profile = _accountOf(profileId);
-    return profile.isPlugin
-        ? _plugins.timetable(profile, day)
-        : _clientFor(profile).fetchTimetableWeek(day);
+    return _sessionFor(profile).timetable(day);
   }
 
   AppSnapshot _emptySnapshot(StudentProfile profile) => AppSnapshot(

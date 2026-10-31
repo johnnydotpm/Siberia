@@ -7,6 +7,7 @@ import '../app_build_info.dart';
 import '../background_notifications.dart';
 import '../data/app_repository.dart';
 import '../data/diary_plugins.dart';
+import '../data/diary_plugin.dart';
 import '../debug/diagnostics.dart';
 import '../domain/librus_error.dart';
 import '../domain/models.dart';
@@ -1588,6 +1589,41 @@ class AppController extends ChangeNotifier {
       _profiles = _repository.profiles;
       notifyListeners();
     }
+  }
+
+  DiaryDefinition get defaultDiary => _repository.defaultDiary;
+  List<DiaryDefinition> get bundledDiaries => _repository.bundledDiaries;
+  Future<List<DiaryDefinition>> availableDiaryDefinitions() async =>
+      (await availableDiaryPlugins())
+          .map(DiaryDefinition.downloadable)
+          .toList();
+
+  /// The plugin registry owns authentication. Existing login orchestration is
+  /// retained for old Librus profile IDs and the parent/student chooser.
+  Future<bool> loginDiary(
+    DiaryDefinition definition,
+    Map<String, Object?> fields, {
+    Future<List<PluginStudent>?> Function(List<PluginStudent>)? choose,
+  }) {
+    if (definition.isBundled) {
+      return loginLibrus(
+        username: fields['username']! as String,
+        password: fields['password']! as String,
+        choose: choose == null
+            ? null
+            : (linked) async {
+                final selected = await choose([
+                  for (final child in linked)
+                    PluginStudent(child.login, child.name, '', child.parent),
+                ]);
+                if (selected == null) return null;
+                return linked
+                    .where((child) => selected.any((s) => s.id == child.login))
+                    .toList();
+              },
+      );
+    }
+    return loginPlugin(definition.release!, fields, choose: choose);
   }
 
   Future<List<PluginManifest>> availableDiaryPlugins() =>

@@ -947,11 +947,11 @@ class _LoginState extends State<_Login> {
   final form = GlobalKey<FormState>();
   final email = TextEditingController();
   final password = TextEditingController();
-  PluginManifest? diary;
+  late DiaryDefinition diary = widget.controller.defaultDiary;
   final pluginFields = <String, TextEditingController>{};
   Future<void> pickDiary() async {
     if (widget.controller.syncing) return;
-    final picked = await showAppSheet<Object>(
+    final picked = await showAppSheet<DiaryDefinition>(
       context: context,
       isScrollControlled: true,
       builder: (_) => _DiaryPicker(widget.controller),
@@ -962,9 +962,9 @@ class _LoginState extends State<_Login> {
     }
     pluginFields.clear();
     setState(() {
-      diary = picked is PluginManifest ? picked : null;
+      diary = picked;
       for (final field
-          in diary?.loginFields ?? const <Map<String, dynamic>>[]) {
+          in diary.release?.loginFields ?? const <Map<String, dynamic>>[]) {
         pluginFields[field['id'] as String] = TextEditingController(
           text: field['initial'] as String? ?? '',
         );
@@ -989,37 +989,30 @@ class _LoginState extends State<_Login> {
       return;
     }
     widget.onStarted?.call();
-    final selectedDiary = diary;
-    final ok = selectedDiary != null
-        ? await widget.controller.loginPlugin(
-            selectedDiary,
-            {
+    final ok = await widget.controller.loginDiary(
+      diary,
+      diary.isBundled
+          ? {'username': email.text, 'password': password.text}
+          : {
               for (final field in pluginFields.entries)
                 field.key: field.value.text,
             },
-            choose: (students) async {
-              final selected = await _chooseStudents(context, [
-                for (final student in students)
-                  LinkedSynergiaAccount(
-                    login: student.id,
-                    name: student.name,
-                    selected: false,
-                    parent: student.parent,
-                  ),
-              ]);
-              if (selected == null) return null;
-              return students
-                  .where(
-                    (student) => selected.any((s) => s.login == student.id),
-                  )
-                  .toList();
-            },
-          )
-        : await widget.controller.loginLibrus(
-            username: email.text,
-            password: password.text,
-            choose: (students) => _chooseStudents(context, students),
-          );
+      choose: (students) async {
+        final selected = await _chooseStudents(context, [
+          for (final student in students)
+            LinkedSynergiaAccount(
+              login: student.id,
+              name: student.name,
+              selected: false,
+              parent: student.parent,
+            ),
+        ]);
+        if (selected == null) return null;
+        return students
+            .where((child) => selected.any((s) => s.login == child.id))
+            .toList();
+      },
+    );
     final embedded = widget.onFinished;
     if (mounted && embedded != null) {
       embedded(ok);
@@ -1074,13 +1067,14 @@ class _LoginState extends State<_Login> {
   }
 
   List<Widget> _pluginFields(BuildContext context) => [
-    if (diary!.instructions.isNotEmpty)
+    if (diary.release!.instructions.isNotEmpty)
       Text(
-        diary!.instructions[Localizations.localeOf(context).languageCode] ??
-            diary!.instructions['en'] ??
-            diary!.instructions.values.first,
+        diary.release!.instructions[Localizations.localeOf(context)
+                .languageCode] ??
+            diary.release!.instructions['en'] ??
+            diary.release!.instructions.values.first,
       ),
-    for (final field in diary!.loginFields) ...[
+    for (final field in diary.release!.loginFields) ...[
       const SizedBox(height: 12),
       TextFormField(
         key: ValueKey('plugin-field-${field['id']}'),
@@ -1107,7 +1101,7 @@ class _LoginState extends State<_Login> {
       children: [
         Expanded(
           child: Text(
-            diary?.name ?? 'Librus',
+            diary.name,
             style: Theme.of(context).textTheme.titleMedium,
           ),
         ),
@@ -1118,7 +1112,7 @@ class _LoginState extends State<_Login> {
         ),
       ],
     ),
-    if (diary != null)
+    if (!diary.isBundled)
       ..._pluginFields(context)
     else ...[
       Text(context.tr('loginHelp')),
@@ -1194,34 +1188,35 @@ class _DiaryPicker extends StatefulWidget {
 }
 
 class _DiaryPickerState extends State<_DiaryPicker> {
-  late Future<List<PluginManifest>> catalog = widget.controller
-      .availableDiaryPlugins();
+  late Future<List<DiaryDefinition>> catalog = widget.controller
+      .availableDiaryDefinitions();
   @override
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.all(_Space.sheet),
-    child: FutureBuilder<List<PluginManifest>>(
+    child: FutureBuilder<List<DiaryDefinition>>(
       future: catalog,
       builder: (context, state) => ListView(
         shrinkWrap: true,
         primary: false,
         children: [
           Text(context.tr('chooseDiary'), style: _sheetTitleStyle(context)),
-          ListTile(
-            title: const Text('Librus'),
-            onTap: () => Navigator.pop(context, 'librus'),
-          ),
+          for (final plugin in widget.controller.bundledDiaries)
+            ListTile(
+              title: Text(plugin.name),
+              onTap: () => Navigator.pop(context, plugin),
+            ),
           if (state.connectionState != ConnectionState.done)
             const Center(child: CircularProgressIndicator()),
           if (state.hasError) ...[
             Text(context.tr('pluginCatalogError')),
             TextButton(
               onPressed: () => setState(
-                () => catalog = widget.controller.availableDiaryPlugins(),
+                () => catalog = widget.controller.availableDiaryDefinitions(),
               ),
               child: Text(context.tr('startupRetry')),
             ),
           ],
-          for (final plugin in state.data ?? const <PluginManifest>[])
+          for (final plugin in state.data ?? const <DiaryDefinition>[])
             ListTile(
               title: Text(plugin.name),
               onTap: () => Navigator.pop(context, plugin),

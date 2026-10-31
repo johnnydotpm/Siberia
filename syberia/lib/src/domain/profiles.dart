@@ -4,7 +4,7 @@ import 'models.dart';
 import 'parent.dart';
 import 'stable_hash.dart';
 
-/// One student at one school: a Librus Synergia account kept on the phone.
+/// One student at one school, supplied by a bundled or downloaded diary plugin.
 /// A parent with two children, or a student at two schools, has two, and
 /// each keeps its own data, marks and settings.
 @immutable
@@ -35,7 +35,7 @@ class SchoolProfile {
   final String providerId;
   final String providerName;
   final String? pluginStudent;
-  bool get isPlugin => providerId != 'librus';
+  bool get usesDownloadedPlugin => providerId != 'librus';
 
   /// The Librus login the profile comes from, as `LibrusLogin.keyOf` names
   /// it; empty when the phone has no login for it.

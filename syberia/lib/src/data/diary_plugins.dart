@@ -13,7 +13,7 @@ import '../domain/models.dart';
 import '../domain/profiles.dart';
 import 'snapshot_cache.dart';
 import 'plugin_text.dart';
-import 'librus/librus_client.dart' show LibrusPart;
+import '../domain/diary_part.dart';
 
 export 'package:siberia_plugins/siberia_plugins.dart' show PluginManifest;
 
@@ -355,9 +355,9 @@ class DiaryPlugins {
   Future<AppSnapshot> sync(
     SchoolProfile profile,
     AppSnapshot previous, {
-    Set<LibrusPart>? parts,
+    Set<DiaryPart>? parts,
   }) async {
-    final wanted = (parts ?? LibrusPart.values.toSet())
+    final wanted = (parts ?? DiaryPart.values.toSet())
         .map((part) => part.name)
         .toList();
     final modules = <String, Object?>{};

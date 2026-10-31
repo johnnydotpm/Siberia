@@ -69,7 +69,7 @@ void main() {
   Matcher code(String value) =>
       isA<PluginException>().having((error) => error.code, 'code', value);
 
-  test('repository catalog parses and never bundles Librus', () {
+  test('download catalog parses and cannot replace bundled Librus', () {
     final catalog = parsePluginCatalog(
       jsonDecode(File('../catalog.json').readAsStringSync()),
     );

@@ -1,15 +1,15 @@
 # Diary plugins
 
 Plugins belong in **`/plugins/` in `johnnydotpm/Siberia`**, alongside `syberia/`.
-Librus remains built into the application; it is not a downloaded plugin.
+[Librus](librus/README.md) is a **bundled plugin**, compiled into the application. Fryderyk and MobiReg are downloadable plugins.
 
 ## Current status
 
 Fryderyk and modern MobiReg now have versioned, independently authored adapters.
-The Flutter app downloads the selected plugin **before sending login data**,
+For a downloadable diary, the Flutter app installs the selected plugin **before sending login data**,
 then uses its installed, pinned release for login, child profiles, foreground
 and background synchronization, messaging, notifications and widgets. Librus
-continues to use its existing built-in client.
+implements the same plugin/session interface through its bundled native adapter; it needs no catalog or plugin download to sign in.
 
 The `dev` app uses the repository's `dev/plugins/` catalog by default. Set
 `DIARY_PLUGIN_SOURCE` to the `main/plugins/` HTTPS directory when promoting the
@@ -26,13 +26,14 @@ current backend acceptance or native execution.
 ```
 plugins/
   catalog.json                     # one currently offered release per diary
-  <provider-id>/
+  librus/plugin.json               # bundled plugin metadata; no download artifact
+  <downloadable-provider-id>/
     src/                           # independently authored adapter source
     plugin.json                    # authoring metadata
     <version>/
       manifest.json                # generated release metadata
       plugin.evc                   # downloadable interpreted bytecode
-  shared/protocol.dart             # bundled adapter normalization helpers
+  shared/protocol.dart             # helpers packaged into downloaded bytecode
   examples/echo/main.dart           # test fixture, never in catalog.json
   sdk/                             # pure Dart loader/runtime + release tools
 ```
@@ -126,11 +127,21 @@ reviewed first-party plugin releases belong in this catalog.
 
 ## Account and app integration
 
-`syberia/lib/src/data/diary_plugins.dart` owns installation, secure account state
-and the normalized DTO boundary. Provider paths, envelopes, decoding and request
-serialization live in plugin bytecode. Release manifests declare credential
-fields and localized login instructions; adding a diary does not require a new
-provider-specific login form in the app.
+`diary_plugin.dart` defines the shared `DiaryPlugin` / `DiarySession` boundary.
+`diary_plugin_registry.dart` registers bundled adapters locally and wraps
+installed/downloadable releases. The repository uses that same session API for
+both, including partial sync, recipients, sent messages, details and attachments.
+
+`librus/librus_plugin.dart` is compiled into the app; its metadata is under
+`/plugins/librus/`. Existing Librus account keys, profile IDs, sessions and caches
+are retained. The picker lists bundled plugins even when catalog retrieval fails.
+The remote catalog cannot replace a bundled registration.
+
+`diary_plugins.dart` owns installation, secure account state and normalized DTOs
+for downloaded adapters. Their provider paths, envelopes, decoding and request
+serialization live in bytecode. Release manifests declare credential fields and
+localized login instructions. `DiaryPart` is shared by all adapters;
+`LibrusPart` is retained as a compatibility alias for existing callers.
 
 An auth owner is provider + canonical server/tenant + account, hashed into a
 separate secure-storage key. Sibling child profiles share that credential record

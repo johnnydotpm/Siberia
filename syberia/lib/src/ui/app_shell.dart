@@ -19,7 +19,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../app_build_info.dart';
 import '../data/app_repository.dart';
-import '../data/diary_plugins.dart';
+import '../data/diary_plugin.dart';
 import '../debug/diagnostics.dart';
 import '../domain/calendar_days.dart';
 import '../domain/grade_calculator.dart';
