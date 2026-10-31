@@ -259,6 +259,8 @@ void main() {
 
     final widgets = find.byKey(const ValueKey('settings-home-widgets'));
     await tester.scrollUntilVisible(widgets, 300);
+    await tester.ensureVisible(widgets);
+    await tester.pumpAndSettle();
     await tester.tap(widgets);
     await tester.pumpAndSettle();
     // With a single widget on the home screen its settings open directly.

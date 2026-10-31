@@ -56,6 +56,9 @@ void main() {
       250,
       scrollable: find.byType(Scrollable).hitTestable().first,
     );
+    // Whole, not only its top edge on screen.
+    await tester.ensureVisible(entry);
+    await tester.pumpAndSettle();
     await tester.tap(entry);
     await tester.pumpAndSettle();
   }

@@ -400,6 +400,10 @@ class TodayLayout {
     (block: TodayBlock.homework, visible: true),
     (block: TodayBlock.events, visible: true),
     (block: TodayBlock.messages, visible: true),
+    // Shown only on a parent's Today, so a student never sees them.
+    (block: TodayBlock.toExcuse, visible: true),
+    (block: TodayBlock.notices, visible: true),
+    (block: TodayBlock.meetings, visible: true),
   ]);
 
   /// A parent's Today: what to excuse first, homework last.
