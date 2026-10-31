@@ -266,6 +266,11 @@ void main() {
     final recipients = await client.fetchMessageRecipients();
     expect(recipients, hasLength(2));
     expect(recipients.first.name, 'Nauczyciel Testowy');
+    // The group's code comes with its name.
+    expect(
+      (recipients.first.groupId, recipients.first.group),
+      ('teachers', 'Przedmioty'),
+    );
     await client.sendMessage(
       recipientIds: [recipients.first.id],
       subject: 'Pytanie',

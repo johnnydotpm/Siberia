@@ -336,10 +336,16 @@ class MessageRecipient {
     required this.id,
     required this.name,
     required this.group,
+    this.groupId = '',
   });
   final int id;
   final String name;
+
+  /// The group's name, as Librus shows it ("Nauczyciele").
   final String group;
+
+  /// The group's code, as Librus keeps it ("teachers").
+  final String groupId;
 }
 
 enum AttendanceKind {

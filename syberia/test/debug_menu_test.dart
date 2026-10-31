@@ -119,6 +119,43 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
   });
 
+  testWidgets('lists the recipient groups with their codes and sizes, and '
+      'no one\'s name', (tester) async {
+    await _openSideMenu(tester);
+    String? copied;
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+      SystemChannels.platform,
+      (call) async {
+        if (call.method == 'Clipboard.setData') {
+          copied = (call.arguments as Map)['text'] as String;
+        }
+        return null;
+      },
+    );
+    addTearDown(
+      () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.platform,
+        null,
+      ),
+    );
+    await _openDebugMenu(tester);
+    final button = find.byKey(const ValueKey('debug-recipient-groups'));
+    await _scrollTo(tester, button);
+    await tester.tap(button);
+    // The menu does not settle here; the list is there in a moment.
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+    final list = tester
+        .widget<SelectableText>(
+          find.byKey(const ValueKey('debug-recipient-groups-list')),
+        )
+        .data!;
+    expect(list, contains('Teachers · 3'));
+    expect(list, isNot(contains('Sample')), reason: 'no names');
+    expect(copied, list);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
   testWidgets('copies a report without the names and schools of the '
       'profiles', (tester) async {
     final (controller, _) = await _openSideMenu(tester);

@@ -215,7 +215,12 @@ class LibrusClient {
         if (recipientId != null && name.isNotEmpty) {
           recipients.putIfAbsent(
             recipientId,
-            () => MessageRecipient(id: recipientId, name: name, group: group),
+            () => MessageRecipient(
+              id: recipientId,
+              name: name,
+              group: group,
+              groupId: id,
+            ),
           );
         }
       }

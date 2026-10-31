@@ -183,6 +183,32 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
   });
 
+  testWidgets('the class teacher is found by the code of the group too', (
+    tester,
+  ) async {
+    final (controller, _) = await _app(
+      recipients: const [
+        MessageRecipient(
+          id: 8,
+          name: 'Wychowawca Testowy',
+          group: 'Klasa 2a',
+          groupId: 'tutors',
+        ),
+      ],
+    );
+    await _pump(tester, controller);
+    await tester.tap(find.byKey(const ValueKey('today-excuse-button')));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.byKey(const ValueKey('excuse-prepare')));
+    await tester.tap(find.byKey(const ValueKey('excuse-prepare')));
+    await tester.pumpAndSettle();
+    expect(
+      find.widgetWithText(InputChip, 'Wychowawca Testowy'),
+      findsOneWidget,
+    );
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
   testWidgets('without a class teacher among the recipients, the message '
       'waits for one to be picked; the signature signs it', (tester) async {
     final (controller, _) = await _app();

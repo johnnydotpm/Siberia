@@ -94,6 +94,39 @@ class _DebugMenuState extends State<_DebugMenu> {
     _controller.snapshot.profile.school,
   ];
 
+  bool _groupsLoading = false;
+  String? _groups;
+
+  /// The groups Librus lists message recipients in: their codes, names and
+  /// sizes, and no one's name. Copied too, to send on.
+  Future<void> _recipientGroups() async {
+    setState(() => _groupsLoading = true);
+    String text;
+    try {
+      final recipients = await _controller.fetchMessageRecipients();
+      final groups = <(String, String), int>{};
+      for (final item in recipients) {
+        final key = (item.groupId, item.group);
+        groups[key] = (groups[key] ?? 0) + 1;
+      }
+      text = groups.isEmpty
+          ? 'No recipients.'
+          : [
+              for (final MapEntry(key: (code, name), value: count)
+                  in groups.entries)
+                '${code.isEmpty ? '-' : code} · ${name.isEmpty ? '-' : name} · $count',
+            ].join('\n');
+      await Clipboard.setData(ClipboardData(text: text));
+    } on Object catch (error) {
+      text = 'Could not load: ${error.runtimeType}';
+    }
+    if (!mounted) return;
+    setState(() {
+      _groupsLoading = false;
+      _groups = text;
+    });
+  }
+
   Future<void> _copyReport() async {
     final report = Diagnostics.instance.report(
       about: await _about,
@@ -304,6 +337,22 @@ class _DebugMenuState extends State<_DebugMenu> {
             icon: const Icon(Icons.widgets_rounded),
             label: const Text('Refresh widgets'),
           ),
+          const SizedBox(height: 8),
+          FilledButton.tonalIcon(
+            key: const ValueKey('debug-recipient-groups'),
+            style: _wideButton,
+            onPressed: _groupsLoading ? null : _recipientGroups,
+            icon: const Icon(Icons.groups_rounded),
+            label: const Text('Recipient groups'),
+          ),
+          if (_groups case final groups?)
+            Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: SelectableText(
+                groups,
+                key: const ValueKey('debug-recipient-groups-list'),
+              ),
+            ),
           const SizedBox(height: 24),
           const _GroupLabel('VPN', accent: true),
           FutureBuilder(

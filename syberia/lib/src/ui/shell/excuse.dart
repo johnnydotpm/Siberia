@@ -14,6 +14,18 @@ List<AttendanceRecord> _absencesToExcuse(AppSnapshot data, DateTime now) {
   });
 }
 
+/// The class teacher among [recipients]: by the code of the group Librus
+/// lists them in, or else by its name.
+MessageRecipient? _classTeacher(List<MessageRecipient> recipients) {
+  const codes = {'tutors', 'tutor', 'wychowawcy', 'wychowawca'};
+  return recipients
+          .where((item) => codes.contains(item.groupId.toLowerCase()))
+          .firstOrNull ??
+      recipients
+          .where((item) => _plainPolish(item.group).contains('wychowaw'))
+          .firstOrNull;
+}
+
 /// The sheet that writes an excuse note to the class teacher.
 Future<void> _showExcuseSheet(BuildContext context, AppController controller) =>
     showAppSheet<void>(
@@ -118,12 +130,7 @@ class _ExcuseSheetState extends State<_ExcuseSheet> {
       final recipients = await controller.fetchMessageRecipients(
         profileId: from,
       );
-      // The class teacher, when Librus names the group so.
-      teacher = [
-        ?recipients
-            .where((item) => _plainPolish(item.group).contains('wychowaw'))
-            .firstOrNull,
-      ];
+      teacher = [?_classTeacher(recipients)];
     } on Object {
       // The teacher is then picked in the message.
     }
