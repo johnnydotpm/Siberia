@@ -1139,3 +1139,29 @@ class _LoginState extends State<_Login> {
     ),
   ];
 }
+
+/// Each profile on a row of its own, its sign, name and school; a tap opens
+/// what can be done with it.
+class _ChildRows extends StatelessWidget {
+  const _ChildRows(this.controller);
+  final AppController controller;
+
+  @override
+  Widget build(BuildContext context) => Column(
+    key: const ValueKey('child-rows'),
+    children: [
+      for (final profile in controller.profiles)
+        ListTile(
+          key: ValueKey('child-${profile.id}'),
+          leading: ProfileAvatar(
+            name: profile.displayName,
+            color: profile.color,
+          ),
+          title: Text(profile.displayName),
+          subtitle: profile.school.isEmpty ? null : Text(profile.school),
+          trailing: const Icon(Icons.chevron_right_rounded),
+          onTap: () => _showProfileActions(context, controller, profile),
+        ),
+    ],
+  );
+}

@@ -1,7 +1,7 @@
 part of '../app_shell.dart';
 
 /// The steps of the first setup, in order.
-enum _SetupStep { welcome, appearance, account, notifications, done }
+enum _SetupStep { welcome, appearance, account, children, notifications, done }
 
 /// The first setup, as on a new phone: the language, the look, signing in
 /// to Librus, notifications, and a few tips. A new install opens on it, and
@@ -119,10 +119,17 @@ class _OnboardingState extends State<_Onboarding>
     }
   }
 
+  /// The steps this user goes through: a parent's include the children.
+  List<_SetupStep> get _steps => [
+    for (final step in _SetupStep.values)
+      if (step != _SetupStep.children || _controller.parentView) step,
+  ];
+
   void _back() {
     HapticFeedback.lightImpact();
-    if (_step.index > 0) {
-      _go(_SetupStep.values[_step.index - 1]);
+    final at = _steps.indexOf(_step);
+    if (at > 0) {
+      _go(_steps[at - 1]);
     } else if (_again) {
       // Run from Settings: going back from the first step leaves it.
       _finish();
@@ -131,7 +138,19 @@ class _OnboardingState extends State<_Onboarding>
 
   void _next() {
     HapticFeedback.lightImpact();
-    _go(_SetupStep.values[_step.index + 1]);
+    _go(_steps[_steps.indexOf(_step) + 1]);
+  }
+
+  /// Signed in: a parent names the children next, all of them together.
+  void _afterSignIn() {
+    if (_controller.parentView) {
+      if (_controller.canBeTogether && !_controller.together) {
+        unawaited(_controller.openTogether());
+      }
+      _go(_SetupStep.children);
+    } else {
+      _go(_SetupStep.notifications);
+    }
   }
 
   /// Out of the setup: it moves back and the app comes forward.
@@ -206,9 +225,10 @@ class _OnboardingState extends State<_Onboarding>
         child: Column(
           children: [
             _SetupHeader(
-              step: _step,
+              at: _steps.indexOf(_step),
+              total: _steps.length,
               onBack:
-                  (_step.index > 0 || _again) &&
+                  (_steps.indexOf(_step) > 0 || _again) &&
                       !_controller.syncing &&
                       !_asking
                   ? _back
@@ -238,7 +258,12 @@ class _OnboardingState extends State<_Onboarding>
                     controller: _controller,
                     motion: _motion(_SetupStep.account),
                     onNext: _signedIn ? _next : null,
-                    onSignedIn: () => _go(_SetupStep.notifications),
+                    onSignedIn: _afterSignIn,
+                  ),
+                  _ChildrenStep(
+                    controller: _controller,
+                    motion: _motion(_SetupStep.children),
+                    onNext: _next,
                   ),
                   _NotificationsStep(
                     controller: _controller,
@@ -269,14 +294,20 @@ class _OnboardingState extends State<_Onboarding>
 
 /// The back button and the dots that tell how far the setup has come.
 class _SetupHeader extends StatelessWidget {
-  const _SetupHeader({required this.step, required this.onBack});
-  final _SetupStep step;
+  const _SetupHeader({
+    required this.at,
+    required this.total,
+    required this.onBack,
+  });
+
+  /// Where the user is among the [total] steps they go through.
+  final int at;
+  final int total;
   final VoidCallback? onBack;
 
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
-    final total = _SetupStep.values.length;
     return SizedBox(
       height: 56,
       child: Stack(
@@ -294,7 +325,7 @@ class _SetupHeader extends StatelessWidget {
             ),
           Semantics(
             label: context.trArgs('onboardingStep', {
-              'n': '${step.index + 1}',
+              'n': '${at + 1}',
               'total': '$total',
             }),
             child: ExcludeSemantics(
@@ -305,10 +336,10 @@ class _SetupHeader extends StatelessWidget {
                     AnimatedContainer(
                       duration: const Duration(milliseconds: 240),
                       margin: const EdgeInsets.symmetric(horizontal: 3),
-                      width: index == step.index ? 22 : 8,
+                      width: index == at ? 22 : 8,
                       height: 8,
                       decoration: BoxDecoration(
-                        color: index <= step.index
+                        color: index <= at
                             ? colors.primary
                             : colors.outlineVariant,
                         borderRadius: BorderRadius.circular(4),
@@ -1028,17 +1059,84 @@ class _DoneStep extends StatelessWidget {
               extra: extra,
             ),
           ),
-        tip(
-          const ValueKey('onboarding-tip-profiles'),
-          Icons.switch_account_rounded,
-          context.tr('onboardingTipProfiles'),
-        ),
-        tip(
-          const ValueKey('onboarding-tip-short-names'),
-          Icons.short_text_rounded,
-          context.tr('onboardingTipShortNames'),
-        ),
+        if (controller.parentView) ...[
+          tip(
+            const ValueKey('onboarding-tip-excuse'),
+            Icons.edit_note_rounded,
+            context.tr('onboardingTipExcuse'),
+          ),
+          tip(
+            const ValueKey('onboarding-tip-children'),
+            Icons.switch_account_rounded,
+            context.tr('onboardingTipChildren'),
+          ),
+          tip(
+            const ValueKey('onboarding-tip-bottom-bar'),
+            Icons.space_dashboard_rounded,
+            context.tr('onboardingTipBottomBar'),
+          ),
+        ] else ...[
+          tip(
+            const ValueKey('onboarding-tip-profiles'),
+            Icons.switch_account_rounded,
+            context.tr('onboardingTipProfiles'),
+          ),
+          tip(
+            const ValueKey('onboarding-tip-short-names'),
+            Icons.short_text_rounded,
+            context.tr('onboardingTipShortNames'),
+          ),
+        ],
       ]),
     );
   }
+}
+
+/// A parent's children: each named and coloured from its row, and all of
+/// them together on one screen when there are two or more.
+class _ChildrenStep extends StatelessWidget {
+  const _ChildrenStep({
+    required this.controller,
+    required this.motion,
+    required this.onNext,
+  });
+  final AppController controller;
+  final _StepMotion motion;
+  final VoidCallback onNext;
+
+  @override
+  Widget build(BuildContext context) => _SetupPage(
+    key: const ValueKey('onboarding-children'),
+    motion: motion,
+    icon: Icons.family_restroom_rounded,
+    badge: _BadgeMotion.cap,
+    title: context.tr('onboardingChildren'),
+    text: context.tr('onboardingChildrenText'),
+    actions: [_setupNext(context, onNext)],
+    children: [
+      Card(
+        child: Column(
+          children: [
+            _ChildRows(controller),
+            if (controller.canBeTogether)
+              SwitchListTile.adaptive(
+                key: const ValueKey('onboarding-together'),
+                secondary: const Icon(Icons.layers_outlined),
+                title: Text(context.tr('onboardingTogether')),
+                subtitle: Text(context.tr('profileTogetherHint')),
+                value: controller.together,
+                onChanged: (value) {
+                  if (value) {
+                    controller.openTogether();
+                  } else if (controller.togetherProfiles.firstOrNull
+                      case final first?) {
+                    controller.switchProfile(first.id);
+                  }
+                },
+              ),
+          ],
+        ),
+      ),
+    ],
+  );
 }

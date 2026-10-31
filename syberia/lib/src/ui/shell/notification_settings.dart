@@ -467,16 +467,18 @@ class _ReminderSettings extends StatelessWidget {
             reminders.copyWith(morning: true, morningMinutes: minutes),
           ),
         ),
-        SwitchListTile.adaptive(
-          key: const ValueKey('reminder-homework'),
-          secondary: const _SettingsIcon(Icons.assignment_rounded),
-          title: Text(context.tr('reminderHomework')),
-          subtitle: Text(context.tr('reminderHomeworkDescription')),
-          value: reminders.homework,
-          onChanged: enabled && reminders.any
-              ? (value) => change(reminders.copyWith(homework: value))
-              : null,
-        ),
+        // A parent does not mark homework done, so has none left to do.
+        if (!controller.parentView)
+          SwitchListTile.adaptive(
+            key: const ValueKey('reminder-homework'),
+            secondary: const _SettingsIcon(Icons.assignment_rounded),
+            title: Text(context.tr('reminderHomework')),
+            subtitle: Text(context.tr('reminderHomeworkDescription')),
+            value: reminders.homework,
+            onChanged: enabled && reminders.any
+                ? (value) => change(reminders.copyWith(homework: value))
+                : null,
+          ),
       ],
     );
   }

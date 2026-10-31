@@ -132,6 +132,17 @@ class AppLocalizations {
       'notification_notices': 'Nowe uwagi',
       'notification_attendance': 'Nowe wpisy frekwencji',
       'notification_events': 'Nowe wydarzenia',
+      'onboardingChildren': 'Dzieci',
+      'onboardingChildrenText':
+          'Nazwij dzieci i nadaj im kolory, żeby łatwo je odróżnić.',
+      'onboardingTogether': 'Wszystkie razem',
+      'onboardingTipExcuse':
+          'Nieusprawiedliwione nieobecności zobaczysz na ekranie Dzisiaj.',
+      'onboardingTipChildren':
+          'Kolejne dziecko dodasz przyciskiem profilu w prawym górnym rogu.',
+      'onboardingTipBottomBar':
+          'Karty na dolnym pasku zmienisz w Ustawieniach.',
+      'settingsChildren': 'Dzieci',
       'todayToExcuse': 'Do usprawiedliwienia',
       'todayNotices': 'Ostatnie uwagi',
       'todayMeetings': 'Zebrania',
@@ -590,6 +601,15 @@ class AppLocalizations {
       'notification_notices': 'New remarks',
       'notification_attendance': 'New attendance entries',
       'notification_events': 'New events',
+      'onboardingChildren': 'Children',
+      'onboardingChildrenText': 'Name your children and give them colours, so they are easy to tell apart.',
+      'onboardingTogether': 'All together',
+      'onboardingTipExcuse': 'Absences still to excuse show on Today.',
+      'onboardingTipChildren':
+          'Add another child with the profile button at the top right.',
+      'onboardingTipBottomBar':
+          'You can change the tabs of the bottom bar in Settings.',
+      'settingsChildren': 'Children',
       'todayToExcuse': 'To excuse',
       'todayNotices': 'Recent notes',
       'todayMeetings': 'Parents\' meetings',
@@ -1050,6 +1070,16 @@ class AppLocalizations {
       'notification_notices': 'Новые замечания',
       'notification_attendance': 'Новые записи посещаемости',
       'notification_events': 'Новые события',
+      'onboardingChildren': 'Дети',
+      'onboardingChildrenText':
+          'Назовите детей и выберите им цвета, чтобы их было легко различать.',
+      'onboardingTogether': 'Все вместе',
+      'onboardingTipExcuse':
+          'Неоправданные пропуски видны на экране «Сегодня».',
+      'onboardingTipChildren':
+          'Ещё одного ребёнка добавите кнопкой профиля в правом верхнем углу.',
+      'onboardingTipBottomBar': 'Вкладки нижней панели меняются в настройках.',
+      'settingsChildren': 'Дети',
       'todayToExcuse': 'Нужно оправдать',
       'todayNotices': 'Последние замечания',
       'todayMeetings': 'Родительские собрания',
@@ -1509,6 +1539,16 @@ class AppLocalizations {
       'notification_notices': 'Neue Bemerkungen',
       'notification_attendance': 'Neue Anwesenheitseinträge',
       'notification_events': 'Neue Termine',
+      'onboardingChildren': 'Kinder',
+      'onboardingChildrenText': 'Benenne deine Kinder und gib ihnen Farben, damit du sie leicht unterscheidest.',
+      'onboardingTogether': 'Alle zusammen',
+      'onboardingTipExcuse':
+          'Noch zu entschuldigende Fehlzeiten siehst du unter Heute.',
+      'onboardingTipChildren':
+          'Ein weiteres Kind fügst du über die Profiltaste oben rechts hinzu.',
+      'onboardingTipBottomBar':
+          'Die Tabs der unteren Leiste änderst du in den Einstellungen.',
+      'settingsChildren': 'Kinder',
       'todayToExcuse': 'Zu entschuldigen',
       'todayNotices': 'Letzte Bemerkungen',
       'todayMeetings': 'Elternabende',
@@ -1974,6 +2014,16 @@ class AppLocalizations {
       'notification_notices': 'Нові зауваження',
       'notification_attendance': 'Нові записи відвідуваності',
       'notification_events': 'Нові події',
+      'onboardingChildren': 'Діти',
+      'onboardingChildrenText':
+          'Назвіть дітей і виберіть їм кольори, щоб їх було легко розрізняти.',
+      'onboardingTogether': 'Усі разом',
+      'onboardingTipExcuse': 'Непояснені пропуски видно на екрані «Сьогодні».',
+      'onboardingTipChildren':
+          'Ще одну дитину додасте кнопкою профілю у правому верхньому куті.',
+      'onboardingTipBottomBar':
+          'Вкладки нижньої панелі змінюються в налаштуваннях.',
+      'settingsChildren': 'Діти',
       'todayToExcuse': 'Потрібно пояснити',
       'todayNotices': 'Останні зауваження',
       'todayMeetings': 'Батьківські збори',

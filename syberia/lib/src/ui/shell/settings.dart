@@ -29,6 +29,11 @@ class _Settings extends StatelessWidget {
       padding: const EdgeInsets.all(_Space.page),
       children: [
         _SettingsProfile(controller),
+        if (controller.parentView)
+          _SettingsSection(
+            title: context.tr('settingsChildren'),
+            children: [_ChildRows(controller)],
+          ),
         _SettingsSection(
           title: context.tr('settingsAppearance'),
           children: [
