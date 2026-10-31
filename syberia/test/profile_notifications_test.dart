@@ -43,6 +43,7 @@ class _Presenter implements SchoolNotificationPresenter {
     int? id,
     NotificationTarget? target,
     String? channelName,
+    bool silent = false,
   }) async => shown.add(_Shown(category, title, id, target, channelName));
 
   @override

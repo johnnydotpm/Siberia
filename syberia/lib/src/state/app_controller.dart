@@ -643,6 +643,11 @@ class AppController extends ChangeNotifier {
     } else {
       await _notify(snapshot, activeProfile);
     }
+    try {
+      await notifications?.deliverDigests(_profiles, name: _notificationName);
+    } on Object {
+      // Notifications cannot turn a successful Librus sync into an error.
+    }
     // Scheduling takes a round trip per reminder, so it never holds the app
     // opening or a sync.
     unawaited(_updateReminders());
@@ -665,7 +670,7 @@ class AppController extends ChangeNotifier {
 
   /// With more than one profile, notifications start with its name.
   String? _notificationName(SchoolProfile? profile) =>
-      profile != null && _profiles.length > 1 ? profile.displayName : null;
+      profile == null ? null : notificationName(profile, _profiles);
 
   /// Opens what a tapped notification is about: its profile, then its page.
   Future<void> openNotification(NotificationTarget target) async {
@@ -710,9 +715,12 @@ class AppController extends ChangeNotifier {
     return enabled ? requestNotificationPermissionIfEnabled() : null;
   }
 
-  /// Every kind of notification on, and the reminders as they come.
+  /// Every kind of notification on, and the reminders as they come; for a
+  /// parent, what a parent hears of.
   Future<bool?> useAllNotifications() async {
-    _notificationSettings = const SchoolNotificationSettings();
+    _notificationSettings = parentView
+        ? SchoolNotificationSettings.parentDefaults
+        : const SchoolNotificationSettings();
     notifyListeners();
     await notifications?.saveSettings(_notificationSettings);
     await configureBackground();
@@ -753,6 +761,29 @@ class AppController extends ChangeNotifier {
           _notificationSettings.allows(category) && !before.allows(category),
     );
     return gained ? requestNotificationPermissionIfEnabled() : null;
+  }
+
+  /// Quiet hours: on or off, and from when to when, in minutes after
+  /// midnight.
+  Future<void> setQuietHours({bool? on, int? from, int? to}) async {
+    _notificationSettings = _notificationSettings.copyWith(
+      quietHours: on ?? (from != null || to != null ? true : null),
+      quietFromMinutes: from,
+      quietToMinutes: to,
+    );
+    notifyListeners();
+    await notifications?.saveSettings(_notificationSettings);
+  }
+
+  /// The evening summary instead of a notification each: on or off, and
+  /// when, in minutes after midnight.
+  Future<void> setDigest({bool? on, int? minutes}) async {
+    _notificationSettings = _notificationSettings.copyWith(
+      digest: on ?? (minutes != null ? true : null),
+      digestMinutes: minutes,
+    );
+    notifyListeners();
+    await notifications?.saveSettings(_notificationSettings);
   }
 
   /// Changes when tests are reminded of and schedules the reminders again

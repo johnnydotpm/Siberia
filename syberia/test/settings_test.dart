@@ -330,6 +330,7 @@ class _DenyingPresenter implements SchoolNotificationPresenter {
     int? id,
     NotificationTarget? target,
     String? channelName,
+    bool silent = false,
   }) async {}
 
   @override

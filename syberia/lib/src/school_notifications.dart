@@ -81,6 +81,17 @@ class NotificationTarget {
 int notificationId(SchoolNotificationCategory category, {int slot = 0}) =>
     1 + slot * 10 + category.index;
 
+/// The name in front of [profile]'s notifications: with more than one of
+/// [profiles] on the phone, or on a parent's profile, whose child it names.
+String? notificationName(SchoolProfile profile, List<SchoolProfile> profiles) =>
+    profiles.length > 1 || profile.usedBy == ProfileRole.parent
+    ? profile.displayName
+    : null;
+
+/// The id of the evening summary of the profile in [slot], after the
+/// categories' own.
+int digestNotificationId({int slot = 0}) => 9 + slot * 10;
+
 /// One profile's data for the test reminders. [name] goes in front of the
 /// titles when the phone has more than one profile.
 class ReminderSource {
@@ -122,7 +133,44 @@ class SchoolNotificationSettings {
     this.reminders = const TestReminderSettings(),
     this.attendanceKinds = const {...AttendanceKind.values},
     this.timetableChanges = const {...TimetableChange.values},
+    this.quietHours = false,
+    this.quietFromMinutes = 21 * 60,
+    this.quietToMinutes = 7 * 60,
+    this.digest = false,
+    this.digestMinutes = 19 * 60,
   });
+
+  /// What a parent hears of: grades, absences and lateness, notes,
+  /// messages, announcements, events and lessons that do not take place; no
+  /// homework and no test reminders, and nothing loud at night.
+  static const parentDefaults = SchoolNotificationSettings(
+    categories: {SchoolNotificationCategory.homework: false},
+    reminders: TestReminderSettings(evening: false),
+    attendanceKinds: {AttendanceKind.absent, AttendanceKind.late},
+    timetableChanges: {TimetableChange.cancelled, TimetableChange.moved},
+    quietHours: true,
+  );
+
+  /// Whether notifications come without sound between [quietFromMinutes]
+  /// and [quietToMinutes], minutes after midnight.
+  final bool quietHours;
+  final int quietFromMinutes;
+  final int quietToMinutes;
+
+  /// Whether the news of a day comes as one summary per profile at
+  /// [digestMinutes] instead of a notification each.
+  final bool digest;
+  final int digestMinutes;
+
+  /// Whether a notification at [now] comes without sound. The hours may
+  /// run past midnight, as from 21:00 to 7:00.
+  bool isQuiet(DateTime now) {
+    if (!quietHours || quietFromMinutes == quietToMinutes) return false;
+    final minutes = now.hour * 60 + now.minute;
+    return quietFromMinutes < quietToMinutes
+        ? minutes >= quietFromMinutes && minutes < quietToMinutes
+        : minutes >= quietFromMinutes || minutes < quietToMinutes;
+  }
 
   final bool enabled;
   final Map<SchoolNotificationCategory, bool> categories;
@@ -159,6 +207,22 @@ class SchoolNotificationSettings {
       timetableChanges.length == TimetableChange.values.length &&
       reminders == const TestReminderSettings();
 
+  /// "All" in the setup: [everything] for a student, and the
+  /// [parentDefaults] for a [parent].
+  bool isAllFor({required bool parent}) {
+    if (!parent) return everything;
+    const all = parentDefaults;
+    return enabled &&
+        SchoolNotificationCategory.values.every(
+          (category) =>
+              (categories[category] ?? true) ==
+              (all.categories[category] ?? true),
+        ) &&
+        setEquals(attendanceKinds, all.attendanceKinds) &&
+        setEquals(timetableChanges, all.timetableChanges) &&
+        reminders == all.reminders;
+  }
+
   bool get remindersOn => enabled && reminders.any;
 
   /// Whether anything needs the background check: new data to report, or
@@ -172,6 +236,11 @@ class SchoolNotificationSettings {
     TestReminderSettings? reminders,
     Set<AttendanceKind>? attendanceKinds,
     Set<TimetableChange>? timetableChanges,
+    bool? quietHours,
+    int? quietFromMinutes,
+    int? quietToMinutes,
+    bool? digest,
+    int? digestMinutes,
   }) => SchoolNotificationSettings(
     enabled: enabled ?? this.enabled,
     categories: category == null
@@ -180,6 +249,11 @@ class SchoolNotificationSettings {
     reminders: reminders ?? this.reminders,
     attendanceKinds: attendanceKinds ?? this.attendanceKinds,
     timetableChanges: timetableChanges ?? this.timetableChanges,
+    quietHours: quietHours ?? this.quietHours,
+    quietFromMinutes: quietFromMinutes ?? this.quietFromMinutes,
+    quietToMinutes: quietToMinutes ?? this.quietToMinutes,
+    digest: digest ?? this.digest,
+    digestMinutes: digestMinutes ?? this.digestMinutes,
   );
 }
 
@@ -189,7 +263,8 @@ abstract class SchoolNotificationPresenter {
 
   /// Shows a notification of [category]. [id] replaces an earlier one with
   /// the same number; [target] is what a tap opens; [channelName] names the
-  /// category in the system settings. Each falls back to the category.
+  /// category in the system settings. Each falls back to the category. A
+  /// [silent] one comes without sound or vibration.
   Future<void> show({
     required SchoolNotificationCategory category,
     required String title,
@@ -197,6 +272,7 @@ abstract class SchoolNotificationPresenter {
     int? id,
     NotificationTarget? target,
     String? channelName,
+    bool silent = false,
   });
 
   /// What the notification that opened the app points to, if one did.
@@ -306,6 +382,7 @@ class FlutterSchoolNotificationPresenter
     int? id,
     NotificationTarget? target,
     String? channelName,
+    bool silent = false,
   }) async {
     if (!_ready) return;
     final channel = channelName ?? title;
@@ -321,7 +398,9 @@ class FlutterSchoolNotificationPresenter
           channelDescription: 'SiberiaGB: $channel',
           importance: Importance.defaultImportance,
           priority: Priority.defaultPriority,
+          silent: silent,
         ),
+        iOS: DarwinNotificationDetails(presentSound: !silent),
       ),
     );
   }
@@ -505,6 +584,11 @@ class SchoolNotificationService {
         preferences.getStringList('${_settingsPrefix}timetable_changes'),
         TimetableChange.values,
       ),
+      quietHours: preferences.getBool('${_settingsPrefix}quiet_hours') ?? false,
+      quietFromMinutes: minutes('quiet_from_minutes') ?? 21 * 60,
+      quietToMinutes: minutes('quiet_to_minutes') ?? 7 * 60,
+      digest: preferences.getBool('${_settingsPrefix}digest') ?? false,
+      digestMinutes: minutes('digest_minutes') ?? 19 * 60,
     );
   }
 
@@ -553,6 +637,23 @@ class SchoolNotificationService {
     await preferences.setStringList('${_settingsPrefix}timetable_changes', [
       for (final change in settings.timetableChanges) change.name,
     ]);
+    await preferences.setBool(
+      '${_settingsPrefix}quiet_hours',
+      settings.quietHours,
+    );
+    await preferences.setInt(
+      '${_settingsPrefix}quiet_from_minutes',
+      settings.quietFromMinutes,
+    );
+    await preferences.setInt(
+      '${_settingsPrefix}quiet_to_minutes',
+      settings.quietToMinutes,
+    );
+    await preferences.setBool('${_settingsPrefix}digest', settings.digest);
+    await preferences.setInt(
+      '${_settingsPrefix}digest_minutes',
+      settings.digestMinutes,
+    );
   }
 
   /// Schedules the reminders for the tests in [snapshot] with the saved
@@ -646,6 +747,7 @@ class SchoolNotificationService {
     SchoolProfile? profile,
     String? name,
     bool quiet = false,
+    DateTime? now,
   }) async {
     if (snapshot.profile.provider != 'Librus Synergia' ||
         snapshot.lastSync.millisecondsSinceEpoch == 0) {
@@ -685,6 +787,12 @@ class SchoolNotificationService {
     await preferences.setString(seenKey, jsonEncode(updated));
     if (seenKey != studentKey) await preferences.remove(studentKey);
     if (quiet) return false;
+    final at = now ?? DateTime.now();
+    final silent = settings.isQuiet(at);
+    // Summed up in the evening instead, when the user wants it so.
+    final summary = settings.digest && profile != null
+        ? _readDigest(preferences, profile.id)
+        : null;
     var found = false;
     for (final category in SchoolNotificationCategory.values) {
       final items = [
@@ -693,6 +801,10 @@ class SchoolNotificationService {
       ];
       if (!settings.allows(category) || items.isEmpty) continue;
       found = true;
+      if (summary != null) {
+        summary[category.name] = (summary[category.name] ?? 0) + items.length;
+        continue;
+      }
       final title = translations.text('notification_${category.name}');
       final body = items.length == 1
           ? items.single.body
@@ -705,12 +817,106 @@ class SchoolNotificationService {
           id: notificationId(category, slot: profile?.slot ?? 0),
           target: NotificationTarget(category, profileId: profile?.id),
           channelName: title,
+          silent: silent,
         );
       } on Object {
         // Notification delivery is best effort; synchronization still succeeds.
       }
     }
+    if (summary != null && summary.isNotEmpty) {
+      await preferences.setString(
+        '$_digestPrefix${profile!.id}',
+        jsonEncode({'day': _day(at), 'counts': summary}),
+      );
+    }
     return found;
+  }
+
+  static const _digestPrefix = 'school_notifications_digest_v1_';
+
+  static String _day(DateTime value) =>
+      '${value.year}-${value.month}-${value.day}';
+
+  /// The counts of the day's news kept for the summary of [profileId]; a
+  /// summary of an earlier day not delivered yet goes on.
+  Map<String, int> _readDigest(
+    SharedPreferences preferences,
+    String profileId,
+  ) {
+    final raw = preferences.getString('$_digestPrefix$profileId');
+    if (raw == null) return {};
+    try {
+      final data = jsonDecode(raw) as Map<String, dynamic>;
+      return {
+        for (final MapEntry(:key, :value)
+            in (data['counts'] as Map<String, dynamic>).entries)
+          if (value is int) key: value,
+      };
+    } on Object {
+      return {};
+    }
+  }
+
+  /// Shows the evening summary of each of [profiles] whose time has come:
+  /// once [SchoolNotificationSettings.digestMinutes] passed on its day, on
+  /// any later day, or at once when summaries were turned off meanwhile.
+  /// [name] goes in front of the title, as in the other notifications.
+  Future<void> deliverDigests(
+    Iterable<SchoolProfile> profiles, {
+    String? Function(SchoolProfile profile)? name,
+    DateTime? now,
+  }) async {
+    final preferences = await _preferences;
+    await preferences.reload();
+    final settings = await loadSettings();
+    final at = now ?? DateTime.now();
+    final minutes = at.hour * 60 + at.minute;
+    AppLocalizations? translations;
+    for (final profile in profiles) {
+      final key = '$_digestPrefix${profile.id}';
+      final raw = preferences.getString(key);
+      if (raw == null) continue;
+      Map<String, dynamic> data;
+      try {
+        data = jsonDecode(raw) as Map<String, dynamic>;
+      } on Object {
+        await preferences.remove(key);
+        continue;
+      }
+      final due =
+          !settings.digest ||
+          data['day'] != _day(at) ||
+          minutes >= settings.digestMinutes;
+      if (!due) continue;
+      await preferences.remove(key);
+      final counts = data['counts'];
+      if (counts is! Map) continue;
+      translations ??= await _translations();
+      final parts = [
+        for (final category in SchoolNotificationCategory.values)
+          if (counts[category.name] case final int count when count > 0)
+            (
+              category,
+              '${translations.text('notification_${category.name}')} $count',
+            ),
+      ];
+      if (parts.isEmpty) continue;
+      final title = translations.text('digestTitle');
+      final who = name?.call(profile);
+      try {
+        await _presenter.show(
+          category: parts.first.$1,
+          title: who == null ? title : '$who · $title',
+          body: parts.map((part) => part.$2).join(' · '),
+          id: digestNotificationId(slot: profile.slot),
+          target: NotificationTarget(parts.first.$1, profileId: profile.id),
+          channelName: title,
+          silent: settings.isQuiet(at),
+        );
+      } on Object {
+        // Best effort, as the other notifications.
+      }
+    }
   }
 
   Map<String, List<String>>? _readSeen(String? raw) {

@@ -168,6 +168,19 @@ class _NotificationSettingsBody extends StatelessWidget {
             ),
           },
         const Divider(height: 24, indent: 16, endIndent: 16),
+        _QuietHoursTile(controller),
+        _ReminderTimeTile(
+          key: const ValueKey('notify-digest'),
+          icon: Icons.summarize_rounded,
+          title: context.tr('digest'),
+          description: context.tr('digestText'),
+          minutes: settings.digestMinutes,
+          value: settings.digest,
+          enabled: settings.enabled,
+          onChanged: (value) => controller.setDigest(on: value),
+          onTime: (minutes) => controller.setDigest(minutes: minutes),
+        ),
+        const Divider(height: 24, indent: 16, endIndent: 16),
         _ReminderSettings(controller, onPermission: denied),
       ],
     );
@@ -481,9 +494,13 @@ class _ReminderTimeTile extends StatelessWidget {
     required this.enabled,
     required this.onChanged,
     required this.onTime,
+    this.description,
   });
   final IconData icon;
   final String title;
+
+  /// Said under the time, when the time alone does not say what it is for.
+  final String? description;
   final int minutes;
   final bool value;
   final bool enabled;
@@ -498,7 +515,8 @@ class _ReminderTimeTile extends StatelessWidget {
       leading: _SettingsIcon(icon),
       title: Text(title),
       subtitle: Text(
-        '${time.format(context)} · ${context.tr('reminderChangeTime')}',
+        '${time.format(context)} · ${context.tr('reminderChangeTime')}'
+        '${description == null ? '' : '\n$description'}',
       ),
       onTap: () async {
         final picked = await showTimePicker(
@@ -510,6 +528,48 @@ class _ReminderTimeTile extends StatelessWidget {
       trailing: Switch.adaptive(
         value: value,
         onChanged: enabled ? onChanged : null,
+      ),
+    );
+  }
+}
+
+/// Quiet hours: notifications without sound from one time to another. A tap
+/// asks for the two times.
+class _QuietHoursTile extends StatelessWidget {
+  const _QuietHoursTile(this.controller);
+  final AppController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    final settings = controller.notificationSettings;
+    TimeOfDay time(int minutes) =>
+        TimeOfDay(hour: minutes ~/ 60, minute: minutes % 60);
+    final from = time(settings.quietFromMinutes);
+    final to = time(settings.quietToMinutes);
+    return ListTile(
+      key: const ValueKey('notify-quiet'),
+      enabled: settings.enabled,
+      leading: const _SettingsIcon(Icons.bedtime_rounded),
+      title: Text(context.tr('quietHours')),
+      subtitle: Text(
+        '${from.format(context)}–${to.format(context)} · '
+        '${context.tr('reminderChangeTime')}\n${context.tr('quietHoursText')}',
+      ),
+      onTap: () async {
+        final start = await showTimePicker(context: context, initialTime: from);
+        if (start == null || !context.mounted) return;
+        final end = await showTimePicker(context: context, initialTime: to);
+        if (end == null) return;
+        await controller.setQuietHours(
+          from: start.hour * 60 + start.minute,
+          to: end.hour * 60 + end.minute,
+        );
+      },
+      trailing: Switch.adaptive(
+        value: settings.quietHours,
+        onChanged: settings.enabled
+            ? (value) => controller.setQuietHours(on: value)
+            : null,
       ),
     );
   }

@@ -765,7 +765,9 @@ class _NotificationsStepState extends State<_NotificationsStep> {
   /// Where the settings already are: all on, off, or something between.
   late _NotifyChoice _choice = switch (widget.controller.notificationSettings) {
     final settings when !settings.enabled => _NotifyChoice.off,
-    final settings when settings.everything => _NotifyChoice.all,
+    final settings
+        when settings.isAllFor(parent: widget.controller.parentView) =>
+      _NotifyChoice.all,
     _ => _NotifyChoice.choose,
   };
 
@@ -883,7 +885,11 @@ class _NotificationsStepState extends State<_NotificationsStep> {
         _NotifyChoice.all,
         Icons.notifications_active_rounded,
         context.tr('notifyAll'),
-        context.tr('notifyAllText'),
+        context.tr(
+          widget.controller.parentView
+              ? 'notifyAllTextParent'
+              : 'notifyAllText',
+        ),
       ),
       _option(
         _NotifyChoice.choose,

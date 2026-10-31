@@ -79,8 +79,7 @@ Future<int> checkProfilesInBackground(
   if (checked.isEmpty) return 0;
   final profiles = await repository.loadProfiles();
   final open = repository.activeProfile;
-  String? name(SchoolProfile profile) =>
-      profiles.length > 1 ? profile.displayName : null;
+  String? name(SchoolProfile profile) => notificationName(profile, profiles);
   for (final (profile, snapshot) in checked) {
     final news = await notifications.processSnapshot(
       snapshot,
@@ -91,6 +90,7 @@ Future<int> checkProfilesInBackground(
       await repository.setProfileNews(profile.id, true);
     }
   }
+  await notifications.deliverDigests(profiles, name: name);
   await notifications.updateAllReminders([
     for (final (profile, snapshot) in await repository.notifyingSnapshots())
       ReminderSource(snapshot, profile: profile, name: name(profile)),
