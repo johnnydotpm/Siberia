@@ -20,7 +20,11 @@ class _AttendanceState extends State<_Attendance> {
     // not drawn as 0 %.
     if (widget.controller.snapshot.attendance.isEmpty) {
       return _PageEmpty(
-        context.tr('emptyAttendance'),
+        context.tr(
+          widget.controller.snapshot.attendanceComplete
+              ? 'emptyAttendance'
+              : 'attendanceIncomplete',
+        ),
         icon: Icons.fact_check_rounded,
       );
     }
@@ -81,11 +85,15 @@ class _AttendanceState extends State<_Attendance> {
             ),
           ),
           const SizedBox(height: _Space.card),
-          _AttendanceChart(
-            counts: counts,
-            style: widget.controller.attendanceChartStyle,
-          ),
-          if (records.any((item) => item.subject.trim().isNotEmpty)) ...[
+          if (!widget.controller.snapshot.attendanceComplete)
+            Text(context.tr('attendanceIncomplete'))
+          else
+            _AttendanceChart(
+              counts: counts,
+              style: widget.controller.attendanceChartStyle,
+            ),
+          if (widget.controller.snapshot.attendanceComplete &&
+              records.any((item) => item.subject.trim().isNotEmpty)) ...[
             const SizedBox(height: 16),
             _AttendanceBySubject(
               records: records,

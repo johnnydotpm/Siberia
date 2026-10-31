@@ -110,6 +110,20 @@ class _TodayState extends State<_Today> {
       child: _PageList(
         padding: const EdgeInsets.all(_Space.page),
         children: [
+          if (controller.snapshot.moduleErrors.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 16),
+              child: Text(
+                context.trArgs('pluginSyncIssues', {
+                  'modules': controller.snapshot.moduleErrors.keys
+                      .map(
+                        (key) =>
+                            context.tr(key == 'timetable' ? 'timetable' : key),
+                      )
+                      .join(', '),
+                }),
+              ),
+            ),
           if (controller.isParent) _ParentDashboard(controller),
           if (controller.updateAvailable) ...[
             _UpdateBanner(controller),

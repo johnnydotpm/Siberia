@@ -1,0 +1,55 @@
+{
+  "id": "mobireg",
+  "name": "MobiReg",
+  "version": "0.1.0",
+  "operations": [
+    "authenticate",
+    "accounts",
+    "terms",
+    "timetable",
+    "messages",
+    "message",
+    "recipients",
+    "sendMessage",
+    "justifications",
+    "refresh",
+    "grades",
+    "attendance",
+    "homework",
+    "events",
+    "notices",
+    "announcements"
+  ],
+  "origins": [],
+  "loginFields": [
+    {
+      "id": "server",
+      "label": "diaryServer",
+      "type": "url",
+      "required": true,
+      "initial": "https://mobireg.pl"
+    },
+    {
+      "id": "school",
+      "label": "schoolCode",
+      "type": "text",
+      "required": true
+    },
+    {
+      "id": "username",
+      "label": "username",
+      "type": "text",
+      "required": true
+    },
+    {
+      "id": "password",
+      "label": "password",
+      "type": "password",
+      "required": true
+    }
+  ],
+  "instructions": {
+    "pl": "Podaj adres dziennika, kod szkoły oraz login i hasło. Obsługiwany jest współczesny protokół MobiReg 3.x.",
+    "en": "Enter your diary server, school code, login and password. Supports the modern MobiReg 3.x protocol."
+  }
+}

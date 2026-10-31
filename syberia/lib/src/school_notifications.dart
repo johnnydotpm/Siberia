@@ -765,7 +765,7 @@ class SchoolNotificationService {
       final settings = await settingsForProfile(source.profile);
       final snapshot = source.snapshot;
       final signedIn =
-          snapshot.profile.provider == 'Librus Synergia' &&
+          snapshot.profile.connected &&
           snapshot.lastSync.millisecondsSinceEpoch != 0;
       if (!signedIn || !settings.remindersOn) continue;
       final profile = source.profile;
@@ -830,7 +830,7 @@ class SchoolNotificationService {
     String? name,
     bool quiet = false,
   }) async {
-    if (snapshot.profile.provider != 'Librus Synergia' ||
+    if (!snapshot.profile.connected ||
         snapshot.lastSync.millisecondsSinceEpoch == 0) {
       return false;
     }

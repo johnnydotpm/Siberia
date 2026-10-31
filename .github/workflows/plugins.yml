@@ -25,7 +25,7 @@ jobs:
         with:
           sdk: '3.13.3'
       - run: dart pub get --enforce-lockfile
-      - run: dart format --output=none --set-exit-if-changed lib test tool ../examples
+      - run: dart format --output=none --set-exit-if-changed lib test tool ../examples ../shared ../fryderyk/src ../mobireg/src
       - run: dart analyze --fatal-infos
       - run: dart test
       - run: dart run tool/validate_catalog.dart

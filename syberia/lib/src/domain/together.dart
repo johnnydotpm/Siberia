@@ -98,11 +98,18 @@ AppSnapshot mergeSnapshots(List<(SchoolProfile, AppSnapshot)> parts) {
       if (snapshot.lastSync.millisecondsSinceEpoch != 0) snapshot.lastSync,
   ];
   return AppSnapshot(
+    attendanceComplete: parts.every((part) => part.$2.attendanceComplete),
+    moduleErrors: {
+      for (final (profile, data) in parts)
+        for (final entry in data.moduleErrors.entries)
+          '${profile.displayName}: ${entry.key}': entry.value,
+    },
     profile: StudentProfile(
       id: togetherId,
       name: '',
       school: '',
       provider: parts.first.$2.profile.provider,
+      pluginId: parts.first.$2.profile.pluginId,
     ),
     lessons: all(
       (snapshot) => snapshot.lessons,

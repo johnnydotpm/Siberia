@@ -407,7 +407,7 @@ class _AbsenceSheetState extends State<_AbsenceSheet> {
   String _body() {
     final rows = unexcusedAbsences(data?.attendance ?? const [])
         .where((record) => selected.contains(record.id));
-    return '${context.trArgs('absenceIntro', {'child': profile?.name ?? ''})}\n\n${rows.map((record) => '${_shortDate(context, record.date)} · ${record.lessonNumber}. ${record.subject}').join('\n')}\n\n${reason.text.trim()}';
+    return '${context.trArgs('absenceIntro', {'child': profile?.name ?? ''})}\n\n${rows.map((record) => '${_shortDate(context, record.date)} · ${record.lessonNumber > 0 ? '${record.lessonNumber}. ' : ''}${record.subject}').join('\n')}\n\n${reason.text.trim()}';
   }
 
   Future<void> _preview() async {
@@ -578,7 +578,7 @@ class _AbsenceSheetState extends State<_AbsenceSheet> {
             CheckboxListTile(
               key: ValueKey('absence-row-${record.id}'),
               title: Text(
-                '${_shortDate(context, record.date)} · ${record.lessonNumber}. ${record.subject}',
+                '${_shortDate(context, record.date)} · ${record.lessonNumber > 0 ? '${record.lessonNumber}. ' : ''}${record.subject}',
               ),
               value: selected.contains(record.id),
               onChanged: busy
@@ -591,7 +591,7 @@ class _AbsenceSheetState extends State<_AbsenceSheet> {
                       }
                     }),
             ),
-          DropdownButtonFormField<int>(
+          DropdownButtonFormField<Object>(
             key: ValueKey('absence-recipient-$profileId'),
             initialValue: recipient?.id,
             isExpanded: true,

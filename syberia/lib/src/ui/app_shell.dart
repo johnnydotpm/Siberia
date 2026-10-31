@@ -19,6 +19,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../app_build_info.dart';
 import '../data/app_repository.dart';
+import '../data/diary_plugins.dart';
 import '../debug/diagnostics.dart';
 import '../domain/calendar_days.dart';
 import '../domain/grade_calculator.dart';
@@ -178,8 +179,7 @@ class _AppShellState extends State<AppShell> {
           _pages.clear();
           return _Onboarding(controller: controller);
         }
-        if (!controller.isDemo &&
-            controller.snapshot.profile.provider != 'Librus Synergia') {
+        if (!controller.isDemo && !controller.snapshot.profile.connected) {
           _pages.clear();
           return _LoginRequired(controller: controller);
         }

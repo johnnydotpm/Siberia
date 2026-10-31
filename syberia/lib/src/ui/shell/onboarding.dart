@@ -166,8 +166,7 @@ class _OnboardingState extends State<_Onboarding>
     _next();
   }
 
-  bool get _signedIn =>
-      _controller.snapshot.profile.provider == 'Librus Synergia';
+  bool get _signedIn => _controller.snapshot.profile.connected;
 
   @override
   Widget build(BuildContext context) => ListenableBuilder(

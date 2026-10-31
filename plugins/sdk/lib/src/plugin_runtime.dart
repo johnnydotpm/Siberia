@@ -13,8 +13,9 @@ import 'plugin_store.dart';
 /// One invocation has no global state. The application owns and securely saves
 /// the returned auth state per provider/tenant/account, outside this runtime.
 class PluginResult {
-  const PluginResult(this.data, this.state);
+  const PluginResult(this.data, this.state, {this.errorCode});
   final Object? data;
+  final String? errorCode;
   final Map<String, dynamic> state;
 }
 
@@ -34,11 +35,19 @@ class PluginRuntime {
     required String operation,
     Map<String, Object?> input = const {},
     Map<String, Object?> state = const {},
+    Set<String> accountOrigins = const {},
     Duration timeout = const Duration(seconds: 45),
   }) async {
     if (!plugin.manifest.operations.contains(operation)) {
       throw const PluginException('unsupported_operation');
     }
+    for (final raw in accountOrigins) {
+      final uri = Uri.tryParse(raw);
+      if (uri == null || !isPluginHttpsUri(uri) || uri.origin != raw) {
+        throw const PluginException('invalid_origin');
+      }
+    }
+    final allowedOrigins = {...plugin.manifest.origins, ...accountOrigins};
     final request = jsonEncode({
       'operation': operation,
       'input': input,
@@ -71,11 +80,23 @@ class PluginRuntime {
         }
         try {
           final response = await _http(
-            plugin.manifest,
+            allowedOrigins,
             event[2] as String,
             cancel,
           );
           if (!done.isCompleted) replies?.send([event[1], true, response]);
+        } on DioException {
+          if (!done.isCompleted) {
+            replies?.send([
+              event[1],
+              true,
+              jsonEncode({
+                'status': 0,
+                'headers': <String, Object?>{},
+                'body': '',
+              }),
+            ]);
+          }
         } on Object {
           // Fail closed: plugins cannot turn a denied request into empty data.
           fail('http_failed');
@@ -88,14 +109,22 @@ class PluginRuntime {
           }
           final result = jsonDecode(raw);
           if (result is! Map<String, dynamic> ||
-              !result.containsKey('data') ||
+              (!result.containsKey('data') && result['error'] is! Map) ||
               result['state'] is! Map<String, dynamic>) {
+            throw const PluginException('invalid_result');
+          }
+          final code = result['error'] is Map
+              ? (result['error'] as Map)['code']
+              : null;
+          if (code != null &&
+              (code is! String || !RegExp(r'^[a-z_]{1,64}$').hasMatch(code))) {
             throw const PluginException('invalid_result');
           }
           done.complete(
             PluginResult(
               result['data'],
               result['state'] as Map<String, dynamic>,
+              errorCode: code as String?,
             ),
           );
         } on Object {
@@ -125,7 +154,7 @@ class PluginRuntime {
   }
 
   Future<String> _http(
-    PluginManifest manifest,
+    Set<String> allowedOrigins,
     String raw,
     CancelToken cancel,
   ) async {
@@ -142,7 +171,7 @@ class PluginRuntime {
     final body = request['body'];
     if (uri == null ||
         !isPluginHttpsUri(uri) ||
-        !manifest.origins.contains(uri.origin) ||
+        !allowedOrigins.contains(uri.origin) ||
         !const {'GET', 'POST', 'PUT', 'PATCH', 'DELETE'}.contains(method) ||
         headers is! Map<String, dynamic> ||
         headers.length > 32 ||
@@ -228,10 +257,44 @@ void _execute(List<Object> args) {
       ]);
       if (result is Future) result = await result;
       if (result is $Value) result = result.$value;
-      host.send(['result', result is String ? result : null]);
+      if (!_reportProviderError(args, result)) {
+        host.send(['result', result is String ? result : null]);
+      }
       replies.close();
     },
-    (error, stack) => (args[0] as SendPort).send(['error']),
+    (error, stack) {
+      if (!_reportProviderError(args, error)) {
+        (args[0] as SendPort).send(['error']);
+      }
+    },
     zoneSpecification: ZoneSpecification(print: (_, _, _, _) {}),
   );
+}
+
+// Provider errors are stable ABI codes. Never forward arbitrary VM exception
+// messages, stack traces or partial credential mutations across the boundary.
+bool _reportProviderError(List<Object> args, Object? error) {
+  if (error is $Value) error = error.$value;
+  const codes = {
+    'protocol_error',
+    'invalid_origin',
+    'session_expired',
+    'invalid_credentials',
+    'unsupported_version',
+    'server_error',
+    'unsupported_operation',
+    'module_unavailable',
+    'invalid_input',
+    'page_limit',
+  };
+  if (error is! String || !codes.contains(error)) return false;
+  final request = jsonDecode(args[2] as String) as Map;
+  (args[0] as SendPort).send([
+    'result',
+    jsonEncode({
+      'error': {'code': error},
+      'state': request['state'],
+    }),
+  ]);
+  return true;
 }

@@ -947,11 +947,40 @@ class _LoginState extends State<_Login> {
   final form = GlobalKey<FormState>();
   final email = TextEditingController();
   final password = TextEditingController();
+  PluginManifest? diary;
+  final pluginFields = <String, TextEditingController>{};
+  Future<void> pickDiary() async {
+    if (widget.controller.syncing) return;
+    final picked = await showAppSheet<Object>(
+      context: context,
+      isScrollControlled: true,
+      builder: (_) => _DiaryPicker(widget.controller),
+    );
+    if (!mounted || picked == null) return;
+    for (final field in pluginFields.values) {
+      field.dispose();
+    }
+    pluginFields.clear();
+    setState(() {
+      diary = picked is PluginManifest ? picked : null;
+      for (final field
+          in diary?.loginFields ?? const <Map<String, dynamic>>[]) {
+        pluginFields[field['id'] as String] = TextEditingController(
+          text: field['initial'] as String? ?? '',
+        );
+      }
+      password.clear();
+    });
+  }
+
   bool obscure = true;
   @override
   void dispose() {
     email.dispose();
     password.dispose();
+    for (final field in pluginFields.values) {
+      field.dispose();
+    }
     super.dispose();
   }
 
@@ -960,11 +989,37 @@ class _LoginState extends State<_Login> {
       return;
     }
     widget.onStarted?.call();
-    final ok = await widget.controller.loginLibrus(
-      username: email.text,
-      password: password.text,
-      choose: (students) => _chooseStudents(context, students),
-    );
+    final selectedDiary = diary;
+    final ok = selectedDiary != null
+        ? await widget.controller.loginPlugin(
+            selectedDiary,
+            {
+              for (final field in pluginFields.entries)
+                field.key: field.value.text,
+            },
+            choose: (students) async {
+              final selected = await _chooseStudents(context, [
+                for (final student in students)
+                  LinkedSynergiaAccount(
+                    login: student.id,
+                    name: student.name,
+                    selected: false,
+                    parent: student.parent,
+                  ),
+              ]);
+              if (selected == null) return null;
+              return students
+                  .where(
+                    (student) => selected.any((s) => s.login == student.id),
+                  )
+                  .toList();
+            },
+          )
+        : await widget.controller.loginLibrus(
+            username: email.text,
+            password: password.text,
+            choose: (students) => _chooseStudents(context, students),
+          );
     final embedded = widget.onFinished;
     if (mounted && embedded != null) {
       embedded(ok);
@@ -1018,47 +1073,95 @@ class _LoginState extends State<_Login> {
     );
   }
 
-  List<Widget> _fields(BuildContext context) => [
-    Text(context.tr('loginHelp')),
-    const SizedBox(height: 20),
-    // Only with a VPN on; asked again after a failed sign-in.
-    _VpnHint(
-      text: context.tr('vpnOnSignIn'),
-      error: widget.controller.error,
-      padding: const EdgeInsets.only(bottom: 20),
-    ),
-    TextFormField(
-      controller: email,
-      keyboardType: TextInputType.emailAddress,
-      autofillHints: const [AutofillHints.email],
-      decoration: InputDecoration(
-        labelText: context.tr('email'),
-        prefixIcon: const Icon(Icons.alternate_email_rounded),
+  List<Widget> _pluginFields(BuildContext context) => [
+    if (diary!.instructions.isNotEmpty)
+      Text(
+        diary!.instructions[Localizations.localeOf(context).languageCode] ??
+            diary!.instructions['en'] ??
+            diary!.instructions.values.first,
       ),
-      validator: (value) => value == null || value.trim().isEmpty
-          ? context.tr('requiredEmail')
-          : null,
-    ),
-    const SizedBox(height: 12),
-    TextFormField(
-      controller: password,
-      obscureText: obscure,
-      autofillHints: const [AutofillHints.password],
-      onFieldSubmitted: (_) => submit(),
-      decoration: InputDecoration(
-        labelText: context.tr('password'),
-        prefixIcon: const Icon(Icons.lock_outline_rounded),
-        suffixIcon: IconButton(
-          onPressed: () => setState(() => obscure = !obscure),
-          icon: Icon(
-            obscure ? Icons.visibility_rounded : Icons.visibility_off_rounded,
+    for (final field in diary!.loginFields) ...[
+      const SizedBox(height: 12),
+      TextFormField(
+        key: ValueKey('plugin-field-${field['id']}'),
+        controller: pluginFields[field['id']],
+        obscureText: field['type'] == 'password',
+        autocorrect: false,
+        keyboardType: field['type'] == 'url'
+            ? TextInputType.url
+            : TextInputType.text,
+        decoration: InputDecoration(
+          labelText: context.tr(field['label'] as String),
+        ),
+        validator: (value) =>
+            field['required'] == true && (value == null || value.trim().isEmpty)
+            ? context.tr('requiredField')
+            : null,
+        onFieldSubmitted: field['type'] == 'password' ? (_) => submit() : null,
+      ),
+    ],
+  ];
+
+  List<Widget> _fields(BuildContext context) => [
+    Row(
+      children: [
+        Expanded(
+          child: Text(
+            diary?.name ?? 'Librus',
+            style: Theme.of(context).textTheme.titleMedium,
           ),
         ),
-      ),
-      validator: (value) => value == null || value.isEmpty
-          ? context.tr('requiredPassword')
-          : null,
+        TextButton(
+          key: const ValueKey('choose-diary'),
+          onPressed: widget.controller.syncing ? null : pickDiary,
+          child: Text(context.tr('otherDiary')),
+        ),
+      ],
     ),
+    if (diary != null)
+      ..._pluginFields(context)
+    else ...[
+      Text(context.tr('loginHelp')),
+      const SizedBox(height: 20),
+      // Only with a VPN on; asked again after a failed sign-in.
+      _VpnHint(
+        text: context.tr('vpnOnSignIn'),
+        error: widget.controller.error,
+        padding: const EdgeInsets.only(bottom: 20),
+      ),
+      TextFormField(
+        controller: email,
+        keyboardType: TextInputType.emailAddress,
+        autofillHints: const [AutofillHints.email],
+        decoration: InputDecoration(
+          labelText: context.tr('email'),
+          prefixIcon: const Icon(Icons.alternate_email_rounded),
+        ),
+        validator: (value) => value == null || value.trim().isEmpty
+            ? context.tr('requiredEmail')
+            : null,
+      ),
+      const SizedBox(height: 12),
+      TextFormField(
+        controller: password,
+        obscureText: obscure,
+        autofillHints: const [AutofillHints.password],
+        onFieldSubmitted: (_) => submit(),
+        decoration: InputDecoration(
+          labelText: context.tr('password'),
+          prefixIcon: const Icon(Icons.lock_outline_rounded),
+          suffixIcon: IconButton(
+            onPressed: () => setState(() => obscure = !obscure),
+            icon: Icon(
+              obscure ? Icons.visibility_rounded : Icons.visibility_off_rounded,
+            ),
+          ),
+        ),
+        validator: (value) => value == null || value.isEmpty
+            ? context.tr('requiredPassword')
+            : null,
+      ),
+    ],
     if (widget.controller.error != null) ...[
       const SizedBox(height: 12),
       Text(
@@ -1081,4 +1184,50 @@ class _LoginState extends State<_Login> {
       ),
     ),
   ];
+}
+
+class _DiaryPicker extends StatefulWidget {
+  const _DiaryPicker(this.controller);
+  final AppController controller;
+  @override
+  State<_DiaryPicker> createState() => _DiaryPickerState();
+}
+
+class _DiaryPickerState extends State<_DiaryPicker> {
+  late Future<List<PluginManifest>> catalog = widget.controller
+      .availableDiaryPlugins();
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.all(_Space.sheet),
+    child: FutureBuilder<List<PluginManifest>>(
+      future: catalog,
+      builder: (context, state) => ListView(
+        shrinkWrap: true,
+        primary: false,
+        children: [
+          Text(context.tr('chooseDiary'), style: _sheetTitleStyle(context)),
+          ListTile(
+            title: const Text('Librus'),
+            onTap: () => Navigator.pop(context, 'librus'),
+          ),
+          if (state.connectionState != ConnectionState.done)
+            const Center(child: CircularProgressIndicator()),
+          if (state.hasError) ...[
+            Text(context.tr('pluginCatalogError')),
+            TextButton(
+              onPressed: () => setState(
+                () => catalog = widget.controller.availableDiaryPlugins(),
+              ),
+              child: Text(context.tr('startupRetry')),
+            ),
+          ],
+          for (final plugin in state.data ?? const <PluginManifest>[])
+            ListTile(
+              title: Text(plugin.name),
+              onTap: () => Navigator.pop(context, plugin),
+            ),
+        ],
+      ),
+    ),
+  );
 }

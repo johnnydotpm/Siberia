@@ -6,6 +6,7 @@ import 'package:flutter/widgets.dart';
 import '../app_build_info.dart';
 import '../background_notifications.dart';
 import '../data/app_repository.dart';
+import '../data/diary_plugins.dart';
 import '../debug/diagnostics.dart';
 import '../domain/librus_error.dart';
 import '../domain/models.dart';
@@ -262,8 +263,7 @@ class AppController extends ChangeNotifier {
   /// before the setup's own step explains it.
   bool get onboardingDone => _onboardingDone;
 
-  bool get _signedIn =>
-      isDemo || snapshot.profile.provider == 'Librus Synergia';
+  bool get _signedIn => isDemo || snapshot.profile.connected;
 
   /// Ends the setup and opens the app.
   Future<void> completeOnboarding() async {
@@ -458,7 +458,7 @@ class AppController extends ChangeNotifier {
   /// account is signed in. The saved data stays on screen meanwhile.
   Future<void> startAutoSync() async {
     if (!_autoSyncOnOpen) return;
-    if (snapshot.profile.provider != 'Librus Synergia') return;
+    if (!snapshot.profile.connected) return;
     await sync();
   }
 
@@ -529,7 +529,7 @@ class AppController extends ChangeNotifier {
       await backgroundScheduling?.call(
         _autoSyncOnOpen &&
             _notificationSettings.needsBackgroundCheck &&
-            snapshot.profile.provider == 'Librus Synergia' &&
+            snapshot.profile.connected &&
             // Nothing to check when every profile has notifications off.
             (_profiles.isEmpty || _profiles.any((profile) => profile.notify)),
       );
@@ -585,7 +585,7 @@ class AppController extends ChangeNotifier {
 
   Future<void> _writeHomeWidget() async {
     final widget = homeWidget!;
-    if (!isDemo && snapshot.profile.provider != 'Librus Synergia') {
+    if (!isDemo && !snapshot.profile.connected) {
       await widget.clear();
       return;
     }
@@ -837,7 +837,7 @@ class AppController extends ChangeNotifier {
   /// one on. True when allowed, or when nothing needs it.
   Future<bool> askNotificationPermission() async {
     if (!_notificationSettings.needsBackgroundCheck ||
-        snapshot.profile.provider != 'Librus Synergia') {
+        !snapshot.profile.connected) {
       return true;
     }
     return await notifications?.requestPermission() ?? true;
@@ -1079,7 +1079,7 @@ class AppController extends ChangeNotifier {
   /// not loaded again within [sentMessagesPause].
   Future<void> refreshSentMessages({bool force = false}) async {
     if (_loadingSentMessages) return;
-    if (!isDemo && snapshot.profile.provider != 'Librus Synergia') return;
+    if (!isDemo && !snapshot.profile.connected) return;
     final loadedAt = _sentMessagesLoadedAt;
     if (!force &&
         loadedAt != null &&
@@ -1581,6 +1581,69 @@ class AppController extends ChangeNotifier {
       return true;
     } on Object catch (error, stack) {
       _error = _failed(error, stack, 'sign-in');
+      return false;
+    } finally {
+      _signingIn = false;
+      _signInStage = null;
+      _profiles = _repository.profiles;
+      notifyListeners();
+    }
+  }
+
+  Future<List<PluginManifest>> availableDiaryPlugins() =>
+      _repository.diaryPlugins();
+
+  Future<bool> loginPlugin(
+    PluginManifest manifest,
+    Map<String, Object?> fields, {
+    Future<List<PluginStudent>?> Function(List<PluginStudent>)? choose,
+  }) async {
+    if (_signingIn || _markingMessagesRead || isDemo) return false;
+    _signingIn = true;
+    _signInStage = SignInStage.checking;
+    _error = null;
+    notifyListeners();
+    final before = activeProfile?.id;
+    final added = <SchoolProfile>[];
+    String? account;
+    try {
+      final found = await _repository.signInPlugin(manifest, fields);
+      account = found.account;
+      final selected = choose != null && found.students.length > 1
+          ? await choose(found.students) ?? const <PluginStudent>[]
+          : found.students;
+      if (selected.isEmpty) {
+        await _repository.discardLogin(account);
+        return false;
+      }
+      added.addAll(await _repository.addPluginProfiles(found, selected));
+      final first =
+          added.firstOrNull ??
+          _repository.profiles.firstWhere((p) => p.account == account);
+      _signInStage = SignInStage.loading;
+      notifyListeners();
+      await _repository.switchProfile(first.id);
+      final synced = await _repository.syncProfile(first.id);
+      _leaveTogether();
+      _snapshot = synced;
+      await _loadProfileSettings();
+      _forgetSentMessages();
+      _syncNews = null;
+      _profiles = _repository.profiles;
+      _seeNews(first.id);
+      await _recordNotifications();
+      _updateHomeWidget();
+      unawaited(_syncInTurn(added.skip(1).toList()));
+      unawaited(configureBackground());
+      unawaited(requestNotificationPermissionIfEnabled());
+      return true;
+    } on Object catch (error, stack) {
+      for (final profile in added) {
+        await _repository.removeProfile(profile.id);
+      }
+      if (account != null) await _repository.discardLogin(account);
+      if (before != null) await _repository.switchProfile(before);
+      _error = _failed(error, stack, 'plugin-sign-in');
       return false;
     } finally {
       _signingIn = false;

@@ -494,6 +494,26 @@ EdgeInsets _chromeInsets(BuildContext context) =>
     ? EdgeInsets.zero
     : MediaQuery.paddingOf(context);
 
+String? _moduleIssue(BuildContext context) {
+  final controller = _ControllerScope.maybeOf(context);
+  if (controller == null || controller.together) return null;
+  const keys = {
+    1: 'timetable',
+    2: 'grades',
+    3: 'events',
+    4: 'homework',
+    5: 'messages',
+    6: 'attendance',
+    7: 'announcements',
+    8: 'notices',
+  };
+  final key = keys[controller.tabIndex];
+  if (key == null || !controller.snapshot.moduleErrors.containsKey(key)) {
+    return null;
+  }
+  return context.trArgs('pluginSyncIssues', {'modules': context.tr(key)});
+}
+
 /// A page's own list. Inside the glass chrome it starts below the top bar,
 /// ends above the tab bar and opens with the page's large title.
 class _PageList extends StatelessWidget {
@@ -503,13 +523,19 @@ class _PageList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final issue = _moduleIssue(context);
+    final contents = <Widget>[
+      if (issue != null)
+        Padding(padding: const EdgeInsets.only(bottom: 16), child: Text(issue)),
+      ...children,
+    ];
     final scope = GlassPageScope.maybeOf(context);
     if (scope == null) {
       return ListView(
         // A search field's keyboard goes once the list is moved.
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         padding: padding,
-        children: children,
+        children: contents,
       );
     }
     final insets = MediaQuery.paddingOf(context);
@@ -530,7 +556,7 @@ class _PageList extends StatelessWidget {
             ),
             child: GlassLargeTitle(title),
           ),
-        ...children,
+        ...contents,
       ],
     );
   }
@@ -545,8 +571,9 @@ class _PageEmpty extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final message = _moduleIssue(context) ?? text;
     final scope = GlassPageScope.maybeOf(context);
-    if (scope == null) return _Empty(text, icon: icon);
+    if (scope == null) return _Empty(message, icon: icon);
     final insets = MediaQuery.paddingOf(context);
     final title = scope.largeTitle;
     return Padding(
@@ -561,7 +588,7 @@ class _PageEmpty extends StatelessWidget {
               ),
               child: GlassLargeTitle(title),
             ),
-          Expanded(child: _Empty(text, icon: icon)),
+          Expanded(child: _Empty(message, icon: icon)),
         ],
       ),
     );

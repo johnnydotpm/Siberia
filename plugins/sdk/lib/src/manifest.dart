@@ -23,6 +23,8 @@ class PluginManifest {
     required this.bytes,
     required this.operations,
     required this.origins,
+    required this.loginFields,
+    required this.instructions,
   });
 
   final String id;
@@ -35,6 +37,8 @@ class PluginManifest {
 
   /// Exact HTTPS origins; no wildcard domains or redirects.
   final Set<String> origins;
+  final List<Map<String, dynamic>> loginFields;
+  final Map<String, String> instructions;
 
   factory PluginManifest.fromJson(Object? value) {
     if (value is! Map<String, dynamic>) {
@@ -101,6 +105,36 @@ class PluginManifest {
         throw const PluginException('invalid_origin');
       }
     }
+    final fields = value['loginFields'] ?? const <Object?>[];
+    final help = value['instructions'] ?? const <String, String>{};
+    if (fields is! List ||
+        fields.length > 8 ||
+        help is! Map ||
+        help.entries.any(
+          (e) =>
+              e.key is! String ||
+              e.value is! String ||
+              (e.value as String).length > 2000,
+        )) {
+      throw const PluginException('invalid_login_fields');
+    }
+    final seen = <String>{};
+    final parsedFields = <Map<String, dynamic>>[];
+    for (final field in fields) {
+      if (field is! Map<String, dynamic> ||
+          field['id'] is! String ||
+          !RegExp(
+            r'^[a-z][a-zA-Z0-9]{0,31}$',
+          ).hasMatch(field['id'] as String) ||
+          !seen.add(field['id'] as String) ||
+          field['label'] is! String ||
+          !const {'text', 'url', 'password'}.contains(field['type']) ||
+          (field['initial'] != null && field['initial'] is! String) ||
+          (field['type'] == 'password' && field['initial'] != null)) {
+        throw const PluginException('invalid_login_fields');
+      }
+      parsedFields.add(Map.unmodifiable(field));
+    }
     return PluginManifest._(
       id: id,
       name: name,
@@ -110,6 +144,8 @@ class PluginManifest {
       bytes: bytes,
       operations: operations,
       origins: origins,
+      loginFields: List.unmodifiable(parsedFields),
+      instructions: Map.unmodifiable(help.cast<String, String>()),
     );
   }
 
@@ -124,6 +160,8 @@ class PluginManifest {
     'bytes': bytes,
     'operations': operations.toList(),
     'origins': origins.toList(),
+    if (loginFields.isNotEmpty) 'loginFields': loginFields,
+    if (instructions.isNotEmpty) 'instructions': instructions,
   };
 }
 

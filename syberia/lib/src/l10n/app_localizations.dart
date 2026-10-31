@@ -20,6 +20,20 @@ class AppLocalizations {
 
   static const _values = <String, Map<String, String>>{
     'pl': {
+      'messageSendUncertain': "Wysyłka nie została potwierdzona. Sprawdź Wysłane przed ponowieniem.",
+      "otherDiary": "Zmień dziennik",
+      "chooseDiary": "Wybierz dziennik",
+      "username": "Login",
+      "diaryServer": "Adres dziennika (HTTPS)",
+      "schoolCode": "Kod szkoły",
+      "requiredField": "Uzupełnij to pole",
+      "pluginCatalogError": "Nie udało się pobrać listy dzienników.",
+      "pluginConnectionError": "Nie udało się połączyć z dziennikiem. Sprawdź dane i spróbuj ponownie.",
+      "pluginDownloadError":
+          "Nie udało się pobrać lub zweryfikować pluginu. Spróbuj ponownie.",
+      "pluginSyncIssues": "Część danych jest niedostępna lub niepełna: {modules}. Zachowano ostatnie poprawne dane.",
+      "attendanceIncomplete": "Dziennik nie udostępnia pełnych danych do obliczenia frekwencji. Pokazujemy otrzymane wpisy.",
+
       'startupRetry': 'Spróbuj ponownie',
       'timetableStyle': 'Styl planu lekcji',
       'timetableStyleClassic': 'Klasyczny',
@@ -173,7 +187,7 @@ class AppLocalizations {
       'notifyChooseText': 'Tylko to, czego potrzebujesz.',
       'notifyOff': 'Wyłącz',
       'notifyOffText': 'Włączysz je później w Ustawieniach.',
-      'signInChecking': 'Logowanie do Librusa',
+      'signInChecking': 'Łączenie z dziennikiem',
       'signInChoosing': 'Wybór uczniów',
       'signInLoading': 'Pobieranie danych',
       'signInDone': 'Gotowe',
@@ -181,7 +195,7 @@ class AppLocalizations {
       'onboardingLanguage': 'Wybierz język',
       'onboardingAppearanceText':
           'Możesz to zmienić w każdej chwili w ustawieniach.',
-      'onboardingAccount': 'Logowanie do Librusa',
+      'onboardingAccount': 'Połącz dziennik',
       'onboardingProfilesText':
           'Profile na tym telefonie. Możesz dodać kolejny.',
       'onboardingNotificationsText': 'Nowe oceny, wiadomości i zmiany w planie przyjdą jako powiadomienia, a o sprawdzianach przypomnimy wcześniej. System raz zapyta o zgodę.',
@@ -497,6 +511,21 @@ class AppLocalizations {
       'unexpectedError': 'Nieoczekiwany błąd.',
     },
     'en': {
+      'messageSendUncertain':
+          "Sending was not confirmed. Check Sent before trying again.",
+      "otherDiary": "Change diary",
+      "chooseDiary": "Choose diary",
+      "username": "Login",
+      "diaryServer": "Diary server (HTTPS)",
+      "schoolCode": "School code",
+      "requiredField": "Complete this field",
+      "pluginCatalogError": "Could not download the diary list.",
+      "pluginConnectionError": "Could not connect to the diary. Check your credentials and try again.",
+      "pluginDownloadError":
+          "Could not download or verify the plugin. Please try again.",
+      "pluginSyncIssues": "Some data is unavailable or incomplete: {modules}. The last valid data was retained.",
+      "attendanceIncomplete": "The diary does not provide complete data for calculating attendance. Showing the records received.",
+
       'startupRetry': 'Try again',
       'timetableStyle': 'Timetable style',
       'timetableStyleClassic': 'Classic',
@@ -649,14 +678,14 @@ class AppLocalizations {
       'notifyChooseText': 'Only what you need.',
       'notifyOff': 'Off',
       'notifyOffText': 'You can turn them on later in Settings.',
-      'signInChecking': 'Signing in to Librus',
+      'signInChecking': 'Connecting to the diary',
       'signInChoosing': 'Choosing students',
       'signInLoading': 'Loading the data',
       'signInDone': 'Done',
       'introSkip': 'Tap to skip',
       'onboardingLanguage': 'Choose your language',
       'onboardingAppearanceText': 'You can change this any time in Settings.',
-      'onboardingAccount': 'Sign in to Librus',
+      'onboardingAccount': 'Connect your diary',
       'onboardingProfilesText':
           'The profiles on this phone. You can add another.',
       'onboardingNotificationsText': 'New grades, messages and timetable changes come as notifications, and tests are reminded of ahead. The system asks for permission once.',
@@ -972,6 +1001,21 @@ class AppLocalizations {
       'unexpectedError': 'Unexpected error.',
     },
     'ru': {
+      'messageSendUncertain':
+          "Отправка не подтверждена. Проверьте Отправленные перед повтором.",
+      "otherDiary": "Сменить дневник",
+      "chooseDiary": "Выберите дневник",
+      "username": "Логин",
+      "diaryServer": "Адрес дневника (HTTPS)",
+      "schoolCode": "Код школы",
+      "requiredField": "Заполните это поле",
+      "pluginCatalogError": "Не удалось загрузить список дневников.",
+      "pluginConnectionError": "Не удалось подключиться. Проверьте данные входа и повторите попытку.",
+      "pluginDownloadError":
+          "Не удалось загрузить или проверить плагин. Повторите попытку.",
+      "pluginSyncIssues": "Некоторые данные недоступны или неполны: {modules}. Сохранены последние корректные данные.",
+      "attendanceIncomplete": "Дневник не предоставляет полные данные для расчёта посещаемости. Показаны полученные записи.",
+
       'startupRetry': 'Повторить',
       'timetableStyle': 'Стиль расписания',
       'timetableStyleClassic': 'Классический',
@@ -1126,7 +1170,7 @@ class AppLocalizations {
       'notifyChooseText': 'Только то, что нужно.',
       'notifyOff': 'Выключить',
       'notifyOffText': 'Включить можно потом в Настройках.',
-      'signInChecking': 'Вход в Librus',
+      'signInChecking': 'Подключение дневника',
       'signInChoosing': 'Выбор учеников',
       'signInLoading': 'Загрузка данных',
       'signInDone': 'Готово',
@@ -1134,7 +1178,7 @@ class AppLocalizations {
       'onboardingLanguage': 'Выберите язык',
       'onboardingAppearanceText':
           'Это можно поменять в любой момент в настройках.',
-      'onboardingAccount': 'Вход в Librus',
+      'onboardingAccount': 'Подключить дневник',
       'onboardingProfilesText':
           'Профили на этом телефоне. Можно добавить ещё один.',
       'onboardingNotificationsText': 'Новые оценки, сообщения и изменения в расписании придут уведомлением, а о контрольных напомним заранее. Система один раз спросит разрешение.',
@@ -1449,6 +1493,20 @@ class AppLocalizations {
       'unexpectedError': 'Непредвиденная ошибка.',
     },
     'de': {
+      'messageSendUncertain': "Versand nicht bestätigt. Vor einem erneuten Versuch Gesendet prüfen.",
+      "otherDiary": "Tagebuch wechseln",
+      "chooseDiary": "Tagebuch auswählen",
+      "username": "Benutzername",
+      "diaryServer": "Tagebuch-Adresse (HTTPS)",
+      "schoolCode": "Schulcode",
+      "requiredField": "Dieses Feld ausfüllen",
+      "pluginCatalogError": "Die Tagebuchliste konnte nicht geladen werden.",
+      "pluginConnectionError": "Verbindung fehlgeschlagen. Zugangsdaten prüfen und erneut versuchen.",
+      "pluginDownloadError":
+          "Plugin konnte nicht geladen oder geprüft werden. Erneut versuchen.",
+      "pluginSyncIssues": "Einige Daten fehlen oder sind unvollständig: {modules}. Die letzten gültigen Daten bleiben erhalten.",
+      "attendanceIncomplete": "Das Tagebuch liefert keine vollständigen Daten zur Berechnung der Anwesenheit. Empfangene Einträge werden angezeigt.",
+
       'startupRetry': 'Erneut versuchen',
       'timetableStyle': 'Stundenplanstil',
       'timetableStyleClassic': 'Klassisch',
@@ -1601,7 +1659,7 @@ class AppLocalizations {
       'notifyChooseText': 'Nur was du brauchst.',
       'notifyOff': 'Aus',
       'notifyOffText': 'Du kannst sie später in den Einstellungen einschalten.',
-      'signInChecking': 'Anmeldung bei Librus',
+      'signInChecking': 'Tagebuch wird verbunden',
       'signInChoosing': 'Auswahl der Schüler',
       'signInLoading': 'Daten werden geladen',
       'signInDone': 'Fertig',
@@ -1609,7 +1667,7 @@ class AppLocalizations {
       'onboardingLanguage': 'Wähle deine Sprache',
       'onboardingAppearanceText':
           'Das kannst du jederzeit in den Einstellungen ändern.',
-      'onboardingAccount': 'Bei Librus anmelden',
+      'onboardingAccount': 'Tagebuch verbinden',
       'onboardingProfilesText':
           'Die Profile auf diesem Telefon. Du kannst ein weiteres hinzufügen.',
       'onboardingNotificationsText': 'Neue Noten, Nachrichten und Stundenplanänderungen kommen als Benachrichtigung, und an Tests wird vorher erinnert. Das System fragt einmal nach der Erlaubnis.',
@@ -1933,6 +1991,21 @@ class AppLocalizations {
       'unexpectedError': 'Unerwarteter Fehler.',
     },
     'uk': {
+      'messageSendUncertain': "Надсилання не підтверджено. Перевірте Надіслані перед повторною спробою.",
+      "otherDiary": "Змінити щоденник",
+      "chooseDiary": "Виберіть щоденник",
+      "username": "Логін",
+      "diaryServer": "Адреса щоденника (HTTPS)",
+      "schoolCode": "Код школи",
+      "requiredField": "Заповніть це поле",
+      "pluginCatalogError": "Не вдалося завантажити список щоденників.",
+      "pluginConnectionError":
+          "Не вдалося підключитися. Перевірте дані входу та повторіть спробу.",
+      "pluginDownloadError":
+          "Не вдалося завантажити або перевірити плагін. Спробуйте ще раз.",
+      "pluginSyncIssues": "Деякі дані недоступні або неповні: {modules}. Збережено останні коректні дані.",
+      "attendanceIncomplete": "Щоденник не надає повних даних для розрахунку відвідуваності. Показано отримані записи.",
+
       'startupRetry': 'Спробувати ще раз',
       'timetableStyle': 'Стиль розкладу',
       'timetableStyleClassic': 'Класичний',
@@ -2086,14 +2159,14 @@ class AppLocalizations {
       'notifyChooseText': 'Лише те, що потрібно.',
       'notifyOff': 'Вимкнути',
       'notifyOffText': 'Увімкнути можна згодом у Налаштуваннях.',
-      'signInChecking': 'Вхід у Librus',
+      'signInChecking': 'Підключення щоденника',
       'signInChoosing': 'Вибір учнів',
       'signInLoading': 'Завантаження даних',
       'signInDone': 'Готово',
       'introSkip': 'Торкніться, щоб пропустити',
       'onboardingLanguage': 'Оберіть мову',
       'onboardingAppearanceText': 'Це можна змінити будь-коли в налаштуваннях.',
-      'onboardingAccount': 'Вхід у Librus',
+      'onboardingAccount': 'Підключити щоденник',
       'onboardingProfilesText':
           'Профілі на цьому телефоні. Можна додати ще один.',
       'onboardingNotificationsText': 'Нові оцінки, повідомлення й зміни в розкладі прийдуть сповіщенням, а про контрольні нагадаємо заздалегідь. Система один раз запитає дозвіл.',
@@ -2511,6 +2584,18 @@ extension LocalizedError on BuildContext {
   /// where the error is caught keeps an error already on screen correct
   /// after the user switches language.
   String trError(AppError error) {
+    final plugin = error.pluginCode;
+    if (plugin != null) {
+      if (plugin == 'send_uncertain') return tr('messageSendUncertain');
+      if (plugin == 'session_expired') return tr('sessionExpired');
+      if (plugin == 'invalid_credentials') return tr('invalidCredentials');
+      if (plugin.startsWith('download') ||
+          plugin == 'integrity_failed' ||
+          plugin == 'incompatible_plugin') {
+        return tr('pluginDownloadError');
+      }
+      return tr('pluginConnectionError');
+    }
     final code = error.errorCode;
     if (code == null) {
       final raw = error.raw?.trim();

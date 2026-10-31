@@ -34,7 +34,12 @@ void main(List<String> args) {
       throw const PluginException('missing_entrypoint');
     }
     final bytes = Uint8List.fromList(
-      Compiler().compile({'diary': files}).write(),
+      (Compiler()..entrypoints.add('package:diary_sdk/protocol.dart')).compile({
+        'diary': files,
+        'diary_sdk': {
+          'protocol.dart': File('../shared/protocol.dart').readAsStringSync(),
+        },
+      }).write(),
     );
     final manifest = PluginManifest.fromJson({
       ...descriptor,

@@ -25,10 +25,17 @@ class SchoolProfile {
     this.roleOverride,
     this.parentPreferences = const ParentPreferences(),
     this.tabs,
+    this.providerId = 'librus',
+    this.providerName = '',
+    this.pluginStudent,
   });
 
   /// Names the profile's own data on the phone. It never changes.
   final String id;
+  final String providerId;
+  final String providerName;
+  final String? pluginStudent;
+  bool get isPlugin => providerId != 'librus';
 
   /// The Librus login the profile comes from, as `LibrusLogin.keyOf` names
   /// it; empty when the phone has no login for it.
@@ -111,6 +118,9 @@ class SchoolProfile {
   }) => SchoolProfile(
     id: id,
     account: account,
+    providerId: providerId,
+    providerName: providerName,
+    pluginStudent: pluginStudent,
     synergiaLogin: synergiaLogin ?? this.synergiaLogin,
     name: name ?? this.name,
     school: school ?? this.school,
@@ -128,6 +138,9 @@ class SchoolProfile {
 
   Map<String, Object?> toJson() => {
     'id': id,
+    'providerId': providerId,
+    'providerName': providerName,
+    'pluginStudent': pluginStudent,
     'account': account,
     'synergiaLogin': synergiaLogin,
     'name': name,
@@ -154,6 +167,9 @@ class SchoolProfile {
     String? text(Object? value) => value is String ? value : null;
     return SchoolProfile(
       id: id,
+      providerId: text(json['providerId']) ?? 'librus',
+      providerName: text(json['providerName']) ?? '',
+      pluginStudent: text(json['pluginStudent']),
       account: account,
       synergiaLogin: text(json['synergiaLogin']),
       name: text(json['name']) ?? '',
@@ -185,6 +201,9 @@ class SchoolProfile {
   bool operator ==(Object other) =>
       other is SchoolProfile &&
       other.id == id &&
+      other.providerId == providerId &&
+      other.providerName == providerName &&
+      other.pluginStudent == pluginStudent &&
       other.account == account &&
       other.synergiaLogin == synergiaLogin &&
       other.name == name &&
@@ -203,6 +222,9 @@ class SchoolProfile {
   @override
   int get hashCode => Object.hash(
     id,
+    providerId,
+    providerName,
+    pluginStudent,
     account,
     synergiaLogin,
     name,

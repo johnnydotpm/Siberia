@@ -5,17 +5,21 @@ Librus remains built into the application; it is not a downloaded plugin.
 
 ## Current status
 
-This directory contains a working distribution/execution SDK and its synthetic
-integration tests. **The app's login and synchronization still use Librus.** The
-SDK is not yet connected to the add-diary screen, account store or background
-sync. `catalog.json` is intentionally empty: there are no published, working
-Fryderyk or MobiReg adapters here yet. The echo example is an SDK test fixture,
-not a diary and not demo school data offered to users.
+Fryderyk and modern MobiReg now have versioned, independently authored adapters.
+The Flutter app downloads the selected plugin **before sending login data**,
+then uses its installed, pinned release for login, child profiles, foreground
+and background synchronization, messaging, notifications and widgets. Librus
+continues to use its existing built-in client.
 
-The research on branch `docs/music-diary-reverse-engineering-2026-10-25` describes
-protocols recovered from shipped clients. It is input for implementing adapters,
-not proof that today's servers accept those requests. No live school account
-was used to test this SDK.
+The `dev` app uses the repository's `dev/plugins/` catalog by default. Set
+`DIARY_PLUGIN_SOURCE` to the `main/plugins/` HTTPS directory when promoting the
+feature. Existing accounts retain their installed manifest/version; catalog
+changes do not silently change an account's protocol.
+
+See [Fryderyk](fryderyk/README.md), [MobiReg](mobireg/README.md) and
+[research provenance](RESEARCH.md) for coverage and remaining gates. Tests use
+synthetic responses. No live school account or device build was used to verify
+current backend acceptance or native execution.
 
 ## Repository layout
 
@@ -28,6 +32,7 @@ plugins/
     <version>/
       manifest.json                # generated release metadata
       plugin.evc                   # downloadable interpreted bytecode
+  shared/protocol.dart             # bundled adapter normalization helpers
   examples/echo/main.dart           # test fixture, never in catalog.json
   sdk/                             # pure Dart loader/runtime + release tools
 ```
@@ -84,8 +89,8 @@ Future<String> main(String requestJson, Function http) async {
 }
 ```
 
-Input: `{"operation":"sync","input":{...},"state":{...}}`.
-Output: `{"data":...,"state":{...}}`. Both cross the boundary as JSON strings.
+Input: `{"operation":"grades","input":{...},"state":{...}}`.
+Output: `{"data":...,"state":{...}}` or an error with a stable `code`. Both cross the boundary as JSON strings. Auth refresh is a separate checkpointed operation. Each data module is invoked separately, so one failure cannot erase another module.
 A new VM and isolate are created per invocation; there are no persistent globals.
 The SDK does not interpret a provider's error/success envelope as a list of data.
 The adapter must validate it and fail on incompatible or unknown schemas.
@@ -105,10 +110,12 @@ The only host capability is `await http(requestJson)`, where the request is:
 rewrite JSON, form fields or HTTP methods. The returned JSON string contains
 `status`, `headers` (lists of values), and raw UTF-8 `body`. HTTP error statuses
 and redirects are returned to the adapter without automatically following them.
-The host rejects requests outside the manifest's exact origins. In v1 all
-origins are static: dynamic school-origin enrollment and cross-module cookie
-scopes need a host-managed per-account grant design before those adapters ship.
-Do not solve this with unrestricted host access or blanket token forwarding.
+The host rejects requests outside the manifest's exact origins plus explicit
+per-account grants. During enrollment the app validates HTTPS origins supplied
+in declared server fields or returned by the authenticated bootstrap/discovery
+operations, then stores those grants with that account. A running plugin cannot
+add a grant. Mail and homework are separately scoped endpoints; the adapters do
+not attach diary JWTs to module or attachment URLs. Redirects are not followed.
 
 Default limits: 45 seconds per invocation, 64 HTTP requests, 1 MiB per JSON/HTTP
 body. A timed-out isolate is killed and its network work cancelled. The VM gets
@@ -117,25 +124,34 @@ Plugin print output and internal exception text are discarded. Isolates do not
 provide a memory quota or a security boundary for hostile native code. Only
 reviewed first-party plugin releases belong in this catalog.
 
-## Account and app integration requirements
+## Account and app integration
 
-The next integration must download a selected release **before submitting login
-credentials**, show install/network errors, and reuse the installed release for
-subsequent sync. Existing Librus profiles must continue to work unchanged.
+`syberia/lib/src/data/diary_plugins.dart` owns installation, secure account state
+and the normalized DTO boundary. Provider paths, envelopes, decoding and request
+serialization live in plugin bytecode. Release manifests declare credential
+fields and localized login instructions; adding a diary does not require a new
+provider-specific login form in the app.
 
-The host owns auth state in secure storage, scoped by provider + canonical
-server/tenant + account. Child and academic-period data have separate scopes.
-Serialize auth mutations per owner and reject late results after switching or
-removing an account. Do not store credentials in this package cache or in logs.
-Persist a rotated token pair atomically after validating the complete operation
-result; uncertain mutations must not be retried automatically.
+An auth owner is provider + canonical server/tenant + account, hashed into a
+separate secure-storage key. Sibling child profiles share that credential record
+and keep separate data caches. Exclusive disk leases serialize operations across
+foreground/background isolates. Lease fencing and profile-removal guards reject
+obsolete results. Removing the last child deletes its owner's credentials;
+signing out clears all plugin owners.
 
-The SDK deliberately does not yet define school DTOs. The app integration needs
-a versioned normalized data contract (including opaque recipient identifiers,
-unsupported capabilities, partial failures, textual grades and parent roles).
-An unsupported module is not an empty record list. Failed modules retain their
-last successful data. Message sending and absence submissions require user
-confirmation and remain bound to the selected account.
+The app validates normalized module payloads through its cache codec. Missing,
+unsupported and malformed modules retain their previous data and carry a visible
+status. Server raw academic metadata (periods, final/proposed assessments,
+unknown codes, summaries) stays under that profile's `providerData`; it is not
+mixed into ordinary grade averages. Auth state and module tokens never belong in
+that snapshot. Excluded grades are excluded from averages even in unweighted
+mode. Opaque recipient keys remain strings, including leading zeroes.
+
+Mailbox pages are read without acknowledging messages, at most 50 pages per
+refresh. A remaining cursor is shown as incomplete data. Opening a message uses
+the provider's documented read acknowledgement. Sending is never automatically
+retried; an uncertain result asks the user to check Sent first. Attachments and
+provider-native absence submissions are not yet exposed by this release.
 
 ## Authoring and checking
 
@@ -144,7 +160,7 @@ and adapter sources under `src/` (`main.dart` is required). From `plugins/sdk`:
 
 ```sh
 dart pub get --enforce-lockfile
-dart analyze
+dart analyze --fatal-infos
 dart test
 dart run tool/package_plugin.dart ../<provider-id> ../<provider-id>/<version>
 dart run tool/validate_catalog.dart
