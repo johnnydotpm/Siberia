@@ -1,13 +1,15 @@
 part of '../app_shell.dart';
 
+/// The new message sheet; [onSent] is called once the message went.
 Future<void> _showComposeMessage(
   BuildContext context,
-  AppController controller,
-) => showModalBottomSheet<void>(
+  AppController controller, {
+  VoidCallback? onSent,
+}) => showModalBottomSheet<void>(
   context: context,
   isScrollControlled: true,
   useSafeArea: true,
-  builder: (context) => _ComposeMessageSheet(controller),
+  builder: (context) => _ComposeMessageSheet(controller, onSent: onSent),
 );
 
 /// What was being written when the sheet closed unsent: the next "New
@@ -39,8 +41,9 @@ class _ComposeDraft {
 }
 
 class _ComposeMessageSheet extends StatefulWidget {
-  const _ComposeMessageSheet(this.controller);
+  const _ComposeMessageSheet(this.controller, {this.onSent});
   final AppController controller;
+  final VoidCallback? onSent;
 
   @override
   State<_ComposeMessageSheet> createState() => _ComposeMessageSheetState();
@@ -183,6 +186,7 @@ class _ComposeMessageSheetState extends State<_ComposeMessageSheet> {
         from: from,
       );
       sent = true;
+      widget.onSent?.call();
       if (!mounted) return;
       HapticFeedback.mediumImpact();
       final messenger = ScaffoldMessenger.of(context);

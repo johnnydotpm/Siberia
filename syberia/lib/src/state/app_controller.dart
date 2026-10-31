@@ -304,6 +304,7 @@ class AppController extends ChangeNotifier {
     await _loadPreferences();
     _snapshot = await _repository.load();
     _profiles = _repository.profiles;
+    await loadExcuseSent();
     if (await _repository.loadTogether() && canBeTogether) {
       _together = true;
       await _loadParts(open: _snapshot);
@@ -344,6 +345,7 @@ class AppController extends ChangeNotifier {
     _gradesView = await _repository.loadGradesView();
     _todayLayout = await _repository.loadTodayLayout();
     _bottomTabs = await _repository.loadBottomTabs();
+    _excuseSignature = await _repository.loadExcuseSignature();
     _autoSyncOnOpen = await _repository.loadAutoSyncOnOpen();
     if (notifications != null) {
       _notificationSettings = await notifications!.loadSettings();
@@ -1277,6 +1279,59 @@ class AppController extends ChangeNotifier {
   }
 
   List<int>? _bottomTabs;
+
+  /// When absences were excused in a message, by profile, then by id.
+  final _excuseSent = <String, Map<String, DateTime>>{};
+  String _excuseSignature = '';
+
+  /// The parent's name under an excuse note.
+  String get excuseSignature => _excuseSignature;
+
+  Future<void> setExcuseSignature(String signature) async {
+    _excuseSignature = signature;
+    await _repository.saveExcuseSignature(signature);
+  }
+
+  /// The profile [record] belongs to, and its id there.
+  (String, String)? _excuseKey(AttendanceRecord record) {
+    final profileId = record.source ?? activeProfile?.id;
+    if (profileId == null) return null;
+    return (profileId, localId(record.id, record.source));
+  }
+
+  /// Loads when the absences of every profile were excused, once.
+  Future<void> loadExcuseSent() async {
+    for (final profile in _profiles) {
+      if (_excuseSent.containsKey(profile.id)) continue;
+      _excuseSent[profile.id] = await _repository.loadExcuseSent(profile.id);
+    }
+    notifyListeners();
+  }
+
+  /// When [record] was excused in a message, if it was.
+  DateTime? excuseSentAt(AttendanceRecord record) {
+    final key = _excuseKey(record);
+    return key == null ? null : _excuseSent[key.$1]?[key.$2];
+  }
+
+  /// Notes [records] as excused in a message sent now.
+  Future<void> markExcuseSent(Iterable<AttendanceRecord> records) async {
+    final now = DateTime.now();
+    final changed = <String>{};
+    for (final record in records) {
+      final key = _excuseKey(record);
+      if (key == null) continue;
+      final sent = _excuseSent[key.$1] ??= await _repository.loadExcuseSent(
+        key.$1,
+      );
+      sent[key.$2] = now;
+      changed.add(key.$1);
+    }
+    notifyListeners();
+    for (final profileId in changed) {
+      await _repository.saveExcuseSent(profileId, _excuseSent[profileId]!);
+    }
+  }
 
   /// The bottom bar: Today, then three tabs: the user's, in the app's
   /// order, or until they choose, a student's timetable, grades and

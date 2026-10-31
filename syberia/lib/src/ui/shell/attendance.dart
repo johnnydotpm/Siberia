@@ -48,6 +48,22 @@ class _AttendanceState extends State<_Attendance> {
       child: _PageList(
         padding: const EdgeInsets.all(_Space.page),
         children: [
+          // A parent excuses the absences from here too.
+          if (widget.controller.parentView &&
+              _absencesToExcuse(
+                widget.controller.snapshot,
+                DateTime.now(),
+              ).any((record) => widget.controller.excuseSentAt(record) == null))
+            Padding(
+              padding: const EdgeInsets.only(bottom: _Space.card),
+              child: FilledButton.tonalIcon(
+                key: const ValueKey('attendance-excuse'),
+                style: _wideButton,
+                icon: const Icon(Icons.edit_note_rounded),
+                label: Text(context.tr('excuseAttendance')),
+                onPressed: () => _showExcuseSheet(context, widget.controller),
+              ),
+            ),
           SizedBox(
             width: double.infinity,
             child: SegmentedButton<_AttendancePeriod>(

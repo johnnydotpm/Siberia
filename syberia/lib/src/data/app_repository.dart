@@ -1137,6 +1137,40 @@ class AppRepository {
     return saved == null ? null : TodayLayout.decode(saved);
   }
 
+  /// When the absences of the profile [profileId] were excused in a message,
+  /// by their ids.
+  Future<Map<String, DateTime>> loadExcuseSent(String profileId) async {
+    final raw = (await _preferences).getString('excuse_sent_v1_$profileId');
+    if (raw == null) return {};
+    try {
+      return {
+        for (final MapEntry(:key, :value)
+            in (jsonDecode(raw) as Map<String, dynamic>).entries)
+          key: ?DateTime.tryParse('$value'),
+      };
+    } on Object {
+      return {};
+    }
+  }
+
+  Future<void> saveExcuseSent(
+    String profileId,
+    Map<String, DateTime> sent,
+  ) async => (await _preferences).setString(
+    'excuse_sent_v1_$profileId',
+    jsonEncode({
+      for (final MapEntry(:key, :value) in sent.entries)
+        key: value.toIso8601String(),
+    }),
+  );
+
+  /// The parent's name under an excuse note.
+  Future<String> loadExcuseSignature() async =>
+      (await _preferences).getString('excuse_signature_v1') ?? '';
+
+  Future<void> saveExcuseSignature(String signature) async =>
+      (await _preferences).setString('excuse_signature_v1', signature);
+
   /// The three tabs the user put beside Today on the bottom bar; null
   /// until they choose, or when what was saved does not fit.
   Future<List<int>?> loadBottomTabs() async {

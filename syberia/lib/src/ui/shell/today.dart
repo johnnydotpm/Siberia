@@ -267,15 +267,15 @@ class _TodayState extends State<_Today> {
         );
       case TodayBlock.toExcuse:
         if (!controller.parentView) return null;
-        // Absences not excused yet, from the last two weeks: what a parent
-        // still has time to excuse.
-        final since = today.subtract(const Duration(days: 14));
+        final absences = _absencesToExcuse(data, now);
+        final waiting = [
+          for (final record in absences)
+            if (controller.excuseSentAt(record) == null) record,
+        ];
+        final sent = absences.length - waiting.length;
+        if (absences.isEmpty) return null;
         final byDay = <DateTime, List<AttendanceRecord>>{};
-        for (final record in data.attendance) {
-          if (record.kind != AttendanceKind.absent ||
-              record.date.isBefore(since)) {
-            continue;
-          }
+        for (final record in waiting) {
           final day = DateTime(
             record.date.year,
             record.date.month,
@@ -283,9 +283,7 @@ class _TodayState extends State<_Today> {
           );
           byDay.putIfAbsent(day, () => []).add(record);
         }
-        if (byDay.isEmpty) return null;
         final days = byDay.keys.toList()..sort((a, b) => b.compareTo(a));
-        final lessons = byDay.values.fold(0, (sum, day) => sum + day.length);
         return section(
           context.tr('todayToExcuse'),
           6,
@@ -295,12 +293,13 @@ class _TodayState extends State<_Today> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    '${_lessonCount(context, lessons)} · '
-                    '${_plural(context, days.length, 'days')}',
-                    key: const ValueKey('today-to-excuse-count'),
-                    style: _rowTitleStyle(context),
-                  ),
+                  if (waiting.isNotEmpty)
+                    Text(
+                      '${_lessonCount(context, waiting.length)} · '
+                      '${_plural(context, days.length, 'days')}',
+                      key: const ValueKey('today-to-excuse-count'),
+                      style: _rowTitleStyle(context),
+                    ),
                   for (final day in days.take(3))
                     Padding(
                       padding: const EdgeInsets.only(top: 6),
@@ -322,6 +321,26 @@ class _TodayState extends State<_Today> {
                         ],
                       ),
                     ),
+                  if (sent > 0)
+                    Padding(
+                      padding: EdgeInsets.only(top: waiting.isEmpty ? 0 : 8),
+                      child: Text(
+                        context.trArgs('todayExcuseSent', {
+                          'lessons': _lessonCount(context, sent),
+                        }),
+                        key: const ValueKey('today-excuse-sent'),
+                        style: _metaStyle(context),
+                      ),
+                    ),
+                  if (waiting.isNotEmpty) ...[
+                    const SizedBox(height: 12),
+                    FilledButton.tonalIcon(
+                      key: const ValueKey('today-excuse-button'),
+                      icon: const Icon(Icons.edit_note_rounded),
+                      label: Text(context.tr('excuseButton')),
+                      onPressed: () => _showExcuseSheet(context, controller),
+                    ),
+                  ],
                 ],
               ),
             ),

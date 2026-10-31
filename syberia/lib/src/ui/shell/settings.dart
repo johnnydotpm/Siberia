@@ -34,6 +34,25 @@ class _Settings extends StatelessWidget {
             title: context.tr('settingsChildren'),
             children: [_ChildRows(controller)],
           ),
+        if (controller.parentView)
+          _SettingsSection(
+            title: context.tr('excuseSettings'),
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+                child: TextFormField(
+                  key: const ValueKey('settings-excuse-signature'),
+                  initialValue: controller.excuseSignature,
+                  textCapitalization: TextCapitalization.words,
+                  decoration: InputDecoration(
+                    labelText: context.tr('excuseSignature'),
+                    hintText: context.tr('excuseSignatureHint'),
+                  ),
+                  onChanged: controller.setExcuseSignature,
+                ),
+              ),
+            ],
+          ),
         _SettingsSection(
           title: context.tr('settingsAppearance'),
           children: [

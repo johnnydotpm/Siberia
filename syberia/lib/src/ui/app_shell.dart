@@ -21,6 +21,7 @@ import '../app_build_info.dart';
 import '../data/app_repository.dart';
 import '../debug/diagnostics.dart';
 import '../domain/calendar_days.dart';
+import '../domain/excuse.dart';
 import '../domain/grade_calculator.dart';
 import '../domain/librus_error.dart';
 import '../domain/models.dart';
@@ -71,6 +72,7 @@ part 'shell/motion.dart';
 part 'shell/sync_news.dart';
 part 'shell/debug_menu.dart';
 part 'shell/together.dart';
+part 'shell/excuse.dart';
 
 class AppShell extends StatefulWidget {
   const AppShell({required this.controller, super.key});
