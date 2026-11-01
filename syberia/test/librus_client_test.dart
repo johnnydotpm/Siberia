@@ -267,7 +267,7 @@ void main() {
     expect(recipients, hasLength(2));
     expect(recipients.first.name, 'Nauczyciel Testowy');
     await client.sendMessage(
-      recipientIds: [recipients.first.id],
+      recipientIds: [recipients.first.id as int],
       subject: 'Pytanie',
       body: 'Dzień dobry',
     );

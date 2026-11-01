@@ -16,6 +16,10 @@ SiberiaGB is a fully functional, cross-platform Librus client written using the 
 </p>
 <!-- download-badges:end -->
 
+Parent mode follows the Librus account type; the interface role can be changed in profile settings without changing its mailbox. The parent dashboard shows children, lesson end times and unexcused absences. In Attendance, select absences and a class teacher, preview the request and confirm before sending. Request history distinguishes sending mail from school approval: attendance changes only after school data is synced. Quiet hours default to 21:00–07:00 and summaries to 19:00; the operating system may delay scheduled notifications. Integration with the separate e-Usprawiedliwienia module still requires protocol verification.
+
+Librus is a bundled plugin using the same interface as the other diaries. Fryderyk and MobiReg are downloadable plugins in [`/plugins/`](plugins/README.md), selected on the login screen. Each adapter documents its 0.1 coverage and limitations; protocols were tested with synthetic responses, without school accounts.
+
 ## Features
 
 - Sign-in with non-expiring sessions

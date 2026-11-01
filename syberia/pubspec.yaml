@@ -33,6 +33,9 @@ dependencies:
   flutter_localizations:
     sdk: flutter
 
+  siberia_plugins:
+    path: ../plugins/sdk
+  crypto: ^3.0.6
   cupertino_icons: ^1.0.8
   dio: ^5.11.1
   xml: ^7.0.1

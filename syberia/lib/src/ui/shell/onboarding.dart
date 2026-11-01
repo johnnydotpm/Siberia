@@ -166,8 +166,7 @@ class _OnboardingState extends State<_Onboarding>
     _next();
   }
 
-  bool get _signedIn =>
-      _controller.snapshot.profile.provider == 'Librus Synergia';
+  bool get _signedIn => _controller.snapshot.profile.connected;
 
   @override
   Widget build(BuildContext context) => ListenableBuilder(
@@ -705,8 +704,18 @@ class _AccountStepState extends State<_AccountStep> {
       motion: widget.motion,
       icon: Icons.school_rounded,
       badge: _BadgeMotion.cap,
-      title: context.tr(listed ? 'profiles' : 'onboardingAccount'),
-      text: listed ? context.tr('onboardingProfilesText') : null,
+      title: context.tr(
+        listed
+            ? (widget.controller.isParent ? 'children' : 'profiles')
+            : 'onboardingAccount',
+      ),
+      text: listed
+          ? context.tr(
+              widget.controller.isParent
+                  ? 'parentTip'
+                  : 'onboardingProfilesText',
+            )
+          : null,
       actions: [
         if (listed || (widget.onNext != null && !_flowing))
           _setupNext(context, widget.onNext),

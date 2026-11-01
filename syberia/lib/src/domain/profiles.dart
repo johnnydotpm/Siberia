@@ -1,9 +1,10 @@
 import 'package:flutter/foundation.dart';
 
 import 'models.dart';
+import 'parent.dart';
 import 'stable_hash.dart';
 
-/// One student at one school: a Librus Synergia account kept on the phone.
+/// One student at one school, supplied by a bundled or downloaded diary plugin.
 /// A parent with two children, or a student at two schools, has two, and
 /// each keeps its own data, marks and settings.
 @immutable
@@ -21,10 +22,20 @@ class SchoolProfile {
     this.studentId,
     this.parent = false,
     this.together = true,
+    this.roleOverride,
+    this.parentPreferences = const ParentPreferences(),
+    this.tabs,
+    this.providerId = 'librus',
+    this.providerName = '',
+    this.pluginStudent,
   });
 
   /// Names the profile's own data on the phone. It never changes.
   final String id;
+  final String providerId;
+  final String providerName;
+  final String? pluginStudent;
+  bool get usesDownloadedPlugin => providerId != 'librus';
 
   /// The Librus login the profile comes from, as `LibrusLogin.keyOf` names
   /// it; empty when the phone has no login for it.
@@ -56,6 +67,14 @@ class SchoolProfile {
 
   /// Whether it is a parent's account rather than the student's own.
   final bool parent;
+  final ProfileRole? roleOverride;
+  final ParentPreferences parentPreferences;
+  final List<int>? tabs;
+  ProfileRole get role =>
+      roleOverride ?? (parent ? ProfileRole.parent : ProfileRole.student);
+  List<int> get bottomTabs =>
+      tabs ??
+      (role == ProfileRole.parent ? const [0, 6, 2, 5] : const [0, 1, 2, 5]);
 
   /// Whether it is in the view of every profile together.
   final bool together;
@@ -65,6 +84,14 @@ class SchoolProfile {
     final own = label?.trim() ?? '';
     return own.isEmpty ? name : own;
   }
+
+  /// Parent alerts always name the child, even when the profile has a custom school label.
+  String get notificationName =>
+      role == ProfileRole.parent &&
+          name.trim().isNotEmpty &&
+          displayName != name
+      ? '$name · $displayName'
+      : displayName;
 
   /// The id of the profile for [synergiaLogin] in [account]: the same student
   /// added again finds the same id.
@@ -85,9 +112,15 @@ class SchoolProfile {
     String? studentId,
     bool? parent,
     bool? together,
+    ProfileRole? Function()? roleOverride,
+    ParentPreferences? parentPreferences,
+    List<int>? tabs,
   }) => SchoolProfile(
     id: id,
     account: account,
+    providerId: providerId,
+    providerName: providerName,
+    pluginStudent: pluginStudent,
     synergiaLogin: synergiaLogin ?? this.synergiaLogin,
     name: name ?? this.name,
     school: school ?? this.school,
@@ -98,10 +131,16 @@ class SchoolProfile {
     studentId: studentId ?? this.studentId,
     parent: parent ?? this.parent,
     together: together ?? this.together,
+    roleOverride: roleOverride == null ? this.roleOverride : roleOverride(),
+    parentPreferences: parentPreferences ?? this.parentPreferences,
+    tabs: tabs ?? this.tabs,
   );
 
   Map<String, Object?> toJson() => {
     'id': id,
+    'providerId': providerId,
+    'providerName': providerName,
+    'pluginStudent': pluginStudent,
     'account': account,
     'synergiaLogin': synergiaLogin,
     'name': name,
@@ -112,6 +151,9 @@ class SchoolProfile {
     'notify': notify,
     'studentId': studentId,
     'parent': parent,
+    'roleOverride': roleOverride?.name,
+    'parentPreferences': parentPreferences.toJson(),
+    'tabs': tabs,
     'together': together,
   };
 
@@ -125,6 +167,9 @@ class SchoolProfile {
     String? text(Object? value) => value is String ? value : null;
     return SchoolProfile(
       id: id,
+      providerId: text(json['providerId']) ?? 'librus',
+      providerName: text(json['providerName']) ?? '',
+      pluginStudent: text(json['pluginStudent']),
       account: account,
       synergiaLogin: text(json['synergiaLogin']),
       name: text(json['name']) ?? '',
@@ -135,6 +180,19 @@ class SchoolProfile {
       notify: json['notify'] != false,
       studentId: text(json['studentId']),
       parent: json['parent'] == true,
+      roleOverride: ProfileRole.values
+          .where((role) => role.name == json['roleOverride'])
+          .firstOrNull,
+      parentPreferences: ParentPreferences.fromJson(json['parentPreferences']),
+      tabs:
+          json['tabs'] is List &&
+              (json['tabs'] as List).length == 4 &&
+              (json['tabs'] as List).toSet().length == 4 &&
+              (json['tabs'] as List).every(
+                (tab) => tab is int && tab >= 0 && tab < 10,
+              )
+          ? (json['tabs'] as List).cast<int>()
+          : null,
       together: json['together'] != false,
     );
   }
@@ -143,6 +201,9 @@ class SchoolProfile {
   bool operator ==(Object other) =>
       other is SchoolProfile &&
       other.id == id &&
+      other.providerId == providerId &&
+      other.providerName == providerName &&
+      other.pluginStudent == pluginStudent &&
       other.account == account &&
       other.synergiaLogin == synergiaLogin &&
       other.name == name &&
@@ -153,11 +214,17 @@ class SchoolProfile {
       other.notify == notify &&
       other.studentId == studentId &&
       other.parent == parent &&
+      other.roleOverride == roleOverride &&
+      mapEquals(other.parentPreferences.toJson(), parentPreferences.toJson()) &&
+      listEquals(other.tabs, tabs) &&
       other.together == together;
 
   @override
   int get hashCode => Object.hash(
     id,
+    providerId,
+    providerName,
+    pluginStudent,
     account,
     synergiaLogin,
     name,
@@ -169,6 +236,9 @@ class SchoolProfile {
     studentId,
     parent,
     together,
+    roleOverride,
+    Object.hashAll(parentPreferences.toJson().values),
+    tabs == null ? null : Object.hashAll(tabs!),
   );
 
   @override
@@ -219,7 +289,16 @@ int freeProfileColor(
 /// parent's account whose child has an account of its own in the list too.
 /// Those two are one child, and the student's own account is the one the
 /// app has always opened.
-Set<String> defaultStudentChoice(List<LinkedSynergiaAccount> students) {
+Set<String> defaultStudentChoice(
+  List<LinkedSynergiaAccount> students, {
+  ProfileRole? role,
+}) {
+  if (role == ProfileRole.parent && students.any((student) => student.parent)) {
+    return {
+      for (final student in students)
+        if (student.parent) student.login,
+    };
+  }
   String key(String name) => name.trim().toLowerCase();
   final ownAccounts = {
     for (final student in students)

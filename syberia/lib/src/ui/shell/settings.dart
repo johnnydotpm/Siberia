@@ -29,6 +29,31 @@ class _Settings extends StatelessWidget {
       padding: const EdgeInsets.all(_Space.page),
       children: [
         _SettingsProfile(controller),
+        if (controller.activeProfile != null)
+          _SettingsSection(
+            title: context.tr('profileRole'),
+            children: [
+              ListTile(
+                key: const ValueKey('settings-parent'),
+                leading: const _SettingsIcon(Icons.family_restroom_rounded),
+                title: Text(context.tr('parentSettings')),
+                onTap: () => _showParentSettings(context, controller),
+              ),
+              if (controller.isParent) ...[
+                ListTile(
+                  title: Text(context.tr('children')),
+                  leading: const _SettingsIcon(Icons.people_rounded),
+                  onTap: () => _showProfiles(context, controller),
+                ),
+                ListTile(
+                  key: const ValueKey('settings-absence-requests'),
+                  title: Text(context.tr('absenceRequests')),
+                  leading: const _SettingsIcon(Icons.fact_check_outlined),
+                  onTap: () => _showAbsenceRequests(context, controller),
+                ),
+              ],
+            ],
+          ),
         _SettingsSection(
           title: context.tr('settingsAppearance'),
           children: [

@@ -20,7 +20,11 @@ class _AttendanceState extends State<_Attendance> {
     // not drawn as 0 %.
     if (widget.controller.snapshot.attendance.isEmpty) {
       return _PageEmpty(
-        context.tr('emptyAttendance'),
+        context.tr(
+          widget.controller.snapshot.attendanceComplete
+              ? 'emptyAttendance'
+              : 'attendanceIncomplete',
+        ),
         icon: Icons.fact_check_rounded,
       );
     }
@@ -48,6 +52,13 @@ class _AttendanceState extends State<_Attendance> {
       child: _PageList(
         padding: const EdgeInsets.all(_Space.page),
         children: [
+          if (widget.controller.isParent)
+            OutlinedButton.icon(
+              key: const ValueKey('attendance-justify'),
+              onPressed: () => _showAbsenceRequests(context, widget.controller),
+              icon: const Icon(Icons.edit_note_rounded),
+              label: Text(context.tr('doJustify')),
+            ),
           SizedBox(
             width: double.infinity,
             child: SegmentedButton<_AttendancePeriod>(
@@ -74,11 +85,15 @@ class _AttendanceState extends State<_Attendance> {
             ),
           ),
           const SizedBox(height: _Space.card),
-          _AttendanceChart(
-            counts: counts,
-            style: widget.controller.attendanceChartStyle,
-          ),
-          if (records.any((item) => item.subject.trim().isNotEmpty)) ...[
+          if (!widget.controller.snapshot.attendanceComplete)
+            Text(context.tr('attendanceIncomplete'))
+          else
+            _AttendanceChart(
+              counts: counts,
+              style: widget.controller.attendanceChartStyle,
+            ),
+          if (widget.controller.snapshot.attendanceComplete &&
+              records.any((item) => item.subject.trim().isNotEmpty)) ...[
             const SizedBox(height: 16),
             _AttendanceBySubject(
               records: records,

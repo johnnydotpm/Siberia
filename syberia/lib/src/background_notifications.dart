@@ -5,7 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:workmanager/workmanager.dart';
 
 import 'data/app_repository.dart';
-import 'data/librus/librus_client.dart';
+import 'domain/diary_part.dart';
 import 'domain/profiles.dart';
 import 'school_notifications.dart';
 
@@ -101,22 +101,22 @@ Future<int> checkProfilesInBackground(
 /// What the background check downloads: only what a notification or the
 /// test reminders are on for.
 @visibleForTesting
-Set<LibrusPart> backgroundParts(SchoolNotificationSettings settings) => {
-  if (settings.allows(SchoolNotificationCategory.grades)) LibrusPart.grades,
-  if (settings.allows(SchoolNotificationCategory.messages)) LibrusPart.messages,
+Set<DiaryPart> backgroundParts(SchoolNotificationSettings settings) => {
+  if (settings.allows(SchoolNotificationCategory.grades)) DiaryPart.grades,
+  if (settings.allows(SchoolNotificationCategory.messages)) DiaryPart.messages,
   if (settings.allows(SchoolNotificationCategory.announcements))
-    LibrusPart.announcements,
-  if (settings.allows(SchoolNotificationCategory.notices)) LibrusPart.notices,
+    DiaryPart.announcements,
+  if (settings.allows(SchoolNotificationCategory.notices)) DiaryPart.notices,
   if (settings.allows(SchoolNotificationCategory.attendance))
-    LibrusPart.attendance,
+    DiaryPart.attendance,
   // Events and homework arrive in one list, so they come together. The
   // reminders need them to know about new tests.
   if (settings.allows(SchoolNotificationCategory.events) ||
       settings.allows(SchoolNotificationCategory.homework) ||
       settings.remindersOn) ...[
-    LibrusPart.events,
-    LibrusPart.homework,
+    DiaryPart.events,
+    DiaryPart.homework,
   ],
   if (settings.allows(SchoolNotificationCategory.timetable))
-    LibrusPart.timetable,
+    DiaryPart.timetable,
 };
