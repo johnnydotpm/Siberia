@@ -685,7 +685,7 @@ Future<void> _showProfileColors(
 );
 
 /// Adding a profile: a student of a login the phone has takes one tap;
-/// another Librus account is signed in to.
+/// another diary is added through the shared sign-in form.
 Future<void> _showAddProfile(BuildContext context, AppController controller) =>
     showAppSheet<void>(
       context: context,
@@ -805,7 +805,7 @@ class _AddProfileState extends State<_AddProfile> {
                   );
                 },
           icon: const Icon(Icons.login_rounded),
-          label: Text(context.tr('otherLibrusAccount')),
+          label: Text(context.tr('addAnotherDiary')),
         ),
       ],
     ),
