@@ -24,6 +24,7 @@ Librus jest wbudowanym pluginem i korzysta z tego samego interfejsu co pozostał
 
 - Logowanie z niewygasającymi sesjami
 - Kilka profili w jednej aplikacji: rodzic z dwójką dzieci albo uczeń w dwóch szkołach. Każdy profil ma własne dane, oceny, zadania i ustawienia średniej, a przełącza się jednym dotknięciem
+- Wsparcie dla dziennikow Librus, Fryderyk i MobiReg.
 - Tryb „Wszystkie razem”: dane kilku profili w jednym widoku, np. lekcje zwykłej i muzycznej szkoły na jednym planie. Każdy wpis ma znaczek swojego profilu, lekcje o tej samej godzinie stoją obok siebie, a wiadomość wysyła się z wybranego profilu
 - Plan lekcji jako oś czasu lub lista, z łączonymi lekcjami podwójnymi i sprawdzianami przy lekcjach, na które są zapowiedziane
 - Oceny w kolorach według wartości i obliczanie średniej, także ważonej, z własną wartością plusów i minusów
