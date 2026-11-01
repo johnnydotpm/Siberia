@@ -1,8 +1,24 @@
-# SiberiaGB
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/banner-dark.svg">
+    <img src=".github/banner-light.svg" alt="SiberiaGB" width="100%">
+  </picture>
+</p>
 
 [Polski](README.md) | [English](README.en.md) | **Русский**
 
 SiberiaGB представляет собой полнофункциональный кроссплатформенный клиент Librus, написанный с использованием фреймворка [Flutter](https://flutter.dev/).
+
+<!-- download-badges:start -->
+<p align="center">
+  <a href="https://github.com/johnnydotpm/Siberia/releases/download/v1.4.0/SiberiaGB-1.4.0-Android.apk"><img src=".github/badges/download-apk.svg" alt="Download APK for Android" width="240" height="72"></a>
+  <a href="https://github.com/johnnydotpm/Siberia/releases/download/v1.4.0/SiberiaGB-1.4.0-iOS.ipa"><img src=".github/badges/download-ipa.svg" alt="Download IPA for iOS" width="240" height="72"></a>
+</p>
+<!-- download-badges:end -->
+
+Режим родителя определяется типом аккаунта Librus; роль интерфейса можно изменить в настройках профиля без смены почтового ящика. Панель родителя показывает детей, время окончания уроков и неоправданные пропуски. В посещаемости выберите пропуски и классного руководителя, проверьте предпросмотр и подтвердите отправку. История отличает отправку письма от одобрения школой: статус посещаемости меняется только после синхронизации со школой. По умолчанию тихие часы — 21:00–07:00, сводка — в 19:00; система может задерживать уведомления. Отдельный модуль e-Usprawiedliwień ещё требует проверки протокола.
+
+Librus — встроенный плагин с тем же интерфейсом, что и остальные дневники. Fryderyk и MobiReg доступны как загружаемые плагины в [`/plugins/`](plugins/README.md), выбираемые на экране входа. Возможности и ограничения версии 0.1 описаны у каждого адаптера; протоколы проверены на синтетических ответах, без школьных аккаунтов.
 
 ## Возможности
 
@@ -115,7 +131,6 @@ flutter build linux --release
 - Расширение модульных и интеграционных тестов на устройствах
 - Дальнейшие улучшения доступности интерфейса
 - Разделение `lib/src/ui/app_shell.dart` на отдельные файлы экранов
-- Дополнительные стили приложения: frutiger aero, minimal, skeuomorphism
 - Больше языков
 
 ## Лицензия и благодарности

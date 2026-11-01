@@ -147,12 +147,30 @@ class _ExcuseSheetState extends State<_ExcuseSheet> {
       body: message.body,
     );
     var sent = false;
+    // Kept as not sure before it goes: if the app stops halfway, the history
+    // says so rather than inviting a second note.
+    final requestId = '${DateTime.now().microsecondsSinceEpoch}';
+    Future<void> record(
+      String subject,
+      String body,
+      List<MessageRecipient> to, {
+      required bool done,
+    }) => controller.recordExcuse(
+      requestId,
+      excused,
+      profileId: from,
+      subject: subject,
+      body: body,
+      recipient: to.map((person) => person.name).join(', '),
+      sent: done,
+    );
     await _showComposeMessage(
       context,
       controller,
-      onSent: () {
+      beforeSend: (subject, body, to) => record(subject, body, to, done: false),
+      onSent: (subject, body, to) {
         sent = true;
-        controller.markExcuseSent(excused);
+        return record(subject, body, to, done: true);
       },
     );
     if (sent && mounted) Navigator.pop(context);

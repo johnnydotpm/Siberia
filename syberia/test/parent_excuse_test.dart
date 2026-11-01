@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syberia/src/app.dart';
 import 'package:syberia/src/domain/excuse.dart';
 import 'package:syberia/src/domain/models.dart';
+import 'package:syberia/src/domain/parent.dart';
 import 'package:syberia/src/state/app_controller.dart';
 
 import 'support/profile_fakes.dart';
@@ -180,7 +181,45 @@ void main() {
       isNotNull,
       reason: 'kept',
     );
+    // The note is in the history, sent, to the class teacher.
+    final history = await again.absenceRequests(controller.activeProfile!.id);
+    expect(history, hasLength(1));
+    expect(history.single.state, AbsenceRequestState.sent);
+    expect(history.single.recipient, 'Wychowawca Testowy');
+    expect(history.single.subject, startsWith('Usprawiedliwienie'));
+    expect(history.single.recordIds, isNotEmpty);
     await tester.pumpWidget(const SizedBox.shrink());
+  });
+
+  test('a note is not sure until it went, and counts as sent either way, so '
+      'it is not sent twice', () async {
+    final (controller, _) = await _app();
+    final record = controller.snapshot.attendance.first;
+    final id = controller.activeProfile!.id;
+    await controller.recordExcuse(
+      'r1',
+      [record],
+      subject: 'Usprawiedliwienie',
+      body: 'Treść',
+      recipient: 'Wychowawca Testowy',
+      sent: false,
+    );
+    expect(controller.excuseSentAt(record), isNotNull);
+    expect(
+      (await controller.absenceRequests(id)).single.state,
+      AbsenceRequestState.uncertain,
+    );
+    await controller.recordExcuse(
+      'r1',
+      [record],
+      subject: 'Usprawiedliwienie',
+      body: 'Treść',
+      recipient: 'Wychowawca Testowy',
+      sent: true,
+    );
+    final history = await controller.absenceRequests(id);
+    expect(history, hasLength(1), reason: 'the same note, now sent');
+    expect(history.single.state, AbsenceRequestState.sent);
   });
 
   testWidgets('the class teacher is found by the code of the group too', (

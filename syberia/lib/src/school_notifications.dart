@@ -10,6 +10,7 @@ import 'package:timezone/timezone.dart' as tz;
 
 import 'domain/models.dart';
 import 'domain/profiles.dart';
+import 'domain/parent.dart';
 import 'homework_done.dart';
 import 'l10n/app_localizations.dart';
 import 'test_reminders.dart';
@@ -84,13 +85,9 @@ int notificationId(SchoolNotificationCategory category, {int slot = 0}) =>
 /// The name in front of [profile]'s notifications: with more than one of
 /// [profiles] on the phone, or on a parent's profile, whose child it names.
 String? notificationName(SchoolProfile profile, List<SchoolProfile> profiles) =>
-    profiles.length > 1 || profile.usedBy == ProfileRole.parent
-    ? profile.displayName
+    profiles.length > 1 || profile.role == ProfileRole.parent
+    ? profile.notificationName
     : null;
-
-/// The id of the evening summary of the profile in [slot], after the
-/// categories' own.
-int digestNotificationId({int slot = 0}) => 9 + slot * 10;
 
 /// One profile's data for the test reminders. [name] goes in front of the
 /// titles when the phone has more than one profile.
@@ -133,44 +130,22 @@ class SchoolNotificationSettings {
     this.reminders = const TestReminderSettings(),
     this.attendanceKinds = const {...AttendanceKind.values},
     this.timetableChanges = const {...TimetableChange.values},
-    this.quietHours = false,
-    this.quietFromMinutes = 21 * 60,
-    this.quietToMinutes = 7 * 60,
-    this.digest = false,
-    this.digestMinutes = 19 * 60,
   });
 
   /// What a parent hears of: grades, absences and lateness, notes,
-  /// messages, announcements, events and lessons that do not take place; no
-  /// homework and no test reminders, and nothing loud at night.
+  /// messages, announcements and lessons that do not take place; no events,
+  /// no homework and no test reminders. The same as
+  /// [SchoolNotifications.settingsForProfile] gives a parent who chose
+  /// nothing yet.
   static const parentDefaults = SchoolNotificationSettings(
-    categories: {SchoolNotificationCategory.homework: false},
+    categories: {
+      SchoolNotificationCategory.events: false,
+      SchoolNotificationCategory.homework: false,
+    },
     reminders: TestReminderSettings(evening: false),
     attendanceKinds: {AttendanceKind.absent, AttendanceKind.late},
-    timetableChanges: {TimetableChange.cancelled, TimetableChange.moved},
-    quietHours: true,
+    timetableChanges: {TimetableChange.cancelled},
   );
-
-  /// Whether notifications come without sound between [quietFromMinutes]
-  /// and [quietToMinutes], minutes after midnight.
-  final bool quietHours;
-  final int quietFromMinutes;
-  final int quietToMinutes;
-
-  /// Whether the news of a day comes as one summary per profile at
-  /// [digestMinutes] instead of a notification each.
-  final bool digest;
-  final int digestMinutes;
-
-  /// Whether a notification at [now] comes without sound. The hours may
-  /// run past midnight, as from 21:00 to 7:00.
-  bool isQuiet(DateTime now) {
-    if (!quietHours || quietFromMinutes == quietToMinutes) return false;
-    final minutes = now.hour * 60 + now.minute;
-    return quietFromMinutes < quietToMinutes
-        ? minutes >= quietFromMinutes && minutes < quietToMinutes
-        : minutes >= quietFromMinutes || minutes < quietToMinutes;
-  }
 
   final bool enabled;
   final Map<SchoolNotificationCategory, bool> categories;
@@ -236,11 +211,6 @@ class SchoolNotificationSettings {
     TestReminderSettings? reminders,
     Set<AttendanceKind>? attendanceKinds,
     Set<TimetableChange>? timetableChanges,
-    bool? quietHours,
-    int? quietFromMinutes,
-    int? quietToMinutes,
-    bool? digest,
-    int? digestMinutes,
   }) => SchoolNotificationSettings(
     enabled: enabled ?? this.enabled,
     categories: category == null
@@ -249,11 +219,6 @@ class SchoolNotificationSettings {
     reminders: reminders ?? this.reminders,
     attendanceKinds: attendanceKinds ?? this.attendanceKinds,
     timetableChanges: timetableChanges ?? this.timetableChanges,
-    quietHours: quietHours ?? this.quietHours,
-    quietFromMinutes: quietFromMinutes ?? this.quietFromMinutes,
-    quietToMinutes: quietToMinutes ?? this.quietToMinutes,
-    digest: digest ?? this.digest,
-    digestMinutes: digestMinutes ?? this.digestMinutes,
   );
 }
 
@@ -263,8 +228,7 @@ abstract class SchoolNotificationPresenter {
 
   /// Shows a notification of [category]. [id] replaces an earlier one with
   /// the same number; [target] is what a tap opens; [channelName] names the
-  /// category in the system settings. Each falls back to the category. A
-  /// [silent] one comes without sound or vibration.
+  /// category in the system settings. Each falls back to the category.
   Future<void> show({
     required SchoolNotificationCategory category,
     required String title,
@@ -272,7 +236,6 @@ abstract class SchoolNotificationPresenter {
     int? id,
     NotificationTarget? target,
     String? channelName,
-    bool silent = false,
   });
 
   /// What the notification that opened the app points to, if one did.
@@ -290,8 +253,23 @@ abstract class SchoolNotificationPresenter {
   Future<List<String>> scheduledReminders();
 }
 
+/// Optional scheduling capability; simple desktop/test presenters remain valid.
+abstract interface class DeferredSchoolNotificationPresenter {
+  Future<void> defer({
+    required int id,
+    required String title,
+    required String body,
+    required DateTime at,
+    required NotificationTarget target,
+    required String channelName,
+  });
+  Future<void> cancelDeferred(int id);
+}
+
 class FlutterSchoolNotificationPresenter
-    implements SchoolNotificationPresenter {
+    implements
+        SchoolNotificationPresenter,
+        DeferredSchoolNotificationPresenter {
   final FlutterLocalNotificationsPlugin _plugin =
       FlutterLocalNotificationsPlugin();
   void Function(NotificationTarget)? _tapCallback;
@@ -382,7 +360,6 @@ class FlutterSchoolNotificationPresenter
     int? id,
     NotificationTarget? target,
     String? channelName,
-    bool silent = false,
   }) async {
     if (!_ready) return;
     final channel = channelName ?? title;
@@ -398,9 +375,43 @@ class FlutterSchoolNotificationPresenter
           channelDescription: 'SiberiaGB: $channel',
           importance: Importance.defaultImportance,
           priority: Priority.defaultPriority,
-          silent: silent,
         ),
-        iOS: DarwinNotificationDetails(presentSound: !silent),
+        iOS: const DarwinNotificationDetails(),
+      ),
+    );
+  }
+
+  @override
+  Future<void> cancelDeferred(int id) async {
+    if (_ready) await _plugin.cancel(id: id);
+  }
+
+  @override
+  Future<void> defer({
+    required int id,
+    required String title,
+    required String body,
+    required DateTime at,
+    required NotificationTarget target,
+    required String channelName,
+  }) async {
+    if (!_ready || !_canSchedule) return;
+    await _plugin.zonedSchedule(
+      id: id,
+      scheduledDate: tz.TZDateTime.from(at, tz.UTC),
+      title: title,
+      body: body,
+      payload: target.payload,
+      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+      notificationDetails: NotificationDetails(
+        android: AndroidNotificationDetails(
+          'siberiagb_parent',
+          channelName,
+          importance: Importance.defaultImportance,
+          priority: Priority.defaultPriority,
+          styleInformation: BigTextStyleInformation(body),
+        ),
+        iOS: const DarwinNotificationDetails(),
       ),
     );
   }
@@ -510,11 +521,14 @@ class SchoolNotificationService {
   SchoolNotificationService(
     this._presenter, {
     Future<SharedPreferences>? preferences,
-  }) : _preferences = preferences ?? SharedPreferences.getInstance();
+    DateTime Function()? clock,
+  }) : _clock = clock ?? DateTime.now,
+       _preferences = preferences ?? SharedPreferences.getInstance();
 
   static const _settingsPrefix = 'school_notifications_v1_';
   static const _seenPrefix = 'school_notifications_seen_v1_';
 
+  final DateTime Function() _clock;
   final SchoolNotificationPresenter _presenter;
   final Future<SharedPreferences> _preferences;
   Future<void> _reminderUpdates = Future.value();
@@ -584,12 +598,138 @@ class SchoolNotificationService {
         preferences.getStringList('${_settingsPrefix}timetable_changes'),
         TimetableChange.values,
       ),
-      quietHours: preferences.getBool('${_settingsPrefix}quiet_hours') ?? false,
-      quietFromMinutes: minutes('quiet_from_minutes') ?? 21 * 60,
-      quietToMinutes: minutes('quiet_to_minutes') ?? 7 * 60,
-      digest: preferences.getBool('${_settingsPrefix}digest') ?? false,
-      digestMinutes: minutes('digest_minutes') ?? 19 * 60,
     );
+  }
+
+  /// Parent defaults apply only to choices the user has not saved explicitly.
+  Future<SchoolNotificationSettings> settingsForProfile(
+    SchoolProfile? profile,
+  ) async {
+    final settings = await loadSettings();
+    if (profile?.role != ProfileRole.parent) return settings;
+    final prefs = await _preferences;
+    return SchoolNotificationSettings(
+      enabled: settings.enabled,
+      categories: {
+        for (final category in SchoolNotificationCategory.values)
+          category:
+              prefs.getBool('$_settingsPrefix${category.name}') ??
+              (category != SchoolNotificationCategory.events &&
+                  category != SchoolNotificationCategory.homework),
+      },
+      attendanceKinds: prefs.containsKey('${_settingsPrefix}attendance_kinds')
+          ? settings.attendanceKinds
+          : {AttendanceKind.absent, AttendanceKind.late},
+      timetableChanges: prefs.containsKey('${_settingsPrefix}timetable_changes')
+          ? settings.timetableChanges
+          : {TimetableChange.cancelled},
+      reminders: settings.reminders.copyWith(
+        evening: prefs.getBool('${_settingsPrefix}reminder_evening') ?? false,
+        morning: prefs.getBool('${_settingsPrefix}reminder_morning') ?? false,
+        homework: prefs.getBool('${_settingsPrefix}reminder_homework') ?? false,
+      ),
+    );
+  }
+
+  Future<void> cancelParentSchedules(SchoolProfile? profile) async {
+    if (profile == null) return;
+    final presenter = _presenter;
+    if (presenter is! DeferredSchoolNotificationPresenter) return;
+    for (final id in [
+      5000 + profile.slot,
+      for (var i = 0; i < 8; i++) 3000 + profile.slot * 10 + i,
+    ]) {
+      await (presenter as DeferredSchoolNotificationPresenter).cancelDeferred(
+        id,
+      );
+    }
+  }
+
+  Future<void> _parentDigest(
+    SchoolProfile profile,
+    Map<SchoolNotificationCategory, int> changes,
+    AppLocalizations translations,
+    bool enabled,
+  ) async {
+    if (profile.role != ProfileRole.parent ||
+        !profile.parentPreferences.digest ||
+        !enabled) {
+      return;
+    }
+    final prefs = await _preferences;
+    final now = _clock();
+    final config = profile.parentPreferences;
+    String dayOf(DateTime value) => '${value.year}-${value.month}-${value.day}';
+    final key = 'parent_digest_v1_${profile.id}';
+    final sentKey = '${key}_scheduled';
+    // The summary replaces the notifications, so what comes in after today's
+    // went out waits for tomorrow's instead of getting lost.
+    var due = DateTime(
+      now.year,
+      now.month,
+      now.day,
+      config.digestAt ~/ 60,
+      config.digestAt % 60,
+    );
+    if (!now.isBefore(due) && prefs.getString(sentKey) == dayOf(due)) {
+      due = DateTime(due.year, due.month, due.day + 1, due.hour, due.minute);
+    }
+    final day = dayOf(due);
+    Map<String, dynamic> saved = {};
+    try {
+      saved = jsonDecode(prefs.getString(key) ?? '{}') as Map<String, dynamic>;
+    } on Object {
+      /* Ignore a corrupt optional digest cache. */
+    }
+    final counts = <String, int>{};
+    if (saved['day'] == day && saved['counts'] is Map) {
+      for (final entry in (saved['counts'] as Map).entries) {
+        if (entry.key is String && entry.value is int) {
+          counts[entry.key as String] = entry.value as int;
+        }
+      }
+    }
+    for (final entry in changes.entries) {
+      counts[entry.key.name] = (counts[entry.key.name] ?? 0) + entry.value;
+    }
+    await prefs.setString(key, jsonEncode({'day': day, 'counts': counts}));
+    if (counts.isEmpty) return;
+    // Late for its time, it comes now, or when the quiet hours end.
+    final delivery = config.nextAllowed(now.isBefore(due) ? due : now);
+    final body = counts.entries
+        .where((entry) => entry.value > 0)
+        .map(
+          (entry) =>
+              '${translations.text('notification_${entry.key}')}: ${entry.value}',
+        )
+        .join(' · ');
+    final title =
+        '${profile.notificationName} · ${translations.text('parentDigest')}';
+    final target = NotificationTarget(
+      SchoolNotificationCategory.grades,
+      profileId: profile.id,
+    );
+    final presenter = _presenter;
+    if (now.isBefore(delivery)) {
+      if (presenter is! DeferredSchoolNotificationPresenter) return;
+      await (presenter as DeferredSchoolNotificationPresenter).defer(
+        id: 5000 + profile.slot,
+        title: title,
+        body: body,
+        at: delivery,
+        target: target,
+        channelName: translations.text('parentDigest'),
+      );
+    } else {
+      await _presenter.show(
+        category: SchoolNotificationCategory.grades,
+        id: 5000 + profile.slot,
+        title: title,
+        body: body,
+        target: target,
+      );
+    }
+    await prefs.setString(sentKey, day);
   }
 
   /// The saved choice, or all of [values] when nothing was saved yet.
@@ -637,23 +777,6 @@ class SchoolNotificationService {
     await preferences.setStringList('${_settingsPrefix}timetable_changes', [
       for (final change in settings.timetableChanges) change.name,
     ]);
-    await preferences.setBool(
-      '${_settingsPrefix}quiet_hours',
-      settings.quietHours,
-    );
-    await preferences.setInt(
-      '${_settingsPrefix}quiet_from_minutes',
-      settings.quietFromMinutes,
-    );
-    await preferences.setInt(
-      '${_settingsPrefix}quiet_to_minutes',
-      settings.quietToMinutes,
-    );
-    await preferences.setBool('${_settingsPrefix}digest', settings.digest);
-    await preferences.setInt(
-      '${_settingsPrefix}digest_minutes',
-      settings.digestMinutes,
-    );
   }
 
   /// Schedules the reminders for the tests in [snapshot] with the saved
@@ -678,14 +801,14 @@ class SchoolNotificationService {
     List<ReminderSource> sources,
     DateTime? now,
   ) async {
-    final settings = await loadSettings();
     final translations = await _translations();
     final preferences = await _preferences;
     final reminders = <TestReminder>[];
     for (final source in sources) {
+      final settings = await settingsForProfile(source.profile);
       final snapshot = source.snapshot;
       final signedIn =
-          snapshot.profile.provider == 'Librus Synergia' &&
+          snapshot.profile.connected &&
           snapshot.lastSync.millisecondsSinceEpoch != 0;
       if (!signedIn || !settings.remindersOn) continue;
       final profile = source.profile;
@@ -696,7 +819,9 @@ class SchoolNotificationService {
             ? HomeworkDoneStore.key
             : HomeworkDoneStore.keyFor(profile.id),
       );
-      final name = source.name;
+      final name = profile?.role == ProfileRole.parent
+          ? profile!.notificationName
+          : source.name;
       for (final reminder in buildTestReminders(
         snapshot.events.where(
           (event) =>
@@ -749,13 +874,13 @@ class SchoolNotificationService {
     bool quiet = false,
     DateTime? now,
   }) async {
-    if (snapshot.profile.provider != 'Librus Synergia' ||
+    if (!snapshot.profile.connected ||
         snapshot.lastSync.millisecondsSinceEpoch == 0) {
       return false;
     }
     final preferences = await _preferences;
     await preferences.reload();
-    final settings = await loadSettings();
+    final settings = await settingsForProfile(profile);
     // Before profiles, what was seen was kept by the student's id; it moves
     // to the profile's own key.
     final studentKey = '$_seenPrefix${snapshot.profile.id}';
@@ -786,13 +911,11 @@ class SchoolNotificationService {
     // kind inside it, never replays its entire history.
     await preferences.setString(seenKey, jsonEncode(updated));
     if (seenKey != studentKey) await preferences.remove(studentKey);
-    if (quiet) return false;
-    final at = now ?? DateTime.now();
-    final silent = settings.isQuiet(at);
-    // Summed up in the evening instead, when the user wants it so.
-    final summary = settings.digest && profile != null
-        ? _readDigest(preferences, profile.id)
-        : null;
+    if (quiet || !settings.enabled) {
+      await cancelParentSchedules(profile);
+      return false;
+    }
+    final dailyChanges = <SchoolNotificationCategory, int>{};
     var found = false;
     for (final category in SchoolNotificationCategory.values) {
       final items = [
@@ -801,8 +924,10 @@ class SchoolNotificationService {
       ];
       if (!settings.allows(category) || items.isEmpty) continue;
       found = true;
-      if (summary != null) {
-        summary[category.name] = (summary[category.name] ?? 0) + items.length;
+      dailyChanges[category] = items.length;
+      // With the evening summary on, a parent hears of it only there.
+      if (profile?.role == ProfileRole.parent &&
+          profile!.parentPreferences.digest) {
         continue;
       }
       final title = translations.text('notification_${category.name}');
@@ -810,113 +935,68 @@ class SchoolNotificationService {
           ? items.single.body
           : translations.plural(items.length, 'newEntries');
       try {
+        final ownerName = profile?.role == ProfileRole.parent
+            ? profile!.notificationName
+            : name;
+        final notificationTitle = ownerName == null
+            ? title
+            : '$ownerName · $title';
+        if (profile?.role == ProfileRole.parent &&
+            profile!.parentPreferences.isQuiet(_clock())) {
+          final presenter = _presenter;
+          if (presenter is DeferredSchoolNotificationPresenter) {
+            final release = profile.parentPreferences.nextAllowed(_clock());
+            final pendingKey = 'parent_quiet_v1_${profile.id}_${category.name}';
+            final releaseKey =
+                '${release.year}-${release.month}-${release.day}';
+            final previousRelease = preferences.getString(
+              '${pendingKey}_release',
+            );
+            final total =
+                (previousRelease == releaseKey
+                    ? preferences.getInt(pendingKey) ?? 0
+                    : 0) +
+                items.length;
+            await preferences.setInt(pendingKey, total);
+            await preferences.setString('${pendingKey}_release', releaseKey);
+            await (presenter as DeferredSchoolNotificationPresenter).defer(
+              id: 3000 + profile.slot * 10 + category.index,
+              title: notificationTitle,
+              body: total == 1
+                  ? body
+                  : translations.plural(total, 'newEntries'),
+              at: release,
+              target: NotificationTarget(category, profileId: profile.id),
+              channelName: title,
+            );
+          }
+          continue;
+        }
         await _presenter.show(
           category: category,
-          title: name == null ? title : '$name · $title',
+          title: notificationTitle,
           body: body,
           id: notificationId(category, slot: profile?.slot ?? 0),
           target: NotificationTarget(category, profileId: profile?.id),
           channelName: title,
-          silent: silent,
         );
       } on Object {
         // Notification delivery is best effort; synchronization still succeeds.
       }
     }
-    if (summary != null && summary.isNotEmpty) {
-      await preferences.setString(
-        '$_digestPrefix${profile!.id}',
-        jsonEncode({'day': _day(at), 'counts': summary}),
-      );
-    }
-    return found;
-  }
-
-  static const _digestPrefix = 'school_notifications_digest_v1_';
-
-  static String _day(DateTime value) =>
-      '${value.year}-${value.month}-${value.day}';
-
-  /// The counts of the day's news kept for the summary of [profileId]; a
-  /// summary of an earlier day not delivered yet goes on.
-  Map<String, int> _readDigest(
-    SharedPreferences preferences,
-    String profileId,
-  ) {
-    final raw = preferences.getString('$_digestPrefix$profileId');
-    if (raw == null) return {};
-    try {
-      final data = jsonDecode(raw) as Map<String, dynamic>;
-      return {
-        for (final MapEntry(:key, :value)
-            in (data['counts'] as Map<String, dynamic>).entries)
-          if (value is int) key: value,
-      };
-    } on Object {
-      return {};
-    }
-  }
-
-  /// Shows the evening summary of each of [profiles] whose time has come:
-  /// once [SchoolNotificationSettings.digestMinutes] passed on its day, on
-  /// any later day, or at once when summaries were turned off meanwhile.
-  /// [name] goes in front of the title, as in the other notifications.
-  Future<void> deliverDigests(
-    Iterable<SchoolProfile> profiles, {
-    String? Function(SchoolProfile profile)? name,
-    DateTime? now,
-  }) async {
-    final preferences = await _preferences;
-    await preferences.reload();
-    final settings = await loadSettings();
-    final at = now ?? DateTime.now();
-    final minutes = at.hour * 60 + at.minute;
-    AppLocalizations? translations;
-    for (final profile in profiles) {
-      final key = '$_digestPrefix${profile.id}';
-      final raw = preferences.getString(key);
-      if (raw == null) continue;
-      Map<String, dynamic> data;
+    if (profile != null) {
       try {
-        data = jsonDecode(raw) as Map<String, dynamic>;
-      } on Object {
-        await preferences.remove(key);
-        continue;
-      }
-      final due =
-          !settings.digest ||
-          data['day'] != _day(at) ||
-          minutes >= settings.digestMinutes;
-      if (!due) continue;
-      await preferences.remove(key);
-      final counts = data['counts'];
-      if (counts is! Map) continue;
-      translations ??= await _translations();
-      final parts = [
-        for (final category in SchoolNotificationCategory.values)
-          if (counts[category.name] case final int count when count > 0)
-            (
-              category,
-              '${translations.text('notification_${category.name}')} $count',
-            ),
-      ];
-      if (parts.isEmpty) continue;
-      final title = translations.text('digestTitle');
-      final who = name?.call(profile);
-      try {
-        await _presenter.show(
-          category: parts.first.$1,
-          title: who == null ? title : '$who · $title',
-          body: parts.map((part) => part.$2).join(' · '),
-          id: digestNotificationId(slot: profile.slot),
-          target: NotificationTarget(parts.first.$1, profileId: profile.id),
-          channelName: title,
-          silent: settings.isQuiet(at),
+        await _parentDigest(
+          profile,
+          dailyChanges,
+          translations,
+          settings.enabled,
         );
       } on Object {
-        // Best effort, as the other notifications.
+        /* Scheduling does not fail a successful sync. */
       }
     }
+    return found;
   }
 
   Map<String, List<String>>? _readSeen(String? raw) {

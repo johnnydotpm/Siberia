@@ -1,8 +1,24 @@
-# SiberiaGB
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/banner-dark.svg">
+    <img src=".github/banner-light.svg" alt="SiberiaGB" width="100%">
+  </picture>
+</p>
 
 **Polski** | [English](README.en.md) | [Русский](README.ru.md)
 
 SiberiaGB to w pełni funkcjonalny, wieloplatformowy klient Librus napisany w frameworku [Flutter](https://flutter.dev/).
+
+<!-- download-badges:start -->
+<p align="center">
+  <a href="https://github.com/johnnydotpm/Siberia/releases/download/v1.4.0/SiberiaGB-1.4.0-Android.apk"><img src=".github/badges/download-apk.svg" alt="Download APK for Android" width="240" height="72"></a>
+  <a href="https://github.com/johnnydotpm/Siberia/releases/download/v1.4.0/SiberiaGB-1.4.0-iOS.ipa"><img src=".github/badges/download-ipa.svg" alt="Download IPA for iOS" width="240" height="72"></a>
+</p>
+<!-- download-badges:end -->
+
+Tryb rodzica jest dobierany z rodzaju konta Librus; można zmienić rolę interfejsu w ustawieniach profilu bez zmiany konta pocztowego. Panel rodzica pokazuje dzieci, koniec lekcji i nieusprawiedliwione nieobecności. Prośbę o usprawiedliwienie można przygotować w sekcji Frekwencja, sprawdzić w podglądzie i wysłać do samodzielnie wybranego wychowawcy. Historia rozróżnia wysłanie wiadomości od akceptacji szkoły; NB zmienia się na U dopiero po synchronizacji danych ze szkołą. Domyślne godziny ciszy to 21:00–07:00, a podsumowania — 19:00; telefon może opóźnić zaplanowane powiadomienia. Integracja z osobnym modułem e-Usprawiedliwień wymaga jeszcze zweryfikowania protokołu.
+
+Librus jest wbudowanym pluginem i korzysta z tego samego interfejsu co pozostałe dzienniki. Fryderyk i MobiReg są dostępne jako pobierane pluginy w [`/plugins/`](plugins/README.md), wybierane na ekranie logowania. Obsługiwane funkcje i ograniczenia wersji 0.1 opisano przy każdym pluginie; protokoły sprawdzono na danych syntetycznych, bez kont szkolnych.
 
 ## Funkcje
 
@@ -115,8 +131,8 @@ Gotowa aplikacja znajduje się w `build/linux/x64/release/bundle`.
 - Rozszerzenie testów jednostkowych i integracyjnych na urządzeniach
 - Dalsze usprawnienia dostępności interfejsu
 - Podział `lib/src/ui/app_shell.dart` na osobne pliki ekranów
-- Dodatkowe style aplikacji, w tym frutiger aero, minimal, skeuomorphism
 - Więcej języków
+- Wsparcie dla innych dzienników elektronicznych m.in. MobiReg, Fryderyk, Vulcan, MobiDziennik i Prymus
 
 ## Licencja i podziękowania
 

@@ -29,15 +29,33 @@ class _Settings extends StatelessWidget {
       padding: const EdgeInsets.all(_Space.page),
       children: [
         _SettingsProfile(controller),
-        if (controller.parentView)
+        if (controller.activeProfile != null)
+          _SettingsSection(
+            title: context.tr('profileRole'),
+            children: [
+              ListTile(
+                key: const ValueKey('settings-parent'),
+                leading: const _SettingsIcon(Icons.family_restroom_rounded),
+                title: Text(context.tr('parentSettings')),
+                onTap: () => _showParentSettings(context, controller),
+              ),
+            ],
+          ),
+        if (controller.isParent)
           _SettingsSection(
             title: context.tr('settingsChildren'),
             children: [_ChildRows(controller)],
           ),
-        if (controller.parentView)
+        if (controller.isParent)
           _SettingsSection(
             title: context.tr('excuseSettings'),
             children: [
+              ListTile(
+                key: const ValueKey('settings-absence-requests'),
+                title: Text(context.tr('absenceRequests')),
+                leading: const _SettingsIcon(Icons.fact_check_outlined),
+                onTap: () => _showAbsenceRequests(context, controller),
+              ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
                 child: TextFormField(
@@ -807,28 +825,34 @@ Future<void> _confirmResetSettings(
       .showSnackBar(SnackBar(content: Text(context.tr('resetSettingsDone'))));
 }
 
-/// The three tabs beside Today on the bottom bar.
+/// The three tabs beside Today on the bottom bar of [profile], by default
+/// the open one.
 Future<void> _showBottomTabsSheet(
   BuildContext context,
-  AppController controller,
-) => showAppSheet<void>(
+  AppController controller, {
+  SchoolProfile? profile,
+}) => showAppSheet<void>(
   context: context,
   useSafeArea: true,
   isScrollControlled: true,
   showDragHandle: true,
-  builder: (_) => _BottomTabsSheet(controller),
+  builder: (_) =>
+      _BottomTabsSheet(controller, profile ?? controller.activeProfile),
 );
 
 class _BottomTabsSheet extends StatefulWidget {
-  const _BottomTabsSheet(this.controller);
+  const _BottomTabsSheet(this.controller, this.profile);
   final AppController controller;
+  final SchoolProfile? profile;
 
   @override
   State<_BottomTabsSheet> createState() => _BottomTabsSheetState();
 }
 
 class _BottomTabsSheetState extends State<_BottomTabsSheet> {
-  late final Set<int> chosen = {...widget.controller.bottomTabs.skip(1)};
+  late final Set<int> chosen = {
+    ...widget.controller.bottomTabsOf(widget.profile).skip(1),
+  };
 
   @override
   Widget build(BuildContext context) => ListView(
@@ -869,7 +893,13 @@ class _BottomTabsSheetState extends State<_BottomTabsSheet> {
         style: _wideButton,
         onPressed: chosen.length == 3
             ? () {
-                widget.controller.setBottomTabs([...chosen]);
+                final profile = widget.profile;
+                if (profile != null) {
+                  widget.controller.setBottomTabs(profile.id, [
+                    0,
+                    ...(chosen.toList()..sort()),
+                  ]);
+                }
                 Navigator.pop(context);
               }
             : null,

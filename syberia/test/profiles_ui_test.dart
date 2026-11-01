@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syberia/src/app.dart';
 import 'package:syberia/src/data/app_repository.dart';
 import 'package:syberia/src/domain/models.dart';
+import 'package:syberia/src/domain/parent.dart';
 import 'package:syberia/src/domain/profiles.dart';
 import 'package:syberia/src/state/app_controller.dart';
 import 'package:syberia/src/ui/glass/glass_items.dart';
@@ -257,8 +258,8 @@ void main() {
 
     final added = controller.profiles.single;
     expect(added.synergiaLogin, 'child-parent');
-    expect(added.usedBy, ProfileRole.parent);
-    expect(controller.parentView, isTrue);
+    expect(added.role, ProfileRole.parent);
+    expect(controller.isParent, isTrue);
     expect(find.text('Connect Librus account'), findsNothing);
     expect(tester.takeException(), isNull);
     await tester.pumpWidget(const SizedBox.shrink());

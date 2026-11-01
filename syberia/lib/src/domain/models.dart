@@ -47,22 +47,27 @@ class StudentProfile {
     required this.name,
     required this.school,
     required this.provider,
+    this.pluginId,
   });
   final String id;
   final String name;
   final String school;
   final String provider;
+  final String? pluginId;
+  bool get connected => provider == 'Librus Synergia' || pluginId != null;
   Map<String, Object?> toJson() => {
     'id': id,
     'name': name,
     'school': school,
     'provider': provider,
+    if (pluginId != null) 'pluginId': pluginId,
   };
   factory StudentProfile.fromJson(Map<String, Object?> json) => StudentProfile(
     id: json['id']! as String,
     name: json['name']! as String,
     school: json['school']! as String,
     provider: json['provider']! as String,
+    pluginId: json['pluginId'] as String?,
   );
 }
 
@@ -135,6 +140,8 @@ class Grade {
     required this.weight,
     required this.semester,
     this.category = '',
+    this.countsToAverage = true,
+    this.assessment = 'current',
     this.previousGrades = const [],
     this.source,
   });
@@ -146,6 +153,8 @@ class Grade {
   final double weight;
   final int semester;
   final String category;
+  final bool countsToAverage;
+  final String assessment;
 
   /// Earlier grade records, ordered from oldest to newest.
   final List<Grade> previousGrades;
@@ -177,6 +186,8 @@ class Grade {
     weight: weight,
     semester: semester,
     category: category,
+    countsToAverage: countsToAverage,
+    assessment: assessment,
     previousGrades: previousGrades ?? this.previousGrades,
     source: source,
   );
@@ -337,8 +348,10 @@ class MessageRecipient {
     required this.name,
     required this.group,
     this.groupId = '',
+    this.owner,
   });
-  final int id;
+  final Object id;
+  final String? owner;
   final String name;
 
   /// The group's name, as Librus shows it ("Nauczyciele").
@@ -545,7 +558,11 @@ class GradeAverageSettings {
     var sum = 0.0;
     var total = 0.0;
     for (final grade in grades) {
-      if (grade.weight <= 0) continue;
+      if (grade.weight <= 0 ||
+          !grade.countsToAverage ||
+          grade.assessment != 'current') {
+        continue;
+      }
       final value = valueOf(grade.value);
       if (value == null) continue;
       final weight = weighted ? grade.weight : 1.0;
@@ -807,10 +824,16 @@ class AppSnapshot {
     required this.notices,
     required this.lastSync,
     this.messagesError,
+    this.providerData = const {},
+    this.moduleErrors = const {},
+    this.attendanceComplete = true,
     this.sentMessages = const [],
     this.freeDays = const [],
   });
   final StudentProfile profile;
+  final Map<String, Object?> providerData;
+  final Map<String, String> moduleErrors;
+  final bool attendanceComplete;
   final List<Lesson> lessons;
   final List<Grade> grades;
   final List<SchoolEvent> events;
@@ -843,6 +866,9 @@ class AppSnapshot {
     DateTime? lastSync,
   }) => AppSnapshot(
     profile: profile,
+    providerData: providerData,
+    moduleErrors: moduleErrors,
+    attendanceComplete: attendanceComplete,
     lessons: lessons ?? this.lessons,
     grades: grades,
     events: events ?? this.events,

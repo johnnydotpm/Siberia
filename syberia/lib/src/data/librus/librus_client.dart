@@ -10,21 +10,13 @@ import 'package:html/parser.dart' as html_parser;
 import '../../debug/diagnostics.dart';
 import '../../domain/librus_error.dart';
 import '../../domain/models.dart';
+import '../../domain/diary_part.dart';
 import '../../domain/stable_hash.dart';
 import 'librus_logins.dart';
 import 'reference_cache.dart';
 
-/// The parts of a snapshot a sync can be limited to.
-enum LibrusPart {
-  grades,
-  timetable,
-  events,
-  homework,
-  attendance,
-  announcements,
-  notices,
-  messages,
-}
+/// Compatibility name retained for existing callers.
+typedef LibrusPart = DiaryPart;
 
 /// Portal-backed Synergia access and web mailbox sessions. Token and session
 /// lifetimes follow Szkolny.eu: six hours for API access and 45 minutes for web.
@@ -2030,6 +2022,7 @@ _ParsedSnapshot _parseSnapshot(_SnapshotInput input) {
       name: profileName.isEmpty ? 'Użytkownik Librus' : profileName,
       school: _schoolName(school),
       provider: 'Librus Synergia',
+      pluginId: 'librus',
     ),
     lessons: LibrusClient._parseTimetable(
       data[1],

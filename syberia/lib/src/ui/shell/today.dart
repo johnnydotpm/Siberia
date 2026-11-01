@@ -110,6 +110,20 @@ class _TodayState extends State<_Today> {
       child: _PageList(
         padding: const EdgeInsets.all(_Space.page),
         children: [
+          if (controller.snapshot.moduleErrors.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 16),
+              child: Text(
+                context.trArgs('pluginSyncIssues', {
+                  'modules': controller.snapshot.moduleErrors.keys
+                      .map(
+                        (key) =>
+                            context.tr(key == 'timetable' ? 'timetable' : key),
+                      )
+                      .join(', '),
+                }),
+              ),
+            ),
           if (controller.updateAvailable) ...[
             _UpdateBanner(controller),
             const SizedBox(height: _Space.card),
@@ -266,7 +280,7 @@ class _TodayState extends State<_Today> {
           key: const ValueKey('today-messages'),
         );
       case TodayBlock.toExcuse:
-        if (!controller.parentView) return null;
+        if (!controller.isParent) return null;
         final absences = _absencesToExcuse(data, now);
         final waiting = [
           for (final record in absences)
@@ -348,7 +362,7 @@ class _TodayState extends State<_Today> {
           key: const ValueKey('today-to-excuse'),
         );
       case TodayBlock.notices:
-        if (!controller.parentView) return null;
+        if (!controller.isParent) return null;
         final since = today.subtract(const Duration(days: 14));
         final recent =
             data.notices.where((item) => !item.date.isBefore(since)).toList()
@@ -361,7 +375,7 @@ class _TodayState extends State<_Today> {
           key: const ValueKey('today-notices'),
         );
       case TodayBlock.meetings:
-        if (!controller.parentView) return null;
+        if (!controller.isParent) return null;
         final until = today.add(const Duration(days: 30));
         final meetings =
             data.events
@@ -497,7 +511,7 @@ class _NowCard extends StatelessWidget {
 
     // The line at the bottom: what follows.
     String? footer;
-    if (current != null && controller.parentView) {
+    if (current != null && controller.isParent) {
       // A parent wants to know when the day ends, more than what is next.
       final last = laterToday.lastOrNull ?? current;
       footer = context.trArgs('todayLessonsUntil', {
@@ -889,12 +903,12 @@ Future<void> _showTodayLayoutSheet(
     listenable: controller,
     builder: (context, _) {
       final layout = controller.todayLayout;
-      final defaults = controller.parentView
+      final defaults = controller.isParent
           ? TodayLayout.parentDefaults
           : TodayLayout.defaults;
       // A student's Today has no parent's blocks to arrange.
       bool shown(TodayBlock block) =>
-          controller.parentView || !TodayBlock.parents.contains(block);
+          controller.isParent || !TodayBlock.parents.contains(block);
       void update(List<({TodayBlock block, bool visible})> blocks) =>
           controller.setTodayLayout(TodayLayout(List.unmodifiable(blocks)));
       return SafeArea(

@@ -1,8 +1,24 @@
-# SiberiaGB
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/banner-dark.svg">
+    <img src=".github/banner-light.svg" alt="SiberiaGB" width="100%">
+  </picture>
+</p>
 
 [Polski](README.md) | **English** | [Русский](README.ru.md)
 
 SiberiaGB is a fully functional, cross-platform Librus client written using the [Flutter](https://flutter.dev/) framework.
+
+<!-- download-badges:start -->
+<p align="center">
+  <a href="https://github.com/johnnydotpm/Siberia/releases/download/v1.4.0/SiberiaGB-1.4.0-Android.apk"><img src=".github/badges/download-apk.svg" alt="Download APK for Android" width="240" height="72"></a>
+  <a href="https://github.com/johnnydotpm/Siberia/releases/download/v1.4.0/SiberiaGB-1.4.0-iOS.ipa"><img src=".github/badges/download-ipa.svg" alt="Download IPA for iOS" width="240" height="72"></a>
+</p>
+<!-- download-badges:end -->
+
+Parent mode follows the Librus account type; the interface role can be changed in profile settings without changing its mailbox. The parent dashboard shows children, lesson end times and unexcused absences. In Attendance, select absences and a class teacher, preview the request and confirm before sending. Request history distinguishes sending mail from school approval: attendance changes only after school data is synced. Quiet hours default to 21:00–07:00 and summaries to 19:00; the operating system may delay scheduled notifications. Integration with the separate e-Usprawiedliwienia module still requires protocol verification.
+
+Librus is a bundled plugin using the same interface as the other diaries. Fryderyk and MobiReg are downloadable plugins in [`/plugins/`](plugins/README.md), selected on the login screen. Each adapter documents its 0.1 coverage and limitations; protocols were tested with synthetic responses, without school accounts.
 
 ## Features
 
@@ -115,7 +131,6 @@ The application will be in `build/linux/x64/release/bundle`.
 - Expand unit and on-device integration tests
 - Further accessibility improvements
 - Split `lib/src/ui/app_shell.dart` into separate screen files
-- Additional app styles, including frutiger aero, minimal, and skeuomorphism
 - More languages
 
 ## License and acknowledgements

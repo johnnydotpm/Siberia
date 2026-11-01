@@ -1,0 +1,9 @@
+{
+  "id": "librus",
+  "name": "Librus",
+  "apiVersion": 1,
+  "distribution": "bundled",
+  "runtime": "flutter-aot",
+  "versionPolicy": "app",
+  "entrypoint": "package:syberia/src/data/librus/librus_plugin.dart"
+}

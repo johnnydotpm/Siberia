@@ -11,10 +11,9 @@ import 'package:syberia/src/test_reminders.dart';
 import 'support/profile_fakes.dart';
 
 class _Shown {
-  _Shown(this.title, this.body, this.silent, this.id);
+  _Shown(this.title, this.body, this.id);
   final String title;
   final String body;
-  final bool silent;
   final int? id;
 }
 
@@ -35,8 +34,7 @@ class _Presenter implements SchoolNotificationPresenter {
     int? id,
     NotificationTarget? target,
     String? channelName,
-    bool silent = false,
-  }) async => shown.add(_Shown(title, body, silent, id));
+  }) async => shown.add(_Shown(title, body, id));
 
   @override
   Future<NotificationTarget?> launchTarget() async => null;
@@ -63,53 +61,6 @@ const _parent = SchoolProfile(
   slot: 2,
 );
 
-AppSnapshot _grades(List<String> ids, {List<String> notes = const []}) {
-  final base = studentSnapshot('s', 'x');
-  return AppSnapshot(
-    profile: base.profile,
-    lessons: const [],
-    grades: [
-      for (final id in ids)
-        Grade(
-          id: id,
-          subject: 'Matematyka',
-          value: '5',
-          description: '',
-          date: DateTime(2026, 10, 1),
-          weight: 1,
-          semester: 1,
-        ),
-    ],
-    events: const [],
-    messages: const [],
-    attendance: const [],
-    announcements: const [],
-    notices: [
-      for (final id in notes)
-        StudentNotice(
-          id: id,
-          text: 'Treść',
-          category: 'Uwaga',
-          teacher: 'Nauczyciel',
-          date: DateTime(2026, 10, 1),
-          tone: NoticeTone.negative,
-        ),
-    ],
-    lastSync: base.lastSync,
-  );
-}
-
-Future<SchoolNotificationService> _service(
-  _Presenter presenter,
-  SchoolNotificationSettings settings,
-) async {
-  final service = SchoolNotificationService(presenter);
-  await service.saveSettings(settings);
-  // What was there before is only seen, not told of.
-  await service.processSnapshot(_grades(['g0']), profile: _parent);
-  return service;
-}
-
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   setUp(() => SharedPreferences.setMockInitialValues({'app_locale_v1': 'en'}));
@@ -125,100 +76,6 @@ void main() {
     expect(notificationName(_parent, [_parent]), 'Uczeń Testowy');
     expect(notificationName(student, [student]), isNull);
     expect(notificationName(student, [student, _parent]), 'Uczeń Testowy');
-  });
-
-  test('quiet hours run past midnight, and nothing is quiet with them off', () {
-    const quiet = SchoolNotificationSettings(quietHours: true);
-    expect(quiet.isQuiet(DateTime(2026, 10, 1, 22, 30)), isTrue);
-    expect(quiet.isQuiet(DateTime(2026, 10, 1, 6, 59)), isTrue);
-    expect(quiet.isQuiet(DateTime(2026, 10, 1, 7)), isFalse);
-    expect(quiet.isQuiet(DateTime(2026, 10, 1, 12)), isFalse);
-    const day = SchoolNotificationSettings(
-      quietHours: true,
-      quietFromMinutes: 12 * 60,
-      quietToMinutes: 13 * 60,
-    );
-    expect(day.isQuiet(DateTime(2026, 10, 1, 12, 30)), isTrue);
-    expect(day.isQuiet(DateTime(2026, 10, 1, 22)), isFalse);
-    expect(
-      const SchoolNotificationSettings().isQuiet(DateTime(2026, 10, 1, 23)),
-      isFalse,
-    );
-  });
-
-  test('in quiet hours a notification comes without sound, by day with it, '
-      'and the settings keep the hours', () async {
-    final presenter = _Presenter();
-    final service = await _service(
-      presenter,
-      const SchoolNotificationSettings(
-        quietHours: true,
-        quietFromMinutes: 22 * 60,
-      ),
-    );
-    final saved = await service.loadSettings();
-    expect((saved.quietHours, saved.quietFromMinutes), (true, 22 * 60));
-
-    await service.processSnapshot(
-      _grades(['g0', 'g1']),
-      profile: _parent,
-      name: 'Uczeń Testowy',
-      now: DateTime(2026, 10, 1, 23),
-    );
-    await service.processSnapshot(
-      _grades(['g0', 'g1', 'g2']),
-      profile: _parent,
-      name: 'Uczeń Testowy',
-      now: DateTime(2026, 10, 2, 10),
-    );
-    expect(presenter.shown.map((shown) => shown.silent), [true, false]);
-    expect(presenter.shown.first.title, startsWith('Uczeń Testowy · '));
-  });
-
-  test('with the evening summary, the day\'s news comes once, as one '
-      'notification', () async {
-    final presenter = _Presenter();
-    final service = await _service(
-      presenter,
-      const SchoolNotificationSettings(digest: true),
-    );
-    await service.processSnapshot(
-      _grades(['g0', 'g1', 'g2']),
-      profile: _parent,
-      now: DateTime(2026, 10, 1, 10),
-    );
-    await service.processSnapshot(
-      _grades(['g0', 'g1', 'g2'], notes: ['n1']),
-      profile: _parent,
-      now: DateTime(2026, 10, 1, 14),
-    );
-    expect(presenter.shown, isEmpty, reason: 'kept for the evening');
-
-    String? name(SchoolProfile profile) => profile.displayName;
-    await service.deliverDigests(
-      [_parent],
-      name: name,
-      now: DateTime(2026, 10, 1, 18, 59),
-    );
-    expect(presenter.shown, isEmpty, reason: 'not yet 19:00');
-    await service.deliverDigests(
-      [_parent],
-      name: name,
-      now: DateTime(2026, 10, 1, 19, 5),
-    );
-    expect(presenter.shown, hasLength(1));
-    final summary = presenter.shown.single;
-    expect(summary.title, 'Uczeń Testowy · Summary of the day');
-    expect(summary.body, contains(' 2'));
-    expect(summary.body, contains(' · '));
-    expect(summary.id, digestNotificationId(slot: 2));
-
-    await service.deliverDigests(
-      [_parent],
-      name: name,
-      now: DateTime(2026, 10, 1, 20),
-    );
-    expect(presenter.shown, hasLength(1), reason: 'once');
   });
 
   test('"All" in the setup gives a parent what a parent hears of', () async {
@@ -239,7 +96,7 @@ void main() {
       notifications: SchoolNotificationService(_Presenter()),
     );
     await controller.bootstrap();
-    expect(controller.parentView, isTrue);
+    expect(controller.isParent, isTrue);
     await controller.useAllNotifications();
     final settings = controller.notificationSettings;
     expect(settings.isAllFor(parent: true), isTrue);
@@ -249,7 +106,7 @@ void main() {
       AttendanceKind.absent,
       AttendanceKind.late,
     });
-    expect(settings.quietHours, isTrue);
+    expect(settings.allows(SchoolNotificationCategory.events), isFalse);
     expect(settings.reminders.any, isFalse);
 
     await controller.switchProfile(
@@ -259,9 +116,8 @@ void main() {
     expect(controller.notificationSettings.everything, isTrue);
   });
 
-  testWidgets('the notification settings turn quiet hours and the summary on', (
-    tester,
-  ) async {
+  testWidgets('a parent\'s notification settings change the quiet hours and '
+      'the summary of the open profile', (tester) async {
     SharedPreferences.setMockInitialValues({
       'auto_sync_on_open_v1': false,
       'app_design_v1': 'classic',
@@ -269,13 +125,14 @@ void main() {
     });
     final world = FakeLibrusWorld()..syncedAt = DateTime.now;
     final repository = world.repository();
-    final found = await repository.signIn(username: familyEmail, password: 'x');
-    await repository.addProfiles([found.students.first]);
-    final service = SchoolNotificationService(_Presenter());
+    final found = await repository.signIn(username: parentEmail, password: 'x');
+    final added = await repository.addProfiles(found.students);
+    final parent = added.firstWhere((profile) => profile.parent);
+    await repository.switchProfile(parent.id);
     final controller = AppController(
       repository,
       updatesEnabled: false,
-      notifications: service,
+      notifications: SchoolNotificationService(_Presenter()),
     );
     await controller.bootstrap();
     controller.selectTab(9);
@@ -283,22 +140,39 @@ void main() {
     addTearDown(() => tester.binding.setSurfaceSize(null));
     await tester.pumpWidget(SyberiaApp(controller: controller));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Notifications').first);
+    // A parent's sections come first, so the row may start below the fold.
+    final row = find.byKey(const ValueKey('settings-notifications'));
+    await tester.scrollUntilVisible(
+      row,
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    // At the top, clear of the bottom bar, the tap lands on the row.
+    await tester.ensureVisible(row);
+    await tester.pumpAndSettle();
+    await tester.tap(row);
     await tester.pumpAndSettle();
 
+    // Quiet hours start on, the summary off.
     for (final key in ['notify-quiet', 'notify-digest']) {
       final tile = find.byKey(ValueKey(key));
-      await tester.ensureVisible(tile);
+      await tester.scrollUntilVisible(
+        tile,
+        200,
+        scrollable: find.byType(Scrollable).last,
+      );
       await tester.pumpAndSettle();
       await tester.tap(
         find.descendant(of: tile, matching: find.byType(Switch)),
       );
       await tester.pumpAndSettle();
     }
-    expect(controller.notificationSettings.quietHours, isTrue);
-    expect(controller.notificationSettings.digest, isTrue);
-    final saved = await service.loadSettings();
-    expect((saved.quietHours, saved.digest), (true, true));
+    final preferences = controller.profileOf(parent.id)!.parentPreferences;
+    expect((preferences.quiet, preferences.digest), (false, true));
+    final saved = (await repository.loadProfiles(reload: true))
+        .firstWhere((profile) => profile.id == parent.id)
+        .parentPreferences;
+    expect((saved.quiet, saved.digest), (false, true));
     expect(tester.takeException(), isNull);
     await tester.pumpWidget(const SizedBox.shrink());
   });

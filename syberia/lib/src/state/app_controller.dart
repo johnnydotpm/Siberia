@@ -6,10 +6,13 @@ import 'package:flutter/widgets.dart';
 import '../app_build_info.dart';
 import '../background_notifications.dart';
 import '../data/app_repository.dart';
+import '../data/diary_plugins.dart';
+import '../data/diary_plugin.dart';
 import '../debug/diagnostics.dart';
 import '../domain/librus_error.dart';
 import '../domain/models.dart';
 import '../domain/profiles.dart';
+import '../domain/parent.dart';
 import '../domain/sync_news.dart';
 import '../domain/together.dart';
 import '../domain/together.dart'
@@ -104,6 +107,150 @@ class AppController extends ChangeNotifier {
   String? _errorSource;
 
   AppSnapshot get snapshot => _snapshot!;
+  bool get isParent => together
+      ? togetherProfiles.isNotEmpty &&
+            togetherProfiles.every(
+              (profile) => profile.role == ProfileRole.parent,
+            )
+      : activeProfile?.role == ProfileRole.parent;
+  bool canUseStudentToolsFor(String? source) {
+    final profile = profileOf(source) ?? activeProfile;
+    return profile?.role != ProfileRole.parent ||
+        (profile?.parentPreferences.studentTools ?? false);
+  }
+
+  bool get canUseStudentTools =>
+      !isParent || (activeProfile?.parentPreferences.studentTools ?? false);
+
+  /// The bottom bar of the open profile: Today, then three tabs.
+  List<int> get bottomTabs => bottomTabsOf(activeProfile);
+
+  /// Today first, then up to three of the tabs [profile] keeps.
+  List<int> bottomTabsOf(SchoolProfile? profile) => [
+    0,
+    ...(profile?.bottomTabs ?? const [0, 1, 2, 5])
+        .where((tab) => tab > 0 && tab < 9)
+        .toSet()
+        .take(3),
+  ];
+
+  /// Who uses the profile [id]; null, or the one its account says, leaves
+  /// it to the account, so a role never goes stale.
+  Future<void> setProfileRole(String id, ProfileRole? role) async {
+    final profile = profileOf(id);
+    if (profile == null) return;
+    final own = profile.parent ? ProfileRole.parent : ProfileRole.student;
+    await notifications?.cancelParentSchedules(profile);
+    await _repository.setProfileRole(id, role == own ? null : role);
+    _profiles = _repository.profiles;
+    if (notifications != null) {
+      _notificationSettings = await notifications!.settingsForProfile(
+        activeProfile,
+      );
+    }
+    notifyListeners();
+    await _updateReminders();
+  }
+
+  Future<void> setParentPreferences(
+    String id,
+    ParentPreferences preferences,
+  ) async {
+    await _repository.setParentPreferences(id, preferences);
+    _profiles = _repository.profiles;
+    await notifications?.cancelParentSchedules(profileOf(id));
+    notifyListeners();
+    await _updateReminders();
+  }
+
+  Future<void> setBottomTabs(String id, List<int> tabs) async {
+    if (tabs.length != 4 ||
+        tabs.toSet().length != 4 ||
+        tabs.any((tab) => tab < 0 || tab >= 10)) {
+      return;
+    }
+    await _repository.setProfileTabs(id, tabs);
+    _profiles = _repository.profiles;
+    notifyListeners();
+  }
+
+  Future<AppSnapshot> absenceSnapshot(String id) =>
+      _repository.loadProfileSnapshot(id);
+  Future<List<AbsenceRequest>> absenceRequests(String id) =>
+      _repository.absenceRequests(id);
+  final _sendingAbsences = <String>{};
+  Future<void> sendAbsenceRequest({
+    required String profileId,
+    required Set<String> recordIds,
+    required MessageRecipient recipient,
+    required String subject,
+    required String body,
+  }) async {
+    final profile = profileOf(profileId);
+    if (profile == null ||
+        profile.role != ProfileRole.parent ||
+        recordIds.isEmpty ||
+        subject.trim().isEmpty ||
+        body.trim().isEmpty) {
+      throw ArgumentError('Invalid absence request');
+    }
+    if (!_sendingAbsences.add(profileId)) {
+      throw StateError('Sending in progress');
+    }
+    final requestId = '$profileId-${DateTime.now().microsecondsSinceEpoch}';
+    try {
+      final data = await _repository.loadProfileSnapshot(profileId);
+      final allowed = unexcusedAbsences(data.attendance)
+          .map((record) => record.id)
+          .toSet();
+      if (!allowed.containsAll(recordIds)) {
+        throw StateError('Attendance changed; refresh the selection');
+      }
+      final recipients = await _repository.fetchMessageRecipients(
+        profileId: profileId,
+      );
+      if (!recipients.any((item) => item.id == recipient.id) ||
+          !profiles.any((item) => item.id == profileId)) {
+        throw StateError('Recipient or profile no longer available');
+      }
+      final at = DateTime.now();
+      AbsenceRequest entry(AbsenceRequestState state, String messageId) =>
+          AbsenceRequest(
+            id: requestId,
+            profileId: profileId,
+            messageId: messageId,
+            at: at,
+            subject: subject,
+            body: body,
+            recipient: recipient.name,
+            recordIds: recordIds.toList(),
+            state: state,
+          );
+      // Persist uncertainty before the request: interruption must not invite an automatic resend.
+      await _repository.recordAbsenceRequest(
+        entry(AbsenceRequestState.uncertain, ''),
+      );
+      final message = await _repository.sendMessage(
+        recipients: [recipient],
+        subject: subject,
+        body: body,
+        profileId: profileId,
+      );
+      await _repository.recordAbsenceRequest(
+        entry(AbsenceRequestState.sent, message.id),
+      );
+      _absenceHistory[profileId] = await _repository.absenceRequests(profileId);
+      if (_together) {
+        _changePart(profileId, (snapshot) => snapshot.withSent(message));
+      } else if (activeProfile?.id == profileId) {
+        _snapshot = snapshot.withSent(message);
+      }
+      notifyListeners();
+    } finally {
+      _sendingAbsences.remove(profileId);
+    }
+  }
+
   bool get isDemo => _snapshot?.profile.provider == 'Demo';
 
   /// The login screen's hidden gesture enters a disposable local session.
@@ -128,8 +275,7 @@ class AppController extends ChangeNotifier {
   /// before the setup's own step explains it.
   bool get onboardingDone => _onboardingDone;
 
-  bool get _signedIn =>
-      isDemo || snapshot.profile.provider == 'Librus Synergia';
+  bool get _signedIn => isDemo || snapshot.profile.connected;
 
   /// Ends the setup and opens the app.
   Future<void> completeOnboarding() async {
@@ -274,7 +420,7 @@ class AppController extends ChangeNotifier {
   GradesView get gradesView => _gradesView;
   TodayLayout get todayLayout =>
       _todayLayout ??
-      (parentView ? TodayLayout.parentDefaults : TodayLayout.defaults);
+      (isParent ? TodayLayout.parentDefaults : TodayLayout.defaults);
 
   /// What the last sync brought, until it is seen or dismissed.
   SyncNews? get syncNews => _syncNews;
@@ -327,7 +473,7 @@ class AppController extends ChangeNotifier {
   /// account is signed in. The saved data stays on screen meanwhile.
   Future<void> startAutoSync() async {
     if (!_autoSyncOnOpen) return;
-    if (snapshot.profile.provider != 'Librus Synergia') return;
+    if (!snapshot.profile.connected) return;
     await sync();
   }
 
@@ -344,16 +490,22 @@ class AppController extends ChangeNotifier {
     _messageListStyle = await _repository.loadMessageListStyle();
     _gradesView = await _repository.loadGradesView();
     _todayLayout = await _repository.loadTodayLayout();
-    _bottomTabs = await _repository.loadBottomTabs();
     _excuseSignature = await _repository.loadExcuseSignature();
     _autoSyncOnOpen = await _repository.loadAutoSyncOnOpen();
     if (notifications != null) {
-      _notificationSettings = await notifications!.loadSettings();
+      _notificationSettings = await notifications!.settingsForProfile(
+        activeProfile,
+      );
     }
   }
 
   /// The settings each profile keeps for itself.
   Future<void> _loadProfileSettings() async {
+    if (notifications != null) {
+      _notificationSettings = await notifications!.settingsForProfile(
+        activeProfile,
+      );
+    }
     _gradeAverage = await _repository.loadGradeAverageSettings();
     _subjectShortNames = await _repository.loadSubjectShortNames();
     _doneHomework = await _repository.loadDoneHomework();
@@ -393,7 +545,7 @@ class AppController extends ChangeNotifier {
       await backgroundScheduling?.call(
         _autoSyncOnOpen &&
             _notificationSettings.needsBackgroundCheck &&
-            snapshot.profile.provider == 'Librus Synergia' &&
+            snapshot.profile.connected &&
             // Nothing to check when every profile has notifications off.
             (_profiles.isEmpty || _profiles.any((profile) => profile.notify)),
       );
@@ -449,7 +601,7 @@ class AppController extends ChangeNotifier {
 
   Future<void> _writeHomeWidget() async {
     final widget = homeWidget!;
-    if (!isDemo && snapshot.profile.provider != 'Librus Synergia') {
+    if (!isDemo && !snapshot.profile.connected) {
       await widget.clear();
       return;
     }
@@ -650,11 +802,6 @@ class AppController extends ChangeNotifier {
     } else {
       await _notify(snapshot, activeProfile);
     }
-    try {
-      await notifications?.deliverDigests(_profiles, name: _notificationName);
-    } on Object {
-      // Notifications cannot turn a successful Librus sync into an error.
-    }
     // Scheduling takes a round trip per reminder, so it never holds the app
     // opening or a sync.
     unawaited(_updateReminders());
@@ -703,7 +850,7 @@ class AppController extends ChangeNotifier {
   /// one on. True when allowed, or when nothing needs it.
   Future<bool> askNotificationPermission() async {
     if (!_notificationSettings.needsBackgroundCheck ||
-        snapshot.profile.provider != 'Librus Synergia') {
+        !snapshot.profile.connected) {
       return true;
     }
     return await notifications?.requestPermission() ?? true;
@@ -714,6 +861,11 @@ class AppController extends ChangeNotifier {
   // it or nothing needs it. null means nothing was asked, as when turning
   // something off.
   Future<bool?> setNotificationsEnabled(bool enabled) async {
+    if (!enabled) {
+      for (final profile in profiles) {
+        await notifications?.cancelParentSchedules(profile);
+      }
+    }
     _notificationSettings = _notificationSettings.copyWith(enabled: enabled);
     notifyListeners();
     await notifications?.saveSettings(_notificationSettings);
@@ -725,7 +877,7 @@ class AppController extends ChangeNotifier {
   /// Every kind of notification on, and the reminders as they come; for a
   /// parent, what a parent hears of.
   Future<bool?> useAllNotifications() async {
-    _notificationSettings = parentView
+    _notificationSettings = isParent
         ? SchoolNotificationSettings.parentDefaults
         : const SchoolNotificationSettings();
     notifyListeners();
@@ -768,29 +920,6 @@ class AppController extends ChangeNotifier {
           _notificationSettings.allows(category) && !before.allows(category),
     );
     return gained ? requestNotificationPermissionIfEnabled() : null;
-  }
-
-  /// Quiet hours: on or off, and from when to when, in minutes after
-  /// midnight.
-  Future<void> setQuietHours({bool? on, int? from, int? to}) async {
-    _notificationSettings = _notificationSettings.copyWith(
-      quietHours: on ?? (from != null || to != null ? true : null),
-      quietFromMinutes: from,
-      quietToMinutes: to,
-    );
-    notifyListeners();
-    await notifications?.saveSettings(_notificationSettings);
-  }
-
-  /// The evening summary instead of a notification each: on or off, and
-  /// when, in minutes after midnight.
-  Future<void> setDigest({bool? on, int? minutes}) async {
-    _notificationSettings = _notificationSettings.copyWith(
-      digest: on ?? (minutes != null ? true : null),
-      digestMinutes: minutes,
-    );
-    notifyListeners();
-    await notifications?.saveSettings(_notificationSettings);
   }
 
   /// Changes when tests are reminded of and schedules the reminders again
@@ -966,7 +1095,7 @@ class AppController extends ChangeNotifier {
   /// not loaded again within [sentMessagesPause].
   Future<void> refreshSentMessages({bool force = false}) async {
     if (_loadingSentMessages) return;
-    if (!isDemo && snapshot.profile.provider != 'Librus Synergia') return;
+    if (!isDemo && !snapshot.profile.connected) return;
     final loadedAt = _sentMessagesLoadedAt;
     if (!force &&
         loadedAt != null &&
@@ -1252,6 +1381,7 @@ class AppController extends ChangeNotifier {
 
   /// Marks [item] as done, or not. Done work is no longer reminded of.
   Future<void> setHomeworkDone(SchoolEvent item, bool done) async {
+    if (!canUseStudentToolsFor(item.source)) return;
     if (isHomeworkDone(item) == done) return;
     final source = item.source;
     if (source != null) {
@@ -1278,10 +1408,8 @@ class AppController extends ChangeNotifier {
     await _updateReminders();
   }
 
-  List<int>? _bottomTabs;
-
-  /// When absences were excused in a message, by profile, then by id.
-  final _excuseSent = <String, Map<String, DateTime>>{};
+  /// The excuse notes sent of each profile, newest first.
+  final _absenceHistory = <String, List<AbsenceRequest>>{};
   String _excuseSignature = '';
 
   /// The parent's name under an excuse note.
@@ -1299,56 +1427,67 @@ class AppController extends ChangeNotifier {
     return (profileId, localId(record.id, record.source));
   }
 
-  /// Loads when the absences of every profile were excused, once.
+  /// Loads the excuse notes of every profile, once.
   Future<void> loadExcuseSent() async {
     for (final profile in _profiles) {
-      if (_excuseSent.containsKey(profile.id)) continue;
-      _excuseSent[profile.id] = await _repository.loadExcuseSent(profile.id);
+      if (_absenceHistory.containsKey(profile.id)) continue;
+      _absenceHistory[profile.id] = await _repository.absenceRequests(
+        profile.id,
+      );
     }
     notifyListeners();
   }
 
-  /// When [record] was excused in a message, if it was.
+  /// When [record] was excused in a note, if it was: sent, or not sure
+  /// whether it went.
   DateTime? excuseSentAt(AttendanceRecord record) {
     final key = _excuseKey(record);
-    return key == null ? null : _excuseSent[key.$1]?[key.$2];
+    if (key == null) return null;
+    for (final request in _absenceHistory[key.$1] ?? const <AbsenceRequest>[]) {
+      if (request.recordIds.contains(key.$2)) return request.at;
+    }
+    return null;
   }
 
-  /// Notes [records] as excused in a message sent now.
-  Future<void> markExcuseSent(Iterable<AttendanceRecord> records) async {
-    final now = DateTime.now();
-    final changed = <String>{};
+  /// Keeps the note [requestId] about [records] in each profile's history:
+  /// [sent], or not sure yet. A planned absence has no records yet: it goes
+  /// to [profileId], by default the open profile.
+  Future<void> recordExcuse(
+    String requestId,
+    Iterable<AttendanceRecord> records, {
+    required String subject,
+    required String body,
+    required String recipient,
+    required bool sent,
+    String? profileId,
+  }) async {
+    final ids = <String, List<String>>{};
     for (final record in records) {
       final key = _excuseKey(record);
-      if (key == null) continue;
-      final sent = _excuseSent[key.$1] ??= await _repository.loadExcuseSent(
-        key.$1,
+      if (key != null) (ids[key.$1] ??= []).add(key.$2);
+    }
+    final target = profileId ?? activeProfile?.id;
+    if (ids.isEmpty && target != null) ids[target] = [];
+    final at = DateTime.now();
+    for (final MapEntry(key: id, value: recordIds) in ids.entries) {
+      await _repository.recordAbsenceRequest(
+        AbsenceRequest(
+          id: '$id-$requestId',
+          profileId: id,
+          messageId: '',
+          at: at,
+          subject: subject,
+          body: body,
+          recipient: recipient,
+          recordIds: recordIds,
+          state: sent
+              ? AbsenceRequestState.sent
+              : AbsenceRequestState.uncertain,
+        ),
       );
-      sent[key.$2] = now;
-      changed.add(key.$1);
+      _absenceHistory[id] = await _repository.absenceRequests(id);
     }
     notifyListeners();
-    for (final profileId in changed) {
-      await _repository.saveExcuseSent(profileId, _excuseSent[profileId]!);
-    }
-  }
-
-  /// The bottom bar: Today, then three tabs: the user's, in the app's
-  /// order, or until they choose, a student's timetable, grades and
-  /// messages, and a parent's attendance first, then grades and messages.
-  List<int> get bottomTabs => [
-    0,
-    ...(_bottomTabs ?? (parentView ? const [6, 2, 5] : const [1, 2, 5])),
-  ];
-
-  /// Puts the three [tabs] beside Today, in the app's order.
-  Future<void> setBottomTabs(List<int> tabs) async {
-    final chosen = {...tabs}.where((tab) => tab >= 1 && tab <= 8).toList()
-      ..sort();
-    if (chosen.length != 3) return;
-    _bottomTabs = chosen;
-    notifyListeners();
-    await _repository.saveBottomTabs(chosen);
   }
 
   Future<void> setTodayLayout(TodayLayout layout) async {
@@ -1549,6 +1688,104 @@ class AppController extends ChangeNotifier {
     }
   }
 
+  DiaryDefinition get defaultDiary => _repository.defaultDiary;
+  List<DiaryDefinition> get bundledDiaries => _repository.bundledDiaries;
+  Future<List<DiaryDefinition>> availableDiaryDefinitions() async =>
+      (await availableDiaryPlugins())
+          .map(DiaryDefinition.downloadable)
+          .toList();
+
+  /// The plugin registry owns authentication. Existing login orchestration is
+  /// retained for old Librus profile IDs and the parent/student chooser.
+  Future<bool> loginDiary(
+    DiaryDefinition definition,
+    Map<String, Object?> fields, {
+    Future<List<PluginStudent>?> Function(List<PluginStudent>)? choose,
+  }) {
+    if (definition.isBundled) {
+      return loginLibrus(
+        username: fields['username']! as String,
+        password: fields['password']! as String,
+        choose: choose == null
+            ? null
+            : (linked) async {
+                final selected = await choose([
+                  for (final child in linked)
+                    PluginStudent(child.login, child.name, '', child.parent),
+                ]);
+                if (selected == null) return null;
+                return linked
+                    .where((child) => selected.any((s) => s.id == child.login))
+                    .toList();
+              },
+      );
+    }
+    return loginPlugin(definition.release!, fields, choose: choose);
+  }
+
+  Future<List<PluginManifest>> availableDiaryPlugins() =>
+      _repository.diaryPlugins();
+
+  Future<bool> loginPlugin(
+    PluginManifest manifest,
+    Map<String, Object?> fields, {
+    Future<List<PluginStudent>?> Function(List<PluginStudent>)? choose,
+  }) async {
+    if (_signingIn || _markingMessagesRead || isDemo) return false;
+    _signingIn = true;
+    _signInStage = SignInStage.checking;
+    _error = null;
+    notifyListeners();
+    final before = activeProfile?.id;
+    final added = <SchoolProfile>[];
+    String? account;
+    try {
+      final found = await _repository.signInPlugin(manifest, fields);
+      account = found.account;
+      final selected = choose != null && found.students.length > 1
+          ? await choose(found.students) ?? const <PluginStudent>[]
+          : found.students;
+      if (selected.isEmpty) {
+        await _repository.discardLogin(account);
+        return false;
+      }
+      added.addAll(await _repository.addPluginProfiles(found, selected));
+      final first =
+          added.firstOrNull ??
+          _repository.profiles.firstWhere((p) => p.account == account);
+      _signInStage = SignInStage.loading;
+      notifyListeners();
+      await _repository.switchProfile(first.id);
+      final synced = await _repository.syncProfile(first.id);
+      _leaveTogether();
+      _snapshot = synced;
+      await _loadProfileSettings();
+      _forgetSentMessages();
+      _syncNews = null;
+      _profiles = _repository.profiles;
+      _seeNews(first.id);
+      await _recordNotifications();
+      _updateHomeWidget();
+      unawaited(_syncInTurn(added.skip(1).toList()));
+      unawaited(configureBackground());
+      unawaited(requestNotificationPermissionIfEnabled());
+      return true;
+    } on Object catch (error, stack) {
+      for (final profile in added) {
+        await _repository.removeProfile(profile.id);
+      }
+      if (account != null) await _repository.discardLogin(account);
+      if (before != null) await _repository.switchProfile(before);
+      _error = _failed(error, stack, 'plugin-sign-in');
+      return false;
+    } finally {
+      _signingIn = false;
+      _signInStage = null;
+      _profiles = _repository.profiles;
+      notifyListeners();
+    }
+  }
+
   /// What signing in is doing, while it runs.
   SignInStage? get signInStage => _signInStage;
 
@@ -1611,6 +1848,7 @@ class AppController extends ChangeNotifier {
   /// Removes the profile [profileId] and its data from the phone. Librus
   /// keeps everything. The last one leaves the app signed out.
   Future<void> removeProfile(String profileId) async {
+    await notifications?.cancelParentSchedules(profileOf(profileId));
     final open = activeProfile?.id == profileId;
     final remaining = await _repository.removeProfile(profileId);
     _profiles = _repository.profiles;
@@ -1648,26 +1886,10 @@ class AppController extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Who uses the profile [profileId]: the one its account says is kept as
-  /// null, so a role never goes stale.
-  Future<void> setProfileRole(String profileId, ProfileRole role) async {
-    final profile = profileOf(profileId);
-    if (profile == null) return;
-    final own = profile.parent ? ProfileRole.parent : ProfileRole.student;
-    await _repository.setProfileRole(profileId, role == own ? null : role);
-    _profiles = _repository.profiles;
-    notifyListeners();
-  }
-
-  /// Whether a parent looks at what is open: the open profile is used by a
-  /// parent, or, all together, every profile in the view is.
-  bool get parentView {
-    final shown = _together ? togetherProfiles : [?activeProfile];
-    return shown.isNotEmpty &&
-        shown.every((profile) => profile.usedBy == ProfileRole.parent);
-  }
-
   Future<void> setProfileNotify(String profileId, bool notify) async {
+    if (!notify) {
+      await notifications?.cancelParentSchedules(profileOf(profileId));
+    }
     await _repository.setProfileNotify(profileId, notify);
     _profiles = _repository.profiles;
     notifyListeners();
@@ -1796,6 +2018,9 @@ class AppController extends ChangeNotifier {
 
   /// Signs out of every profile: their data and logins leave the phone.
   Future<void> logout() async {
+    for (final profile in profiles) {
+      await notifications?.cancelParentSchedules(profile);
+    }
     _leaveTogether();
     _snapshot = await _repository.logout();
     _profiles = const [];

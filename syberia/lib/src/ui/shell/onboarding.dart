@@ -122,7 +122,7 @@ class _OnboardingState extends State<_Onboarding>
   /// The steps this user goes through: a parent's include the children.
   List<_SetupStep> get _steps => [
     for (final step in _SetupStep.values)
-      if (step != _SetupStep.children || _controller.parentView) step,
+      if (step != _SetupStep.children || _controller.isParent) step,
   ];
 
   void _back() {
@@ -143,7 +143,7 @@ class _OnboardingState extends State<_Onboarding>
 
   /// Signed in: a parent names the children next, all of them together.
   void _afterSignIn() {
-    if (_controller.parentView) {
+    if (_controller.isParent) {
       if (_controller.canBeTogether && !_controller.together) {
         unawaited(_controller.openTogether());
       }
@@ -185,8 +185,7 @@ class _OnboardingState extends State<_Onboarding>
     _next();
   }
 
-  bool get _signedIn =>
-      _controller.snapshot.profile.provider == 'Librus Synergia';
+  bool get _signedIn => _controller.snapshot.profile.connected;
 
   @override
   Widget build(BuildContext context) => ListenableBuilder(
@@ -736,6 +735,7 @@ class _AccountStepState extends State<_AccountStep> {
       motion: widget.motion,
       icon: Icons.school_rounded,
       badge: _BadgeMotion.cap,
+      // A parent's children get a step of their own next.
       title: context.tr(listed ? 'profiles' : 'onboardingAccount'),
       text: listed ? context.tr('onboardingProfilesText') : null,
       actions: [
@@ -796,8 +796,7 @@ class _NotificationsStepState extends State<_NotificationsStep> {
   /// Where the settings already are: all on, off, or something between.
   late _NotifyChoice _choice = switch (widget.controller.notificationSettings) {
     final settings when !settings.enabled => _NotifyChoice.off,
-    final settings
-        when settings.isAllFor(parent: widget.controller.parentView) =>
+    final settings when settings.isAllFor(parent: widget.controller.isParent) =>
       _NotifyChoice.all,
     _ => _NotifyChoice.choose,
   };
@@ -917,9 +916,7 @@ class _NotificationsStepState extends State<_NotificationsStep> {
         Icons.notifications_active_rounded,
         context.tr('notifyAll'),
         context.tr(
-          widget.controller.parentView
-              ? 'notifyAllTextParent'
-              : 'notifyAllText',
+          widget.controller.isParent ? 'notifyAllTextParent' : 'notifyAllText',
         ),
       ),
       _option(
@@ -1059,7 +1056,7 @@ class _DoneStep extends StatelessWidget {
               extra: extra,
             ),
           ),
-        if (controller.parentView) ...[
+        if (controller.isParent) ...[
           tip(
             const ValueKey('onboarding-tip-excuse'),
             Icons.edit_note_rounded,

@@ -19,6 +19,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../app_build_info.dart';
 import '../data/app_repository.dart';
+import '../data/diary_plugin.dart';
 import '../debug/diagnostics.dart';
 import '../domain/calendar_days.dart';
 import '../domain/excuse.dart';
@@ -26,6 +27,7 @@ import '../domain/grade_calculator.dart';
 import '../domain/librus_error.dart';
 import '../domain/models.dart';
 import '../domain/profiles.dart';
+import '../domain/parent.dart';
 import '../domain/sync_news.dart';
 import '../domain/together.dart' show togetherId;
 import '../home_widget.dart';
@@ -62,6 +64,7 @@ part 'shell/settings.dart';
 part 'shell/settings_previews.dart';
 part 'shell/notification_settings.dart';
 part 'shell/account.dart';
+part 'shell/parent.dart';
 part 'shell/onboarding.dart';
 part 'shell/onboarding_intro.dart';
 part 'shell/onboarding_motion.dart';
@@ -178,8 +181,7 @@ class _AppShellState extends State<AppShell> {
           _pages.clear();
           return _Onboarding(controller: controller);
         }
-        if (!controller.isDemo &&
-            controller.snapshot.profile.provider != 'Librus Synergia') {
+        if (!controller.isDemo && !controller.snapshot.profile.connected) {
           _pages.clear();
           return _LoginRequired(controller: controller);
         }
@@ -209,6 +211,7 @@ class _AppShellState extends State<AppShell> {
                 : _pages[index] ?? const SizedBox.shrink(),
         ];
         final body = _SubjectScope(
+          studentTools: controller.canUseStudentTools,
           names: controller.subjectShortNames,
           colors: _subjectColors(),
           child: _FreeDaysScope(

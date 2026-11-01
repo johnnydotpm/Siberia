@@ -112,7 +112,7 @@ void main() {
     final semantics = tester.ensureSemantics();
     final controller = await _onAccount(tester, FakeLibrusWorld());
     await _signIn(tester, parentEmail, role: 'parent');
-    expect(controller.parentView, isTrue);
+    expect(controller.isParent, isTrue);
     expect(find.byKey(const ValueKey('onboarding-children')), findsOneWidget);
     expect(find.bySemanticsLabel('Step 4 of 6'), findsOneWidget);
     expect(

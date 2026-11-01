@@ -1,15 +1,25 @@
 part of '../app_shell.dart';
 
-/// The new message sheet; [onSent] is called once the message went.
+/// What the sheet hands over about a message it sends.
+typedef _OutgoingMessage = FutureOr<void> Function(
+  String subject,
+  String body,
+  List<MessageRecipient> recipients,
+);
+
+/// The new message sheet; [beforeSend] is awaited right before the message
+/// goes, [onSent] is called once it went.
 Future<void> _showComposeMessage(
   BuildContext context,
   AppController controller, {
-  VoidCallback? onSent,
+  _OutgoingMessage? beforeSend,
+  _OutgoingMessage? onSent,
 }) => showModalBottomSheet<void>(
   context: context,
   isScrollControlled: true,
   useSafeArea: true,
-  builder: (context) => _ComposeMessageSheet(controller, onSent: onSent),
+  builder: (context) =>
+      _ComposeMessageSheet(controller, beforeSend: beforeSend, onSent: onSent),
 );
 
 /// What was being written when the sheet closed unsent: the next "New
@@ -41,9 +51,10 @@ class _ComposeDraft {
 }
 
 class _ComposeMessageSheet extends StatefulWidget {
-  const _ComposeMessageSheet(this.controller, {this.onSent});
+  const _ComposeMessageSheet(this.controller, {this.beforeSend, this.onSent});
   final AppController controller;
-  final VoidCallback? onSent;
+  final _OutgoingMessage? beforeSend;
+  final _OutgoingMessage? onSent;
 
   @override
   State<_ComposeMessageSheet> createState() => _ComposeMessageSheetState();
@@ -179,14 +190,16 @@ class _ComposeMessageSheetState extends State<_ComposeMessageSheet> {
       validationError = null;
     });
     try {
+      final to = selectedRecipients.toList();
+      await widget.beforeSend?.call(subject, body, to);
       await widget.controller.sendMessage(
-        recipients: selectedRecipients.toList(),
+        recipients: to,
         subject: subject,
         body: body,
         from: from,
       );
       sent = true;
-      widget.onSent?.call();
+      await widget.onSent?.call(subject, body, to);
       if (!mounted) return;
       HapticFeedback.mediumImpact();
       final messenger = ScaffoldMessenger.of(context);

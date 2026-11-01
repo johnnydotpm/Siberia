@@ -272,7 +272,7 @@ void main() {
       ('teachers', 'Przedmioty'),
     );
     await client.sendMessage(
-      recipientIds: [recipients.first.id],
+      recipientIds: [recipients.first.id as int],
       subject: 'Pytanie',
       body: 'Dzień dobry',
     );

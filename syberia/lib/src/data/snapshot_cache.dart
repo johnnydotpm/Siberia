@@ -7,6 +7,9 @@ import '../domain/librus_error.dart';
 abstract final class SnapshotCache {
   static String encode(AppSnapshot value) => jsonEncode({
     'profile': value.profile.toJson(),
+    'providerData': value.providerData,
+    'moduleErrors': value.moduleErrors,
+    'attendanceComplete': value.attendanceComplete,
     'lastSync': _date(value.lastSync),
     'lessons': [for (final item in value.lessons) _lesson(item)],
     'grades': [for (final item in value.grades) _grade(item)],
@@ -33,6 +36,13 @@ abstract final class SnapshotCache {
     try {
       final value = _map(jsonDecode(raw));
       return AppSnapshot(
+        providerData: value['providerData'] is Map
+            ? _map(value['providerData'])
+            : const {},
+        moduleErrors: value['moduleErrors'] is Map
+            ? (value['moduleErrors'] as Map).cast<String, String>()
+            : const {},
+        attendanceComplete: value['attendanceComplete'] != false,
         profile: StudentProfile.fromJson(
           value['profile'] as Map<String, Object?>,
         ),
@@ -125,6 +135,8 @@ abstract final class SnapshotCache {
     'weight': item.weight,
     'semester': item.semester,
     'category': item.category,
+    'countsToAverage': item.countsToAverage,
+    'assessment': item.assessment,
     'previousGrades': [for (final old in item.previousGrades) _grade(old)],
   };
   static Grade _readGrade(Map<String, Object?> item) => Grade(
@@ -136,6 +148,8 @@ abstract final class SnapshotCache {
     weight: (item['weight']! as num).toDouble(),
     semester: item['semester']! as int,
     category: item['category'] as String? ?? '',
+    countsToAverage: item['countsToAverage'] != false,
+    assessment: item['assessment'] as String? ?? 'current',
     previousGrades: _list(item['previousGrades'] ?? const [], _readGrade),
   );
 

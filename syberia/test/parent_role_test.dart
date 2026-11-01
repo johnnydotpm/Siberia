@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syberia/src/app.dart';
 import 'package:syberia/src/domain/models.dart';
+import 'package:syberia/src/domain/parent.dart';
 import 'package:syberia/src/domain/profiles.dart';
 import 'package:syberia/src/domain/together.dart';
 import 'package:syberia/src/state/app_controller.dart';
@@ -43,41 +44,49 @@ void main() {
       synergiaLogin: 'u',
       name: 'Uczeń',
     );
-    expect(profile.usedBy, ProfileRole.student);
-    expect(profile.copyWith(parent: true).usedBy, ProfileRole.parent);
-    final parent = profile.copyWith(role: () => ProfileRole.parent);
+    expect(profile.role, ProfileRole.student);
+    expect(profile.copyWith(parent: true).role, ProfileRole.parent);
+    final parent = profile.copyWith(roleOverride: () => ProfileRole.parent);
     expect(SchoolProfile.fromJson(parent.toJson()), parent);
-    expect(SchoolProfile.fromJson(parent.toJson())!.usedBy, ProfileRole.parent);
-    final old = profile.toJson()..remove('role');
-    expect(SchoolProfile.fromJson(old)!.role, isNull);
-    expect(SchoolProfile.fromJson({...old, 'role': 'teacher'})!.role, isNull);
+    expect(SchoolProfile.fromJson(parent.toJson())!.role, ProfileRole.parent);
+    final old = profile.toJson()..remove('roleOverride');
+    expect(SchoolProfile.fromJson(old)!.roleOverride, isNull);
+    expect(
+      SchoolProfile.fromJson({...old, 'roleOverride': 'teacher'})!.roleOverride,
+      isNull,
+    );
+    // Builds before the merge with dev kept the choice under 'role'.
+    expect(
+      SchoolProfile.fromJson({...old, 'role': 'parent'})!.role,
+      ProfileRole.parent,
+    );
   });
 
   test('who uses a profile is kept, and decides whether a parent looks at '
       'the open view', () async {
     final (controller, world, parent, student) = await _parentLogin();
-    expect(controller.parentView, isTrue);
+    expect(controller.isParent, isTrue);
 
     await controller.switchProfile(student.id);
-    expect(controller.parentView, isFalse);
+    expect(controller.isParent, isFalse);
     await controller.setProfileRole(student.id, ProfileRole.parent);
-    expect(controller.parentView, isTrue);
+    expect(controller.isParent, isTrue);
     expect(controller.profileOf(student.id)!.role, ProfileRole.parent);
 
     // The account's own role is kept as none, so it never goes stale.
     await controller.setProfileRole(student.id, ProfileRole.student);
-    expect(controller.profileOf(student.id)!.role, isNull);
+    expect(controller.profileOf(student.id)!.roleOverride, isNull);
     await controller.setProfileRole(student.id, ProfileRole.parent);
 
     final again = AppController(world.repository(), updatesEnabled: false);
     await again.bootstrap();
-    expect(again.profileOf(student.id)!.usedBy, ProfileRole.parent);
+    expect(again.profileOf(student.id)!.role, ProfileRole.parent);
 
     // All together: a parent's view only when every profile in it is.
     await controller.openTogether();
-    expect(controller.parentView, isTrue);
+    expect(controller.isParent, isTrue);
     await controller.setProfileRole(student.id, ProfileRole.student);
-    expect(controller.parentView, isFalse);
+    expect(controller.isParent, isFalse);
   });
 
   test('a parent\'s profile writes from the parent\'s account', () async {
@@ -111,7 +120,7 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.text('Who uses this profile'), findsOneWidget);
+    expect(find.text('Who uses this profile'), findsWidgets);
     SegmentedButton<ProfileRole> picker() => tester.widget(
       find.descendant(
         of: find.byKey(const ValueKey('profile-role')),
@@ -122,7 +131,7 @@ void main() {
 
     await tester.tap(find.byKey(const ValueKey('profile-role-parent')));
     await tester.pumpAndSettle();
-    expect(controller.profileOf(student.id)!.usedBy, ProfileRole.parent);
+    expect(controller.profileOf(student.id)!.role, ProfileRole.parent);
     expect(picker().selected, {ProfileRole.parent});
     expect(tester.takeException(), isNull);
     await tester.pumpWidget(const SizedBox.shrink());

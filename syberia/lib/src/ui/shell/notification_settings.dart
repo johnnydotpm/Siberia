@@ -168,19 +168,32 @@ class _NotificationSettingsBody extends StatelessWidget {
             ),
           },
         const Divider(height: 24, indent: 16, endIndent: 16),
-        _QuietHoursTile(controller),
-        _ReminderTimeTile(
-          key: const ValueKey('notify-digest'),
-          icon: Icons.summarize_rounded,
-          title: context.tr('digest'),
-          description: context.tr('digestText'),
-          minutes: settings.digestMinutes,
-          value: settings.digest,
-          enabled: settings.enabled,
-          onChanged: (value) => controller.setDigest(on: value),
-          onTime: (minutes) => controller.setDigest(minutes: minutes),
-        ),
-        const Divider(height: 24, indent: 16, endIndent: 16),
+        // A parent's profile keeps its own quiet hours and summary.
+        if (controller.activeProfile case final profile?
+            when profile.role == ProfileRole.parent) ...[
+          _QuietHoursTile(controller, profile),
+          _ReminderTimeTile(
+            key: const ValueKey('notify-digest'),
+            icon: Icons.summarize_rounded,
+            title: context.tr('digest'),
+            description: context.tr('digestText'),
+            minutes: profile.parentPreferences.digestAt,
+            value: profile.parentPreferences.digest,
+            enabled: settings.enabled,
+            onChanged: (value) => controller.setParentPreferences(
+              profile.id,
+              profile.parentPreferences.copyWith(digest: value),
+            ),
+            onTime: (minutes) => controller.setParentPreferences(
+              profile.id,
+              profile.parentPreferences.copyWith(
+                digest: true,
+                digestAt: minutes,
+              ),
+            ),
+          ),
+          const Divider(height: 24, indent: 16, endIndent: 16),
+        ],
         _ReminderSettings(controller, onPermission: denied),
       ],
     );
@@ -468,7 +481,7 @@ class _ReminderSettings extends StatelessWidget {
           ),
         ),
         // A parent does not mark homework done, so has none left to do.
-        if (!controller.parentView)
+        if (!controller.isParent)
           SwitchListTile.adaptive(
             key: const ValueKey('reminder-homework'),
             secondary: const _SettingsIcon(Icons.assignment_rounded),
@@ -538,16 +551,18 @@ class _ReminderTimeTile extends StatelessWidget {
 /// Quiet hours: notifications without sound from one time to another. A tap
 /// asks for the two times.
 class _QuietHoursTile extends StatelessWidget {
-  const _QuietHoursTile(this.controller);
+  const _QuietHoursTile(this.controller, this.profile);
   final AppController controller;
+  final SchoolProfile profile;
 
   @override
   Widget build(BuildContext context) {
     final settings = controller.notificationSettings;
+    final preferences = profile.parentPreferences;
     TimeOfDay time(int minutes) =>
         TimeOfDay(hour: minutes ~/ 60, minute: minutes % 60);
-    final from = time(settings.quietFromMinutes);
-    final to = time(settings.quietToMinutes);
+    final from = time(preferences.quietStart);
+    final to = time(preferences.quietEnd);
     return ListTile(
       key: const ValueKey('notify-quiet'),
       enabled: settings.enabled,
@@ -562,15 +577,22 @@ class _QuietHoursTile extends StatelessWidget {
         if (start == null || !context.mounted) return;
         final end = await showTimePicker(context: context, initialTime: to);
         if (end == null) return;
-        await controller.setQuietHours(
-          from: start.hour * 60 + start.minute,
-          to: end.hour * 60 + end.minute,
+        await controller.setParentPreferences(
+          profile.id,
+          preferences.copyWith(
+            quiet: true,
+            quietStart: start.hour * 60 + start.minute,
+            quietEnd: end.hour * 60 + end.minute,
+          ),
         );
       },
       trailing: Switch.adaptive(
-        value: settings.quietHours,
+        value: preferences.quiet,
         onChanged: settings.enabled
-            ? (value) => controller.setQuietHours(on: value)
+            ? (value) => controller.setParentPreferences(
+                profile.id,
+                preferences.copyWith(quiet: value),
+              )
             : null,
       ),
     );

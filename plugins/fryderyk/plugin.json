@@ -1,0 +1,42 @@
+{
+  "id": "fryderyk",
+  "name": "Fryderyk",
+  "version": "0.1.0",
+  "operations": [
+    "authenticate",
+    "accounts",
+    "timetable",
+    "messages",
+    "message",
+    "recipients",
+    "sendMessage",
+    "attendanceSummary",
+    "absenceRequests",
+    "refresh",
+    "grades",
+    "attendance",
+    "homework",
+    "events"
+  ],
+  "origins": [
+    "https://swiadectwa.fryderyk.edu.pl"
+  ],
+  "loginFields": [
+    {
+      "id": "username",
+      "label": "username",
+      "type": "text",
+      "required": true
+    },
+    {
+      "id": "password",
+      "label": "password",
+      "type": "password",
+      "required": true
+    }
+  ],
+  "instructions": {
+    "pl": "W panelu Fryderyka otwórz Dostęp mobilny → Wygeneruj dane logowania. Użyj wygenerowanego loginu i hasła.",
+    "en": "In Fryderyk open Mobile access and generate mobile login credentials. Use that login and password."
+  }
+}

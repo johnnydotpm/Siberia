@@ -1,3 +1,5 @@
+import 'package:siberia_plugins/siberia_plugins.dart' show PluginException;
+
 /// Provider-agnostic error vocabulary. The data layer throws these codes so
 /// that no user-facing wording lives behind the repository boundary; the UI
 /// turns a code into text through `AppLocalizations`.
@@ -47,9 +49,11 @@ class LibrusException implements Exception {
 /// What the UI renders. Carries either a known [LibrusErrorCode] or, for
 /// anything the data layer did not anticipate, the original text in [raw].
 class AppError {
-  const AppError({this.errorCode, this.detail, this.raw});
+  const AppError({this.errorCode, this.detail, this.raw, this.pluginCode});
 
-  factory AppError.from(Object error) => error is LibrusException
+  factory AppError.from(Object error) => error is PluginException
+      ? AppError(pluginCode: error.code)
+      : error is LibrusException
       ? AppError(
           errorCode: error.errorCode,
           detail: error.detail,
@@ -58,6 +62,7 @@ class AppError {
       : AppError(raw: error.toString());
 
   final LibrusErrorCode? errorCode;
+  final String? pluginCode;
   final String? detail;
   final String? raw;
 }
