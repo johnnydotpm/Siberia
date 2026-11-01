@@ -141,7 +141,7 @@ void main() {
         MessageRecipient(
           id: 7,
           name: 'Wychowawca Testowy',
-          group: 'Wychowawcy',
+          group: 'Wychowawca',
         ),
       ],
     );

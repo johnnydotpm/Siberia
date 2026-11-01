@@ -14,13 +14,10 @@ List<AttendanceRecord> _absencesToExcuse(AppSnapshot data, DateTime now) {
   });
 }
 
-/// The class teacher among [recipients]: by the code of the group Librus
-/// lists them in, or else by its name.
+/// The class teacher among [recipients]: in the group Librus codes
+/// "tutors" ("Wychowawca"), or else in one named so.
 MessageRecipient? _classTeacher(List<MessageRecipient> recipients) {
-  const codes = {'tutors', 'tutor', 'wychowawcy', 'wychowawca'};
-  return recipients
-          .where((item) => codes.contains(item.groupId.toLowerCase()))
-          .firstOrNull ??
+  return recipients.where((item) => item.groupId == 'tutors').firstOrNull ??
       recipients
           .where((item) => _plainPolish(item.group).contains('wychowaw'))
           .firstOrNull;
