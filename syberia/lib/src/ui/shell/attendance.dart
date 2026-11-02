@@ -116,6 +116,10 @@ class _AttendanceState extends State<_Attendance> {
           const SizedBox(height: 16),
           _AttendanceCalendar(
             records: records,
+            // A parent sees which absences went in a note and wait.
+            sent: widget.controller.isParent
+                ? (record) => widget.controller.excuseSentAt(record) != null
+                : null,
             month: month,
             selectedDay: selectedDay,
             onMonthChanged: (value) => setState(() => month = value),
@@ -665,8 +669,12 @@ class _AttendanceCalendar extends StatelessWidget {
     required this.selectedDay,
     required this.onMonthChanged,
     required this.onDaySelected,
+    this.sent,
   });
   final List<AttendanceRecord> records;
+
+  /// Whether an absence went in an excuse note; null shows none as sent.
+  final bool Function(AttendanceRecord record)? sent;
   final DateTime month;
   final DateTime? selectedDay;
   final ValueChanged<DateTime> onMonthChanged;
@@ -689,7 +697,7 @@ class _AttendanceCalendar extends StatelessWidget {
     }
     final days = {
       for (final MapEntry(key: day, value: dayRecords) in byDay.entries)
-        day: _attendanceDay(dayRecords),
+        day: _attendanceDay(dayRecords, sent: sent),
     };
     final shown = days.values.nonNulls.map((day) => day.label).toSet();
     return Card(
@@ -867,18 +875,26 @@ typedef _AttendanceDay = ({Color color, String label});
 
 const _partlyAbsent = (color: Color(0xFFF28C28), label: 'partlyAbsent');
 
+/// Absences that went in an excuse note and wait for the class teacher.
+const _excuseSent = (color: Color(0xFF8E7CF0), label: 'excuseCalendarSent');
+
 /// Everything a calendar day can show, in the order of its legend.
 final _attendanceDayKinds = <_AttendanceDay>[
   for (final kind in AttendanceKind.values) ...[
     (color: _attendanceColor(kind), label: _attendanceLabel(kind)),
-    if (kind == AttendanceKind.absent) _partlyAbsent,
+    if (kind == AttendanceKind.absent) ...[_partlyAbsent, _excuseSent],
   ],
 ];
 
 /// The colour of a calendar day: the most serious record of the day, or
 /// "partly absent" when the student missed only some of the lessons.
-_AttendanceDay? _attendanceDay(List<AttendanceRecord> records) {
+_AttendanceDay? _attendanceDay(
+  List<AttendanceRecord> records, {
+  bool Function(AttendanceRecord record)? sent,
+}) {
   if (records.isEmpty) return null;
+  final open = records.where((record) => record.kind == AttendanceKind.absent);
+  if (sent != null && open.isNotEmpty && open.every(sent)) return _excuseSent;
   // Attended the same way the rate above the calendar counts it, so late
   // lessons are attendance too.
   final hasPresence = records.any((record) => record.kind.countsAsPresence);

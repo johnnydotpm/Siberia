@@ -127,6 +127,33 @@ class _DebugMenuState extends State<_DebugMenu> {
     });
   }
 
+  bool _probing = false;
+  String? _probe;
+
+  /// How Librus answers the addresses an e-Usprawiedliwienia module may
+  /// use: read only, the status and the shape of each answer, no values.
+  /// "Me" shows the check itself works. Copied too, to send on.
+  Future<void> _probeExcuses() async {
+    setState(() => _probing = true);
+    String text;
+    try {
+      text = (await _controller.probeLibrus(const [
+        'Me',
+        'Justifications',
+        'Attendances/Justifications',
+        'AttendanceTypes',
+      ])).join('\n');
+      await Clipboard.setData(ClipboardData(text: text));
+    } on Object catch (error) {
+      text = 'Could not check: ${error.runtimeType}';
+    }
+    if (!mounted) return;
+    setState(() {
+      _probing = false;
+      _probe = text;
+    });
+  }
+
   Future<void> _copyReport() async {
     final report = Diagnostics.instance.report(
       about: await _about,
@@ -351,6 +378,22 @@ class _DebugMenuState extends State<_DebugMenu> {
               child: SelectableText(
                 groups,
                 key: const ValueKey('debug-recipient-groups-list'),
+              ),
+            ),
+          const SizedBox(height: 8),
+          FilledButton.tonalIcon(
+            key: const ValueKey('debug-excuse-probe'),
+            style: _wideButton,
+            onPressed: _probing ? null : _probeExcuses,
+            icon: const Icon(Icons.fact_check_rounded),
+            label: const Text('Librus: e-Usprawiedliwienia'),
+          ),
+          if (_probe case final probe?)
+            Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: SelectableText(
+                probe,
+                key: const ValueKey('debug-excuse-probe-result'),
               ),
             ),
           const SizedBox(height: 24),

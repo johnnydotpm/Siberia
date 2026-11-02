@@ -300,7 +300,9 @@ void main() {
       changes: {
         'kid-regular': (data) => data.copyWith(lessons: [_lesson('r1', 9, 0)]),
         'kid-music': (data) => data.copyWith(
-          lessons: [_lesson('m1', 12, 0)],
+          // Not under way while the test runs: a lesson going on shows its
+          // progress where the teacher's absence would be.
+          lessons: [_lesson('m1', _awayFromNow(12), 0)],
           freeDays: [
             FreeDay(
               id: 'away',
@@ -431,4 +433,32 @@ void main() {
     expect(tester.takeException(), isNull);
     await tester.pumpWidget(const SizedBox.shrink());
   });
+
+  testWidgets('a lesson going on now fits its narrow card beside another '
+      'school\'s, whatever the hour', (tester) async {
+    // The lessons follow the clock, so the music one is always under way.
+    final now = DateTime.now();
+    final regular = now.subtract(const Duration(minutes: 58));
+    final music = now.subtract(const Duration(minutes: 43));
+    final (controller, _, _, _) = await _family(
+      changes: {
+        'kid-regular': (data) => data.copyWith(
+          lessons: [_lesson('r1', regular.hour, regular.minute)],
+        ),
+        'kid-music': (data) =>
+            data.copyWith(lessons: [_lesson('m1', music.hour, music.minute)]),
+      },
+    );
+    await _pump(tester, controller);
+    controller.selectTab(1);
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+}
+
+/// [hour], or three hours later when a lesson then would be going on now.
+int _awayFromNow(int hour) {
+  final now = DateTime.now().hour;
+  return (now - hour).abs() <= 1 ? (hour + 3) % 24 : hour;
 }

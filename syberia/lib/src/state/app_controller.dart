@@ -185,11 +185,14 @@ class AppController extends ChangeNotifier {
     required MessageRecipient recipient,
     required String subject,
     required String body,
+    List<DateTime> days = const [],
+    List<String> reasons = const [],
+    bool planned = false,
   }) async {
     final profile = profileOf(profileId);
     if (profile == null ||
         profile.role != ProfileRole.parent ||
-        recordIds.isEmpty ||
+        (recordIds.isEmpty && !planned) ||
         subject.trim().isEmpty ||
         body.trim().isEmpty) {
       throw ArgumentError('Invalid absence request');
@@ -225,11 +228,16 @@ class AppController extends ChangeNotifier {
             recipient: recipient.name,
             recordIds: recordIds.toList(),
             state: state,
+            days: days,
+            reasons: reasons,
+            planned: planned,
           );
       // Persist uncertainty before the request: interruption must not invite an automatic resend.
       await _repository.recordAbsenceRequest(
         entry(AbsenceRequestState.uncertain, ''),
       );
+      _absenceHistory[profileId] = await _repository.absenceRequests(profileId);
+      notifyListeners();
       final message = await _repository.sendMessage(
         recipients: [recipient],
         subject: subject,
@@ -1438,6 +1446,14 @@ class AppController extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// How Librus answers [endpoints] for the open profile, for the debug menu.
+  Future<List<String>> probeLibrus(List<String> endpoints) =>
+      _repository.probeLibrus(endpoints);
+
+  /// The excuse notes of the profile [profileId] kept so far, newest first.
+  List<AbsenceRequest> absenceHistoryOf(String? profileId) =>
+      _absenceHistory[profileId] ?? const [];
+
   /// When [record] was excused in a note, if it was: sent, or not sure
   /// whether it went.
   DateTime? excuseSentAt(AttendanceRecord record) {
@@ -1460,6 +1476,9 @@ class AppController extends ChangeNotifier {
     required String recipient,
     required bool sent,
     String? profileId,
+    List<DateTime> days = const [],
+    List<String> reasons = const [],
+    bool planned = false,
   }) async {
     final ids = <String, List<String>>{};
     for (final record in records) {
@@ -1483,6 +1502,9 @@ class AppController extends ChangeNotifier {
           state: sent
               ? AbsenceRequestState.sent
               : AbsenceRequestState.uncertain,
+          days: days,
+          reasons: reasons,
+          planned: planned,
         ),
       );
       _absenceHistory[id] = await _repository.absenceRequests(id);

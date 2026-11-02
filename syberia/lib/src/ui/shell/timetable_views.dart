@@ -561,21 +561,23 @@ class _TimelineLessonCard extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 8),
-                        // Long words or large text cut it short rather than
-                        // push the badge out of the card; the bar keeps the
-                        // rest.
-                        ConstrainedBox(
-                          constraints: BoxConstraints(
-                            maxWidth: constraints.maxWidth * 0.55,
-                          ),
-                          child: Text(
-                            context.trArgs('lessonProgress', {
-                              'elapsed': '$elapsed',
-                              'total': '${duration.inMinutes}',
-                            }),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: progressStyle,
+                        // Long words, large text or a narrow card beside
+                        // another lesson cut it short rather than push the
+                        // badge out of the card; the bar keeps the rest.
+                        Flexible(
+                          child: ConstrainedBox(
+                            constraints: BoxConstraints(
+                              maxWidth: constraints.maxWidth * 0.55,
+                            ),
+                            child: Text(
+                              context.trArgs('lessonProgress', {
+                                'elapsed': '$elapsed',
+                                'total': '${duration.inMinutes}',
+                              }),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: progressStyle,
+                            ),
                           ),
                         ),
                         const SizedBox(width: 6),

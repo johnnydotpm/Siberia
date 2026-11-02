@@ -1385,6 +1385,16 @@ class AppRepository {
   }
 
   /// Who the profile [profileId], or the open one, can write to.
+  /// How Librus answers [endpoints] for the open profile, for the debug
+  /// menu; nothing for a demo or another diary.
+  Future<List<String>> probeLibrus(List<String> endpoints) async {
+    if (_demo != null) return const ['Demo: no Librus.'];
+    await _ensureReady();
+    final session = _sessionFor(_requireActive());
+    if (session is! LibrusProbing) return const ['Not a Librus diary.'];
+    return (session as LibrusProbing).probe(endpoints);
+  }
+
   Future<List<MessageRecipient>> fetchMessageRecipients({
     String? profileId,
   }) async {

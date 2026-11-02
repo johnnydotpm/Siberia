@@ -286,8 +286,61 @@ class _TodayState extends State<_Today> {
           for (final record in absences)
             if (controller.excuseSentAt(record) == null) record,
         ];
-        final sent = absences.length - waiting.length;
-        if (absences.isEmpty) return null;
+        // Days of notes still waiting, and of notes the school accepted.
+        final pending = <DateTime, int>{};
+        for (final record in absences) {
+          if (controller.excuseSentAt(record) == null) continue;
+          final day = DateTime(
+            record.date.year,
+            record.date.month,
+            record.date.day,
+          );
+          pending[day] = (pending[day] ?? 0) + 1;
+        }
+        final since = DateTime(now.year, now.month, now.day - 14);
+        final accepted = <DateTime, int>{};
+        final views = <String?>[
+          if (controller.together)
+            for (final profile in controller.togetherProfiles) profile.id
+          else
+            controller.activeProfile?.id,
+        ];
+        for (final id in views) {
+          for (final request in controller.absenceHistoryOf(id)) {
+            if (request.planned ||
+                request.recordIds.isEmpty ||
+                request.at.isBefore(since)) {
+              continue;
+            }
+            final records = [
+              for (final record in data.attendance)
+                if ((record.source ?? id) == id &&
+                    request.recordIds.contains(
+                      localId(record.id, record.source),
+                    ))
+                  record,
+            ];
+            if (records.length != request.recordIds.length ||
+                records.any(
+                  (record) => record.kind != AttendanceKind.absentExcused,
+                )) {
+              continue;
+            }
+            for (final record in records) {
+              final day = DateTime(
+                record.date.year,
+                record.date.month,
+                record.date.day,
+              );
+              accepted[day] = (accepted[day] ?? 0) + 1;
+            }
+          }
+        }
+        if (absences.isEmpty && accepted.isEmpty) return null;
+        final statuses = [
+          for (final day in pending.keys) (day, pending[day]!, false),
+          for (final day in accepted.keys) (day, accepted[day]!, true),
+        ]..sort((a, b) => b.$1.compareTo(a.$1));
         final byDay = <DateTime, List<AttendanceRecord>>{};
         for (final record in waiting) {
           final day = DateTime(
@@ -335,26 +388,72 @@ class _TodayState extends State<_Today> {
                         ],
                       ),
                     ),
-                  if (sent > 0)
+                  if (statuses.isNotEmpty)
                     Padding(
+                      key: const ValueKey('today-excuse-sent'),
                       padding: EdgeInsets.only(top: waiting.isEmpty ? 0 : 8),
-                      child: Text(
-                        context.trArgs('todayExcuseSent', {
-                          'lessons': _lessonCount(context, sent),
-                        }),
-                        key: const ValueKey('today-excuse-sent'),
-                        style: _metaStyle(context),
+                      child: Column(
+                        children: [
+                          for (final (day, lessons, done) in statuses.take(3))
+                            Padding(
+                              padding: const EdgeInsets.only(top: 4),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      '${_shortWeekday(context, day)} '
+                                      '${_shortDate(context, day)} · '
+                                      '${_lessonCount(context, lessons)}',
+                                      style: _metaStyle(context),
+                                    ),
+                                  ),
+                                  Text(
+                                    context.tr(
+                                      done
+                                          ? 'excuseStatusAccepted'
+                                          : 'excuseStatusWaiting',
+                                    ),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .labelMedium
+                                        ?.copyWith(
+                                          color: done
+                                              ? Theme.of(context)
+                                                    .colorScheme
+                                                    .tertiary
+                                              : Theme.of(context)
+                                                    .colorScheme
+                                                    .primary,
+                                        ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                        ],
                       ),
                     ),
-                  if (waiting.isNotEmpty) ...[
-                    const SizedBox(height: 12),
-                    FilledButton.tonalIcon(
-                      key: const ValueKey('today-excuse-button'),
-                      icon: const Icon(Icons.edit_note_rounded),
-                      label: Text(context.tr('excuseButton')),
-                      onPressed: () => _showExcuseSheet(context, controller),
-                    ),
-                  ],
+                  const SizedBox(height: 12),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      if (waiting.isNotEmpty)
+                        FilledButton.tonalIcon(
+                          key: const ValueKey('today-excuse-button'),
+                          icon: const Icon(Icons.edit_note_rounded),
+                          label: Text(context.tr('excuseButton')),
+                          onPressed: () =>
+                              _showExcuseSheet(context, controller),
+                        ),
+                      if (statuses.isNotEmpty)
+                        OutlinedButton(
+                          key: const ValueKey('today-excuse-history'),
+                          onPressed: () =>
+                              _showAbsenceRequests(context, controller),
+                          child: Text(context.tr('excuseStatusSent')),
+                        ),
+                    ],
+                  ),
                 ],
               ),
             ),

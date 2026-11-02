@@ -73,9 +73,17 @@ class LibrusDiaryPlugin implements DiaryPlugin {
   Future<void> forgetAccount(String account) => _logins.remove(account);
 }
 
-class _LibrusSession implements DiarySession {
+/// A session that can say how Librus answers some API addresses, for the
+/// debug menu.
+abstract interface class LibrusProbing {
+  Future<List<String>> probe(List<String> endpoints);
+}
+
+class _LibrusSession implements DiarySession, LibrusProbing {
   _LibrusSession(this.client);
   final LibrusClient client;
+  @override
+  Future<List<String>> probe(List<String> endpoints) => client.probe(endpoints);
   @override
   String? get studentKey => client.synergiaLogin;
   @override

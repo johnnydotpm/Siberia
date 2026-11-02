@@ -11,12 +11,26 @@ class ParentPreferences {
     this.digest = false,
     this.digestAt = 1140,
     this.studentTools = false,
+    this.excuseGreeting = '',
+    this.excuseChild = 'child',
+    this.excuseClosing = '',
   });
   final bool quiet;
   final int quietStart, quietEnd;
   final bool digest;
   final int digestAt;
   final bool studentTools;
+
+  /// How the excuse notes of this child greet the class teacher; empty
+  /// lets the app suggest it from the teacher's name.
+  final String excuseGreeting;
+
+  /// The [ExcuseChild] name the notes speak of the child as.
+  final String excuseChild;
+
+  /// How the notes end; empty is "Dziękuję za zrozumienie."
+  final String excuseClosing;
+
   ParentPreferences copyWith({
     bool? quiet,
     int? quietStart,
@@ -24,6 +38,9 @@ class ParentPreferences {
     bool? digest,
     int? digestAt,
     bool? studentTools,
+    String? excuseGreeting,
+    String? excuseChild,
+    String? excuseClosing,
   }) => ParentPreferences(
     quiet: quiet ?? this.quiet,
     quietStart: quietStart ?? this.quietStart,
@@ -31,6 +48,9 @@ class ParentPreferences {
     digest: digest ?? this.digest,
     digestAt: digestAt ?? this.digestAt,
     studentTools: studentTools ?? this.studentTools,
+    excuseGreeting: excuseGreeting ?? this.excuseGreeting,
+    excuseChild: excuseChild ?? this.excuseChild,
+    excuseClosing: excuseClosing ?? this.excuseClosing,
   );
   bool isQuiet(DateTime time) {
     if (!quiet || quietStart == quietEnd) return false;
@@ -60,6 +80,9 @@ class ParentPreferences {
     'digest': digest,
     'digestAt': digestAt,
     'studentTools': studentTools,
+    'excuseGreeting': excuseGreeting,
+    'excuseChild': excuseChild,
+    'excuseClosing': excuseClosing,
   };
   factory ParentPreferences.fromJson(Object? raw) {
     if (raw is! Map) return const ParentPreferences();
@@ -74,6 +97,15 @@ class ParentPreferences {
       digest: raw['digest'] == true,
       digestAt: minute('digestAt', 1140),
       studentTools: raw['studentTools'] == true,
+      excuseGreeting: raw['excuseGreeting'] is String
+          ? raw['excuseGreeting'] as String
+          : '',
+      excuseChild: raw['excuseChild'] is String
+          ? raw['excuseChild'] as String
+          : 'child',
+      excuseClosing: raw['excuseClosing'] is String
+          ? raw['excuseClosing'] as String
+          : '',
     );
   }
 }
@@ -92,11 +124,22 @@ class AbsenceRequest {
     required this.recipient,
     required this.recordIds,
     required this.state,
+    this.days = const [],
+    this.reasons = const [],
+    this.planned = false,
   });
   final String id, profileId, messageId, subject, body, recipient;
   final DateTime at;
   final List<String> recordIds;
   final AbsenceRequestState state;
+
+  /// The days the note is about, and the [ExcuseReason] names given; none
+  /// in notes kept before they were.
+  final List<DateTime> days;
+  final List<String> reasons;
+
+  /// Whether it told of days to come rather than excused days gone.
+  final bool planned;
   Map<String, Object> toJson() => {
     'id': id,
     'profileId': profileId,
@@ -107,6 +150,9 @@ class AbsenceRequest {
     'recipient': recipient,
     'recordIds': recordIds,
     'state': state.name,
+    'days': [for (final day in days) day.toIso8601String()],
+    'reasons': reasons,
+    'planned': planned,
   };
   static AbsenceRequest? fromJson(Object? raw) {
     if (raw is! Map || raw['profileId'] is! String || raw['at'] is! String) {
@@ -134,6 +180,14 @@ class AbsenceRequest {
       state: raw['state'] == 'sent'
           ? AbsenceRequestState.sent
           : AbsenceRequestState.uncertain,
+      days: [
+        for (final day in raw['days'] is List ? raw['days'] as List : const [])
+          if (day is String) ?DateTime.tryParse(day),
+      ],
+      reasons: (raw['reasons'] is List ? raw['reasons'] as List : const [])
+          .whereType<String>()
+          .toList(),
+      planned: raw['planned'] == true,
     );
   }
 }

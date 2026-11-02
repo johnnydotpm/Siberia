@@ -792,6 +792,37 @@ class LibrusClient {
     );
   }
 
+  /// How the API answers each of [endpoints], read only: the status and
+  /// the shape of the answer, its keys and kinds of values but no values,
+  /// so nothing about anyone goes in the report.
+  Future<List<String>> probe(List<String> endpoints) async {
+    // A first call opens the session when it is not open yet.
+    await _apiGet('Me', optional: true);
+    final lines = <String>[];
+    for (final endpoint in endpoints) {
+      try {
+        final response = await _dio.get<Object?>(
+          '$_apiBase/$endpoint',
+          options: Options(
+            headers: {
+              'Authorization': 'Bearer $_synergiaToken',
+              'Accept': 'application/json',
+              'User-Agent': _userAgent,
+            },
+            validateStatus: (status) => status != null && status < 600,
+          ),
+        );
+        final data = _map(response.data) ?? _decodeMap(response.data);
+        lines.add(
+          '$endpoint · ${response.statusCode ?? '?'} · ${probeShape(data)}',
+        );
+      } on DioException catch (error) {
+        lines.add('$endpoint · ${error.type.name}');
+      }
+    }
+    return lines;
+  }
+
   Future<Map<String, dynamic>> _apiGet(
     String endpoint, {
     bool optional = false,
@@ -2422,3 +2453,27 @@ LibrusException _networkException(DioException error) => switch (error.type) {
         ? const LibrusException(LibrusErrorCode.networkUnknown)
         : LibrusException(LibrusErrorCode.networkOther, detail: error.message),
 };
+
+/// The shape of a JSON answer: keys, list sizes and kinds of values, two
+/// levels deep, and never a value itself.
+String probeShape(Object? value, [int depth = 0]) {
+  if (value is Map) {
+    if (depth >= 2) return '{…}';
+    final entries = value.entries
+        .take(12)
+        .map((entry) => '${entry.key}: ${probeShape(entry.value, depth + 1)}');
+    return '{${entries.join(', ')}${value.length > 12 ? ', …' : ''}}';
+  }
+  if (value is List) {
+    return value.isEmpty
+        ? '[0]'
+        : '[${value.length} × ${probeShape(value.first, depth)}]';
+  }
+  return switch (value) {
+    null => 'null',
+    String() => 'text',
+    num() => 'number',
+    bool() => 'bool',
+    _ => 'other',
+  };
+}

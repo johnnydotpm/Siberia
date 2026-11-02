@@ -69,6 +69,8 @@ class _Settings extends StatelessWidget {
                   onChanged: controller.setExcuseSignature,
                 ),
               ),
+              if (controller.activeProfile case final profile?)
+                _ExcuseWording(controller, profile),
             ],
           ),
         _SettingsSection(
@@ -907,4 +909,70 @@ class _BottomTabsSheetState extends State<_BottomTabsSheet> {
       ),
     ],
   );
+}
+
+/// How the generated excuse notes of [profile]'s child read: the greeting,
+/// the word for the child and the closing. Each child keeps its own.
+class _ExcuseWording extends StatelessWidget {
+  const _ExcuseWording(this.controller, this.profile);
+  final AppController controller;
+  final SchoolProfile profile;
+
+  @override
+  Widget build(BuildContext context) {
+    final preferences = profile.parentPreferences;
+    final word = ExcuseChild.byName(preferences.excuseChild);
+    void save(ParentPreferences value) =>
+        controller.setParentPreferences(profile.id, value);
+    return Padding(
+      key: ValueKey('settings-excuse-wording-${profile.id}'),
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          TextFormField(
+            key: const ValueKey('settings-excuse-greeting'),
+            initialValue: preferences.excuseGreeting,
+            textCapitalization: TextCapitalization.sentences,
+            decoration: InputDecoration(
+              labelText: context.tr('excuseGreeting'),
+              hintText: 'Dzień dobry Pani Anno,',
+            ),
+            onChanged: (value) =>
+                save(preferences.copyWith(excuseGreeting: value)),
+          ),
+          const SizedBox(height: 12),
+          // Above its choices: beside them it does not fit a narrow phone.
+          Text(context.tr('excuseChildWord')),
+          const SizedBox(height: 6),
+          SegmentedButton<ExcuseChild>(
+            key: const ValueKey('settings-excuse-child'),
+            showSelectedIcon: false,
+            segments: [
+              for (final value in ExcuseChild.values)
+                ButtonSegment(
+                  value: value,
+                  label: Text(value.nominative.split(' ').last),
+                ),
+            ],
+            selected: {word},
+            onSelectionChanged: (value) =>
+                save(preferences.copyWith(excuseChild: value.first.name)),
+          ),
+          const SizedBox(height: 12),
+          TextFormField(
+            key: const ValueKey('settings-excuse-closing'),
+            initialValue: preferences.excuseClosing,
+            textCapitalization: TextCapitalization.sentences,
+            decoration: InputDecoration(
+              labelText: context.tr('excuseClosing'),
+              hintText: defaultExcuseClosing,
+            ),
+            onChanged: (value) =>
+                save(preferences.copyWith(excuseClosing: value)),
+          ),
+        ],
+      ),
+    );
+  }
 }

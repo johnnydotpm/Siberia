@@ -29,7 +29,7 @@ import '../domain/models.dart';
 import '../domain/profiles.dart';
 import '../domain/parent.dart';
 import '../domain/sync_news.dart';
-import '../domain/together.dart' show togetherId;
+import '../domain/together.dart' show localId, togetherId;
 import '../home_widget.dart';
 import '../network_vpn.dart';
 import '../l10n/app_localizations.dart';

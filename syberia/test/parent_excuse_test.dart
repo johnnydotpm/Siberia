@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syberia/src/app.dart';
+import 'package:syberia/src/data/librus/librus_client.dart' show probeShape;
 import 'package:syberia/src/domain/excuse.dart';
 import 'package:syberia/src/domain/models.dart';
 import 'package:syberia/src/domain/parent.dart';
@@ -25,19 +26,42 @@ AttendanceRecord _absence(String id, int daysAgo, int lesson, String subject) =>
       kind: AttendanceKind.absent,
     );
 
-AppSnapshot _withAbsences(AppSnapshot data) => AppSnapshot(
+AppSnapshot _withAbsences(
+  AppSnapshot data, {
+  bool excused = false,
+  SchoolMessage? reply,
+}) => AppSnapshot(
   profile: data.profile,
   lessons: data.lessons,
   grades: data.grades,
   events: const [],
-  messages: data.messages,
+  messages: [...data.messages, ?reply],
   attendance: [
-    _absence('a1', 2, 1, 'Matematyka'),
-    _absence('a2', 2, 2, 'Fizyka'),
+    for (final record in [
+      _absence('a1', 2, 1, 'Matematyka'),
+      _absence('a2', 2, 2, 'Fizyka'),
+    ])
+      excused
+          ? AttendanceRecord(
+              id: record.id,
+              date: record.date,
+              lessonNumber: record.lessonNumber,
+              subject: record.subject,
+              type: 'Nieobecność usprawiedliwiona',
+              symbol: 'u',
+              kind: AttendanceKind.absentExcused,
+            )
+          : record,
   ],
   announcements: const [],
   notices: const [],
   lastSync: data.lastSync,
+);
+
+const _teacher = MessageRecipient(
+  id: 7,
+  name: 'Anna Testowa',
+  group: 'Wychowawca',
 );
 
 /// The parent's login, the parent's account open when [parent].
@@ -83,119 +107,337 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('the note to the class teacher', () {
-    test('lists each day\'s lessons and subjects, the reason and the '
-        'signature, in Polish', () {
-      final message = excuseMessage(
-        child: 'Uczeń Testowy',
-        lessons: [
-          (date: DateTime(2026, 10, 27), lesson: 2, subject: 'Fizyka'),
-          (date: DateTime(2026, 10, 27), lesson: 1, subject: 'Matematyka'),
-          (date: DateTime(2026, 10, 28), lesson: 3, subject: 'Historia'),
-        ],
-        reason: ExcuseReason.illness,
-        note: 'Zaświadczenie dostarczę.',
-        signature: 'Rodzic Testowy',
-      );
-      expect(message.subject, 'Usprawiedliwienie nieobecności – Uczeń Testowy');
+    test('says each day and its reason, as the design shows', () {
       expect(
-        message.body,
-        'Dzień dobry,\n'
-        '\n'
-        'proszę o usprawiedliwienie nieobecności mojego dziecka, '
-        'Uczeń Testowy:\n'
-        '– wtorek 27.10.2026: lekcje 1, 2 (Matematyka, Fizyka)\n'
-        '– środa 28.10.2026: lekcja 3 (Historia)\n'
-        '\n'
-        'Powód: choroba.\n'
-        'Zaświadczenie dostarczę.\n'
-        '\n'
-        'Z poważaniem\n'
-        'Rodzic Testowy',
+        excuseSentence([
+          (
+            date: DateTime(2026, 10, 27),
+            reason: ExcuseReason.unwell,
+            other: '',
+          ),
+          (
+            date: DateTime(2026, 10, 29),
+            reason: ExcuseReason.family,
+            other: '',
+          ),
+        ], word: ExcuseChild.son),
+        'Proszę o usprawiedliwienie nieobecności mojego syna w dniu 27 '
+        'października z powodu złego samopoczucia oraz 29 z powodu spraw '
+        'rodzinnych.',
       );
     });
 
-    test('tells of days to come, with the reason written out', () {
-      final message = excuseMessage(
-        child: 'Uczeń Testowy',
-        from: DateTime(2026, 11, 3),
-        to: DateTime(2026, 11, 5),
-        reason: ExcuseReason.other,
-        note: 'wyjazd rodzinny',
-      );
-      expect(message.subject, 'Planowana nieobecność – Uczeń Testowy');
+    test('puts days of one reason together, a month once, in date order', () {
       expect(
-        message.body,
-        contains(
-          'moje dziecko, Uczeń Testowy, nie będzie obecne w szkole w dniach '
-          '03.11–05.11.2026.',
-        ),
+        excuseSentence([
+          (
+            date: DateTime(2026, 11, 3),
+            reason: ExcuseReason.illness,
+            other: '',
+          ),
+          (
+            date: DateTime(2026, 10, 30),
+            reason: ExcuseReason.illness,
+            other: '',
+          ),
+          (
+            date: DateTime(2026, 10, 31),
+            reason: ExcuseReason.illness,
+            other: '',
+          ),
+          (date: DateTime(2026, 11, 4), reason: ExcuseReason.doctor, other: ''),
+        ], word: ExcuseChild.daughter),
+        'Proszę o usprawiedliwienie nieobecności mojej córki w dniach 30 i 31 '
+        'października i 3 listopada z powodu choroby oraz 4 z powodu wizyty '
+        'u lekarza.',
       );
-      expect(message.body, contains('Powód: wyjazd rodzinny.'));
-      expect(message.body, endsWith('Z poważaniem'));
+    });
+
+    test('a reason in the parent\'s words goes after "z powodu"; none, and '
+        'the sentence goes without it', () {
+      final day = DateTime(2026, 10, 2);
+      expect(
+        excuseSentence([
+          (date: day, reason: ExcuseReason.other, other: ' wizyty w urzędzie '),
+        ], word: ExcuseChild.child),
+        'Proszę o usprawiedliwienie nieobecności mojego dziecka w dniu 2 '
+        'października z powodu wizyty w urzędzie.',
+      );
+      expect(
+        excuseSentence([
+          (date: day, reason: ExcuseReason.other, other: ''),
+        ], word: ExcuseChild.child),
+        'Proszę o usprawiedliwienie nieobecności mojego dziecka w dniu 2 '
+        'października.',
+      );
+    });
+
+    test('tells of days to come', () {
+      expect(
+        plannedSentence(
+          from: DateTime(2026, 11, 3),
+          to: DateTime(2026, 11, 5),
+          word: ExcuseChild.daughter,
+          reason: ExcuseReason.familyTrip,
+        ),
+        'Uprzejmie informuję, że moja córka nie będzie obecna w szkole w '
+        'dniach 3–5 listopada z powodu wyjazdu rodzinnego.',
+      );
+      expect(
+        plannedSentence(
+          from: DateTime(2026, 10, 30),
+          to: DateTime(2026, 11, 2),
+          word: ExcuseChild.son,
+          reason: ExcuseReason.sport,
+        ),
+        'Uprzejmie informuję, że mój syn nie będzie obecny w szkole w dniach '
+        '30 października – 2 listopada z powodu udziału w zawodach '
+        'sportowych.',
+      );
+      expect(
+        plannedSentence(
+          from: DateTime(2026, 11, 3),
+          to: DateTime(2026, 11, 3),
+          word: ExcuseChild.child,
+          reason: ExcuseReason.dentist,
+        ),
+        'Uprzejmie informuję, że moje dziecko nie będzie obecne w szkole w '
+        'dniu 3 listopada z powodu wizyty u dentysty.',
+      );
+    });
+
+    test('greets, closes and signs; empty greeting or closing falls back', () {
+      expect(
+        excuseBody(
+          sentence: 'Zdanie.',
+          greeting: 'Dzień dobry Pani Anno,',
+          signature: ' Rodzic Testowy ',
+        ),
+        'Dzień dobry Pani Anno,\nZdanie.\n\nDziękuję za zrozumienie.\n'
+        'Rodzic Testowy',
+      );
+      expect(
+        excuseBody(sentence: 'Zdanie.', greeting: ' ', closing: ''),
+        'Dzień dobry,\nZdanie.\n\nDziękuję za zrozumienie.',
+      );
+      expect(
+        excuseSubject('Uczeń Testowy'),
+        'Usprawiedliwienie nieobecności – Uczeń Testowy',
+      );
+      expect(
+        excuseSubject('Uczeń Testowy', planned: true),
+        'Planowana nieobecność – Uczeń Testowy',
+      );
+    });
+
+    test('suggests "Pani" with a woman\'s first name, whichever way round, '
+        'and only the plain greeting for a man', () {
+      for (final name in ['Anna Kowalska', 'Kowalska Anna', 'Anna Testowa']) {
+        expect(excuseGreetings(name), [
+          'Dzień dobry Pani Anno,',
+          'Dzień dobry,',
+        ], reason: name);
+      }
+      expect(excuseGreetings('Maja Nowak').first, 'Dzień dobry Pani Maju,');
+      expect(
+        excuseGreetings('Wioleta Zielińska').first,
+        'Dzień dobry Pani Wioleto,',
+      );
+      expect(
+        excuseGreetings('Maria Wiśniewska').first,
+        'Dzień dobry Pani Mario,',
+      );
+      expect(excuseGreetings('Jan Nowak'), ['Dzień dobry,']);
+      expect(excuseGreetings(''), ['Dzień dobry,']);
     });
   });
 
-  testWidgets('from Today, the note opens as a message to the class '
-      'teacher; once sent, the absences wait for the teacher', (tester) async {
-    final (controller, world) = await _app(
-      recipients: const [
-        MessageRecipient(
-          id: 7,
-          name: 'Wychowawca Testowy',
-          group: 'Wychowawca',
-        ),
-      ],
-    );
+  testWidgets('from Today: the day, its reason and the child\'s word make the '
+      'note; it goes to the class teacher after a confirmation, and waits', (
+    tester,
+  ) async {
+    final (controller, world) = await _app(recipients: const [_teacher]);
     await _pump(tester, controller);
     await tester.tap(find.byKey(const ValueKey('today-excuse-button')));
     await tester.pumpAndSettle();
-    expect(find.byKey(const ValueKey('excuse-absence-a1')), findsOneWidget);
-    expect(
-      tester.widget<Text>(find.byKey(const ValueKey('excuse-preview'))).data,
-      contains('lekcje 1, 2 (Matematyka, Fizyka)'),
-    );
-    await tester.tap(find.byKey(const ValueKey('excuse-reason-doctor')));
-    await tester.pump();
-    await tester.ensureVisible(find.byKey(const ValueKey('excuse-prepare')));
-    await tester.tap(find.byKey(const ValueKey('excuse-prepare')));
-    await tester.pumpAndSettle();
+    expect(find.textContaining('Anna Testowa'), findsWidgets);
+    final day = _day(2);
+    String text() => _field(tester, 'excuse-preview');
+    expect(text(), startsWith('Dzień dobry Pani Anno,\n'));
+    expect(text(), contains('mojego dziecka w dniu ${day.day} '));
+    expect(text(), contains('z powodu złego samopoczucia.'));
 
-    expect(_field(tester, 'compose-subject'), startsWith('Usprawiedliwienie'));
-    expect(_field(tester, 'compose-body'), contains('wizyta u lekarza'));
-    expect(
-      find.widgetWithText(InputChip, 'Wychowawca Testowy'),
-      findsOneWidget,
+    await tester.tap(
+      find.byKey(ValueKey('excuse-reason-${day.month}-${day.day}')),
     );
-    await tester.tap(find.text('Send'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('excuse-reason-doctor')).last);
+    await tester.pumpAndSettle();
+    expect(text(), contains('z powodu wizyty u lekarza.'));
+
+    await tester.tap(find.byKey(const ValueKey('excuse-word')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('excuse-word-daughter')).last);
+    await tester.pumpAndSettle();
+    expect(text(), contains('mojej córki'));
+    expect(
+      controller.activeProfile!.parentPreferences.excuseChild,
+      'daughter',
+      reason: 'kept for the child',
+    );
+
+    await tester.ensureVisible(find.byKey(const ValueKey('excuse-send')));
+    await tester.tap(find.byKey(const ValueKey('excuse-send')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('excuse-confirm')), findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey('excuse-confirm-send')));
     await tester.pumpAndSettle();
     expect(controller.snapshot.sentMessages, hasLength(1));
-    expect(find.byKey(const ValueKey('excuse-prepare')), findsNothing);
-
-    // The block counts nothing more to excuse, and says what waits.
+    expect(
+      controller.snapshot.sentMessages.single.subject,
+      startsWith('Usprawiedliwienie nieobecności'),
+    );
+    expect(find.byKey(const ValueKey('excuse-send')), findsNothing);
     expect(find.byKey(const ValueKey('today-excuse-button')), findsNothing);
     expect(find.byKey(const ValueKey('today-excuse-sent')), findsOneWidget);
+    expect(find.text('Waiting'), findsOneWidget);
+
     final again = AppController(world.repository(), updatesEnabled: false);
     await again.bootstrap();
-    expect(
-      again.excuseSentAt(controller.snapshot.attendance.first),
-      isNotNull,
-      reason: 'kept',
-    );
-    // The note is in the history, sent, to the class teacher.
     final history = await again.absenceRequests(controller.activeProfile!.id);
     expect(history, hasLength(1));
     expect(history.single.state, AbsenceRequestState.sent);
-    expect(history.single.recipient, 'Wychowawca Testowy');
-    expect(history.single.subject, startsWith('Usprawiedliwienie'));
-    expect(history.single.recordIds, isNotEmpty);
+    expect(history.single.recipient, 'Anna Testowa');
+    expect(history.single.reasons, ['doctor']);
+    expect(history.single.days.single, day);
+    expect(history.single.recordIds, unorderedEquals(['a1', 'a2']));
+    expect(history.single.body, contains('mojej córki'));
     await tester.pumpWidget(const SizedBox.shrink());
   });
 
-  test('a note is not sure until it went, and counts as sent either way, so '
-      'it is not sent twice', () async {
-    final (controller, _) = await _app();
-    final record = controller.snapshot.attendance.first;
+  testWidgets('a note in the parent\'s own words goes as written', (
+    tester,
+  ) async {
+    final (controller, _) = await _app(recipients: const [_teacher]);
+    await _pump(tester, controller);
+    await tester.tap(find.byKey(const ValueKey('today-excuse-button')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('excuse-own')));
+    await tester.pumpAndSettle();
+    expect(
+      tester
+          .widget<ButtonStyleButton>(find.byKey(const ValueKey('excuse-send')))
+          .onPressed,
+      isNull,
+      reason: 'nothing written yet',
+    );
+    await tester.enterText(
+      find.byKey(const ValueKey('excuse-own-text')),
+      'Dzień dobry, syn był chory. Pozdrawiam',
+    );
+    await tester.pump();
+    await tester.ensureVisible(find.byKey(const ValueKey('excuse-send')));
+    await tester.tap(find.byKey(const ValueKey('excuse-send')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('excuse-confirm-send')));
+    await tester.pumpAndSettle();
+    final history = await controller.absenceRequests(
+      controller.activeProfile!.id,
+    );
+    expect(history.single.body, 'Dzień dobry, syn był chory. Pozdrawiam');
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
+  testWidgets('the history says waiting, then accepted once the school '
+      'excused the days, with the class teacher\'s answer', (tester) async {
+    final (controller, world) = await _app(recipients: const [_teacher]);
     final id = controller.activeProfile!.id;
+    final record = controller.snapshot.attendance.first;
+    await controller.sendAbsenceRequest(
+      profileId: id,
+      recordIds: {'a1', 'a2'},
+      recipient: _teacher,
+      subject: 'Usprawiedliwienie nieobecności',
+      body: 'Treść',
+      days: [_day(2)],
+      reasons: const ['illness'],
+    );
+    expect(controller.excuseSentAt(record), isNotNull);
+    await _pump(tester, controller);
+    await tester.tap(find.byKey(const ValueKey('today-excuse-history')));
+    await tester.pumpAndSettle();
+    final request = (await controller.absenceRequests(id)).single;
+    Text status() => tester.widget<Text>(
+      find.descendant(
+        of: find.byKey(ValueKey('absence-status-${request.id}')),
+        matching: find.byType(Text),
+      ),
+    );
+    expect(status().data, 'Waiting');
+    expect(find.text('Illness'), findsOneWidget);
+    expect(find.byKey(ValueKey('absence-reply-${request.id}')), findsNothing);
+    await tester.tapAt(const Offset(10, 10));
+    await tester.pumpAndSettle();
+
+    world.changes['child-parent'] = (data) => _withAbsences(
+      data,
+      excused: true,
+      reply: SchoolMessage(
+        id: 'reply-1',
+        sender: 'Anna Testowa',
+        subject: 'Re: Usprawiedliwienie',
+        preview: 'Dziękuję, usprawiedliwione.',
+        receivedAt: DateTime.now().add(const Duration(minutes: 5)),
+        unread: true,
+        hasAttachments: false,
+      ),
+    );
+    await controller.sync();
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('today-excuse-history')), findsOneWidget);
+    expect(find.text('Accepted'), findsOneWidget, reason: 'on Today');
+    await tester.tap(find.byKey(const ValueKey('today-excuse-history')));
+    await tester.pumpAndSettle();
+    expect(status().data, 'Accepted');
+    expect(find.byKey(ValueKey('absence-reply-${request.id}')), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byKey(ValueKey('absence-reply-${request.id}')),
+        matching: find.text('Dziękuję, usprawiedliwione.'),
+      ),
+      findsOneWidget,
+    );
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
+  test('a planned note needs no absences; one not sure until it went '
+      'counts as sent, so it is not sent twice', () async {
+    final (controller, _) = await _app(recipients: const [_teacher]);
+    final id = controller.activeProfile!.id;
+    await controller.sendAbsenceRequest(
+      profileId: id,
+      recordIds: const {},
+      recipient: _teacher,
+      subject: 'Planowana nieobecność',
+      body: 'Treść',
+      days: [DateTime(2026, 11, 3), DateTime(2026, 11, 4)],
+      reasons: const ['familyTrip'],
+      planned: true,
+    );
+    expect((await controller.absenceRequests(id)).single.planned, isTrue);
+    await expectLater(
+      controller.sendAbsenceRequest(
+        profileId: id,
+        recordIds: const {},
+        recipient: _teacher,
+        subject: 'Usprawiedliwienie',
+        body: 'Treść',
+      ),
+      throwsArgumentError,
+      reason: 'excusing days gone needs absences',
+    );
+
+    final record = controller.snapshot.attendance.first;
     await controller.recordExcuse(
       'r1',
       [record],
@@ -205,10 +447,6 @@ void main() {
       sent: false,
     );
     expect(controller.excuseSentAt(record), isNotNull);
-    expect(
-      (await controller.absenceRequests(id)).single.state,
-      AbsenceRequestState.uncertain,
-    );
     await controller.recordExcuse(
       'r1',
       [record],
@@ -218,8 +456,11 @@ void main() {
       sent: true,
     );
     final history = await controller.absenceRequests(id);
-    expect(history, hasLength(1), reason: 'the same note, now sent');
-    expect(history.single.state, AbsenceRequestState.sent);
+    expect(
+      history.where((request) => request.id.endsWith('-r1')),
+      hasLength(1),
+      reason: 'the same note, now sent',
+    );
   });
 
   testWidgets('the class teacher is found by the code of the group too', (
@@ -238,26 +479,27 @@ void main() {
     await _pump(tester, controller);
     await tester.tap(find.byKey(const ValueKey('today-excuse-button')));
     await tester.pumpAndSettle();
-    await tester.ensureVisible(find.byKey(const ValueKey('excuse-prepare')));
-    await tester.tap(find.byKey(const ValueKey('excuse-prepare')));
-    await tester.pumpAndSettle();
     expect(
-      find.widgetWithText(InputChip, 'Wychowawca Testowy'),
+      find.descendant(
+        of: find.byKey(const ValueKey('excuse-teacher')),
+        matching: find.textContaining('Wychowawca Testowy'),
+      ),
       findsOneWidget,
     );
     await tester.pumpWidget(const SizedBox.shrink());
   });
 
-  testWidgets('without a class teacher among the recipients, the message '
-      'waits for one to be picked; the signature signs it', (tester) async {
+  testWidgets('without a class teacher among the recipients, the note opens '
+      'as a message to pick one; the signature signs it', (tester) async {
     final (controller, _) = await _app();
     await controller.setExcuseSignature('Rodzic Testowy');
     await _pump(tester, controller);
     await tester.tap(find.byKey(const ValueKey('today-excuse-button')));
     await tester.pumpAndSettle();
-    await tester.ensureVisible(find.byKey(const ValueKey('excuse-prepare')));
-    await tester.tap(find.byKey(const ValueKey('excuse-prepare')));
+    await tester.ensureVisible(find.byKey(const ValueKey('excuse-send')));
+    await tester.tap(find.byKey(const ValueKey('excuse-send')));
     await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('excuse-confirm')), findsNothing);
     expect(find.byType(InputChip), findsNothing);
     expect(_field(tester, 'compose-body'), endsWith('Rodzic Testowy'));
     await tester.pumpWidget(const SizedBox.shrink());
@@ -277,5 +519,88 @@ void main() {
       );
       await tester.pumpWidget(const SizedBox.shrink());
     }
+  });
+
+  testWidgets('the attendance calendar marks a day whose absences went in a '
+      'note and wait', (tester) async {
+    final (controller, world) = await _app(recipients: const [_teacher]);
+    final now = DateTime.now();
+    world.changes['child-parent'] = (data) => AppSnapshot(
+      profile: data.profile,
+      lessons: data.lessons,
+      grades: data.grades,
+      events: const [],
+      messages: data.messages,
+      attendance: [
+        AttendanceRecord(
+          id: 'c1',
+          date: DateTime(now.year, now.month, now.day),
+          lessonNumber: 1,
+          subject: 'Matematyka',
+          type: 'Nieobecność',
+          symbol: 'nb',
+          kind: AttendanceKind.absent,
+        ),
+      ],
+      announcements: const [],
+      notices: const [],
+      lastSync: data.lastSync,
+    );
+    await controller.sync();
+    controller.selectTab(6);
+    await _pump(tester, controller);
+    expect(find.text('sent, waiting'), findsNothing);
+    await controller.recordExcuse(
+      'r1',
+      [controller.snapshot.attendance.single],
+      subject: 'Usprawiedliwienie',
+      body: 'Treść',
+      recipient: 'Anna Testowa',
+      sent: true,
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('sent, waiting'), findsOneWidget);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
+  testWidgets('settings keep how the notes of each child read', (tester) async {
+    final (controller, _) = await _app();
+    controller.selectTab(9);
+    await _pump(tester, controller);
+    final word = find.byKey(const ValueKey('settings-excuse-child'));
+    await tester.scrollUntilVisible(
+      word,
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.ensureVisible(word);
+    await tester.pumpAndSettle();
+    await tester.tap(find.descendant(of: word, matching: find.text('córka')));
+    await tester.pumpAndSettle();
+    await tester.enterText(
+      find.byKey(const ValueKey('settings-excuse-closing')),
+      'Pozdrawiam serdecznie',
+    );
+    await tester.pumpAndSettle();
+    final preferences = controller.activeProfile!.parentPreferences;
+    expect(preferences.excuseChild, 'daughter');
+    expect(preferences.excuseClosing, 'Pozdrawiam serdecznie');
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
+  test('the Librus check reports the shape of an answer, never a value', () {
+    final shape = probeShape({
+      'Justifications': [
+        {'Id': 7, 'Note': 'Anna Testowa', 'Accepted': true},
+      ],
+      'Resources': {'Url': 'https://example.invalid'},
+    });
+    expect(
+      shape,
+      '{Justifications: [1 × {Id: number, Note: text, Accepted: bool}], '
+      'Resources: {Url: text}}',
+    );
+    expect(shape, isNot(contains('Anna')));
+    expect(probeShape(null), 'null');
   });
 }
