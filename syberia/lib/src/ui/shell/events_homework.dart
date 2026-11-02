@@ -17,12 +17,17 @@ class _EventsState extends State<_Events> {
       (item) => _sameDay(item.date, selected),
     );
     final today = DateTime.now();
-    final upcoming = events
-        .where(
-          (item) =>
-              !item.date.isBefore(DateTime(today.year, today.month, today.day)),
-        )
-        .take(8);
+    final start = DateTime(today.year, today.month, today.day);
+    final day = DateTime(selected.year, selected.month, selected.day);
+    // What comes after the chosen day, so neither it nor today's entries
+    // stand there again; from today when a day gone is chosen.
+    final from = day.isBefore(start)
+        ? start
+        : DateTime(day.year, day.month, day.day + 1);
+    final upcoming =
+        (events.where((item) => !item.date.isBefore(from)).toList()
+              ..sort((a, b) => a.date.compareTo(b.date)))
+            .take(8);
     return _Refresh(
       controller: widget.controller,
       child: _PageList(

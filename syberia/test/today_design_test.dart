@@ -183,6 +183,50 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
   });
 
+  testWidgets('after a day is picked, what comes next starts after it: '
+      'today\'s test does not stay there', (tester) async {
+    final now = DateTime.now();
+    SchoolEvent on(String id, int days) => SchoolEvent(
+      id: id,
+      title: 'Kartkówka',
+      subject: 'fizyka',
+      date: DateTime(now.year, now.month, now.day + days),
+      kind: EventKind.exam,
+      typeLabel: 'kartkówka',
+    );
+    final controller = await _pump(
+      tester,
+      locale: 'en',
+      snapshot: _snapshot(
+        events: [on('today', 0), on('tomorrow', 1), on('later', 5)],
+      ),
+    );
+    controller.selectTab(3);
+    await tester.pumpAndSettle();
+    Finder event(String id) => find.byKey(ValueKey('event-$id'));
+    // Today picked: it stands once, under the day, not again below.
+    expect(event('today'), findsOneWidget);
+    expect(event('tomorrow'), findsOneWidget);
+    expect(event('later'), findsOneWidget);
+
+    final tomorrow = DateTime(now.year, now.month, now.day + 1);
+    if (tomorrow.month != now.month) {
+      await tester.tap(find.byTooltip('Next month'));
+      await tester.pumpAndSettle();
+    }
+    await tester.tap(
+      find.descendant(
+        of: find.byType(CalendarDatePicker),
+        matching: find.text('${tomorrow.day}'),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(event('today'), findsNothing);
+    expect(event('tomorrow'), findsOneWidget);
+    expect(event('later'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('each kind of entry has its own icon, colour and label', (
     tester,
   ) async {

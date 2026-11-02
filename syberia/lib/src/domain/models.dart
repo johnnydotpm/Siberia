@@ -523,7 +523,9 @@ class GradeAverageSettings {
   double? valueOf(String label) {
     final value = label.trim().toLowerCase();
     final numeric = double.tryParse(value.replaceFirst(',', '.'));
-    if (numeric != null) return numeric;
+    // Only the scale from 1 to 6 is a grade: a "0" marks work not handed in,
+    // and points are not grades, so neither counts.
+    if (numeric != null) return numeric >= 1 && numeric <= 6 ? numeric : null;
     final match = RegExp(r'^([1-6])([+-])$').firstMatch(value);
     if (match != null) {
       final base = double.parse(match.group(1)!);

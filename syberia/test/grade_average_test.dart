@@ -117,6 +117,20 @@ void main() {
     );
     expect(tester.takeException(), isNull);
   });
+
+  test('a 0, or a number off the scale from 1 to 6, is no grade and does not '
+      'pull the average down', () {
+    const settings = GradeAverageSettings();
+    expect(settings.valueOf('0'), isNull);
+    expect(settings.valueOf('0,0'), isNull);
+    expect(settings.valueOf('7'), isNull);
+    expect(settings.valueOf('85'), isNull);
+    expect(settings.valueOf('1'), 1);
+    expect(settings.valueOf('6'), 6);
+    expect(settings.valueOf('4,5'), 4.5);
+    expect(settings.average([_grade('5', 1), _grade('0', 1)]), 5);
+    expect(settings.average([_grade('0', 1)]), isNull);
+  });
 }
 
 class _SignedInRepository extends AppRepository {
