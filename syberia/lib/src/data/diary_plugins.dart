@@ -55,15 +55,13 @@ class DiaryPlugins {
   Future<PluginStore> get _store async => PluginStore(
     directory: await _directory(),
     client: _distribution,
-    source: source ?? _developmentSource,
+    source: source ?? _defaultSource,
   );
-  // A dev checkout deliberately uses the dev catalog; release builds must
-  // select main explicitly when this feature is promoted there.
-  static final _developmentSource = Uri.parse(
+  static final _defaultSource = Uri.parse(
     const String.fromEnvironment(
       'DIARY_PLUGIN_SOURCE',
       defaultValue:
-          'https://raw.githubusercontent.com/johnnydotpm/Siberia/dev/plugins/',
+          'https://raw.githubusercontent.com/johnnydotpm/Siberia/main/plugins/',
     ),
   );
   static String _key(String owner) => 'diary_plugin_account_v1_$owner';
@@ -232,9 +230,29 @@ class DiaryPlugins {
     Map<String, Object?> input,
   ) => _locked(profile.account, () async {
     final record = await _read(profile.account);
-    final manifest = PluginManifest.fromJson(record['manifest']);
+    var manifest = PluginManifest.fromJson(record['manifest']);
     if (manifest.id != profile.providerId) {
       throw const PluginException('invalid_account');
+    }
+    // Upgrade the two first-party adapters only when a newly requested
+    // operation is absent. Verify the immutable artifact before using the
+    // existing session, and never expand permissions or downgrade a release.
+    if (operation == 'deleteMessage' &&
+        !manifest.operations.contains(operation) &&
+        const {'fryderyk', 'mobireg'}.contains(manifest.id)) {
+      final available = await catalog();
+      final next = available.where((m) => m.id == manifest.id).firstOrNull;
+      if (next == null ||
+          !next.operations.contains(operation) ||
+          !next.operations.containsAll(manifest.operations) ||
+          !next.origins.containsAll(manifest.origins) ||
+          !manifest.origins.containsAll(next.origins) ||
+          jsonEncode(next.loginFields) != jsonEncode(manifest.loginFields) ||
+          !_newerVersion(next.version, manifest.version)) {
+        throw const PluginException('unsupported_operation');
+      }
+      await (await _store).install(next);
+      manifest = next;
     }
     final installed = await (await _store).install(manifest);
     var state = (record['state'] as Map).cast<String, Object?>();
@@ -450,6 +468,26 @@ class DiaryPlugins {
         group: row['group'] as String,
       );
     }).toList();
+  }
+
+  static bool _newerVersion(String next, String current) {
+    final a = next.split('.').map(int.parse).toList();
+    final b = current.split('.').map(int.parse).toList();
+    for (var i = 0; i < 3; i++) {
+      if (a[i] != b[i]) return a[i] > b[i];
+    }
+    return false;
+  }
+
+  Future<void> deleteMessage(SchoolProfile p, SchoolMessage message) async {
+    final rawId = _rawId(p, message.id);
+    final result = await invoke(p, 'deleteMessage', {
+      'id': rawId,
+      'sent': message.sent,
+    });
+    if (result.data is! Map || (result.data as Map)['deleted'] != true) {
+      throw const PluginException('protocol_error');
+    }
   }
 
   Future<String> send(

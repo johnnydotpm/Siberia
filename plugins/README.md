@@ -11,10 +11,16 @@ then uses its installed, pinned release for login, child profiles, foreground
 and background synchronization, messaging, notifications and widgets. Librus
 implements the same plugin/session interface through its bundled native adapter; it needs no catalog or plugin download to sign in.
 
-The `dev` app uses the repository's `dev/plugins/` catalog by default. Set
-`DIARY_PLUGIN_SOURCE` to the `main/plugins/` HTTPS directory when promoting the
-feature. Existing accounts retain their installed manifest/version; catalog
-changes do not silently change an account's protocol.
+The app uses the repository's `main/plugins/` catalog by default. Override
+`DIARY_PLUGIN_SOURCE` with an HTTPS directory for development. Accounts keep their
+pinned release for normal operations. When deletion is first requested on an old
+Fryderyk or MobiReg account, the host installs a newer, verified compatible release
+with the same origins, login fields and existing operations before using its stored
+session. Published releases are immutable; 0.1.0 remains available alongside 0.1.1.
+
+Mailbox selection supports marking messages read and deleting them, including
+long-press actions. Deletion requires confirmation; only confirmed successes leave
+the local list. No provider mutation is automatically retried after a failure.
 
 See [Fryderyk](fryderyk/README.md), [MobiReg](mobireg/README.md) and
 [research provenance](RESEARCH.md) for coverage and remaining gates. Tests use

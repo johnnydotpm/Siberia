@@ -74,6 +74,7 @@ abstract interface class DiarySession {
     required String body,
   });
   Future<DiarySentFolder> sent();
+  Future<void> deleteMessage(SchoolMessage message);
   Future<SchoolMessageContent> message(
     SchoolMessage message,
     AppSnapshot? cached,

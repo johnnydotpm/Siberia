@@ -32,3 +32,13 @@ the adapters; the Flutter integration tests also download and execute the exact
 published `.evc` files. A successful source compilation alone is insufficient.
 
 Native application builds and on-device validation were deliberately not run.
+
+Message deletion uses the same reviewed research snapshot: Fryderyk's
+`POST /api/messages/delete/{id}` with a JSON `null` body and MobiReg's modern
+mailbox `DELETE /api/messages/{id}` with its separate session cookie and no body.
+The bundled Librus adapter follows `removeMessage` (`LIB-3afe9aa850`) in
+`providers/librus/operations.json`: `PUT /Messages/{id}` with JSON
+`{"action":"delete"}`. Its source evidence is
+`src/api/raw-rest-api/synergia-messages-rest.js:43–45`.
+Synthetic tests verify transport, confirmation/failure handling and no automatic
+mutation replay. Current server acceptance still requires an actual account.

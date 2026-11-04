@@ -1,4 +1,4 @@
-# Fryderyk 0.1.0
+# Fryderyk 0.1.1
 
 Use **Dostęp mobilny → Wygeneruj dane logowania** in the school portal. Enter
 those mobile credentials, not ordinary website credentials. Siberia identifies
@@ -20,11 +20,11 @@ Implemented:
   absence-only list.
 - Read-only homework and its due dates/content.
 - Inbox/sent pages, recipient directory with opaque keys, opening/marking read,
-  and sending a plain message. Sending uses the documented To/CC/BCC/body keys;
+  deleting with confirmation, and sending a plain message. Sending uses the documented To/CC/BCC/body keys;
   it is never retried automatically after an uncertain outcome.
 
 Not exposed in this release: attachment downloads/uploads, CC/BCC compose UI,
-reply-all/forward/delete controls, native absence submissions, remote push
+reply-all/forward controls, native absence submissions, remote push
 registration, and final/proposed-grade presentation as separate UI sections.
 Raw academic metadata is retained for later presentation, not mixed into current
 marks or inferred permissions. No unsupported announcement/remark endpoint is
@@ -37,3 +37,5 @@ an offset follow Dart's local interpretation, as the recovered client does;
 actual school-zone behavior still needs a device/account fixture.
 
 [Protocol provenance and verification limits](../RESEARCH.md).
+
+Version 0.1.1 adds confirmed message deletion without mutation retries. Version 0.1.0 remains immutable for existing installations.

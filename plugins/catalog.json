@@ -4,12 +4,12 @@
     {
       "id": "fryderyk",
       "name": "Fryderyk",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "apiVersion": 1,
       "runtime": "dart_eval-0.8.5",
-      "artifact": "fryderyk/0.1.0/plugin.evc",
-      "sha256": "6a630db1620e356a4ba2d93cecadf130ebca69fe0814c4defdeb1fd20c3b0833",
-      "bytes": 27412,
+      "artifact": "fryderyk/0.1.1/plugin.evc",
+      "sha256": "80424cd58331682ad4be09e2ada29ba5f51ff46578c8ca2fe6cc25835b0092aa",
+      "bytes": 27612,
       "operations": [
         "authenticate",
         "accounts",
@@ -24,7 +24,8 @@
         "grades",
         "attendance",
         "homework",
-        "events"
+        "events",
+        "deleteMessage"
       ],
       "origins": [
         "https://swiadectwa.fryderyk.edu.pl"
@@ -51,12 +52,12 @@
     {
       "id": "mobireg",
       "name": "MobiReg",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "apiVersion": 1,
       "runtime": "dart_eval-0.8.5",
-      "artifact": "mobireg/0.1.0/plugin.evc",
-      "sha256": "ca71122e14a303dc90e2c71b973c85213984ccfe3c558720f32e3b37257bffc6",
-      "bytes": 33254,
+      "artifact": "mobireg/0.1.1/plugin.evc",
+      "sha256": "f43aac5d915b55253019e162a348246f16e9050dcca2a886e6903fc15c85e846",
+      "bytes": 33546,
       "operations": [
         "authenticate",
         "accounts",
@@ -73,7 +74,8 @@
         "homework",
         "events",
         "notices",
-        "announcements"
+        "announcements",
+        "deleteMessage"
       ],
       "origins": [],
       "loginFields": [

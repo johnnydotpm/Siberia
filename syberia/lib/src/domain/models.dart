@@ -852,6 +852,15 @@ class AppSnapshot {
   );
 
   /// [message] just sent, at the top of the Sent folder.
+  AppSnapshot withoutMessage(SchoolMessage message) => copyWith(
+    messages: message.sent
+        ? messages
+        : messages.where((item) => item.id != message.id).toList(),
+    sentMessages: message.sent
+        ? sentMessages.where((item) => item.id != message.id).toList()
+        : sentMessages,
+  );
+
   AppSnapshot withSent(SchoolMessage message) => copyWith(
     sentMessages: [
       message,

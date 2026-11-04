@@ -11,6 +11,7 @@ import 'package:siberia_plugins/siberia_plugins.dart';
 import 'package:syberia/src/data/app_repository.dart';
 import 'package:syberia/src/data/diary_plugins.dart';
 import 'package:syberia/src/domain/models.dart';
+import 'package:syberia/src/domain/profiles.dart';
 
 class _Http implements HttpClientAdapter {
   _Http(this.reply);
@@ -58,6 +59,143 @@ void main() {
       200,
     ),
   );
+
+  test('an older account upgrades its verified package for delete, persists the release and never replays a failure', () async {
+    const profile = SchoolProfile(
+      id: 'test-profile',
+      account: 'plugin-fryderyk-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+      synergiaLogin: null,
+      name: 'Synthetic',
+      providerId: 'fryderyk',
+      providerName: 'Fryderyk',
+      pluginStudent: '1',
+    );
+    final old = release('fryderyk');
+    final next = PluginManifest.fromJson(
+      jsonDecode(
+        File('../plugins/fryderyk/0.1.1/manifest.json').readAsStringSync(),
+      ),
+    );
+    secrets['diary_plugin_account_v1_${profile.account}'] = jsonEncode({
+      'manifest': old.toJson(),
+      'state': {
+        'username': 'm.test',
+        'schoolUrl': 'https://music.example',
+        'accessToken': 'ACCESS',
+        'refreshToken': 'REFRESH',
+        'origins': ['https://music.example'],
+      },
+    });
+    final downloads = _Http((r) {
+      if (r.uri.path.endsWith('/catalog.json')) {
+        return _json({
+          'schemaVersion': 1,
+          'plugins': [next.toJson()],
+        });
+      }
+      expect(r.uri.path, endsWith('/fryderyk/0.1.1/plugin.evc'));
+      return ResponseBody.fromBytes(
+        File('../plugins/fryderyk/0.1.1/plugin.evc').readAsBytesSync(),
+        200,
+      );
+    });
+    var attempts = 0;
+    final school = _Http((r) {
+      attempts++;
+      expect(r.uri.path, '/api/messages/delete/0007');
+      expect(r.method, 'POST');
+      return attempts == 1 ? _fry(null) : _json({}, status: 401);
+    });
+    final host = DiaryPlugins(
+      directory: () async => root,
+      distributionClient: Dio()..httpClientAdapter = downloads,
+      runtime: PluginRuntime(client: Dio()..httpClientAdapter = school),
+    );
+    final message = SchoolMessage(
+      id: '${profile.id}:${base64Url.encode(utf8.encode('0007'))}',
+      sender: '',
+      subject: '',
+      preview: '',
+      receivedAt: DateTime(2026),
+      unread: true,
+      hasAttachments: false,
+    );
+    await host.deleteMessage(profile, message);
+    expect(attempts, 1);
+    expect(downloads.requests, hasLength(2));
+    expect(jsonDecode(secrets.values.single)['manifest']['version'], '0.1.1');
+    expect(
+      jsonDecode(secrets.values.single)['state']['refreshToken'],
+      'REFRESH',
+    );
+    await expectLater(
+      host.deleteMessage(profile, message),
+      throwsA(isA<PluginException>()),
+    );
+    expect(
+      attempts,
+      2,
+      reason: '401 on a mutation must not trigger account recovery/replay',
+    );
+    expect(
+      downloads.requests,
+      hasLength(2),
+      reason: 'the verified release is cached',
+    );
+  });
+
+  test('an unverified upgrade never receives a stored session or performs deletion', () async {
+    const profile = SchoolProfile(
+      id: 'test-profile',
+      account: 'plugin-fryderyk-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+      synergiaLogin: null,
+      name: 'Synthetic',
+      providerId: 'fryderyk',
+      pluginStudent: '1',
+    );
+    final old = release('fryderyk');
+    final next = PluginManifest.fromJson(
+      jsonDecode(
+        File('../plugins/fryderyk/0.1.1/manifest.json').readAsStringSync(),
+      ),
+    );
+    secrets['diary_plugin_account_v1_${profile.account}'] = jsonEncode({
+      'manifest': old.toJson(),
+      'state': {
+        'origins': ['https://music.example'],
+        'refreshToken': 'KEEP',
+      },
+    });
+    final school = _Http(
+      (_) => throw StateError('Must not receive credentials'),
+    );
+    final host = DiaryPlugins(
+      directory: () async => root,
+      distributionClient: Dio()
+        ..httpClientAdapter = _Http(
+          (r) => r.uri.path.endsWith('/catalog.json')
+              ? _json({
+                  'schemaVersion': 1,
+                  'plugins': [next.toJson()],
+                })
+              : ResponseBody.fromBytes([0, 1, 2], 200),
+        ),
+      runtime: PluginRuntime(client: Dio()..httpClientAdapter = school),
+    );
+    await expectLater(
+      host.invoke(profile, 'deleteMessage', {'id': '7'}),
+      throwsA(
+        isA<PluginException>().having(
+          (error) => error.code,
+          'code',
+          'integrity_failed',
+        ),
+      ),
+    );
+    expect(school.requests, isEmpty);
+    expect(jsonDecode(secrets.values.single)['manifest']['version'], '0.1.0');
+    expect(jsonDecode(secrets.values.single)['state']['refreshToken'], 'KEEP');
+  });
 
   test('published Fryderyk package installs before credentials, restores offline, and retains grades on partial failure', () async {
     final downloads = distribution('fryderyk');

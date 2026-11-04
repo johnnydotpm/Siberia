@@ -1,0 +1,48 @@
+{
+  "id": "fryderyk",
+  "name": "Fryderyk",
+  "version": "0.1.1",
+  "apiVersion": 1,
+  "runtime": "dart_eval-0.8.5",
+  "artifact": "fryderyk/0.1.1/plugin.evc",
+  "sha256": "80424cd58331682ad4be09e2ada29ba5f51ff46578c8ca2fe6cc25835b0092aa",
+  "bytes": 27612,
+  "operations": [
+    "authenticate",
+    "accounts",
+    "timetable",
+    "messages",
+    "message",
+    "recipients",
+    "sendMessage",
+    "attendanceSummary",
+    "absenceRequests",
+    "refresh",
+    "grades",
+    "attendance",
+    "homework",
+    "events",
+    "deleteMessage"
+  ],
+  "origins": [
+    "https://swiadectwa.fryderyk.edu.pl"
+  ],
+  "loginFields": [
+    {
+      "id": "username",
+      "label": "username",
+      "type": "text",
+      "required": true
+    },
+    {
+      "id": "password",
+      "label": "password",
+      "type": "password",
+      "required": true
+    }
+  ],
+  "instructions": {
+    "pl": "W panelu Fryderyka otwórz Dostęp mobilny → Wygeneruj dane logowania. Użyj wygenerowanego loginu i hasła.",
+    "en": "In Fryderyk open Mobile access and generate mobile login credentials. Use that login and password."
+  }
+}

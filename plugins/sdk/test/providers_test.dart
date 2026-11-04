@@ -358,6 +358,40 @@ void main() {
     },
   );
 
+  test(
+    'Fryderyk deletes with POST JSON null, confirms the envelope and does not retry',
+    () async {
+      final p = await plugin('fryderyk');
+      for (final status in [200, 401, 500]) {
+        final network = MemoryHttp((r) {
+          expect(r.method, 'POST');
+          expect(r.uri.path, '/api/messages/delete/0007');
+          expect(r.data, 'null');
+          expect(r.headers['Authorization'], 'Bearer ACCESS');
+          return jsonReply({
+            'success': status == 200,
+            'data': null,
+          }, status: status);
+        });
+        final result = await invoke(
+          p,
+          network,
+          'deleteMessage',
+          state: fryState,
+          origins: {'https://music.example'},
+          input: {'id': '0007'},
+        );
+        expect(network.requests, hasLength(1));
+        if (status == 200) {
+          expect(result.errorCode, isNull);
+          expect(result.data, {'deleted': true});
+        } else {
+          expect(result.errorCode, isNotNull);
+        }
+      }
+    },
+  );
+
   final mobState = <String, Object?>{
     'server': 'https://diary.example',
     'school': 'SYNTHETIC',
@@ -366,6 +400,44 @@ void main() {
     'token': 'JWT',
     'origins': ['https://diary.example'],
   };
+  test(
+    'MobiReg deletes once with mailbox cookie and no body, including empty 204 replies',
+    () async {
+      final p = await plugin('mobireg');
+      for (final status in [204, 401, 500]) {
+        final network = MemoryHttp((r) {
+          expect(r.method, 'DELETE');
+          expect(r.uri.path, '/api/messages/0007');
+          expect(r.data, isNull);
+          expect(r.headers['Cookie'], 'MAIL=SYNTHETIC');
+          expect(r.headers.containsKey('Authorization'), isFalse);
+          return ResponseBody.fromString('', status);
+        });
+        final result = await invoke(
+          p,
+          network,
+          'deleteMessage',
+          state: {
+            ...mobState,
+            'messagingUrl': 'https://mail.example/sso',
+            'messagesToken': 'MODULE',
+            'mailCookie': 'MAIL=SYNTHETIC',
+            'origins': ['https://diary.example', 'https://mail.example'],
+          },
+          origins: {'https://diary.example', 'https://mail.example'},
+          input: {'id': '0007'},
+        );
+        expect(network.requests, hasLength(1));
+        if (status == 204) {
+          expect(result.errorCode, isNull);
+          expect(result.data, {'deleted': true});
+        } else {
+          expect(result.errorCode, isNotNull);
+        }
+      }
+    },
+  );
+
   test(
     'MobiReg modern password and gateway aliases; users never has fabricated pupil',
     () async {

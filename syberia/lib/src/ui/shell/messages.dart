@@ -17,6 +17,15 @@ class _MessagesState extends State<_Messages> {
   final _search = TextEditingController();
   bool _unreadOnly = false;
   _MessageFolder _folder = _MessageFolder.inbox;
+  bool _selecting = false;
+  bool _working = false;
+  final _selected = <String>{};
+  late Object _scope;
+  Object get _currentScope => (
+    widget.controller.together,
+    widget.controller.activeProfile?.id,
+    widget.controller.snapshot.profile.id,
+  );
 
   /// The messages shown as unread under the filter, by id: one read there,
   /// opened or swiped, stays, as read now, until the filter, the folder or
@@ -26,17 +35,25 @@ class _MessagesState extends State<_Messages> {
   @override
   void initState() {
     super.initState();
+    _scope = _currentScope;
     widget.controller.addListener(_onController);
   }
 
   /// Left for another tab: what was read here goes from the filter.
   void _onController() {
-    if (widget.controller.tabIndex != _messagesTab) _shownUnread.clear();
+    if (widget.controller.tabIndex != _messagesTab || _scope != _currentScope) {
+      _shownUnread.clear();
+      _selected.clear();
+      _selecting = false;
+      _scope = _currentScope;
+    }
   }
 
   void _openFolder(_MessageFolder folder) {
     HapticFeedback.selectionClick();
     _shownUnread.clear();
+    _selected.clear();
+    _selecting = false;
     setState(() => _folder = folder);
     // A sync leaves the Sent folder out, so it is loaded when opened.
     if (folder == _MessageFolder.sent) {
@@ -51,17 +68,56 @@ class _MessagesState extends State<_Messages> {
     super.dispose();
   }
 
-  Future<void> _markAllRead() async {
+  List<SchoolMessage> get _selection => [
+    for (final item
+        in _folder == _MessageFolder.sent
+            ? widget.controller.snapshot.sentMessages
+            : widget.controller.snapshot.messages)
+      if (_selected.contains(item.id)) item,
+  ];
+
+  void _toggle(SchoolMessage message) => setState(() {
+    _selecting = true;
+    if (!_selected.remove(message.id)) _selected.add(message.id);
+  });
+
+  Future<void> _runSelection({required bool delete}) async {
+    if (_working) return;
+    final scope = _scope;
+    final folder = _folder;
+    final selected = _selection;
+    if (selected.isEmpty) return;
+    if (!delete) setState(() => _working = true);
     try {
-      await widget.controller.markAllMessagesRead();
-      if (!mounted) return;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(context.tr('allMessagesRead'))));
+      if (delete) {
+        await _deleteMessages(
+          context,
+          widget.controller,
+          selected,
+          onConfirmed: () => setState(() => _working = true),
+        );
+      } else {
+        await widget.controller.markMessagesRead(selected);
+      }
     } on Object {
-      if (!mounted) return;
+      if (!mounted || scope != _currentScope) return;
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text(context.tr('markAllReadFailed'))));
+    } finally {
+      if (mounted) {
+        setState(() {
+          _working = false;
+          if (scope == _currentScope && folder == _folder) {
+            final remaining = {
+              for (final item in _selection)
+                if (delete || item.unread) item.id,
+            };
+            _selected.retainAll(remaining);
+            if (_selected.isEmpty) _selecting = false;
+          }
+        });
+      }
     }
   }
 
@@ -84,6 +140,7 @@ class _MessagesState extends State<_Messages> {
                 : controller.snapshot.messages)
             .toList()
           ..sort((a, b) => b.receivedAt.compareTo(a.receivedAt));
+    _selected.retainAll(all.map((message) => message.id));
     final query = _plainPolish(_search.text.trim());
     if (_unreadOnly && !sentFolder) {
       _shownUnread.addAll([
@@ -131,7 +188,21 @@ class _MessagesState extends State<_Messages> {
       } else if (style == MessageListStyle.cards) {
         rows.add(const SizedBox(height: _Space.item));
       }
-      rows.add(_MessageTile(controller, item, style: style, now: now));
+      rows.add(
+        _MessageTile(
+          controller,
+          item,
+          key: ValueKey('message-tile-${item.id}'),
+          style: style,
+          now: now,
+          selecting: _selecting,
+          selected: _selected.contains(item.id),
+          busy: _working,
+          onSelect: () => _toggle(item),
+          onDelete: () => _runSelection(delete: true),
+          onRead: () => _runSelection(delete: false),
+        ),
+      );
     }
     Future<void> refresh() => sentFolder
         ? controller.refreshSentMessages(force: true)
@@ -141,7 +212,7 @@ class _MessagesState extends State<_Messages> {
       TextField(
         key: const ValueKey('messages-search'),
         controller: _search,
-        onChanged: (_) => setState(() {}),
+        onChanged: (_) => setState(_selected.clear),
         textInputAction: TextInputAction.search,
         decoration: InputDecoration(
           hintText: context.tr('messagesSearch'),
@@ -152,7 +223,10 @@ class _MessagesState extends State<_Messages> {
                   icon: const Icon(Icons.clear_rounded),
                   tooltip: MaterialLocalizations.of(context)
                       .deleteButtonTooltip,
-                  onPressed: () => setState(_search.clear),
+                  onPressed: () => setState(() {
+                    _search.clear();
+                    _selected.clear();
+                  }),
                 ),
           filled: true,
           isDense: true,
@@ -193,7 +267,9 @@ class _MessagesState extends State<_Messages> {
         ),
       ),
       const SizedBox(height: _Space.item),
-      Row(
+      Wrap(
+        alignment: WrapAlignment.spaceBetween,
+        crossAxisAlignment: WrapCrossAlignment.center,
         children: [
           if (!sentFolder)
             FilterChip(
@@ -208,63 +284,123 @@ class _MessagesState extends State<_Messages> {
               onSelected: (value) => setState(() {
                 _unreadOnly = value;
                 _shownUnread.clear();
+                _selected.clear();
               }),
             ),
-          const Spacer(),
-          if (sentFolder)
-            IconButton(
-              key: const ValueKey('messages-sent-refresh'),
-              tooltip: MaterialLocalizations.of(context)
-                  .refreshIndicatorSemanticLabel,
-              onPressed: loadingSent
-                  ? null
-                  : () => controller.refreshSentMessages(force: true),
-              icon: loadingSent
-                  ? const SizedBox(
-                      width: 18,
-                      height: 18,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : const Icon(Icons.refresh_rounded),
-            )
-          else
-            IconButton(
-              key: const ValueKey('messages-mark-all-read'),
-              tooltip: context.tr('markAllRead'),
-              onPressed:
-                  unreadCount == 0 ||
-                      controller.markingMessagesRead ||
-                      controller.syncing
-                  ? null
-                  : _markAllRead,
-              icon: controller.markingMessagesRead
-                  ? const SizedBox(
-                      width: 18,
-                      height: 18,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : const Icon(Icons.done_all_rounded),
-            ),
-          IconButton(
-            key: const ValueKey('messages-style-toggle'),
-            tooltip: context.tr(
-              style == MessageListStyle.list
-                  ? 'messagesViewCards'
-                  : 'messagesViewList',
-            ),
-            onPressed: () => controller.setMessageListStyle(
-              style == MessageListStyle.list
-                  ? MessageListStyle.cards
-                  : MessageListStyle.list,
-            ),
-            icon: Icon(
-              style == MessageListStyle.list
-                  ? Icons.view_agenda_rounded
-                  : Icons.view_list_rounded,
-            ),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (sentFolder)
+                IconButton(
+                  key: const ValueKey('messages-sent-refresh'),
+                  tooltip: MaterialLocalizations.of(context)
+                      .refreshIndicatorSemanticLabel,
+                  onPressed: loadingSent
+                      ? null
+                      : () => controller.refreshSentMessages(force: true),
+                  icon: loadingSent
+                      ? const SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Icon(Icons.refresh_rounded),
+                ),
+              TextButton(
+                key: const ValueKey('messages-select'),
+                onPressed: _working
+                    ? null
+                    : () => setState(() {
+                        _selecting = !_selecting;
+                        _selected.clear();
+                      }),
+                child: Text(
+                  _selecting
+                      ? MaterialLocalizations.of(context).cancelButtonLabel
+                      : context.tr('messagesSelect'),
+                ),
+              ),
+              IconButton(
+                key: const ValueKey('messages-style-toggle'),
+                tooltip: context.tr(
+                  style == MessageListStyle.list
+                      ? 'messagesViewCards'
+                      : 'messagesViewList',
+                ),
+                onPressed: () => controller.setMessageListStyle(
+                  style == MessageListStyle.list
+                      ? MessageListStyle.cards
+                      : MessageListStyle.list,
+                ),
+                icon: Icon(
+                  style == MessageListStyle.list
+                      ? Icons.view_agenda_rounded
+                      : Icons.view_list_rounded,
+                ),
+              ),
+            ],
           ),
         ],
       ),
+      if (_selecting) ...[
+        Wrap(
+          crossAxisAlignment: WrapCrossAlignment.center,
+          spacing: 4,
+          children: [
+            TextButton.icon(
+              key: const ValueKey('messages-select-all'),
+              onPressed: _working
+                  ? null
+                  : () => setState(() {
+                      if (messages.every((m) => _selected.contains(m.id))) {
+                        _selected.clear();
+                      } else {
+                        _selected.addAll(messages.map((m) => m.id));
+                      }
+                    }),
+              icon: const Icon(Icons.select_all_rounded),
+              label: Text(context.tr('messagesSelectAll')),
+            ),
+            if (_selected.isNotEmpty) ...[
+              Text(
+                context.trArgs('messagesSelected', {
+                  'count': '${_selected.length}',
+                }),
+              ),
+              if (!sentFolder)
+                IconButton(
+                  key: const ValueKey('messages-mark-selected-read'),
+                  tooltip: context.tr('messageMarkRead'),
+                  onPressed:
+                      _working ||
+                          controller.syncing ||
+                          controller.markingMessagesRead ||
+                          controller.deletingMessages ||
+                          !_selection.any((m) => m.unread)
+                      ? null
+                      : () => _runSelection(delete: false),
+                  icon: const Icon(Icons.mark_email_read_rounded),
+                ),
+              IconButton(
+                key: const ValueKey('messages-delete-selected'),
+                tooltip: context.tr('messagesDelete'),
+                onPressed:
+                    _working ||
+                        controller.syncing ||
+                        controller.markingMessagesRead ||
+                        controller.deletingMessages
+                    ? null
+                    : () => _runSelection(delete: true),
+                icon: Icon(
+                  Icons.delete_outline_rounded,
+                  color: Theme.of(context).colorScheme.error,
+                ),
+              ),
+            ],
+          ],
+        ),
+        if (_working) const LinearProgressIndicator(),
+      ],
       if (error != null) ...[
         const SizedBox(height: _Space.item),
         _InfoCard(
@@ -428,13 +564,22 @@ class _MessageTile extends StatelessWidget {
   const _MessageTile(
     this.controller,
     this.item, {
+    super.key,
     required this.style,
     required this.now,
+    this.selecting = false,
+    this.selected = false,
+    this.busy = false,
+    this.onSelect,
+    this.onDelete,
+    this.onRead,
   });
   final AppController controller;
   final SchoolMessage item;
   final MessageListStyle style;
   final DateTime now;
+  final bool selecting, selected, busy;
+  final VoidCallback? onSelect, onDelete, onRead;
 
   Future<bool> _markRead(BuildContext context) async {
     final messenger = ScaffoldMessenger.of(context);
@@ -452,26 +597,34 @@ class _MessageTile extends StatelessWidget {
     return false;
   }
 
-  /// A long press: open it, or mark it read without opening it.
-  void _actions(BuildContext context, bool unread) => _showItemActions(
-    context,
-    title: item.subject.isEmpty ? item.sender : item.subject,
-    actions: [
-      (
-        key: ValueKey('message-action-open-${item.id}'),
-        icon: Icons.mail_outline_rounded,
-        label: context.tr('open'),
-        run: () => _showMessageDetail(context, controller, item),
-      ),
-      if (unread)
+  void _actions(BuildContext context, bool unread) {
+    if (!selected) onSelect?.call();
+    _showItemActions(
+      context,
+      title: item.subject.isEmpty ? item.sender : item.subject,
+      actions: [
         (
-          key: ValueKey('message-action-read-${item.id}'),
-          icon: Icons.mark_email_read_rounded,
-          label: context.tr('messageMarkRead'),
-          run: () => _markRead(context),
+          key: ValueKey('message-action-open-${item.id}'),
+          icon: Icons.mail_outline_rounded,
+          label: context.tr('open'),
+          run: () => _showMessageDetail(context, controller, item),
         ),
-    ],
-  );
+        if (unread)
+          (
+            key: ValueKey('message-action-read-${item.id}'),
+            icon: Icons.mark_email_read_rounded,
+            label: context.tr('messageMarkRead'),
+            run: onRead ?? () => _markRead(context),
+          ),
+        (
+          key: ValueKey('message-action-delete-${item.id}'),
+          icon: Icons.delete_outline_rounded,
+          label: context.tr('messagesDelete'),
+          run: onDelete ?? () => _deleteMessages(context, controller, [item]),
+        ),
+      ],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -492,9 +645,22 @@ class _MessageTile extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          item.sent
-              ? _SentAvatar(item.recipients.firstOrNull ?? '')
-              : _SenderAvatar(item.sender),
+          if (selecting)
+            SizedBox(
+              width: 40,
+              height: 40,
+              child: Checkbox(
+                key: ValueKey('message-select-${item.id}'),
+                value: selected,
+                semanticLabel:
+                    '${context.tr('messagesSelect')}: ${item.subject}',
+                onChanged: busy ? null : (_) => onSelect?.call(),
+              ),
+            )
+          else if (item.sent)
+            _SentAvatar(item.recipients.firstOrNull ?? '')
+          else
+            _SenderAvatar(item.sender),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -609,10 +775,15 @@ class _MessageTile extends StatelessWidget {
     );
     final tile = style == MessageListStyle.cards
         ? Card(
+            color: selected ? colors.secondaryContainer : null,
             clipBehavior: Clip.antiAlias,
             child: InkWell(
-              onTap: () => _showMessageDetail(context, controller, item),
-              onLongPress: item.sent ? null : () => _actions(context, unread),
+              onTap: busy
+                  ? null
+                  : selecting
+                  ? onSelect
+                  : () => _showMessageDetail(context, controller, item),
+              onLongPress: busy ? null : () => _actions(context, unread),
               child: Container(
                 decoration: BoxDecoration(
                   border: Border(
@@ -629,20 +800,38 @@ class _MessageTile extends StatelessWidget {
         : Column(
             children: [
               InkWell(
+                overlayColor: selected
+                    ? WidgetStatePropertyAll(colors.secondaryContainer)
+                    : null,
                 borderRadius: BorderRadius.circular(14),
-                onTap: () => _showMessageDetail(context, controller, item),
-                onLongPress: item.sent ? null : () => _actions(context, unread),
-                child: content,
+                onTap: busy
+                    ? null
+                    : selecting
+                    ? onSelect
+                    : () => _showMessageDetail(context, controller, item),
+                onLongPress: busy ? null : () => _actions(context, unread),
+                child: ColoredBox(
+                  color: selected
+                      ? colors.secondaryContainer
+                      : Colors.transparent,
+                  child: content,
+                ),
               ),
               // Under the text, past the avatar: 12 + 40 + 12.
               const Divider(height: 1, indent: 64),
             ],
           );
-    if (item.sent) return tile;
+    final accessible = Semantics(
+      selected: selecting ? selected : null,
+      child: tile,
+    );
+    if (item.sent) return accessible;
     // Kept once read, only no longer swiped, so the row changes in place.
     return Dismissible(
       key: ValueKey('message-${item.id}'),
-      direction: unread ? DismissDirection.startToEnd : DismissDirection.none,
+      direction: unread && !selecting && !busy
+          ? DismissDirection.startToEnd
+          : DismissDirection.none,
       confirmDismiss: (_) {
         // Felt, as the homework's swipe is.
         HapticFeedback.lightImpact();
@@ -652,8 +841,72 @@ class _MessageTile extends StatelessWidget {
         icon: Icons.mark_email_read_rounded,
         label: context.tr('messageMarkRead'),
       ),
-      child: tile,
+      child: accessible,
     );
+  }
+}
+
+Future<void> _deleteMessages(
+  BuildContext context,
+  AppController controller,
+  List<SchoolMessage> messages, {
+  VoidCallback? onConfirmed,
+}) async {
+  final scope = (
+    controller.together,
+    controller.activeProfile?.id,
+    controller.snapshot.profile.id,
+  );
+  final confirmed = await showDialog<bool>(
+    context: context,
+    builder: (dialog) => AlertDialog(
+      title: Text(context.tr('messagesDeleteTitle')),
+      content: Text(
+        context.trArgs('messagesDeleteConfirm', {
+          'count': '${messages.length}',
+        }),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(dialog, false),
+          child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
+        ),
+        TextButton(
+          key: const ValueKey('messages-confirm-delete'),
+          onPressed: () => Navigator.pop(dialog, true),
+          style: TextButton.styleFrom(
+            foregroundColor: Theme.of(dialog).colorScheme.error,
+          ),
+          child: Text(context.tr('messagesDelete')),
+        ),
+      ],
+    ),
+  );
+  if (confirmed != true ||
+      !context.mounted ||
+      scope !=
+          (
+            controller.together,
+            controller.activeProfile?.id,
+            controller.snapshot.profile.id,
+          )) {
+    return;
+  }
+  try {
+    onConfirmed?.call();
+    await controller.deleteMessages(messages);
+  } on Object {
+    if (context.mounted &&
+        scope ==
+            (
+              controller.together,
+              controller.activeProfile?.id,
+              controller.snapshot.profile.id,
+            )) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(context.tr('messagesDeleteFailed'))),
+      );
+    }
   }
 }
 
