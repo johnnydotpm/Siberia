@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syberia/src/app.dart';
-import 'package:syberia/src/data/librus/librus_client.dart' show probeShape;
+import 'package:syberia/src/data/librus/librus_client.dart'
+    show parseJustifications, probeMask, probeMessages, probeShape, probeWords;
 import 'package:syberia/src/domain/excuse.dart';
 import 'package:syberia/src/domain/models.dart';
 import 'package:syberia/src/domain/parent.dart';
@@ -602,5 +603,155 @@ void main() {
     );
     expect(shape, isNot(contains('Anna')));
     expect(probeShape(null), 'null');
+  });
+
+  group('the school\'s own e-Usprawiedliwienia module', () {
+    test('reads the notes Librus keeps, newest first, with the teachers', () {
+      final notes = parseJustifications({
+        'status': 'ok',
+        'message': '',
+        'data': [
+          {
+            'id': 11,
+            'messageFromParent': 'Proszę o usprawiedliwienie.',
+            'postDate': '2026-10-20 07:12:00',
+            'justificationStatus': 'accepted',
+            'lessons': [],
+            'attachment': false,
+            'dateFrom': '2026-10-15',
+            'dateTo': '2026-10-15',
+            'justifiedAbsences': 3,
+            'notifiedTeachers': [
+              {'firstName': 'Anna', 'lastName': 'Testowa'},
+            ],
+          },
+          {
+            'id': 12,
+            'messageFromParent': 'Wyjazd.',
+            'postDate': '2026-11-01 18:40:00',
+            'justificationStatus': 'Oczekuje',
+            'lessons': [
+              {'id': 1},
+            ],
+            'dateFrom': '2026-11-03',
+            'dateTo': '2026-11-05',
+            'justifiedAbsences': '0',
+            'notifiedTeachers': [
+              {'name': 'Nauczyciel Testowy'},
+              {'id': 5},
+            ],
+          },
+          {'messageFromParent': 'bez id'},
+          'nie mapa',
+        ],
+      });
+      expect(notes.map((note) => note.id), ['12', '11']);
+      final [later, earlier] = notes;
+      expect(later.state, JustificationState.pending);
+      expect(later.from, DateTime(2026, 11, 3));
+      expect(later.to, DateTime(2026, 11, 5));
+      expect(later.lessons, 1);
+      expect(later.teachers, ['Nauczyciel Testowy', '']);
+      expect(earlier.state, JustificationState.accepted);
+      expect(earlier.justified, 3);
+      expect(earlier.teachers, ['Anna Testowa']);
+      expect(earlier.postedAt, DateTime(2026, 10, 20, 7, 12));
+      expect(parseJustifications(null), isEmpty);
+      expect(parseJustifications({'data': 'nic'}), isEmpty);
+    });
+
+    test('knows the status words in English and Polish; others stay as '
+        'they are', () {
+      for (final (word, state) in [
+        ('accepted', JustificationState.accepted),
+        ('Zaakceptowane', JustificationState.accepted),
+        ('rejected', JustificationState.rejected),
+        ('Odrzucone', JustificationState.rejected),
+        ('pending', JustificationState.pending),
+        ('Oczekuje', JustificationState.pending),
+        ('', JustificationState.unknown),
+        ('cośinnego', JustificationState.unknown),
+      ]) {
+        expect(justificationState(word), state, reason: word);
+      }
+    });
+
+    test('the check shows status codes and the shape of dates, never a '
+        'long text or a date itself; an error answer says its messages', () {
+      expect(
+        probeWords(['accepted', 'pending', 'accepted', null]),
+        'accepted | pending | null',
+      );
+      expect(
+        probeWords(['Proszę o usprawiedliwienie nieobecności syna']),
+        '<String 44>',
+      );
+      expect(probeMask('2026-10-20 07:12:00'), 'dddd-dd-dd dd:dd:dd');
+      expect(probeMask(7), isNull);
+      expect(
+        probeMessages({
+          'status': 'error',
+          'message': 'Validation failed',
+          'errors': [
+            {'field': 'dateFrom', 'message': 'required'},
+          ],
+        }),
+        [
+          'status: error',
+          'message: Validation failed',
+          'field: dateFrom',
+          'message: required',
+        ],
+      );
+      expect(probeMessages('Bad Request'), ['Bad Request']);
+    });
+
+    testWidgets('the history shows the notes Librus keeps, with the school\'s '
+        'answer', (tester) async {
+      final (controller, world) = await _app(recipients: const [_teacher]);
+      world.justifications = [
+        SchoolJustification(
+          id: 'j1',
+          message: 'Proszę o usprawiedliwienie.',
+          status: 'rejected',
+          postedAt: DateTime(2026, 10, 20, 7, 12),
+          from: DateTime(2026, 10, 15),
+          to: DateTime(2026, 10, 16),
+          justified: 0,
+          teachers: const ['Anna Testowa'],
+        ),
+        const SchoolJustification(id: 'j2', message: '', status: 'nowyKod'),
+      ];
+      await controller.sendAbsenceRequest(
+        profileId: controller.activeProfile!.id,
+        recordIds: {'a1', 'a2'},
+        recipient: _teacher,
+        subject: 'Usprawiedliwienie nieobecności',
+        body: 'Treść',
+        days: [_day(2)],
+        reasons: const ['illness'],
+      );
+      await _pump(tester, controller);
+      await tester.tap(find.byKey(const ValueKey('today-excuse-history')));
+      await tester.pumpAndSettle();
+      expect(find.text('In Librus'), findsOneWidget);
+      Text status(String id) => tester.widget<Text>(
+        find.descendant(
+          of: find.byKey(ValueKey('absence-diary-status-$id')),
+          matching: find.byType(Text),
+        ),
+      );
+      expect(status('j1').data, 'Rejected');
+      expect(status('j2').data, 'nowyKod');
+      expect(
+        find.descendant(
+          of: find.byKey(const ValueKey('absence-diary-j1')),
+          matching: find.textContaining('Anna Testowa'),
+        ),
+        findsOneWidget,
+      );
+      expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox.shrink());
+    });
   });
 }

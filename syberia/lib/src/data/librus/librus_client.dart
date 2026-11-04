@@ -816,12 +816,102 @@ class LibrusClient {
         lines.add(
           '$endpoint · ${response.statusCode ?? '?'} · ${probeShape(data)}',
         );
+        if (endpoint == 'Justifications' && response.statusCode == 200) {
+          lines.addAll(await _probeJustifications(data));
+        }
       } on DioException catch (error) {
         lines.add('$endpoint · ${error.type.name}');
       }
     }
     return lines;
   }
+
+  Options get _probeOptions => Options(
+    headers: {
+      'Authorization': 'Bearer $_synergiaToken',
+      'Accept': 'application/json',
+      'User-Agent': _userAgent,
+    },
+    validateStatus: (status) => status != null && status < 600,
+  );
+
+  /// More of the e-Usprawiedliwienia module, still read only: the status
+  /// words, the shape of dates, the teachers and lessons of a note, one
+  /// note on its own and the methods the address allows.
+  Future<List<String>> _probeJustifications(Map<String, dynamic>? data) async {
+    final items = [
+      for (final item in (data?['data'] is List ? data!['data'] as List : []))
+        if (item is Map) item,
+    ];
+    final lines = <String>[
+      'Justifications statuses · ${probeWords([for (final item in items) item['justificationStatus']])}',
+      for (final key in ['postDate', 'dateFrom', 'dateTo'])
+        'Justifications $key · ${probeWords([for (final item in items) probeMask(item[key])])}',
+      for (final key in ['notifiedTeachers', 'lessons'])
+        'Justifications $key item · ${probeShape(items.map((item) => item[key]).whereType<List>().expand((list) => list).firstOrNull)}',
+    ];
+    final id = items.firstOrNull?['id'];
+    if (id != null) {
+      try {
+        final response = await _dio.get<Object?>(
+          '$_apiBase/Justifications/$id',
+          options: _probeOptions,
+        );
+        final one = _map(response.data) ?? _decodeMap(response.data);
+        lines.add(
+          'Justifications/<id> · ${response.statusCode ?? '?'} · ${probeShape(one)}',
+        );
+      } on DioException catch (error) {
+        lines.add('Justifications/<id> · ${error.type.name}');
+      }
+    }
+    try {
+      final response = await _dio.request<Object?>(
+        '$_apiBase/Justifications',
+        options: _probeOptions.copyWith(method: 'OPTIONS'),
+      );
+      lines.add(
+        'OPTIONS Justifications · ${response.statusCode ?? '?'} · Allow: '
+        '${response.headers.value('allow') ?? response.headers.value('access-control-allow-methods') ?? '-'}',
+      );
+    } on DioException catch (error) {
+      lines.add('OPTIONS Justifications · ${error.type.name}');
+    }
+    return lines;
+  }
+
+  /// Asks Librus once, with an empty body, to make an excuse note, so that
+  /// its answer says what a note needs. Without dates or text Librus should
+  /// refuse it; if it ever takes it, the report says so plainly. Never
+  /// retried.
+  Future<List<String>> probeSend() async {
+    await _apiGet('Me', optional: true);
+    try {
+      final response = await _dio.post<Object?>(
+        '$_apiBase/Justifications',
+        data: const <String, Object>{},
+        options: _probeOptions.copyWith(contentType: 'application/json'),
+      );
+      final status = response.statusCode ?? 0;
+      final data = _map(response.data) ?? _decodeMap(response.data);
+      return [
+        'POST Justifications · $status · '
+            '${response.headers.value('content-type') ?? '-'}',
+        if (status == 200 || status == 201)
+          'Librus accepted the empty request! id: '
+              '${(data?['data'] is Map ? data!['data']['id'] : null) ?? data?['id'] ?? '?'}',
+        'shape · ${probeShape(data)}',
+        for (final text in probeMessages(data ?? response.data)) 'says · $text',
+      ];
+    } on DioException catch (error) {
+      return ['POST Justifications · ${error.type.name}'];
+    }
+  }
+
+  /// The excuse notes the school's e-Usprawiedliwienia module keeps for the
+  /// account, newest first.
+  Future<List<SchoolJustification>> fetchJustifications() async =>
+      parseJustifications(await _apiGet('Justifications'));
 
   Future<Map<String, dynamic>> _apiGet(
     String endpoint, {
@@ -2476,4 +2566,118 @@ String probeShape(Object? value, [int depth = 0]) {
     bool() => 'bool',
     _ => 'other',
   };
+}
+
+/// The distinct short words among [values], for status codes: a long text,
+/// which may say something about someone, is shown only as its length.
+String probeWords(Iterable<Object?> values) {
+  final words = <String>{};
+  for (final value in values) {
+    if (value == null) {
+      words.add('null');
+    } else if (value is String &&
+        value.length <= 24 &&
+        RegExp(r'^[\p{L}\p{N}_ .:-]*$', unicode: true).hasMatch(value)) {
+      words.add(value);
+    } else {
+      words.add('<${value.runtimeType} ${value.toString().length}>');
+    }
+  }
+  return words.isEmpty ? '-' : words.join(' | ');
+}
+
+/// [value] with every digit as "d": the shape of a date, not the date.
+String? probeMask(Object? value) =>
+    value is String ? value.replaceAll(RegExp(r'\d'), 'd') : null;
+
+/// What an error answer says: its message and error texts, flattened, each
+/// cut to 200 characters.
+List<String> probeMessages(Object? value) {
+  final texts = <String>[];
+  void walk(Object? node, String? key) {
+    if (node is Map) {
+      for (final MapEntry(:key, :value) in node.entries) {
+        walk(value, '$key');
+      }
+    } else if (node is List) {
+      for (final item in node) {
+        walk(item, key);
+      }
+    } else if (node is String &&
+        key != null &&
+        RegExp(
+          r'message|error|field|code|status|detail|title',
+          caseSensitive: false,
+        ).hasMatch(key)) {
+      final text = node.length > 200 ? '${node.substring(0, 200)}…' : node;
+      texts.add('$key: $text');
+    }
+  }
+
+  walk(value is String ? (_tryJson(value) ?? value) : value, null);
+  if (texts.isEmpty && value is String && value.trim().isNotEmpty) {
+    final text = value.trim();
+    texts.add(text.length > 200 ? '${text.substring(0, 200)}…' : text);
+  }
+  return texts.take(20).toList();
+}
+
+Object? _tryJson(String text) {
+  try {
+    return jsonDecode(text);
+  } on Object {
+    return null;
+  }
+}
+
+/// The notes in an answer of the Justifications address: `{status,
+/// message, data: [...]}`, newest first. A note without an id is left out.
+List<SchoolJustification> parseJustifications(Map<String, dynamic>? json) {
+  final items = json?['data'];
+  if (items is! List) return const [];
+  String text(Object? value) => value == null ? '' : '$value'.trim();
+  DateTime? date(Object? value) => DateTime.tryParse(text(value));
+  String teacher(Object? value) {
+    if (value is String) return value.trim();
+    if (value is! Map) return '';
+    for (final key in ['name', 'fullName', 'displayName', 'label']) {
+      if (text(value[key]).isNotEmpty) return text(value[key]);
+    }
+    return [
+      text(value['firstName'] ?? value['FirstName']),
+      text(value['lastName'] ?? value['LastName']),
+    ].where((part) => part.isNotEmpty).join(' ');
+  }
+
+  final notes = [
+    for (final item in items)
+      if (item is Map && text(item['id']).isNotEmpty)
+        SchoolJustification(
+          id: text(item['id']),
+          message: text(item['messageFromParent']),
+          status: text(item['justificationStatus']),
+          postedAt: date(item['postDate']),
+          from: date(item['dateFrom']),
+          to: date(item['dateTo']),
+          justified: item['justifiedAbsences'] is num
+              ? (item['justifiedAbsences'] as num).toInt()
+              : int.tryParse(text(item['justifiedAbsences'])) ?? 0,
+          teachers: [
+            for (final person
+                in item['notifiedTeachers'] is List
+                    ? item['notifiedTeachers'] as List
+                    : const [])
+              teacher(person),
+          ],
+          lessons: item['lessons'] is List
+              ? (item['lessons'] as List).length
+              : 0,
+        ),
+  ];
+  notes.sort(
+    (a, b) => (b.postedAt ?? b.from ?? DateTime(0)).compareTo(
+      a.postedAt ?? a.from ?? DateTime(0),
+    ),
+  );
+  return notes;
 }

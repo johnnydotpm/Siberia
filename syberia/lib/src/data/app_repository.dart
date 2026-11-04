@@ -1395,6 +1395,28 @@ class AppRepository {
     return (session as LibrusProbing).probe(endpoints);
   }
 
+  /// Asks Librus once, for the debug menu, with an empty body, what an
+  /// excuse note needs.
+  Future<List<String>> probeLibrusSend() async {
+    if (_demo != null) return const ['Demo: no Librus.'];
+    await _ensureReady();
+    final session = _sessionFor(_requireActive());
+    if (session is! LibrusProbing) return const ['Not a Librus diary.'];
+    return (session as LibrusProbing).probeSend();
+  }
+
+  /// The excuse notes the diary's own module keeps for the profile
+  /// [profileId], or the open one; none for a diary without such a module.
+  Future<List<SchoolJustification>> fetchJustifications({
+    String? profileId,
+  }) async {
+    if (_demo != null) return const [];
+    await _ensureReady();
+    final session = _sessionFor(_accountOf(profileId));
+    if (session is! JustificationSource) return const [];
+    return (session as JustificationSource).justifications();
+  }
+
   Future<List<MessageRecipient>> fetchMessageRecipients({
     String? profileId,
   }) async {

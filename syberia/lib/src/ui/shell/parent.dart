@@ -183,6 +183,9 @@ class _AbsenceSheetState extends State<_AbsenceSheet> {
   late String? profileId =
       widget.profileId ?? widget.controller.activeProfile?.id;
   List<AbsenceRequest> history = [];
+
+  /// The notes the diary's own e-Usprawiedliwienia module keeps.
+  List<SchoolJustification> fromDiary = [];
   AppSnapshot? data;
   bool loading = true;
   String? error;
@@ -212,10 +215,18 @@ class _AbsenceSheetState extends State<_AbsenceSheet> {
     try {
       final snapshot = await widget.controller.absenceSnapshot(id);
       final sent = await widget.controller.absenceRequests(id);
+      // The diary's own notes are a bonus: without them the rest still shows.
+      var kept = const <SchoolJustification>[];
+      try {
+        kept = await widget.controller.schoolJustifications(id);
+      } on Object {
+        // Offline, or a school without the module.
+      }
       if (!mounted || profileId != id) return;
       setState(() {
         data = snapshot;
         history = sent;
+        fromDiary = kept;
         loading = false;
       });
     } on Object {
@@ -428,6 +439,119 @@ class _AbsenceSheetState extends State<_AbsenceSheet> {
     );
   }
 
+  /// A note the diary's module keeps, with the school's answer.
+  Widget _diaryCard(BuildContext context, SchoolJustification note) {
+    final theme = Theme.of(context);
+    final (label, background, foreground) = switch (note.state) {
+      JustificationState.accepted => (
+        context.tr('excuseStatusAccepted'),
+        theme.colorScheme.tertiaryContainer,
+        theme.colorScheme.onTertiaryContainer,
+      ),
+      JustificationState.rejected => (
+        context.tr('excuseStatusRejected'),
+        theme.colorScheme.errorContainer,
+        theme.colorScheme.onErrorContainer,
+      ),
+      JustificationState.pending => (
+        context.tr('excuseStatusWaiting'),
+        theme.colorScheme.secondaryContainer,
+        theme.colorScheme.onSecondaryContainer,
+      ),
+      // A word not known yet is shown as the diary says it.
+      JustificationState.unknown => (
+        note.status.isEmpty ? '?' : note.status,
+        theme.colorScheme.surfaceContainerHighest,
+        theme.colorScheme.onSurface,
+      ),
+    };
+    final from = note.from;
+    final to = note.to;
+    final when = from == null
+        ? (note.postedAt == null ? '' : _shortDate(context, note.postedAt!))
+        : to == null || _sameDay(from, to)
+        ? _shortDate(context, from)
+        : '${_shortDate(context, from)} – ${_shortDate(context, to)}';
+    return Card(
+      key: ValueKey('absence-diary-${note.id}'),
+      margin: const EdgeInsets.only(bottom: _Space.card),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: note.message.isEmpty
+            ? null
+            : () => showDialog<void>(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: Text(when),
+                  content: SingleChildScrollView(
+                    child: SelectableText(note.message),
+                  ),
+                ),
+              ),
+        child: Padding(
+          padding: const EdgeInsets.all(_Space.inset),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(when, style: theme.textTheme.titleMedium),
+                  ),
+                  Container(
+                    key: ValueKey('absence-diary-status-${note.id}'),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: background,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      label,
+                      style: theme.textTheme.labelMedium?.copyWith(
+                        color: foreground,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              if (note.message.isNotEmpty) ...[
+                const SizedBox(height: 4),
+                Text(
+                  note.message,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+              const SizedBox(height: 4),
+              Text(
+                [
+                  if (note.postedAt case final at?)
+                    context.trArgs('excuseSentTime', {
+                      'date': _shortDate(context, at),
+                    }),
+                  if (note.justified > 0)
+                    context.trArgs('excuseJustifiedCount', {
+                      'count': '${note.justified}',
+                    }),
+                  if (note.teachers.isNotEmpty)
+                    note.teachers.every((name) => name.isNotEmpty)
+                        ? note.teachers.join(', ')
+                        : context.trArgs('excuseNotifiedCount', {
+                            'count': '${note.teachers.length}',
+                          }),
+                ].join(' · '),
+                style: _metaStyle(context),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final now = DateTime.now();
@@ -482,7 +606,18 @@ class _AbsenceSheetState extends State<_AbsenceSheet> {
           },
         ),
         const SizedBox(height: 16),
-        if (!loading && history.isEmpty) Text(context.tr('excuseHistoryEmpty')),
+        if (!loading && history.isEmpty && fromDiary.isEmpty)
+          Text(context.tr('excuseHistoryEmpty')),
+        if (fromDiary.isNotEmpty) ...[
+          Padding(
+            padding: const EdgeInsets.only(top: 8, bottom: 8),
+            child: Text(
+              context.tr('excuseInLibrus'),
+              style: Theme.of(context).textTheme.titleSmall,
+            ),
+          ),
+          for (final note in fromDiary) _diaryCard(context, note),
+        ],
         for (final MapEntry(key: month, value: requests) in months.entries) ...[
           Padding(
             padding: const EdgeInsets.only(top: 8, bottom: 8),

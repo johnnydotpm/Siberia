@@ -15,10 +15,26 @@ module of Librus itself, instead of a message to the class teacher.
   parent's account, and the app does not sign in to anyone's account from
   outside the phone.
 
+- 2026-11-04, the debug check on a parent's phone (keys only):
+  - `Me` 200: the check works;
+  - `Justifications` 200 with a wrapper `{status, message, data}`; each
+    note in `data` has `id, messageFromParent, postDate,
+    justificationStatus, lessons[], attachment, dateFrom, dateTo,
+    justifiedAbsences, notifiedTeachers[]`;
+  - `Attendances/Justifications` and `AttendanceTypes` 404.
+  So the module answers this school's parent accounts through API 2.0,
+  the one the app already uses, and the app now reads the notes into its
+  history.
+- Third-party libraries (librus-sdk, librus-python-api, librus-synergia)
+  only read the notes; none sends one.
+
 ## Not checked
 
-- The API addresses of the module. Names such as `Justifications` are
-  guesses until a parent's phone answers them.
+- How a note is sent: the method, address and fields. The check v2 asks
+  `OPTIONS Justifications`, and a separate button, after a confirmation,
+  sends one empty `POST Justifications` whose error answer should list
+  what a note needs.
+- The words `justificationStatus` takes; the check v2 lists the short ones.
 
 ## How to check
 
@@ -33,3 +49,11 @@ profile it asks the API, read only, for:
 For each it shows the status and the shape of the answer: its keys, list
 sizes and kinds of values, never a value. The result is copied, ready to
 send. Stage 6b builds on what it shows.
+
+For `Justifications` it also shows the status words, the shape of the
+dates (digits as `d`), the keys of a notified teacher and of a lesson,
+one note on its own (`Justifications/<id>`) and `OPTIONS`.
+
+"Librus: test sending (empty request)" asks first, then sends one empty
+`POST Justifications` and shows the status and the error messages. Never
+retried.

@@ -924,3 +924,58 @@ class AppSnapshot {
     );
   }
 }
+
+/// How the school answered an excuse note sent through the diary's own
+/// e-Usprawiedliwienia module.
+enum JustificationState { pending, accepted, rejected, unknown }
+
+/// The state a diary's status word stands for, whichever language it is in;
+/// [JustificationState.unknown] for a word not known yet.
+JustificationState justificationState(String status) {
+  final word = status.toLowerCase();
+  bool any(List<String> parts) => parts.any(word.contains);
+  if (any(['accept', 'approv', 'zaakcept', 'zatwierdz', 'uwzgl'])) {
+    return JustificationState.accepted;
+  }
+  if (any(['reject', 'denied', 'decline', 'odrzu', 'odmow', 'odmów'])) {
+    return JustificationState.rejected;
+  }
+  if (any(['pend', 'wait', 'new', 'sent', 'oczek', 'nowe', 'wysł', 'wysl'])) {
+    return JustificationState.pending;
+  }
+  return JustificationState.unknown;
+}
+
+/// An excuse note the diary's own module keeps: sent from the diary's site
+/// or app, with the school's answer.
+class SchoolJustification {
+  const SchoolJustification({
+    required this.id,
+    required this.message,
+    required this.status,
+    this.postedAt,
+    this.from,
+    this.to,
+    this.justified = 0,
+    this.teachers = const [],
+    this.lessons = 0,
+  });
+
+  final String id;
+  final String message;
+
+  /// The status as the diary words it.
+  final String status;
+  final DateTime? postedAt;
+  final DateTime? from;
+  final DateTime? to;
+
+  /// How many absences it excused.
+  final int justified;
+
+  /// The teachers told of it, by name when the diary gives one.
+  final List<String> teachers;
+  final int lessons;
+
+  JustificationState get state => justificationState(status);
+}

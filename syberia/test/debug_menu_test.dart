@@ -156,6 +156,72 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
   });
 
+  testWidgets('asks before it sends Librus the empty request, and sends '
+      'nothing when told no', (tester) async {
+    await _openSideMenu(tester);
+    String? copied;
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+      SystemChannels.platform,
+      (call) async {
+        if (call.method == 'Clipboard.setData') {
+          copied = (call.arguments as Map)['text'] as String;
+        }
+        return null;
+      },
+    );
+    addTearDown(
+      () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.platform,
+        null,
+      ),
+    );
+    await _openDebugMenu(tester);
+    final button = find.byKey(const ValueKey('debug-excuse-send-probe'));
+    await _scrollTo(tester, button);
+    await tester.tap(button);
+    // The menu does not settle; a dialog is up in a moment.
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+    expect(find.text('Send an empty request to Librus?'), findsOneWidget);
+    await tester.tap(
+      find.descendant(
+        of: find.byType(AlertDialog),
+        matching: find.text('Cancel'),
+      ),
+    );
+    // The menu does not settle; the dialog is gone in a moment.
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.pump();
+    expect(find.byType(AlertDialog), findsNothing);
+    expect(
+      find.byKey(const ValueKey('debug-excuse-send-result')),
+      findsNothing,
+      reason: 'told no, nothing went',
+    );
+    await tester.tap(button);
+    // The menu does not settle; a dialog is up in a moment.
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+    await tester.tap(find.byKey(const ValueKey('debug-excuse-send-confirm')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 2));
+    // Built right below the button, maybe just below the fold.
+    expect(
+      tester
+          .widget<SelectableText>(
+            find.byKey(
+              const ValueKey('debug-excuse-send-result'),
+              skipOffstage: false,
+            ),
+          )
+          .data,
+      anyOf('Demo: no Librus.', 'POST Justifications · 400 · fake'),
+    );
+    expect(copied, isNotNull, reason: 'copied, ready to send');
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
   testWidgets('copies a report without the names and schools of the '
       'profiles', (tester) async {
     final (controller, _) = await _openSideMenu(tester);

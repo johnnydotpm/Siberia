@@ -1446,6 +1446,13 @@ class AppController extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Asks Librus once, for the debug menu, what an excuse note needs.
+  Future<List<String>> probeLibrusSend() => _repository.probeLibrusSend();
+
+  /// The excuse notes the diary's own module keeps for [profileId].
+  Future<List<SchoolJustification>> schoolJustifications(String profileId) =>
+      _repository.fetchJustifications(profileId: profileId);
+
   /// How Librus answers [endpoints] for the open profile, for the debug menu.
   Future<List<String>> probeLibrus(List<String> endpoints) =>
       _repository.probeLibrus(endpoints);

@@ -154,6 +154,51 @@ class _DebugMenuState extends State<_DebugMenu> {
     });
   }
 
+  bool _sendProbing = false;
+  String? _sendProbe;
+
+  /// Asks Librus once, after a confirmation, with an empty body, to make an
+  /// excuse note: its answer says what a note needs. Copied too.
+  Future<void> _probeExcuseSend() async {
+    final go = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Send an empty request to Librus?'),
+        content: const Text(
+          'One request to make an excuse note goes to Librus, with no dates, '
+          'text or absences. Librus should refuse it and keep nothing; its '
+          'answer shows what a note needs. If Librus ever takes it, the '
+          'report says so.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            key: const ValueKey('debug-excuse-send-confirm'),
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Send'),
+          ),
+        ],
+      ),
+    );
+    if (go != true || !mounted) return;
+    setState(() => _sendProbing = true);
+    String text;
+    try {
+      text = (await _controller.probeLibrusSend()).join('\n');
+      await Clipboard.setData(ClipboardData(text: text));
+    } on Object catch (error) {
+      text = 'Could not check: ${error.runtimeType}';
+    }
+    if (!mounted) return;
+    setState(() {
+      _sendProbing = false;
+      _sendProbe = text;
+    });
+  }
+
   Future<void> _copyReport() async {
     final report = Diagnostics.instance.report(
       about: await _about,
@@ -394,6 +439,24 @@ class _DebugMenuState extends State<_DebugMenu> {
               child: SelectableText(
                 probe,
                 key: const ValueKey('debug-excuse-probe-result'),
+              ),
+            ),
+          const SizedBox(height: 8),
+          OutlinedButton.icon(
+            key: const ValueKey('debug-excuse-send-probe'),
+            style: OutlinedButton.styleFrom(
+              minimumSize: const Size.fromHeight(48),
+            ),
+            onPressed: _sendProbing ? null : _probeExcuseSend,
+            icon: const Icon(Icons.outbox_rounded),
+            label: const Text('Librus: test sending (empty request)'),
+          ),
+          if (_sendProbe case final probe?)
+            Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: SelectableText(
+                probe,
+                key: const ValueKey('debug-excuse-send-result'),
               ),
             ),
           const SizedBox(height: 24),

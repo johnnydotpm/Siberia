@@ -77,13 +77,20 @@ class LibrusDiaryPlugin implements DiaryPlugin {
 /// debug menu.
 abstract interface class LibrusProbing {
   Future<List<String>> probe(List<String> endpoints);
+  Future<List<String>> probeSend();
 }
 
-class _LibrusSession implements DiarySession, LibrusProbing {
+class _LibrusSession
+    implements DiarySession, LibrusProbing, JustificationSource {
   _LibrusSession(this.client);
   final LibrusClient client;
   @override
   Future<List<String>> probe(List<String> endpoints) => client.probe(endpoints);
+  @override
+  Future<List<String>> probeSend() => client.probeSend();
+  @override
+  Future<List<SchoolJustification>> justifications() =>
+      client.fetchJustifications();
   @override
   String? get studentKey => client.synergiaLogin;
   @override

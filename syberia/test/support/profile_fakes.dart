@@ -147,6 +147,22 @@ class FakeProfileClient extends LibrusClient {
   }
 
   @override
+  Future<List<SchoolJustification>> fetchJustifications() async =>
+      world.justifications;
+
+  // The checks of the debug menu never reach Librus from a test.
+  @override
+  Future<List<String>> probe(List<String> endpoints) async => [
+    for (final endpoint in endpoints) '$endpoint · fake',
+  ];
+
+  @override
+  Future<List<String>> probeSend() async {
+    world.sendProbes++;
+    return const ['POST Justifications · 400 · fake'];
+  }
+
+  @override
   Future<List<MessageRecipient>> fetchMessageRecipients() async {
     final login = profile!.synergiaLogin ?? '';
     return [
@@ -202,6 +218,12 @@ class FakeLibrusWorld {
 
   /// Recipients every login offers after its own teacher.
   List<MessageRecipient> recipients = const [];
+
+  /// The notes the school's e-Usprawiedliwienia module keeps.
+  List<SchoolJustification> justifications = const [];
+
+  /// How many times the debug menu sent Librus its empty request.
+  var sendProbes = 0;
 
   /// Every fetch so far, so each one's data differs.
   var fetchCount = 0;

@@ -61,6 +61,12 @@ class DiarySentFolder {
   final Map<String, Object?> providerData;
 }
 
+/// A diary session whose own module keeps excuse notes and the school's
+/// answers to them.
+abstract interface class JustificationSource {
+  Future<List<SchoolJustification>> justifications();
+}
+
 abstract interface class DiarySession {
   /// Selected account/child identity, learned during restoration if necessary.
   String? get studentKey;
