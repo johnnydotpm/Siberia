@@ -908,6 +908,41 @@ class LibrusClient {
     }
   }
 
+  /// Asks Librus, once for each of [probeFieldBodies], to make an excuse
+  /// note whose dates read "x": no date at all, so Librus cannot keep any of
+  /// them. Which names it reads shows in its answers: a name it does not
+  /// know leaves "Nie wprowadzono daty", one it knows is refused for its
+  /// value. Never retried.
+  Future<List<String>> probeSendFields() async {
+    await _apiGet('Me', optional: true);
+    final lines = <String>[];
+    for (final (:label, :body, :form) in probeFieldBodies()) {
+      try {
+        final response = await _dio.post<Object?>(
+          '$_apiBase/Justifications',
+          data: body,
+          options: _probeOptions.copyWith(
+            contentType: form
+                ? Headers.formUrlEncodedContentType
+                : Headers.jsonContentType,
+          ),
+        );
+        final status = response.statusCode ?? 0;
+        final data = _map(response.data) ?? _decodeMap(response.data);
+        final said = probeMessages(data ?? response.data)
+            .where((text) => text.toLowerCase().startsWith('message'))
+            .join(' | ');
+        lines.add(
+          '$label · $status · ${said.isEmpty ? probeShape(data) : said}'
+          '${status == 200 || status == 201 ? ' · ACCEPTED?!' : ''}',
+        );
+      } on DioException catch (error) {
+        lines.add('$label · ${error.type.name}');
+      }
+    }
+    return lines;
+  }
+
   /// The excuse notes the school's e-Usprawiedliwienia module keeps for the
   /// account, newest first.
   Future<List<SchoolJustification>> fetchJustifications() async =>
@@ -2697,3 +2732,24 @@ List<SchoolJustification> parseJustifications(Map<String, dynamic>? json) {
   );
   return notes;
 }
+
+/// The bodies the field check sends: the names a note's dates may go by,
+/// each with "x" for a value, never a date, so that Librus can keep none
+/// of them; one is sent as a form instead of JSON.
+List<({String label, Map<String, Object> body, bool form})>
+probeFieldBodies() => [
+  for (final (from, to) in [
+    ('dateFrom', 'dateTo'),
+    ('DateFrom', 'DateTo'),
+    ('date_from', 'date_to'),
+    ('from', 'to'),
+    ('startDate', 'endDate'),
+  ])
+    (label: '$from+$to', body: {from: 'x', to: 'x'}, form: false),
+  (label: 'date', body: {'date': 'x'}, form: false),
+  (
+    label: 'form dateFrom+dateTo',
+    body: {'dateFrom': 'x', 'dateTo': 'x'},
+    form: true,
+  ),
+];

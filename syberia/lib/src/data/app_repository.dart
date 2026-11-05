@@ -1405,6 +1405,16 @@ class AppRepository {
     return (session as LibrusProbing).probeSend();
   }
 
+  /// Asks Librus, for the debug menu, which names a note's dates go by,
+  /// with dates it cannot keep.
+  Future<List<String>> probeLibrusFields() async {
+    if (_demo != null) return const ['Demo: no Librus.'];
+    await _ensureReady();
+    final session = _sessionFor(_requireActive());
+    if (session is! LibrusProbing) return const ['Not a Librus diary.'];
+    return (session as LibrusProbing).probeSendFields();
+  }
+
   /// The excuse notes the diary's own module keeps for the profile
   /// [profileId], or the open one; none for a diary without such a module.
   Future<List<SchoolJustification>> fetchJustifications({

@@ -3,7 +3,13 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syberia/src/app.dart';
 import 'package:syberia/src/data/librus/librus_client.dart'
-    show parseJustifications, probeMask, probeMessages, probeShape, probeWords;
+    show
+        parseJustifications,
+        probeFieldBodies,
+        probeMask,
+        probeMessages,
+        probeShape,
+        probeWords;
 import 'package:syberia/src/domain/excuse.dart';
 import 'package:syberia/src/domain/models.dart';
 import 'package:syberia/src/domain/parent.dart';
@@ -658,6 +664,22 @@ void main() {
       expect(earlier.postedAt, DateTime(2026, 10, 20, 7, 12));
       expect(parseJustifications(null), isEmpty);
       expect(parseJustifications({'data': 'nic'}), isEmpty);
+    });
+
+    test('the field check never sends Librus a date it could keep', () {
+      final bodies = probeFieldBodies();
+      expect(bodies, isNotEmpty);
+      for (final (:label, :body, form: _) in bodies) {
+        expect(body, isNotEmpty, reason: label);
+        for (final value in body.values) {
+          expect(value, 'x', reason: label);
+          expect(DateTime.tryParse('$value'), isNull, reason: label);
+        }
+      }
+      expect(
+        bodies.map((body) => body.label).toSet(),
+        hasLength(bodies.length),
+      );
     });
 
     test('knows the status words in English and Polish; others stay as '

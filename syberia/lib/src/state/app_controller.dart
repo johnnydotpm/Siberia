@@ -1446,6 +1446,9 @@ class AppController extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Asks Librus, for the debug menu, which names a note's dates go by.
+  Future<List<String>> probeLibrusFields() => _repository.probeLibrusFields();
+
   /// Asks Librus once, for the debug menu, what an excuse note needs.
   Future<List<String>> probeLibrusSend() => _repository.probeLibrusSend();
 

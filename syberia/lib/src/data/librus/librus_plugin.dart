@@ -78,6 +78,7 @@ class LibrusDiaryPlugin implements DiaryPlugin {
 abstract interface class LibrusProbing {
   Future<List<String>> probe(List<String> endpoints);
   Future<List<String>> probeSend();
+  Future<List<String>> probeSendFields();
 }
 
 class _LibrusSession
@@ -88,6 +89,8 @@ class _LibrusSession
   Future<List<String>> probe(List<String> endpoints) => client.probe(endpoints);
   @override
   Future<List<String>> probeSend() => client.probeSend();
+  @override
+  Future<List<String>> probeSendFields() => client.probeSendFields();
   @override
   Future<List<SchoolJustification>> justifications() =>
       client.fetchJustifications();

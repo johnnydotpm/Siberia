@@ -157,19 +157,22 @@ class _DebugMenuState extends State<_DebugMenu> {
   bool _sendProbing = false;
   String? _sendProbe;
 
-  /// Asks Librus once, after a confirmation, with an empty body, to make an
-  /// excuse note: its answer says what a note needs. Copied too.
-  Future<void> _probeExcuseSend() async {
+  /// Asks first, then runs [check] against Librus: requests to make an
+  /// excuse note that Librus cannot keep. The answer is shown and copied.
+  Future<void> _probeExcuseSend({
+    String title = 'Send an empty request to Librus?',
+    String text =
+        'One request to make an excuse note goes to Librus, with no dates, '
+        'text or absences. Librus should refuse it and keep nothing; its '
+        'answer shows what a note needs. If Librus ever takes it, the '
+        'report says so.',
+    Future<List<String>> Function()? check,
+  }) async {
     final go = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Send an empty request to Librus?'),
-        content: const Text(
-          'One request to make an excuse note goes to Librus, with no dates, '
-          'text or absences. Librus should refuse it and keep nothing; its '
-          'answer shows what a note needs. If Librus ever takes it, the '
-          'report says so.',
-        ),
+        title: Text(title),
+        content: Text(text),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
@@ -185,17 +188,17 @@ class _DebugMenuState extends State<_DebugMenu> {
     );
     if (go != true || !mounted) return;
     setState(() => _sendProbing = true);
-    String text;
+    String report;
     try {
-      text = (await _controller.probeLibrusSend()).join('\n');
-      await Clipboard.setData(ClipboardData(text: text));
+      report = (await (check ?? _controller.probeLibrusSend)()).join('\n');
+      await Clipboard.setData(ClipboardData(text: report));
     } on Object catch (error) {
-      text = 'Could not check: ${error.runtimeType}';
+      report = 'Could not check: ${error.runtimeType}';
     }
     if (!mounted) return;
     setState(() {
       _sendProbing = false;
-      _sendProbe = text;
+      _sendProbe = report;
     });
   }
 
@@ -450,6 +453,26 @@ class _DebugMenuState extends State<_DebugMenu> {
             onPressed: _sendProbing ? null : _probeExcuseSend,
             icon: const Icon(Icons.outbox_rounded),
             label: const Text('Librus: test sending (empty request)'),
+          ),
+          const SizedBox(height: 8),
+          OutlinedButton.icon(
+            key: const ValueKey('debug-excuse-fields-probe'),
+            style: OutlinedButton.styleFrom(
+              minimumSize: const Size.fromHeight(48),
+            ),
+            onPressed: _sendProbing
+                ? null
+                : () => _probeExcuseSend(
+                    title: 'Check the names of the fields?',
+                    text:
+                        'A few requests to make an excuse note go to Librus, '
+                        'each with "x" where a date goes: not a date, so '
+                        'Librus cannot keep any of them. Its answers show '
+                        'which names it reads.',
+                    check: _controller.probeLibrusFields,
+                  ),
+            icon: const Icon(Icons.rule_rounded),
+            label: const Text('Librus: check field names (no dates)'),
           ),
           if (_sendProbe case final probe?)
             Padding(

@@ -27,14 +27,24 @@ module of Librus itself, instead of a message to the class teacher.
   history.
 - Third-party libraries (librus-sdk, librus-python-api, librus-synergia)
   only read the notes; none sends one.
+- 2026-11-05, the check v2 on the same phone:
+  - `justificationStatus` was `accept` on both notes;
+  - `postDate` reads `dddd-dd-dd dd:dd:dd`, `dateFrom` and `dateTo`
+    `dddd-dd-dd`;
+  - a notified teacher is `{name}`; `lessons` was empty on both notes;
+  - `Justifications/<id>` answers one note in the same shape;
+  - `OPTIONS Justifications` 405 with `Allow: POST, GET`;
+  - one empty `POST Justifications`: 400, `Code: InvalidRequest`,
+    `Message: Nie wprowadzono daty.`; nothing was kept.
+  So a note is sent by POST to the same address, and a date comes first.
 
 ## Not checked
 
-- How a note is sent: the method, address and fields. The check v2 asks
-  `OPTIONS Justifications`, and a separate button, after a confirmation,
-  sends one empty `POST Justifications` whose error answer should list
-  what a note needs.
-- The words `justificationStatus` takes; the check v2 lists the short ones.
+- The names of the fields a note is sent with. "Librus: check field
+  names (no dates)" sends a few notes whose dates read "x", which Librus
+  cannot keep, under different names; the name Librus reads is the one
+  whose answer is not "Nie wprowadzono daty".
+- The words `justificationStatus` takes besides `accept`.
 
 ## How to check
 

@@ -157,6 +157,12 @@ class FakeProfileClient extends LibrusClient {
   ];
 
   @override
+  Future<List<String>> probeSendFields() async {
+    world.sendProbes++;
+    return const ['dateFrom+dateTo · 400 · fake'];
+  }
+
+  @override
   Future<List<String>> probeSend() async {
     world.sendProbes++;
     return const ['POST Justifications · 400 · fake'];
