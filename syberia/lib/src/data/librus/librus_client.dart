@@ -1622,9 +1622,14 @@ class LibrusClient {
       if (date == null || day.value is! List) continue;
       for (final range in day.value as List<Object?>) {
         if (range is! List) continue;
-        for (final raw in range) {
-          final item = _map(raw);
-          if (item == null) continue;
+        final items = [for (final raw in range) ?_map(raw)];
+        // A class split into groups, or a lesson and its substitute: more
+        // than one entry under one lesson number. Each gets an id of its
+        // own, from its subject and teacher, so neither stands for the
+        // other whatever order they come in; a lone entry keeps the id it
+        // always had.
+        final taken = <String>{};
+        for (final item in items) {
           final start = _withTime(date, item['HourFrom']);
           final end = _withTime(date, item['HourTo']);
           if (start == null || end == null) continue;
@@ -1643,9 +1648,20 @@ class LibrusClient {
           final movedTo = substitution && cancelled && newDate != null
               ? _withTime(newDate, item['NewHourFrom'])
               : null;
+          var id =
+              '${day.key}-${item['LessonNo'] ?? start.millisecondsSinceEpoch}';
+          if (items.length > 1) {
+            id =
+                '$id-${_referenceId(item['Subject']) ?? ''}'
+                '-${_referenceId(item['Teacher']) ?? ''}';
+            final base = id;
+            for (var n = 2; !taken.add(id); n++) {
+              id = '$base-$n';
+            }
+          }
           result.add(
             Lesson(
-              id: '${day.key}-${item['LessonNo'] ?? start.millisecondsSinceEpoch}',
+              id: id,
               subject: subjects[_referenceId(item['Subject'])] ?? 'Lekcja',
               teacher: teachers[_referenceId(item['Teacher'])] ?? '',
               room: classrooms[_referenceId(item['Classroom'])] ?? '',

@@ -142,6 +142,84 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
   });
 
+  testWidgets('two lessons of one class at the same time, as of two groups, '
+      'stand side by side, each with its own test', (tester) async {
+    final day = _tomorrow();
+    final start = DateTime(day.year, day.month, day.day, 8, 50);
+    final controller = AppController(
+      _Repository(
+        AppSnapshot(
+          profile: const StudentProfile(
+            id: 'test',
+            name: 'Test',
+            school: 'School',
+            provider: 'Librus Synergia',
+          ),
+          lessons: [
+            _lesson(
+              'g1',
+              'Mechatronika pojazdów samochodowych',
+              start,
+              teacher: 'Nauczyciel Pierwszy',
+              number: 2,
+            ),
+            _lesson(
+              'g2',
+              'Diagnostyka pojazdów samochodowych',
+              start,
+              teacher: 'Nauczyciel Drugi',
+              number: 2,
+            ),
+          ],
+          grades: const [],
+          events: [
+            SchoolEvent(
+              id: 't1',
+              title: 'Rozdział 2',
+              subject: 'Diagnostyka pojazdów samochodowych',
+              date: DateTime(day.year, day.month, day.day),
+              kind: EventKind.exam,
+              typeLabel: 'Kartkówka',
+              lessonNumber: 2,
+            ),
+          ],
+          messages: const [],
+          attendance: const [],
+          announcements: const [],
+          notices: const [],
+          lastSync: DateTime.now(),
+        ),
+      ),
+      updatesEnabled: false,
+    );
+    await controller.bootstrap();
+    controller.selectTab(1);
+    await tester.pumpWidget(SyberiaApp(controller: controller));
+    await tester.pumpAndSettle();
+
+    final first = find.byKey(const ValueKey('timeline-lesson-g1'));
+    final second = find.byKey(const ValueKey('timeline-lesson-g2'));
+    final left = tester.getRect(first);
+    final right = tester.getRect(second);
+    // Not one on the other, as in 1.3.1: one beside the other.
+    expect(left.overlaps(right), isFalse);
+    expect(left.top, right.top);
+    expect(left.right, lessThanOrEqualTo(right.left));
+    Finder test(Finder lesson) => find.descendant(
+      of: lesson,
+      matching: find.byKey(const ValueKey('timetable-test-t1')),
+    );
+    expect(test(second), findsOneWidget);
+    expect(test(first), findsNothing);
+
+    await controller.setTimetableView(TimetableView.list);
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('timetable-row-g1')), findsOneWidget);
+    expect(find.byKey(const ValueKey('timetable-row-g2')), findsOneWidget);
+    expect(tester.takeException(), isNull);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
   testWidgets('tests of the day sit on the lessons they are written in', (
     tester,
   ) async {

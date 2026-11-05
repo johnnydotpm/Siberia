@@ -196,6 +196,57 @@ void main() {
     }
   });
 
+  test('two entries under one lesson number, as of two groups, are two '
+      'lessons with ids of their own; a lone entry keeps its id', () async {
+    (int, Object) respond(RequestOptions options) {
+      if (!options.uri.path.endsWith('/Timetables')) {
+        return _successfulResponse(options);
+      }
+      Map<String, Object> entry(int number, int subject, int teacher) => {
+        'LessonNo': number,
+        'HourFrom': number == 1 ? '08:00' : '08:50',
+        'HourTo': number == 1 ? '08:45' : '09:35',
+        'Subject': {'Id': subject},
+        'Teacher': {'Id': teacher},
+        'Classroom': {'Id': 30},
+        'IsCanceled': false,
+        'IsSubstitutionClass': false,
+      };
+      return (
+        200,
+        {
+          'Timetable': {
+            '2026-09-18': [
+              [entry(1, 10, 20)],
+              // Ids in reverse order: an id does not hang on the order.
+              [entry(2, 11, 20), entry(2, 10, 20)],
+            ],
+          },
+        },
+      );
+    }
+
+    final dio = Dio()..httpClientAdapter = _FixtureAdapter(respond);
+    final client = LibrusClient(
+      dio: dio,
+      secureStorage: const FlutterSecureStorage(),
+    );
+    final snapshot = await client.loginAndFetch(
+      username: 'parent@example.com',
+      password: 'secret',
+    );
+    final ids = [for (final lesson in snapshot.lessons) lesson.id];
+    expect(ids, hasLength(3));
+    expect(ids.toSet(), hasLength(3), reason: 'no two lessons share an id');
+    expect(ids, contains('2026-09-18-1'));
+    expect(ids, containsAll(['2026-09-18-2-10-20', '2026-09-18-2-11-20']));
+    final second = snapshot.lessons.where((lesson) => lesson.lessonNumber == 2);
+    expect(
+      {for (final lesson in second) lesson.id: lesson.subject},
+      {'2026-09-18-2-10-20': 'Matematyka', '2026-09-18-2-11-20': 'Fizyka'},
+    );
+  });
+
   test('uses Portal refresh flow and maps Librus modules', () async {
     final dio = Dio()..httpClientAdapter = _FixtureAdapter(_successfulResponse);
     final client = LibrusClient(
