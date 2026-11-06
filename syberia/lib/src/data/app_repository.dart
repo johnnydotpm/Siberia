@@ -91,6 +91,7 @@ class AppRepository {
   static const _localeKey = 'app_locale_v1';
   static const _attendanceChartStyleKey = 'attendance_chart_style_v1';
   static const _designKey = 'app_design_v1';
+  static const _wallpaperColorsKey = 'app_wallpaper_colors_v1';
   static const _colorModeKey = 'app_color_mode_v1';
   static const _gradePlusKey = 'grade_plus_value_v1';
   static const _gradeMinusKey = 'grade_minus_value_v1';
@@ -1333,6 +1334,14 @@ class AppRepository {
 
   Future<void> saveDesign(AppDesign design) async =>
       (await _preferences).setString(_designKey, design.name);
+
+  /// Whether the Expressive design takes the wallpaper's colours where the
+  /// phone has them. On unless turned off.
+  Future<bool> loadUseWallpaperColors() async =>
+      (await _preferences).getBool(_wallpaperColorsKey) ?? true;
+
+  Future<void> saveUseWallpaperColors(bool enabled) async =>
+      (await _preferences).setBool(_wallpaperColorsKey, enabled);
 
   Future<String?> fetchLatestReleaseVersion() async {
     if (_demo != null) return null;

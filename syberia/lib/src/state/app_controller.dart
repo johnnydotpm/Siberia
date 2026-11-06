@@ -23,6 +23,7 @@ import '../home_widget.dart' as home_widget show displaySubject;
 import '../l10n/app_localizations.dart';
 import '../school_notifications.dart';
 import '../test_reminders.dart';
+import '../theme/wallpaper_colors.dart';
 
 /// The parts of signing in to Librus, in the order they happen.
 enum SignInStage {
@@ -71,6 +72,8 @@ class AppController extends ChangeNotifier {
   bool _updateAvailable = false;
   AttendanceChartStyle _attendanceChartStyle = AttendanceChartStyle.ring;
   AppDesign _design = AppDesign.glass;
+  bool _useWallpaperColors = true;
+  WallpaperColors? _wallpaperColors;
   AppColorMode _colorMode = AppColorMode.system;
   GradeAverageSettings _gradeAverage = const GradeAverageSettings();
   Map<String, String> _subjectShortNames = const {};
@@ -408,6 +411,19 @@ class AppController extends ChangeNotifier {
   bool get updateAvailable => _updateAvailable;
   AttendanceChartStyle get attendanceChartStyle => _attendanceChartStyle;
   AppDesign get design => _design;
+
+  /// Whether the Expressive design should take the wallpaper's colours.
+  bool get useWallpaperColors => _useWallpaperColors;
+
+  /// The colours Android picked from the wallpaper; null where the phone
+  /// has none, so there is nothing to choose.
+  WallpaperColors? get wallpaperColors => _wallpaperColors;
+
+  /// The wallpaper's colours when they are on and the phone has them, for
+  /// the Expressive theme; otherwise it takes the brand colour.
+  WallpaperColors? get themeWallpaperColors =>
+      _useWallpaperColors ? _wallpaperColors : null;
+
   AppColorMode get colorMode => _colorMode;
   GradeAverageSettings get gradeAverage => _gradeAverage;
 
@@ -490,6 +506,7 @@ class AppController extends ChangeNotifier {
     _locale = languageCode == null ? null : Locale(languageCode);
     _attendanceChartStyle = await _repository.loadAttendanceChartStyle();
     _design = await _repository.loadDesign();
+    _useWallpaperColors = await _repository.loadUseWallpaperColors();
     _colorMode = await _repository.loadColorMode();
     await _loadProfileSettings();
     _timetableView = await _repository.loadTimetableView();
@@ -1553,6 +1570,23 @@ class AppController extends ChangeNotifier {
     _design = design;
     notifyListeners();
     await _repository.saveDesign(design);
+  }
+
+  Future<void> setUseWallpaperColors(bool enabled) async {
+    if (_useWallpaperColors == enabled) return;
+    _useWallpaperColors = enabled;
+    notifyListeners();
+    await _repository.saveUseWallpaperColors(enabled);
+  }
+
+  /// Asks the phone for the wallpaper's colours: as the app starts, before
+  /// its first frame, and when it comes back, as the wallpaper may have
+  /// changed meanwhile.
+  Future<void> refreshWallpaperColors() async {
+    final colors = await WallpaperColors.load();
+    if (colors == _wallpaperColors) return;
+    _wallpaperColors = colors;
+    notifyListeners();
   }
 
   void selectTab(int value) {

@@ -204,12 +204,44 @@ class _ThemePreview extends StatelessWidget {
   }
 }
 
+/// The app's designs to choose from. Glass is among them only where the
+/// platform can draw it; there the app is classic when glass was chosen.
+class _DesignChoice extends StatelessWidget {
+  const _DesignChoice(this.controller, {required this.keyPrefix});
+  final AppController controller;
+  final String keyPrefix;
+
+  @override
+  Widget build(BuildContext context) {
+    final glass = GlassPlatform.supported;
+    return _PreviewChoice<AppDesign>(
+      title: context.tr('design'),
+      icon: Icons.auto_awesome_rounded,
+      selected: controller.design == AppDesign.glass && !glass
+          ? AppDesign.classic
+          : controller.design,
+      onSelected: controller.setDesign,
+      options: [
+        for (final design in AppDesign.values)
+          if (design != AppDesign.glass || glass)
+            (
+              value: design,
+              label: context.tr('design_${design.name}'),
+              key: ValueKey('$keyPrefix-design-${design.name}'),
+              preview: _DesignPreview(design),
+            ),
+      ],
+    );
+  }
+}
+
 class _DesignPreview extends StatelessWidget {
   const _DesignPreview(this.design);
   final AppDesign design;
 
   @override
   Widget build(BuildContext context) {
+    if (design == AppDesign.expressive) return const _ExpressivePreview();
     final colors = Theme.of(context).colorScheme;
     final glass = design == AppDesign.glass;
     Widget bar({required bool top}) => Container(
@@ -241,6 +273,69 @@ class _DesignPreview extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [bar(top: true), bar(top: false)],
+      ),
+    );
+  }
+}
+
+/// A page of the Expressive design in miniature: a rounded card in the
+/// primary container and the navigation bar with its pill.
+class _ExpressivePreview extends StatelessWidget {
+  const _ExpressivePreview();
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = AppTheme.brandScheme(Theme.of(context).brightness);
+    Widget dot(Color color, {double width = 8}) => Container(
+      width: width,
+      height: 6,
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(3),
+      ),
+    );
+    return ColoredBox(
+      color: colors.surface,
+      child: Column(
+        children: [
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(6, 6, 6, 4),
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: colors.primaryContainer,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 6),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Container(
+                      width: 16,
+                      height: 16,
+                      decoration: BoxDecoration(
+                        color: colors.primary,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Container(
+            height: 14,
+            color: colors.surfaceContainer,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                dot(colors.secondaryContainer, width: 16),
+                dot(colors.onSurfaceVariant.withValues(alpha: 0.4)),
+                dot(colors.onSurfaceVariant.withValues(alpha: 0.4)),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -36,6 +36,7 @@ import '../l10n/app_localizations.dart';
 import '../school_notifications.dart';
 import '../state/app_controller.dart';
 import '../test_reminders.dart';
+import '../theme/app_theme.dart';
 import 'brand/brand_mark.dart';
 import 'brand/brand_wordmark.dart';
 import 'brand_logo.dart';

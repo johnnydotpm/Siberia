@@ -11,6 +11,7 @@ class MainActivity : FlutterActivity() {
         HomeWidgetChannel.register(this, flutterEngine.dartExecutor.binaryMessenger)
         frameRate = FrameRateChannel.register(this, flutterEngine.dartExecutor.binaryMessenger)
         VpnChannel.register(this, flutterEngine.dartExecutor.binaryMessenger)
+        WallpaperColorsChannel.register(this, flutterEngine.dartExecutor.binaryMessenger)
     }
 
     override fun onPause() {

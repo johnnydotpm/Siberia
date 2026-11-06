@@ -91,6 +91,9 @@ flutter:
     - family: Unbounded
       fonts:
         - asset: assets/fonts/Unbounded.ttf
+    - family: MaterialSymbolsRounded
+      fonts:
+        - asset: assets/fonts/MaterialSymbolsRounded.ttf
   assets:
     - assets/branding/logo-light.png
     - assets/branding/logo-dark.png
@@ -98,6 +101,9 @@ flutter:
     - assets/fonts/OFL.txt
     - assets/fonts/InterVariable.ttf
     - assets/fonts/Inter-LICENSE.txt
+    - assets/fonts/GoogleSansFlex.ttf
+    - assets/fonts/GoogleSansFlex-OFL.txt
+    - assets/fonts/MaterialSymbols-LICENSE.txt
 
   # The lens at the edge of the glass that Flutter draws, and the blur that
   # lets go smoothly under its bars.

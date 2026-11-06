@@ -236,7 +236,7 @@ void main() {
     expect(find.byType(AppBar), findsOneWidget);
   }, variant: onIos);
 
-  testWidgets('without platform support the design is classic and fixed', (
+  testWidgets('without platform support the design is classic, not glass', (
     tester,
   ) async {
     GlassPlatform.debugSetBackend(GlassBackend.none);
@@ -249,10 +249,12 @@ void main() {
     controller.selectTab(9);
     await tester.pumpAndSettle();
     await tester.scrollUntilVisible(
-      find.byKey(const ValueKey('settings-profile')),
+      find.byKey(const ValueKey('settings-design-classic')),
       200,
     );
-    expect(find.text('Design'), findsNothing);
+    // Classic and Expressive are left to choose from.
+    expect(find.text('Glass'), findsNothing);
+    expect(find.text('Expressive'), findsOneWidget);
   }, variant: onIos);
 
   testWidgets('where the system has no glass, Flutter draws the bars', (

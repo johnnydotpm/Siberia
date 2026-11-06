@@ -2,6 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'expressive_tokens.dart';
+import 'wallpaper_colors.dart';
+
 abstract final class AppTheme {
   static const _seed = Color(0xFF176B8F);
 
@@ -26,25 +29,158 @@ abstract final class AppTheme {
     return font.load();
   }
 
+  static Future<void>? _expressiveFont;
+
+  /// Loads Google Sans Flex, the Expressive design's typeface, once. Like
+  /// Inter it is not declared as one of the app's fonts, so only the devices
+  /// that show the design load it.
+  static Future<void> loadExpressiveFont() => _expressiveFont ??= (FontLoader(
+    TypeScale.fontFamily,
+  )..addFont(rootBundle.load('assets/fonts/GoogleSansFlex.ttf'))).load();
+
+  /// The Expressive scheme from the brand colour, as previews show it.
+  static ColorScheme brandScheme(Brightness brightness) =>
+      ColorScheme.fromSeed(seedColor: _seed, brightness: brightness);
+
+  /// Languages whose letters Google Sans Flex does not have.
+  static const _withoutExpressiveFont = {'ru', 'uk'};
+
+  /// Whether Google Sans Flex can draw the app in [locale]'s language. In
+  /// the others the system's font draws the same type scale.
+  static bool expressiveFontDraws(Locale locale) =>
+      !_withoutExpressiveFont.contains(locale.languageCode);
+
+  /// Material 3 Expressive: Material's colours from the brand colour, or
+  /// from the wallpaper when [wallpaper] is given, its type scale in Google
+  /// Sans Flex (unless [latinFont] is false) and its shapes.
+  static ThemeData expressive(
+    Brightness brightness, {
+    WallpaperColors? wallpaper,
+    bool amoled = false,
+    bool latinFont = true,
+  }) {
+    // Built again on each change of the app's state otherwise, and a scheme
+    // from a seed takes some arithmetic.
+    final key = (brightness, wallpaper, amoled, latinFont);
+    final cached = _expressiveThemes[key];
+    if (cached != null) return cached;
+    if (_expressiveThemes.length >= 4) _expressiveThemes.clear();
+    return _expressiveThemes[key] = _expressive(
+      brightness,
+      wallpaper,
+      amoled: amoled,
+      latinFont: latinFont,
+    );
+  }
+
+  static final _expressiveThemes =
+      <(Brightness, WallpaperColors?, bool, bool), ThemeData>{};
+
+  static ThemeData _expressive(
+    Brightness brightness,
+    WallpaperColors? wallpaper, {
+    required bool amoled,
+    required bool latinFont,
+  }) {
+    var colors =
+        wallpaper?.scheme(brightness) ??
+        ColorScheme.fromSeed(seedColor: _seed, brightness: brightness);
+    if (amoled) colors = _black(colors);
+    final family = latinFont ? TypeScale.fontFamily : null;
+    final text = TypeScale.baseline(family: family);
+    TextStyle label(Color color) => text.labelMedium!.copyWith(color: color);
+    return ThemeData(
+      useMaterial3: true,
+      brightness: brightness,
+      colorScheme: colors,
+      fontFamily: family,
+      textTheme: text,
+      scaffoldBackgroundColor: colors.surface,
+      extensions: [
+        ExpressiveType(emphasized: TypeScale.emphasized(family: family)),
+      ],
+      cupertinoOverrideTheme: CupertinoThemeData(
+        brightness: brightness,
+        primaryColor: colors.primary,
+        scaffoldBackgroundColor: colors.surface,
+      ),
+      appBarTheme: AppBarTheme(
+        centerTitle: false,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        backgroundColor: colors.surface,
+        surfaceTintColor: Colors.transparent,
+        systemOverlayStyle: _statusBar(brightness),
+        titleTextStyle: text.titleLarge!.copyWith(color: colors.onSurface),
+      ),
+      // Flat cards on the low container, rounded as the mockup's lists.
+      cardTheme: CardThemeData(
+        elevation: 0,
+        color: colors.surfaceContainerLow,
+        margin: EdgeInsets.zero,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(Corners.largeIncreased),
+        ),
+      ),
+      // The short navigation bar (NavigationBarTokens).
+      navigationBarTheme: NavigationBarThemeData(
+        height: 64,
+        elevation: 0,
+        backgroundColor: colors.surfaceContainer,
+        surfaceTintColor: Colors.transparent,
+        indicatorColor: colors.secondaryContainer,
+        indicatorShape: const StadiumBorder(),
+        labelTextStyle: WidgetStateProperty.resolveWith(
+          (states) => label(
+            states.contains(WidgetState.selected)
+                ? colors.secondary
+                : colors.onSurfaceVariant,
+          ),
+        ),
+        iconTheme: WidgetStateProperty.resolveWith(
+          (states) => IconThemeData(
+            size: 24,
+            color: states.contains(WidgetState.selected)
+                ? colors.onSecondaryContainer
+                : colors.onSurfaceVariant,
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// The surfaces of [colors] made black, for screens that save power.
+  static ColorScheme _black(ColorScheme colors) => colors.copyWith(
+    surface: Colors.black,
+    surfaceDim: Colors.black,
+    surfaceBright: Colors.black,
+    surfaceContainerLowest: Colors.black,
+    surfaceContainerLow: Colors.black,
+    surfaceContainer: Colors.black,
+    surfaceContainerHigh: Colors.black,
+    surfaceContainerHighest: Colors.black,
+    surfaceTint: Colors.transparent,
+  );
+
+  // Flutter picks the status bar icons from the bar's colour. A transparent
+  // bar reads as dark, which left white icons on the light page, so the
+  // theme's brightness decides instead.
+  static SystemUiOverlayStyle _statusBar(Brightness brightness) =>
+      SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarBrightness: brightness,
+        statusBarIconBrightness: brightness == Brightness.light
+            ? Brightness.dark
+            : Brightness.light,
+      );
+
   static ThemeData _theme(
     Brightness brightness,
     bool likeIos, {
     bool amoled = false,
   }) {
     var colors = ColorScheme.fromSeed(seedColor: _seed, brightness: brightness);
-    if (amoled) {
-      colors = colors.copyWith(
-        surface: Colors.black,
-        surfaceDim: Colors.black,
-        surfaceBright: Colors.black,
-        surfaceContainerLowest: Colors.black,
-        surfaceContainerLow: Colors.black,
-        surfaceContainer: Colors.black,
-        surfaceContainerHigh: Colors.black,
-        surfaceContainerHighest: Colors.black,
-        surfaceTint: Colors.transparent,
-      );
-    }
+    if (amoled) colors = _black(colors);
     final background = amoled
         ? Colors.black
         : brightness == Brightness.light
@@ -71,16 +207,7 @@ abstract final class AppTheme {
         scrolledUnderElevation: 0,
         backgroundColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
-        // Flutter picks the status bar icons from the bar's colour. A
-        // transparent bar reads as dark, which left white icons on the light
-        // page, so the theme's brightness decides instead.
-        systemOverlayStyle: SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent,
-          statusBarBrightness: brightness,
-          statusBarIconBrightness: brightness == Brightness.light
-              ? Brightness.dark
-              : Brightness.light,
-        ),
+        systemOverlayStyle: _statusBar(brightness),
         titleTextStyle: TextStyle(
           color: colors.onSurface,
           fontSize: 28,

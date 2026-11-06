@@ -91,22 +91,17 @@ class _Settings extends StatelessWidget {
                   ),
               ],
             ),
-            // Where the platform cannot draw glass there is nothing to choose.
-            if (GlassPlatform.supported)
-              _PreviewChoice<AppDesign>(
-                title: context.tr('design'),
-                icon: Icons.auto_awesome_rounded,
-                selected: controller.design,
-                onSelected: controller.setDesign,
-                options: [
-                  for (final design in AppDesign.values)
-                    (
-                      value: design,
-                      label: context.tr('design_${design.name}'),
-                      key: ValueKey('settings-design-${design.name}'),
-                      preview: _DesignPreview(design),
-                    ),
-                ],
+            _DesignChoice(controller, keyPrefix: 'settings'),
+            // Only where the phone has wallpaper colours: Android 12 and newer.
+            if (controller.design == AppDesign.expressive &&
+                controller.wallpaperColors != null)
+              SwitchListTile.adaptive(
+                key: const ValueKey('settings-wallpaper-colors'),
+                secondary: const _SettingsIcon(Icons.palette_rounded),
+                title: Text(context.tr('wallpaperColors')),
+                subtitle: Text(context.tr('wallpaperColorsDescription')),
+                value: controller.useWallpaperColors,
+                onChanged: controller.setUseWallpaperColors,
               ),
             ListTile(
               key: const ValueKey('settings-language'),

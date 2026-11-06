@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui' show PlatformDispatcher;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -51,6 +52,8 @@ class _SyberiaAppState extends State<SyberiaApp> with WidgetsBindingObserver {
       _wasBackgrounded = false;
       // The background check may have found news for another profile.
       unawaited(widget.controller.refreshProfiles());
+      // And a new wallpaper brings new colours.
+      unawaited(widget.controller.refreshWallpaperColors());
       if (widget.controller.autoSyncOnOpen) unawaited(widget.controller.sync());
     }
   }
@@ -59,12 +62,26 @@ class _SyberiaAppState extends State<SyberiaApp> with WidgetsBindingObserver {
   Widget build(BuildContext context) => ListenableBuilder(
     listenable: widget.controller,
     builder: (context, _) {
+      final controller = widget.controller;
       final glass =
-          GlassPlatform.supported &&
-          widget.controller.design == AppDesign.glass;
+          GlassPlatform.supported && controller.design == AppDesign.glass;
       // Where Flutter draws the glass, the design is a copy of the iPhone's
       // and brings the iPhone's look and manners with it.
       final likeIos = glass && GlassPlatform.backend == GlassBackend.rendered;
+      final expressive = controller.design == AppDesign.expressive;
+      final amoled = controller.colorMode == AppColorMode.amoled;
+      ThemeData expressiveTheme(Brightness brightness) {
+        unawaited(AppTheme.loadExpressiveFont());
+        return AppTheme.expressive(
+          brightness,
+          wallpaper: controller.themeWallpaperColors,
+          amoled: amoled && brightness == Brightness.dark,
+          latinFont: AppTheme.expressiveFontDraws(
+            controller.locale ?? PlatformDispatcher.instance.locale,
+          ),
+        );
+      }
+
       return ValueListenableBuilder(
         valueListenable: _revealing,
         builder: (context, revealing, _) => BrandEventScope(
@@ -73,8 +90,12 @@ class _SyberiaAppState extends State<SyberiaApp> with WidgetsBindingObserver {
           child: MaterialApp(
             title: 'SiberiaGB',
             debugShowCheckedModeBanner: false,
-            theme: AppTheme.light(likeIos: likeIos),
-            darkTheme: widget.controller.colorMode == AppColorMode.amoled
+            theme: expressive
+                ? expressiveTheme(Brightness.light)
+                : AppTheme.light(likeIos: likeIos),
+            darkTheme: expressive
+                ? expressiveTheme(Brightness.dark)
+                : amoled
                 ? AppTheme.amoled(likeIos: likeIos)
                 : AppTheme.dark(likeIos: likeIos),
             themeAnimationDuration: revealing

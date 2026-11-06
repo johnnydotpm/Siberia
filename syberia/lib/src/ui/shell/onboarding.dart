@@ -669,22 +669,7 @@ class _AppearanceStep extends StatelessWidget {
                   ),
               ],
             ),
-            if (GlassPlatform.supported)
-              _PreviewChoice<AppDesign>(
-                title: context.tr('design'),
-                icon: Icons.auto_awesome_rounded,
-                selected: controller.design,
-                onSelected: controller.setDesign,
-                options: [
-                  for (final design in AppDesign.values)
-                    (
-                      value: design,
-                      label: context.tr('design_${design.name}'),
-                      key: ValueKey('onboarding-design-${design.name}'),
-                      preview: _DesignPreview(design),
-                    ),
-                ],
-              ),
+            _DesignChoice(controller, keyPrefix: 'onboarding'),
           ],
         ),
       ),

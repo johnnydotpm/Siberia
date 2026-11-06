@@ -373,9 +373,10 @@ enum AttendanceKind {
 
 enum AttendanceChartStyle { ring, pie, bar }
 
-/// The look of the app's bars, sheets and menus. [glass] needs a platform
-/// that can draw it; elsewhere the app stays [classic] whatever is chosen.
-enum AppDesign { glass, classic }
+/// The look of the app. [glass] needs a platform that can draw it; elsewhere
+/// the app stays [classic] when it is chosen. [expressive] is Material 3
+/// Expressive, Google's design, which any platform can draw.
+enum AppDesign { glass, classic, expressive }
 
 enum AppColorMode { system, light, dark, amoled }
 

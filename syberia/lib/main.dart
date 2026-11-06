@@ -7,11 +7,13 @@ import 'package:flutter/services.dart';
 import 'src/background_notifications.dart';
 import 'src/data/app_repository.dart';
 import 'src/debug/diagnostics.dart';
+import 'src/domain/models.dart';
 import 'src/frame_rate.dart';
 import 'src/home_widget.dart';
 import 'src/school_notifications.dart';
 import 'src/state/app_controller.dart';
 import 'src/startup.dart';
+import 'src/theme/app_theme.dart';
 import 'src/ui/home_widget_settings.dart';
 import 'src/ui/glass/glass_platform.dart';
 
@@ -52,7 +54,16 @@ Future<AppController> _initializeApplication(AppRepository repository) async {
       _initializeBackground(),
       GlassPlatform.ensureInitialized(),
       // The snapshot may raise notifications, so the plugin comes first.
-      notifications.initialize().then((_) => controller.bootstrap()),
+      notifications.initialize().then((_) => controller.bootstrap())
+      // Google Sans Flex before the first frame, so the text does not
+      // change its font once on screen.
+      .then((_) async {
+        if (controller.design == AppDesign.expressive) {
+          await AppTheme.loadExpressiveFont();
+        }
+      }),
+      // The wallpaper's colours too, so they do not change once on screen.
+      controller.refreshWallpaperColors(),
     ]);
     final launchTarget = await notifications.launchTarget();
     if (launchTarget != null) await controller.openNotification(launchTarget);
