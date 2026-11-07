@@ -13,6 +13,7 @@ import 'package:syberia/src/theme/app_symbols.dart';
 import 'package:syberia/src/theme/app_theme.dart';
 import 'package:syberia/src/theme/expressive_tokens.dart';
 import 'package:syberia/src/theme/wallpaper_colors.dart';
+import 'package:syberia/src/ui/expressive/expressive.dart';
 import 'package:syberia/src/ui/glass/glass_platform.dart';
 
 import 'support/profile_fakes.dart';
@@ -316,7 +317,9 @@ void main() {
       await tester.pumpAndSettle();
       expect(controller.design, AppDesign.expressive);
       expect(await _Repository().loadDesign(), AppDesign.expressive);
-      final theme = Theme.of(tester.element(find.byType(NavigationBar)));
+      final theme = Theme.of(
+        tester.element(find.byType(ExpressiveNavigationBar)),
+      );
       expect(theme.extension<ExpressiveType>(), isNotNull);
       expect(theme.colorScheme.primary, const Color(0xFF1D6586));
     }, variant: onAndroid);
@@ -328,7 +331,7 @@ void main() {
       await scrollTo(tester, toggle);
       expect(controller.useWallpaperColors, isTrue);
       Color primary() =>
-          Theme.of(tester.element(find.byType(NavigationBar)))
+          Theme.of(tester.element(find.byType(ExpressiveNavigationBar)))
               .colorScheme
               .primary;
       expect(primary(), const Color(0xFF3B6939));

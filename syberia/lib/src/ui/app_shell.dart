@@ -40,6 +40,7 @@ import '../theme/app_theme.dart';
 import 'brand/brand_mark.dart';
 import 'brand/brand_wordmark.dart';
 import 'brand_logo.dart';
+import 'expressive/expressive.dart';
 import 'glass/glass_items.dart';
 import 'glass/glass_modals.dart';
 import 'glass/glass_platform.dart';
@@ -317,6 +318,16 @@ class _AppShellState extends State<AppShell> {
             body: body,
           );
         }
+        void selectBottomTab(int index) {
+          HapticFeedback.selectionClick();
+          final page = bottomTabs[index];
+          if (page == controller.tabIndex) {
+            _reselect(page, glass: false);
+          } else {
+            controller.selectTab(page);
+          }
+        }
+
         return Scaffold(
           drawer: Drawer(
             child: SafeArea(child: _SideNavigation(controller: controller)),
@@ -349,44 +360,59 @@ class _AppShellState extends State<AppShell> {
             ],
           ),
           body: body,
-          // A page opened from the menu has no tab, so none looks selected.
-          // NavigationBar always selects one, so the first is drawn plain.
-          bottomNavigationBar: NavigationBarTheme(
-            data: selected >= 0
-                ? NavigationBarTheme.of(context)
-                : NavigationBarTheme.of(context).copyWith(
-                    indicatorColor: Colors.transparent,
-                    iconTheme: WidgetStatePropertyAll(
-                      IconThemeData(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+          bottomNavigationBar: controller.design == AppDesign.expressive
+              ? ExpressiveNavigationBar(
+                  selectedIndex: selected,
+                  onSelected: selectBottomTab,
+                  destinations: [
+                    for (final tab in bottomTabs)
+                      (
+                        icon: _tabLooks[tab].icon,
+                        label: context.tr(_tabLooks[tab].label),
+                        badge: tab == 5
+                            ? controller.snapshot.unreadMessages
+                            : 0,
+                        badgeText: badgeText(
+                          tab == 5 ? controller.snapshot.unreadMessages : 0,
+                        ),
                       ),
-                    ),
+                  ],
+                )
+              // A page opened from the menu has no tab, so none looks
+              // selected. NavigationBar always selects one, so the first is
+              // drawn plain.
+              : NavigationBarTheme(
+                  data: selected >= 0
+                      ? NavigationBarTheme.of(context)
+                      : NavigationBarTheme.of(context).copyWith(
+                          indicatorColor: Colors.transparent,
+                          iconTheme: WidgetStatePropertyAll(
+                            IconThemeData(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurfaceVariant,
+                            ),
+                          ),
+                        ),
+                  child: NavigationBar(
+                    selectedIndex: selected < 0 ? 0 : selected,
+                    onDestinationSelected: selectBottomTab,
+                    destinations: [
+                      for (final tab in bottomTabs)
+                        _destination(
+                          _tabLooks[tab].icon,
+                          // Off the bar, Today stands selected only for show.
+                          tab == 0 && selected < 0
+                              ? _tabLooks[tab].icon
+                              : _tabLooks[tab].selectedIcon,
+                          context.tr(_tabLooks[tab].label),
+                          badge: tab == 5
+                              ? controller.snapshot.unreadMessages
+                              : 0,
+                        ),
+                    ],
                   ),
-            child: NavigationBar(
-              selectedIndex: selected < 0 ? 0 : selected,
-              onDestinationSelected: (index) {
-                HapticFeedback.selectionClick();
-                final page = bottomTabs[index];
-                if (page == controller.tabIndex) {
-                  _reselect(page, glass: false);
-                } else {
-                  controller.selectTab(page);
-                }
-              },
-              destinations: [
-                for (final tab in bottomTabs)
-                  _destination(
-                    _tabLooks[tab].icon,
-                    // Off the bar, Today stands selected only for show.
-                    tab == 0 && selected < 0
-                        ? _tabLooks[tab].icon
-                        : _tabLooks[tab].selectedIcon,
-                    context.tr(_tabLooks[tab].label),
-                    badge: tab == 5 ? controller.snapshot.unreadMessages : 0,
-                  ),
-              ],
-            ),
-          ),
+                ),
         );
       },
     ),

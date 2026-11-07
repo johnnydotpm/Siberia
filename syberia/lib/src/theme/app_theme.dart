@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'app_symbols.dart';
 import 'expressive_tokens.dart';
 import 'wallpaper_colors.dart';
 
@@ -120,6 +121,14 @@ abstract final class AppTheme {
         margin: EdgeInsets.zero,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(Corners.largeIncreased),
+        ),
+      ),
+      // A check on the handle of a switch that is on.
+      switchTheme: SwitchThemeData(
+        thumbIcon: WidgetStateProperty.resolveWith(
+          (states) => states.contains(WidgetState.selected)
+              ? const Icon(AppSymbols.check)
+              : null,
         ),
       ),
       // The short navigation bar (NavigationBarTokens).

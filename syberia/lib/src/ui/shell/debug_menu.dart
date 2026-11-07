@@ -414,6 +414,20 @@ class _DebugMenuState extends State<_DebugMenu> {
           ),
           const SizedBox(height: 8),
           FilledButton.tonalIcon(
+            key: const ValueKey('debug-expressive-gallery'),
+            style: _wideButton,
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (_) => ExpressiveGallery(
+                  wallpaper: _controller.themeWallpaperColors,
+                ),
+              ),
+            ),
+            icon: const Icon(Icons.auto_awesome_rounded),
+            label: const Text('Expressive components'),
+          ),
+          const SizedBox(height: 8),
+          FilledButton.tonalIcon(
             key: const ValueKey('debug-recipient-groups'),
             style: _wideButton,
             onPressed: _groupsLoading ? null : _recipientGroups,
