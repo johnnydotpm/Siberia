@@ -7,6 +7,8 @@ import 'package:flutter/services.dart';
 
 import 'glass_fade.dart';
 import 'glass_items.dart';
+import 'glass_material.dart';
+import 'glass_plate.dart';
 import 'glass_platform.dart';
 import 'native_bar_buttons.dart';
 import 'native_glass_surface.dart';
@@ -786,8 +788,8 @@ class GlassAction {
 }
 
 /// A capsule of actions in place of the tab bar, while the page has picked
-/// something to act on: the tab bar's size and place, its icons over their
-/// labels, drawn by Flutter on glass.
+/// something to act on: the tab bar's size, place and glass, its icons over
+/// their labels.
 class GlassActionBar extends StatelessWidget {
   const GlassActionBar({required this.actions, super.key});
 
@@ -811,22 +813,25 @@ class GlassActionBar extends StatelessWidget {
         ),
         child: SizedBox(
           height: RenderedGlassTabBar.capsuleHeight,
-          child: GlassPanel(
-            radius: RenderedGlassTabBar.capsuleHeight / 2,
-            child: Padding(
-              padding: const EdgeInsets.all(4),
-              child: Row(
-                children: [
-                  for (final action in actions)
-                    Expanded(
-                      child: _GlassActionButton(
-                        action,
-                        color: action.destructive
-                            ? colors.error
-                            : colors.primary,
+          child: _glass(
+            context,
+            Material(
+              type: MaterialType.transparency,
+              child: Padding(
+                padding: const EdgeInsets.all(4),
+                child: Row(
+                  children: [
+                    for (final action in actions)
+                      Expanded(
+                        child: _GlassActionButton(
+                          action,
+                          color: action.destructive
+                              ? colors.error
+                              : colors.primary,
+                        ),
                       ),
-                    ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -834,6 +839,20 @@ class GlassActionBar extends StatelessWidget {
       ),
     );
   }
+
+  /// The tab bar's own glass behind [child]: its material where Flutter
+  /// draws it, UIKit's regular glass, untinted as a bar's is, on iOS 26.
+  static Widget _glass(BuildContext context, Widget child) =>
+      GlassPlatform.backend == GlassBackend.rendered
+      ? GlassPlate(
+          look: GlassMaterial.chrome(Theme.of(context).brightness),
+          shape: const StadiumBorder(),
+          child: child,
+        )
+      : NativeGlassSurface(
+          radius: RenderedGlassTabBar.capsuleHeight / 2,
+          child: child,
+        );
 }
 
 class _GlassActionButton extends StatelessWidget {
