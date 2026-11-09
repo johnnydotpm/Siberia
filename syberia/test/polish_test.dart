@@ -371,9 +371,13 @@ void main() {
 
       controller.selectTab(5);
       await tester.pumpAndSettle();
+      haptics.clear();
       await tester.longPress(find.text('Temat m1'));
       await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const ValueKey('message-action-read-m1')));
+      expect(haptics, contains('HapticFeedbackType.mediumImpact'));
+      await tester.tap(
+        find.byKey(const ValueKey('messages-mark-selected-read')),
+      );
       await tester.pumpAndSettle();
       expect(repository.opened, ['m1']);
       expect(controller.snapshot.messages.single.unread, isFalse);
@@ -381,10 +385,19 @@ void main() {
       await tester.longPress(find.text('Temat m1'));
       await tester.pumpAndSettle();
       expect(
-        find.byKey(const ValueKey('message-action-read-m1')),
-        findsNothing,
+        tester
+            .widget<InkResponse>(
+              find.descendant(
+                of: find.byKey(const ValueKey('messages-mark-selected-read')),
+                matching: find.byType(InkResponse),
+              ),
+            )
+            .onTap,
+        isNull,
       );
-      await tester.tap(find.byKey(const ValueKey('message-action-open-m1')));
+      await tester.tap(find.byKey(const ValueKey('messages-selection-close')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Temat m1'));
       await tester.pumpAndSettle();
       expect(find.text('Treść pełna'), findsOneWidget);
       await tester.pumpWidget(const SizedBox.shrink());
@@ -694,9 +707,7 @@ void main() {
       find.byKey(const ValueKey('message-unread-demo-inbox-0')),
     );
     await tester.pumpAndSettle();
-    await tester.tap(
-      find.byKey(const ValueKey('message-action-read-demo-inbox-0')),
-    );
+    await tester.tap(find.byKey(const ValueKey('messages-mark-selected-read')));
     await tester.pumpAndSettle();
     expect(controller.snapshot.unreadMessages, unread - 1);
     await tester.tap(find.text('Project feedback').first);

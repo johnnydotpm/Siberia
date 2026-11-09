@@ -103,6 +103,13 @@ class GlassSymbol {
     'arrow.triangle.2.circlepath',
     CupertinoIcons.arrow_2_circlepath,
   );
+
+  /// Leaves picking, in place of the menu.
+  static const close = GlassSymbol('xmark', CupertinoIcons.xmark);
+
+  /// Picks everything on the page, or nothing once all is.
+  static const selectAll = GlassSymbol('checklist', Icons.checklist_rounded);
+
   static const account = GlassSymbol(
     'person.crop.circle',
     CupertinoIcons.person_crop_circle,

@@ -130,6 +130,8 @@ class GlassShell extends StatefulWidget {
     required this.drawer,
     required this.body,
     this.onTabReselected,
+    this.leading,
+    this.actionBar,
     super.key,
   });
 
@@ -163,6 +165,14 @@ class GlassShell extends StatefulWidget {
 
   final Widget drawer;
   final Widget body;
+
+  /// Buttons on the leading side of the top bar in place of the menu, while
+  /// the page asks for others, as a way out of picking.
+  final List<GlassBarButton>? leading;
+
+  /// Shown in place of the tab bar while the page has picked something to
+  /// act on, usually a [GlassActionBar].
+  final Widget? actionBar;
 
   @override
   State<GlassShell> createState() => _GlassShellState();
@@ -240,14 +250,16 @@ class _GlassShellState extends State<GlassShell> {
 
   @override
   Widget build(BuildContext context) {
-    final leading = [
-      GlassBarButton(
-        id: 'menu',
-        symbol: GlassSymbol.menu,
-        label: widget.menuLabel,
-        onPressed: () => _scaffold.currentState?.openDrawer(),
-      ),
-    ];
+    final leading =
+        widget.leading ??
+        [
+          GlassBarButton(
+            id: 'menu',
+            symbol: GlassSymbol.menu,
+            label: widget.menuLabel,
+            onPressed: () => _scaffold.currentState?.openDrawer(),
+          ),
+        ];
     final theme = Theme.of(context);
     return Theme(
       // A message floats above the tab bar. Spanning the screen, it would
@@ -287,6 +299,7 @@ class _GlassShellState extends State<GlassShell> {
             tabs: widget.tabs,
             selectedIndex: widget.selectedTab,
             onSelected: _onTabSelected,
+            actionBar: widget.actionBar,
           ),
         ),
       ),
@@ -675,15 +688,33 @@ class _BottomBar extends StatelessWidget {
     required this.tabs,
     required this.selectedIndex,
     required this.onSelected,
+    this.actionBar,
   });
 
   final List<GlassTab> tabs;
   final int? selectedIndex;
   final ValueChanged<int> onSelected;
+  final Widget? actionBar;
 
   @override
   Widget build(BuildContext context) {
     final background = Theme.of(context).scaffoldBackgroundColor;
+    final Widget bar =
+        actionBar ??
+        (GlassPlatform.backend == GlassBackend.rendered
+            ? RenderedGlassTabBar(
+                key: const ValueKey('glass-tabs'),
+                tabs: tabs,
+                selectedIndex: selectedIndex,
+                onSelected: onSelected,
+              )
+            : NativeGlassTabBar(
+                key: const ValueKey('glass-tabs'),
+                tabs: tabs,
+                selectedIndex: selectedIndex,
+                onSelected: onSelected,
+              ));
+    final reduceMotion = MediaQuery.maybeDisableAnimationsOf(context) ?? false;
     return Stack(
       children: [
         Positioned.fill(
@@ -704,19 +735,153 @@ class _BottomBar extends StatelessWidget {
             ),
           ),
         ),
-        if (GlassPlatform.backend == GlassBackend.rendered)
-          RenderedGlassTabBar(
-            tabs: tabs,
-            selectedIndex: selectedIndex,
-            onSelected: onSelected,
+        // The tab bar gives way to the actions, and comes back, the way a
+        // glass panel settles: it fades in from a little smaller. UIKit's
+        // tab bar is a view of its own that a fade would not reach.
+        if (GlassPlatform.backend == GlassBackend.rendered && !reduceMotion)
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 260),
+            switchInCurve: Curves.easeOutCubic,
+            switchOutCurve: Curves.easeInCubic,
+            transitionBuilder: (child, animation) => FadeTransition(
+              opacity: animation,
+              child: ScaleTransition(
+                scale: Tween<double>(begin: 0.94, end: 1).animate(animation),
+                child: child,
+              ),
+            ),
+            layoutBuilder: (current, previous) => Stack(
+              alignment: Alignment.bottomCenter,
+              children: [...previous, ?current],
+            ),
+            child: bar,
           )
         else
-          NativeGlassTabBar(
-            tabs: tabs,
-            selectedIndex: selectedIndex,
-            onSelected: onSelected,
-          ),
+          bar,
       ],
+    );
+  }
+}
+
+/// One action of a [GlassActionBar].
+@immutable
+class GlassAction {
+  const GlassAction({
+    required this.icon,
+    required this.label,
+    required this.onPressed,
+    this.destructive = false,
+    this.key,
+  });
+
+  final IconData icon;
+  final String label;
+
+  /// Null while the action cannot be taken.
+  final VoidCallback? onPressed;
+
+  /// Drawn in the error colour, as deleting is.
+  final bool destructive;
+  final Key? key;
+}
+
+/// A capsule of actions in place of the tab bar, while the page has picked
+/// something to act on: the tab bar's size and place, its icons over their
+/// labels, drawn by Flutter on glass.
+class GlassActionBar extends StatelessWidget {
+  const GlassActionBar({required this.actions, super.key});
+
+  final List<GlassAction> actions;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    final gap = RenderedGlassTabBar.bottomGap(
+      MediaQuery.viewPaddingOf(context).bottom,
+    );
+    // Like the tab bar's, the labels keep their size: the capsule has no
+    // room for larger ones.
+    return MediaQuery.withNoTextScaling(
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(
+          RenderedGlassTabBar.margin,
+          RenderedGlassTabBar.headroom,
+          RenderedGlassTabBar.margin,
+          gap,
+        ),
+        child: SizedBox(
+          height: RenderedGlassTabBar.capsuleHeight,
+          child: GlassPanel(
+            radius: RenderedGlassTabBar.capsuleHeight / 2,
+            child: Padding(
+              padding: const EdgeInsets.all(4),
+              child: Row(
+                children: [
+                  for (final action in actions)
+                    Expanded(
+                      child: _GlassActionButton(
+                        action,
+                        color: action.destructive
+                            ? colors.error
+                            : colors.primary,
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _GlassActionButton extends StatelessWidget {
+  const _GlassActionButton(this.action, {required this.color});
+
+  final GlassAction action;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    final enabled = action.onPressed != null;
+    return Semantics(
+      button: true,
+      enabled: enabled,
+      label: action.label,
+      excludeSemantics: true,
+      child: InkWell(
+        key: action.key,
+        onTap: action.onPressed == null
+            ? null
+            : () {
+                HapticFeedback.selectionClick();
+                action.onPressed!();
+              },
+        customBorder: const StadiumBorder(),
+        child: AnimatedOpacity(
+          opacity: enabled ? 1 : 0.38,
+          duration: const Duration(milliseconds: 150),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(action.icon, size: 24, color: color),
+              const SizedBox(height: 2),
+              Text(
+                action.label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: color,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: -0.1,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

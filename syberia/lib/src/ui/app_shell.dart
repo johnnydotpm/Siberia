@@ -3,6 +3,7 @@ import 'dart:io' show Platform;
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 
+import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -79,6 +80,7 @@ part 'shell/sync_news.dart';
 part 'shell/debug_menu.dart';
 part 'shell/together.dart';
 part 'shell/excuse.dart';
+part 'shell/selection_bars.dart';
 
 class AppShell extends StatefulWidget {
   const AppShell({required this.controller, super.key});
@@ -112,12 +114,19 @@ class _AppShellState extends State<AppShell> {
   /// The page whose tab was tapped while open, for the page to act on.
   final _reselected = _Reselect();
 
+  /// What the Messages page has picked, shown in the bars while it picks.
+  final _selection = _SelectionBars();
+
+  /// Everything the shell is drawn from.
+  late final _changes = Listenable.merge([widget.controller, _selection]);
+
   AppController get controller => widget.controller;
 
   @override
   void dispose() {
     _reselected.dispose();
     _titleScroll.dispose();
+    _selection.dispose();
     super.dispose();
   }
 
@@ -186,7 +195,7 @@ class _AppShellState extends State<AppShell> {
 
   @override
   Widget build(BuildContext context) => ListenableBuilder(
-    listenable: controller,
+    listenable: _changes,
     builder: (context, _) => LayoutBuilder(
       builder: (context, constraints) {
         // The first setup comes before anything else; the demo, started
@@ -204,11 +213,20 @@ class _AppShellState extends State<AppShell> {
         // UIKit's own on iOS 26, drawn by Flutter elsewhere.
         final glass = GlassStyle.of(context);
         final expressive = ExpressiveStyle.of(context);
+        // While messages are picked, the bars are about them: the count up
+        // top with a way out, the actions in place of the tabs. A wide
+        // screen has no such bars, and the page shows them itself.
+        final picking = !wide && controller.tabIndex == _messagesTab
+            ? _selection.value
+            : null;
+        String titleOf(int index) => picking != null && index == _messagesTab
+            ? _selectionTitle(context, picking.count)
+            : _title(context, index);
         Widget wrap(int index, Widget page) => glass
             ? GlassPageScope(
                 // The timetable keeps its day strip under the bar, so it has
                 // no title that could scroll away.
-                largeTitle: index == 1 ? null : _title(context, index),
+                largeTitle: index == 1 ? null : titleOf(index),
                 barActions: !wide,
                 child: page,
               )
@@ -238,28 +256,32 @@ class _AppShellState extends State<AppShell> {
             days: controller.snapshot.freeDays,
             child: _ControllerScope(
               controller: controller,
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  NotificationListener<ScrollNotification>(
-                    onNotification: _onScroll,
-                    child: IndexedStack(index: current, children: pages),
-                  ),
-                  // Under the top bar, over the page.
-                  Positioned(
-                    top: 0,
-                    left: _Space.page,
-                    right: _Space.page,
-                    child: Builder(
-                      builder: (context) => Padding(
-                        padding: EdgeInsets.only(
-                          top: MediaQuery.paddingOf(context).top + 8,
+              child: _SelectionScope(
+                selection: _selection,
+                hosted: !wide,
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    NotificationListener<ScrollNotification>(
+                      onNotification: _onScroll,
+                      child: IndexedStack(index: current, children: pages),
+                    ),
+                    // Under the top bar, over the page.
+                    Positioned(
+                      top: 0,
+                      left: _Space.page,
+                      right: _Space.page,
+                      child: Builder(
+                        builder: (context) => Padding(
+                          padding: EdgeInsets.only(
+                            top: MediaQuery.paddingOf(context).top + 8,
+                          ),
+                          child: Center(child: _SyncNewsBanner(controller)),
                         ),
-                        child: Center(child: _SyncNewsBanner(controller)),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -297,7 +319,7 @@ class _AppShellState extends State<AppShell> {
         if (glass) {
           return GlassShell(
             pageIndex: controller.tabIndex,
-            title: _title(context, controller.tabIndex),
+            title: titleOf(controller.tabIndex),
             largeTitle: controller.tabIndex != 1,
             tabs: [
               for (final tab in bottomTabs)
@@ -313,25 +335,48 @@ class _AppShellState extends State<AppShell> {
             onTabReselected: (index) =>
                 _reselect(bottomTabs[index], glass: true),
             menuLabel: MaterialLocalizations.of(context).openAppDrawerTooltip,
-            actions: [
-              if (controller.tabIndex == 5)
-                GlassBarButton(
-                  id: 'compose',
-                  symbol: GlassSymbol.compose,
-                  label: context.tr('newMessage'),
-                  prominent: true,
-                  separated: true,
-                  onPressed: () => _showComposeMessage(context, controller),
-                ),
-              GlassBarButton(
-                id: 'sync',
-                symbol: GlassSymbol.sync,
-                label: context.tr('sync'),
-                loading: controller.syncing,
-                onPressed: controller.syncing ? null : controller.sync,
-              ),
-              _profileBarButton(context, controller),
-            ],
+            leading: picking == null
+                ? null
+                : [
+                    GlassBarButton(
+                      id: 'selection-close',
+                      symbol: GlassSymbol.close,
+                      label: context.tr('messagesEndSelection'),
+                      onPressed: picking.onClose,
+                    ),
+                  ],
+            actionBar: picking == null
+                ? null
+                : _glassSelectionActions(context, picking),
+            actions: picking != null
+                ? [
+                    GlassBarButton(
+                      id: 'selection-all',
+                      symbol: GlassSymbol.selectAll,
+                      label: _selectAllLabel(context, picking),
+                      onPressed: picking.selectAll,
+                    ),
+                  ]
+                : [
+                    if (controller.tabIndex == 5)
+                      GlassBarButton(
+                        id: 'compose',
+                        symbol: GlassSymbol.compose,
+                        label: context.tr('newMessage'),
+                        prominent: true,
+                        separated: true,
+                        onPressed: () =>
+                            _showComposeMessage(context, controller),
+                      ),
+                    GlassBarButton(
+                      id: 'sync',
+                      symbol: GlassSymbol.sync,
+                      label: context.tr('sync'),
+                      loading: controller.syncing,
+                      onPressed: controller.syncing ? null : controller.sync,
+                    ),
+                    _profileBarButton(context, controller),
+                  ],
             drawer: _SideNavigation(controller: controller, glass: true),
             body: body,
           );
@@ -350,53 +395,77 @@ class _AppShellState extends State<AppShell> {
           drawer: Drawer(
             child: SafeArea(child: _SideNavigation(controller: controller)),
           ),
-          appBar: AppBar(
-            // In the Expressive design the page opens with its own large
-            // title; the bar shows it once that has scrolled away.
-            title: expressive && controller.tabIndex != 1
-                ? ValueListenableBuilder(
+          appBar: picking == null
+              ? AppBar(
+                  // In the Expressive design the page opens with its own large
+                  // title; the bar shows it once that has scrolled away.
+                  title: expressive && controller.tabIndex != 1
+                      ? ValueListenableBuilder(
+                          valueListenable: _titleScroll,
+                          builder: (context, _, child) => AnimatedOpacity(
+                            opacity: _titleAway[controller.tabIndex] ?? false
+                                ? 1
+                                : 0,
+                            duration: const Duration(milliseconds: 150),
+                            child: child,
+                          ),
+                          child: Text(_title(context, controller.tabIndex)),
+                        )
+                      : Text(_title(context, controller.tabIndex)),
+                  actions: [
+                    // One sign of a sync: the button turns into its spinner.
+                    IconButton(
+                      key: const ValueKey('sync-button'),
+                      onPressed: controller.syncing ? null : controller.sync,
+                      icon: controller.syncing
+                          ? expressive
+                                // Expressive's own: shapes that morph as they turn.
+                                ? const SizedBox.square(
+                                    dimension: 28,
+                                    child: FittedBox(child: LoadingIndicator()),
+                                  )
+                                : const SizedBox.square(
+                                    dimension: 18,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                          : const AppIcon(Icons.sync_rounded),
+                      tooltip: context.tr('sync'),
+                    ),
+                    IconButton(
+                      key: const ValueKey('profile-button'),
+                      tooltip: context.tr('profiles'),
+                      onPressed: () => _showProfiles(context, controller),
+                      icon: _OpenProfileSign(
+                        controller,
+                        radius: 15,
+                        news: controller.otherProfilesHaveNews,
+                      ),
+                    ),
+                  ],
+                )
+              : expressive
+              ? _expressiveSelectionBar(
+                  context,
+                  picking,
+                  title: ValueListenableBuilder(
                     valueListenable: _titleScroll,
                     builder: (context, _, child) => AnimatedOpacity(
                       opacity: _titleAway[controller.tabIndex] ?? false ? 1 : 0,
                       duration: const Duration(milliseconds: 150),
                       child: child,
                     ),
-                    child: Text(_title(context, controller.tabIndex)),
-                  )
-                : Text(_title(context, controller.tabIndex)),
-            actions: [
-              // One sign of a sync: the button turns into its spinner.
-              IconButton(
-                key: const ValueKey('sync-button'),
-                onPressed: controller.syncing ? null : controller.sync,
-                icon: controller.syncing
-                    ? expressive
-                          // Expressive's own: shapes that morph as they turn.
-                          ? const SizedBox.square(
-                              dimension: 28,
-                              child: FittedBox(child: LoadingIndicator()),
-                            )
-                          : const SizedBox.square(
-                              dimension: 18,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
-                    : const AppIcon(Icons.sync_rounded),
-                tooltip: context.tr('sync'),
-              ),
-              IconButton(
-                key: const ValueKey('profile-button'),
-                tooltip: context.tr('profiles'),
-                onPressed: () => _showProfiles(context, controller),
-                icon: _OpenProfileSign(
-                  controller,
-                  radius: 15,
-                  news: controller.otherProfilesHaveNews,
-                ),
-              ),
-            ],
-          ),
+                    child: Text(titleOf(controller.tabIndex)),
+                  ),
+                )
+              : _ClassicSelectionBar(picking),
           body: body,
-          bottomNavigationBar: controller.design == AppDesign.expressive
+          bottomNavigationBar: picking != null
+              ? expressive
+                    ? null
+                    : _ClassicSelectionActions(picking)
+              : controller.design == AppDesign.expressive
               ? ExpressiveNavigationBar(
                   selectedIndex: selected,
                   onSelected: selectBottomTab,
@@ -449,6 +518,12 @@ class _AppShellState extends State<AppShell> {
                     ],
                   ),
                 ),
+          // Expressive's actions float where its navigation bar was.
+          floatingActionButton: picking != null && expressive
+              ? _ExpressiveSelectionToolbar(picking)
+              : null,
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerFloat,
         );
       },
     ),

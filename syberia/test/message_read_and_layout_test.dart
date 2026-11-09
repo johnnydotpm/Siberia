@@ -12,6 +12,21 @@ import 'package:syberia/src/domain/models.dart';
 import 'package:syberia/src/state/app_controller.dart';
 import 'package:syberia/src/ui/glass/glass_platform.dart';
 
+/// Whether the action under [key] can be taken now.
+bool _enabled(WidgetTester tester, String key) =>
+    tester
+        .widget<InkResponse>(
+          find
+              .descendant(
+                of: find.byKey(ValueKey(key)),
+                matching: find.byWidgetPredicate((w) => w is InkResponse),
+                matchRoot: true,
+              )
+              .first,
+        )
+        .onTap !=
+    null;
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -108,7 +123,7 @@ void main() {
   );
 
   testWidgets(
-    'selection shows actions only after choosing messages; delete confirms and retains failures',
+    'picking turns the bars to its actions, live once something is picked; delete confirms and retains failures',
     (tester) async {
       final client = _ReadClient()..failures.add('b');
       final controller = await load(client, _data());
@@ -125,10 +140,10 @@ void main() {
       );
       await tester.tap(find.byKey(const ValueKey('messages-select')));
       await tester.pumpAndSettle();
-      expect(
-        find.byKey(const ValueKey('messages-delete-selected')),
-        findsNothing,
-      );
+      // The bars turn to picking at once; nothing picked, nothing to do.
+      expect(find.text('Select messages'), findsWidgets);
+      expect(_enabled(tester, 'messages-delete-selected'), isFalse);
+      expect(_enabled(tester, 'messages-mark-selected-read'), isFalse);
       await tester.tap(find.byKey(const ValueKey('message-select-a')));
       await tester.tap(find.text('Subject b'));
       await tester.pumpAndSettle();
@@ -137,7 +152,7 @@ void main() {
         isEmpty,
         reason: 'tapping in selection mode does not open mail',
       );
-      expect(find.text('Selected: 2'), findsOneWidget);
+      expect(find.text('2 selected'), findsOneWidget);
       await tester.tap(find.byKey(const ValueKey('messages-delete-selected')));
       await tester.pumpAndSettle();
       expect(client.deleted, isEmpty);
@@ -152,7 +167,7 @@ void main() {
       expect(client.deleted, ['a']);
       expect(find.text('Subject a'), findsNothing);
       expect(find.text('Subject b'), findsOneWidget);
-      expect(find.text('Selected: 1'), findsOneWidget);
+      expect(find.text('1 selected'), findsOneWidget);
       expect(
         find.text(
           'Some deletions could not be confirmed. Refresh the mailbox to check their status.',
@@ -181,7 +196,7 @@ void main() {
   );
 
   testWidgets(
-    'long press selects without reading and offers read and delete; folder changes clear selection',
+    'long press picks without reading, the bars offer read and delete; folder changes clear the picking',
     (tester) async {
       final client = _ReadClient();
       final controller = await load(client, _data());
@@ -191,25 +206,26 @@ void main() {
       await tester.longPress(find.text('Subject c'));
       await tester.pumpAndSettle();
       expect(client.opened, isEmpty);
-      expect(
-        find.byKey(const ValueKey('message-action-delete-c')),
-        findsOneWidget,
+      expect(find.text('1 selected'), findsOneWidget);
+      expect(_enabled(tester, 'messages-delete-selected'), isTrue);
+      await tester.tap(
+        find.byKey(const ValueKey('messages-mark-selected-read')),
       );
-      await tester.tap(find.byKey(const ValueKey('message-action-read-c')));
       await tester.pumpAndSettle();
       expect(client.opened, ['c']);
       expect(
         controller.snapshot.messages.firstWhere((m) => m.id == 'a').unread,
         isTrue,
       );
+      // Read, it leaves the picking, and the bars are the tabs again.
       expect(
         find.byKey(const ValueKey('messages-mark-selected-read')),
         findsNothing,
       );
       await tester.longPress(find.text('Subject c'));
       await tester.pumpAndSettle();
-      expect(find.byKey(const ValueKey('message-action-read-c')), findsNothing);
-      await tester.tap(find.byKey(const ValueKey('message-action-delete-c')));
+      expect(_enabled(tester, 'messages-mark-selected-read'), isFalse);
+      await tester.tap(find.byKey(const ValueKey('messages-delete-selected')));
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const ValueKey('messages-confirm-delete')));
       await tester.pumpAndSettle();
@@ -260,16 +276,10 @@ void main() {
       await tester.longPress(find.text('Sent subject'));
       await tester.pumpAndSettle();
       expect(
-        find.byKey(const ValueKey('message-action-read-sent-1')),
-        findsNothing,
-      );
-      expect(
         find.byKey(const ValueKey('messages-mark-selected-read')),
         findsNothing,
       );
-      await tester.tap(
-        find.byKey(const ValueKey('message-action-delete-sent-1')),
-      );
+      await tester.tap(find.byKey(const ValueKey('messages-delete-selected')));
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const ValueKey('messages-confirm-delete')));
       await tester.pumpAndSettle();

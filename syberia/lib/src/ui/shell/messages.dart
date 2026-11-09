@@ -32,6 +32,12 @@ class _MessagesState extends State<_Messages> {
   /// the tab changes.
   final _shownUnread = <String>{};
 
+  /// Where the shell shows what is picked, when it has bars for it.
+  _SelectionBars? _bars;
+
+  /// The messages on screen, by id, for picking them all.
+  List<String> _visibleIds = const [];
+
   @override
   void initState() {
     super.initState();
@@ -46,8 +52,56 @@ class _MessagesState extends State<_Messages> {
       _selected.clear();
       _selecting = false;
       _scope = _currentScope;
+      _showInBars(null);
     }
   }
+
+  /// Hands [selection] to the shell's bars once this frame is done: they
+  /// belong to the shell, which may be building now.
+  void _showInBars(_Selection? selection) {
+    final bars = _bars;
+    if (bars == null || bars.value == selection) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (bars.disposed) return;
+      // A page gone, or left for another tab, takes back only its own.
+      if (selection == null && bars.value?.onClose != _endSelection) return;
+      bars.value = selection;
+    });
+  }
+
+  /// Starts picking, with [first] picked when it came from a message.
+  void _startSelection([SchoolMessage? first]) {
+    if (_working) return;
+    HapticFeedback.selectionClick();
+    setState(() {
+      _selecting = true;
+      if (first != null) _selected.add(first.id);
+    });
+  }
+
+  void _endSelection() {
+    if (!_selecting) return;
+    setState(() {
+      _selecting = false;
+      _selected.clear();
+    });
+  }
+
+  /// Picks every message on screen, or none once all of them are.
+  void _selectAll() {
+    if (_working) return;
+    HapticFeedback.selectionClick();
+    setState(() {
+      if (_visibleIds.isNotEmpty && _visibleIds.every(_selected.contains)) {
+        _selected.clear();
+      } else {
+        _selected.addAll(_visibleIds);
+      }
+    });
+  }
+
+  void _readPicked() => _runSelection(delete: false);
+  void _deletePicked() => _runSelection(delete: true);
 
   void _openFolder(_MessageFolder folder) {
     HapticFeedback.selectionClick();
@@ -65,6 +119,7 @@ class _MessagesState extends State<_Messages> {
   void dispose() {
     widget.controller.removeListener(_onController);
     _search.dispose();
+    _showInBars(null);
     super.dispose();
   }
 
@@ -76,10 +131,15 @@ class _MessagesState extends State<_Messages> {
       if (_selected.contains(item.id)) item,
   ];
 
-  void _toggle(SchoolMessage message) => setState(() {
-    _selecting = true;
-    if (!_selected.remove(message.id)) _selected.add(message.id);
-  });
+  void _toggle(SchoolMessage message) {
+    if (_working) return;
+    // Felt as picking starts, from a long press or an avatar.
+    if (!_selecting) HapticFeedback.selectionClick();
+    setState(() {
+      _selecting = true;
+      if (!_selected.remove(message.id)) _selected.add(message.id);
+    });
+  }
 
   Future<void> _runSelection({required bool delete}) async {
     if (_working) return;
@@ -199,14 +259,38 @@ class _MessagesState extends State<_Messages> {
           selected: _selected.contains(item.id),
           busy: _working,
           onSelect: () => _toggle(item),
-          onDelete: () => _runSelection(delete: true),
-          onRead: () => _runSelection(delete: false),
         ),
       );
     }
     Future<void> refresh() => sentFolder
         ? controller.refreshSentMessages(force: true)
         : controller.sync();
+
+    // What is picked, for the shell's bars or, on a wide screen, for the
+    // page's own row.
+    _visibleIds = [for (final item in messages) item.id];
+    final selectionScope = _SelectionScope.maybeOf(context);
+    final hosted = selectionScope?.hosted ?? false;
+    _bars = hosted ? selectionScope!.selection : null;
+    final selection = _selecting
+        ? _Selection(
+            count: _selected.length,
+            total: messages.length,
+            readable: !sentFolder,
+            canRead: _selection.any((item) => item.unread),
+            busy:
+                _working ||
+                controller.syncing ||
+                controller.markingMessagesRead ||
+                controller.deletingMessages,
+            onClose: _endSelection,
+            onSelectAll: _selectAll,
+            onRead: _readPicked,
+            onDelete: _deletePicked,
+          )
+        : null;
+    _showInBars(selection);
+    final expressive = ExpressiveStyle.of(context);
 
     final tiles = <Widget>[
       TextField(
@@ -306,101 +390,51 @@ class _MessagesState extends State<_Messages> {
                         )
                       : const AppIcon(Icons.refresh_rounded),
                 ),
-              TextButton(
-                key: const ValueKey('messages-select'),
-                onPressed: _working
-                    ? null
-                    : () => setState(() {
-                        _selecting = !_selecting;
-                        _selected.clear();
-                      }),
-                child: Text(
-                  _selecting
-                      ? MaterialLocalizations.of(context).cancelButtonLabel
-                      : context.tr('messagesSelect'),
+              if (!_selecting) ...[
+                if (expressive)
+                  FilledButton.tonalIcon(
+                    key: const ValueKey('messages-select'),
+                    onPressed: _working || messages.isEmpty
+                        ? null
+                        : _startSelection,
+                    icon: const AppIcon(Icons.check_circle_outline_rounded),
+                    label: Text(context.tr('messagesSelect')),
+                  )
+                else
+                  TextButton.icon(
+                    key: const ValueKey('messages-select'),
+                    onPressed: _working || messages.isEmpty
+                        ? null
+                        : _startSelection,
+                    icon: const AppIcon(Icons.check_circle_outline_rounded),
+                    label: Text(context.tr('messagesSelect')),
+                  ),
+                IconButton(
+                  key: const ValueKey('messages-style-toggle'),
+                  tooltip: context.tr(
+                    style == MessageListStyle.list
+                        ? 'messagesViewCards'
+                        : 'messagesViewList',
+                  ),
+                  onPressed: () => controller.setMessageListStyle(
+                    style == MessageListStyle.list
+                        ? MessageListStyle.cards
+                        : MessageListStyle.list,
+                  ),
+                  icon: AppIcon(
+                    style == MessageListStyle.list
+                        ? Icons.view_agenda_rounded
+                        : Icons.view_list_rounded,
+                  ),
                 ),
-              ),
-              IconButton(
-                key: const ValueKey('messages-style-toggle'),
-                tooltip: context.tr(
-                  style == MessageListStyle.list
-                      ? 'messagesViewCards'
-                      : 'messagesViewList',
-                ),
-                onPressed: () => controller.setMessageListStyle(
-                  style == MessageListStyle.list
-                      ? MessageListStyle.cards
-                      : MessageListStyle.list,
-                ),
-                icon: AppIcon(
-                  style == MessageListStyle.list
-                      ? Icons.view_agenda_rounded
-                      : Icons.view_list_rounded,
-                ),
-              ),
+              ],
             ],
           ),
         ],
       ),
-      if (_selecting) ...[
-        Wrap(
-          crossAxisAlignment: WrapCrossAlignment.center,
-          spacing: 4,
-          children: [
-            TextButton.icon(
-              key: const ValueKey('messages-select-all'),
-              onPressed: _working
-                  ? null
-                  : () => setState(() {
-                      if (messages.every((m) => _selected.contains(m.id))) {
-                        _selected.clear();
-                      } else {
-                        _selected.addAll(messages.map((m) => m.id));
-                      }
-                    }),
-              icon: const AppIcon(Icons.select_all_rounded),
-              label: Text(context.tr('messagesSelectAll')),
-            ),
-            if (_selected.isNotEmpty) ...[
-              Text(
-                context.trArgs('messagesSelected', {
-                  'count': '${_selected.length}',
-                }),
-              ),
-              if (!sentFolder)
-                IconButton(
-                  key: const ValueKey('messages-mark-selected-read'),
-                  tooltip: context.tr('messageMarkRead'),
-                  onPressed:
-                      _working ||
-                          controller.syncing ||
-                          controller.markingMessagesRead ||
-                          controller.deletingMessages ||
-                          !_selection.any((m) => m.unread)
-                      ? null
-                      : () => _runSelection(delete: false),
-                  icon: const AppIcon(Icons.mark_email_read_rounded),
-                ),
-              IconButton(
-                key: const ValueKey('messages-delete-selected'),
-                tooltip: context.tr('messagesDelete'),
-                onPressed:
-                    _working ||
-                        controller.syncing ||
-                        controller.markingMessagesRead ||
-                        controller.deletingMessages
-                    ? null
-                    : () => _runSelection(delete: true),
-                icon: AppIcon(
-                  Icons.delete_outline_rounded,
-                  color: Theme.of(context).colorScheme.error,
-                ),
-              ),
-            ],
-          ],
-        ),
-        if (_working) const LinearProgressIndicator(),
-      ],
+      // On a wide screen the shell has no bars to show the picking in.
+      if (selection != null && !hosted) _InlineSelection(selection),
+      if (_working) const LinearProgressIndicator(),
       if (error != null) ...[
         const SizedBox(height: _Space.item),
         _InfoCard(
@@ -443,77 +477,209 @@ class _MessagesState extends State<_Messages> {
     final scope = GlassPageScope.maybeOf(context);
     // Under a glass top bar the compose button lives in the bar.
     if (scope != null && scope.barActions) {
-      return _Refresh(
-        controller: controller,
-        onRefresh: refresh,
-        child: _PageList(
-          padding: const EdgeInsets.all(_Space.page),
-          children: tiles,
+      return _picking(
+        _Refresh(
+          controller: controller,
+          onRefresh: refresh,
+          child: _PageList(
+            padding: const EdgeInsets.all(_Space.page),
+            children: tiles,
+          ),
         ),
       );
     }
     final insets = _chromeInsets(context);
     final title = scope?.largeTitle;
     final expressiveTitle = ExpressivePageScope.maybeOf(context)?.largeTitle;
-    return Column(
-      children: [
-        SizedBox(height: insets.top),
-        if (title != null)
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: GlassLargeTitle.margin,
-            ),
-            child: Align(
-              alignment: AlignmentDirectional.centerStart,
-              child: GlassLargeTitle(title),
-            ),
-          )
-        else if (expressiveTitle != null)
-          Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(
-              _Space.page,
-              _Space.page,
-              _Space.page,
-              0,
-            ),
-            child: Align(
-              alignment: AlignmentDirectional.centerStart,
-              child: ExpressiveLargeTitle(expressiveTitle),
-            ),
-          ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(
-            _Space.page,
-            _Space.page,
-            _Space.page,
-            0,
-          ),
-          child: Align(
-            alignment: AlignmentDirectional.centerEnd,
-            child: FilledButton.icon(
-              onPressed: () => _showComposeMessage(context, controller),
-              icon: const AppIcon(Icons.edit_rounded),
-              label: Text(context.tr('newMessage')),
-            ),
-          ),
-        ),
-        Expanded(
-          child: _Refresh(
-            controller: controller,
-            onRefresh: refresh,
-            child: ListView(
-              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-              padding: EdgeInsets.fromLTRB(
-                _Space.page,
-                _Space.page,
-                _Space.page,
-                _Space.page + insets.bottom,
+    final picking = selection != null && hosted;
+    return _picking(
+      Column(
+        children: [
+          SizedBox(height: insets.top),
+          if (title != null)
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: GlassLargeTitle.margin,
               ),
-              children: tiles,
+              child: Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: GlassLargeTitle(title),
+              ),
+            )
+          else if (expressiveTitle != null)
+            Padding(
+              padding: const EdgeInsetsDirectional.fromSTEB(
+                _Space.page,
+                _Space.page,
+                _Space.page,
+                0,
+              ),
+              child: Align(
+                alignment: AlignmentDirectional.centerStart,
+                // While picking, the count is the title.
+                child: picking
+                    ? _PickedHeadline(selection.count)
+                    : ExpressiveLargeTitle(expressiveTitle),
+              ),
+            ),
+          // While picking, the bars hold what there is to do.
+          if (!picking)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                _Space.page,
+                _Space.page,
+                _Space.page,
+                0,
+              ),
+              child: Align(
+                alignment: AlignmentDirectional.centerEnd,
+                child: FilledButton.icon(
+                  onPressed: () => _showComposeMessage(context, controller),
+                  icon: const AppIcon(Icons.edit_rounded),
+                  label: Text(context.tr('newMessage')),
+                ),
+              ),
+            ),
+          Expanded(
+            child: _Refresh(
+              controller: controller,
+              onRefresh: refresh,
+              child: ListView(
+                keyboardDismissBehavior:
+                    ScrollViewKeyboardDismissBehavior.onDrag,
+                padding: EdgeInsets.fromLTRB(
+                  _Space.page,
+                  _Space.page,
+                  _Space.page,
+                  // Clear of Expressive's floating toolbar.
+                  _Space.page +
+                      insets.bottom +
+                      (picking && expressive ? 88 : 0),
+                ),
+                children: tiles,
+              ),
             ),
           ),
+        ],
+      ),
+    );
+  }
+
+  /// [page], where going back while picking stops picking first.
+  Widget _picking(Widget page) => PopScope(
+    canPop: !_selecting,
+    onPopInvokedWithResult: (didPop, _) {
+      if (!didPop) _endSelection();
+    },
+    child: page,
+  );
+}
+
+/// The count of picked messages as the Expressive page's large title, the
+/// number in the accent colour.
+class _PickedHeadline extends StatelessWidget {
+  const _PickedHeadline(this.count);
+
+  final int count;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final emphasized =
+        theme.extension<ExpressiveType>()?.emphasized ?? theme.textTheme;
+    final style = emphasized.displaySmall?.copyWith(
+      color: theme.colorScheme.onSurface,
+      fontFeatures: _tabular,
+    );
+    final text = _selectionTitle(context, count);
+    final number = '$count';
+    final at = count == 0 ? -1 : text.indexOf(number);
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Semantics(
+        header: true,
+        liveRegion: true,
+        child: Text.rich(
+          at < 0
+              ? TextSpan(text: text)
+              : TextSpan(
+                  children: [
+                    TextSpan(text: text.substring(0, at)),
+                    TextSpan(
+                      text: number,
+                      style: TextStyle(color: theme.colorScheme.primary),
+                    ),
+                    TextSpan(text: text.substring(at + number.length)),
+                  ],
+                ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: style,
         ),
-      ],
+      ),
+    );
+  }
+}
+
+/// What the bars show while picking, as a row of the page itself, where
+/// the shell has no bars: on a wide screen.
+class _InlineSelection extends StatelessWidget {
+  const _InlineSelection(this.selection);
+
+  final _Selection selection;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    return Padding(
+      padding: const EdgeInsets.only(top: 4, bottom: 4),
+      child: Material(
+        color: _pickedTint(theme),
+        shape: const StadiumBorder(),
+        clipBehavior: Clip.antiAlias,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: Row(
+            children: [
+              IconButton(
+                key: const ValueKey('messages-selection-close'),
+                tooltip: context.tr('messagesEndSelection'),
+                onPressed: selection.onClose,
+                icon: const AppIcon(Icons.close_rounded),
+              ),
+              Expanded(
+                child: _PickedCount(
+                  selection.count,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              IconButton(
+                key: const ValueKey('messages-select-all'),
+                tooltip: _selectAllLabel(context, selection),
+                onPressed: selection.selectAll,
+                icon: AppIcon(_selectAllIcon(selection)),
+              ),
+              if (selection.readable)
+                IconButton(
+                  key: const ValueKey('messages-mark-selected-read'),
+                  tooltip: context.tr('messageMarkRead'),
+                  onPressed: selection.read,
+                  icon: const AppIcon(Icons.mark_email_read_rounded),
+                ),
+              IconButton(
+                key: const ValueKey('messages-delete-selected'),
+                tooltip: context.tr('messagesDelete'),
+                color: colors.error,
+                onPressed: selection.delete,
+                icon: const AppIcon(Icons.delete_outline_rounded),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
@@ -585,15 +751,16 @@ class _MessageTile extends StatelessWidget {
     this.selected = false,
     this.busy = false,
     this.onSelect,
-    this.onDelete,
-    this.onRead,
   });
   final AppController controller;
   final SchoolMessage item;
   final MessageListStyle style;
   final DateTime now;
   final bool selecting, selected, busy;
-  final VoidCallback? onSelect, onDelete, onRead;
+
+  /// Picks the message, or lets it go: a tap while picking, a long press or
+  /// a tap on the avatar at any time.
+  final VoidCallback? onSelect;
 
   Future<bool> _markRead(BuildContext context) async {
     final messenger = ScaffoldMessenger.of(context);
@@ -611,40 +778,30 @@ class _MessageTile extends StatelessWidget {
     return false;
   }
 
-  void _actions(BuildContext context, bool unread) {
-    if (!selected) onSelect?.call();
-    _showItemActions(
-      context,
-      title: item.subject.isEmpty ? item.sender : item.subject,
-      actions: [
-        (
-          key: ValueKey('message-action-open-${item.id}'),
-          icon: Icons.mail_outline_rounded,
-          label: context.tr('open'),
-          run: () => _showMessageDetail(context, controller, item),
-        ),
-        if (unread)
-          (
-            key: ValueKey('message-action-read-${item.id}'),
-            icon: Icons.mark_email_read_rounded,
-            label: context.tr('messageMarkRead'),
-            run: onRead ?? () => _markRead(context),
-          ),
-        (
-          key: ValueKey('message-action-delete-${item.id}'),
-          icon: Icons.delete_outline_rounded,
-          label: context.tr('messagesDelete'),
-          run: onDelete ?? () => _deleteMessages(context, controller, [item]),
-        ),
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
     final unread = !item.sent && item.unread;
+    final expressive = ExpressiveStyle.of(context);
+    // A picked row stands out softly, rounded as the design rounds rows.
+    final tint = expressive
+        ? _pickedTint(theme)
+        : colors.primary.withValues(
+            alpha: theme.brightness == Brightness.light ? 0.10 : 0.14,
+          );
+    final radius = BorderRadius.circular(
+      expressive
+          ? 20
+          : GlassStyle.of(context)
+          ? 14
+          : 16,
+    );
+    void longPress() {
+      HapticFeedback.mediumImpact();
+      onSelect?.call();
+    }
+
     final content = Padding(
       // A card's content starts 16 from its edge, the stripe included.
       // In the list, the avatar lines up with the label of its group.
@@ -659,22 +816,24 @@ class _MessageTile extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (selecting)
-            SizedBox(
-              width: 40,
-              height: 40,
-              child: Checkbox(
-                key: ValueKey('message-select-${item.id}'),
-                value: selected,
-                semanticLabel:
-                    '${context.tr('messagesSelect')}: ${item.subject}',
-                onChanged: busy ? null : (_) => onSelect?.call(),
+          Semantics(
+            button: true,
+            selected: selected,
+            label: '${context.tr('messagesSelect')}: ${item.subject}',
+            excludeSemantics: true,
+            child: InkResponse(
+              key: ValueKey('message-select-${item.id}'),
+              onTap: busy ? null : onSelect,
+              radius: 24,
+              child: _PickMark(
+                picked: selected,
+                square: expressive,
+                child: item.sent
+                    ? _SentAvatar(item.recipients.firstOrNull ?? '')
+                    : _SenderAvatar(item.sender),
               ),
-            )
-          else if (item.sent)
-            _SentAvatar(item.recipients.firstOrNull ?? '')
-          else
-            _SenderAvatar(item.sender),
+            ),
+          ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -789,7 +948,7 @@ class _MessageTile extends StatelessWidget {
     );
     final tile = style == MessageListStyle.cards
         ? Card(
-            color: selected ? colors.secondaryContainer : null,
+            color: selected ? tint : null,
             clipBehavior: Clip.antiAlias,
             child: InkWell(
               onTap: busy
@@ -797,7 +956,7 @@ class _MessageTile extends StatelessWidget {
                   : selecting
                   ? onSelect
                   : () => _showMessageDetail(context, controller, item),
-              onLongPress: busy ? null : () => _actions(context, unread),
+              onLongPress: busy ? null : longPress,
               child: Container(
                 decoration: BoxDecoration(
                   border: Border(
@@ -814,25 +973,30 @@ class _MessageTile extends StatelessWidget {
         : Column(
             children: [
               InkWell(
-                overlayColor: selected
-                    ? WidgetStatePropertyAll(colors.secondaryContainer)
-                    : null,
-                borderRadius: BorderRadius.circular(14),
+                borderRadius: radius,
                 onTap: busy
                     ? null
                     : selecting
                     ? onSelect
                     : () => _showMessageDetail(context, controller, item),
-                onLongPress: busy ? null : () => _actions(context, unread),
-                child: ColoredBox(
-                  color: selected
-                      ? colors.secondaryContainer
-                      : Colors.transparent,
+                onLongPress: busy ? null : longPress,
+                child: AnimatedContainer(
+                  duration: _listMotion(context),
+                  curve: _motionCurve(context),
+                  decoration: BoxDecoration(
+                    color: selected ? tint : tint.withValues(alpha: 0),
+                    borderRadius: radius,
+                  ),
                   child: content,
                 ),
               ),
-              // Under the text, past the avatar: 12 + 40 + 12.
-              const Divider(height: 1, indent: 64),
+              // Under the text, past the avatar: 12 + 40 + 12. A picked
+              // row needs no line to stand apart.
+              Divider(
+                height: 1,
+                indent: 64,
+                color: selected ? Colors.transparent : null,
+              ),
             ],
           );
     final accessible = Semantics(
@@ -860,6 +1024,282 @@ class _MessageTile extends StatelessWidget {
   }
 }
 
+/// A row's avatar, turned into a check while the message is picked: a
+/// circle, or in Expressive a rounded square, as its shapes change when
+/// chosen.
+class _PickMark extends StatelessWidget {
+  const _PickMark({
+    required this.picked,
+    required this.square,
+    required this.child,
+  });
+
+  final bool picked;
+  final bool square;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return AnimatedSwitcher(
+      duration: _motion(context, const Duration(milliseconds: 200)),
+      switchInCurve: Curves.easeOutBack,
+      switchOutCurve: Curves.easeIn,
+      transitionBuilder: (child, animation) => ScaleTransition(
+        scale: Tween<double>(begin: 0.6, end: 1).animate(animation),
+        child: FadeTransition(opacity: animation, child: child),
+      ),
+      child: picked
+          ? Container(
+              key: const ValueKey('picked'),
+              width: 40,
+              height: 40,
+              decoration: ShapeDecoration(
+                color: colors.primary,
+                shape: square
+                    ? RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(13),
+                      )
+                    : const CircleBorder(),
+              ),
+              child: AppIcon(
+                Icons.check_rounded,
+                size: 22,
+                color: colors.onPrimary,
+              ),
+            )
+          : KeyedSubtree(key: const ValueKey('avatar'), child: child),
+    );
+  }
+}
+
+/// Asks before [count] messages are deleted, the way the design asks: a
+/// sheet from below as on an iPhone, Expressive's dialog with its icon, or
+/// the app's own dialog.
+Future<bool> _askDelete(BuildContext context, int count) {
+  final title = _plural(context, count, 'messagesDeleteCount');
+  final note = _plural(context, count, 'messagesDeleteNote');
+  if (GlassStyle.of(context)) {
+    return _glassDeleteSheet(context, title: title, note: note);
+  }
+  if (ExpressiveStyle.of(context)) {
+    return _expressiveDeleteDialog(context, title: title, note: note);
+  }
+  return _confirm(
+    context,
+    title: title,
+    message: note,
+    action: context.tr('messagesDelete'),
+    actionKey: const ValueKey('messages-confirm-delete'),
+  );
+}
+
+/// An iOS action sheet on glass: what is about to go with the destructive
+/// button under it, and the way back apart, below.
+Future<bool> _glassDeleteSheet(
+  BuildContext context, {
+  required String title,
+  required String note,
+}) async {
+  final confirmed = await showGeneralDialog<bool>(
+    context: context,
+    barrierDismissible: true,
+    barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
+    barrierColor: glassBarrierColor,
+    transitionDuration: _motion(context, const Duration(milliseconds: 300)),
+    pageBuilder: (dialogContext, animation, _) {
+      final theme = Theme.of(dialogContext);
+      final colors = theme.colorScheme;
+      // Where Flutter draws the glass it brings the panels up itself; a
+      // fade around them would leave them nothing to show through.
+      final reveal = GlassPlatform.backend == GlassBackend.rendered
+          ? animation
+          : null;
+      Widget button(
+        String label, {
+        required Key key,
+        required Color color,
+        required FontWeight weight,
+        required bool value,
+      }) => SizedBox(
+        width: double.infinity,
+        height: 58,
+        child: TextButton(
+          key: key,
+          onPressed: () => Navigator.pop(dialogContext, value),
+          style: TextButton.styleFrom(
+            foregroundColor: color,
+            shape: const RoundedRectangleBorder(),
+            // The theme's typeface, Inter where the glass is drawn.
+            textStyle: theme.textTheme.titleMedium?.copyWith(
+              fontSize: 18,
+              fontWeight: weight,
+            ),
+          ),
+          child: Text(label),
+        ),
+      );
+      final muted = theme.textTheme.bodySmall?.copyWith(
+        color: colors.onSurfaceVariant,
+        fontSize: 13,
+      );
+      return Align(
+        alignment: Alignment.bottomCenter,
+        child: SafeArea(
+          minimum: const EdgeInsets.fromLTRB(10, 0, 10, 10),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 460),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                GlassPanel(
+                  radius: 28,
+                  reveal: reveal,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 16, 20, 14),
+                        child: Column(
+                          children: [
+                            Text(
+                              title,
+                              textAlign: TextAlign.center,
+                              style: muted?.copyWith(
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              note,
+                              textAlign: TextAlign.center,
+                              style: muted,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Divider(height: 1, color: colors.outlineVariant),
+                      button(
+                        context.tr('messagesDelete'),
+                        key: const ValueKey('messages-confirm-delete'),
+                        color: colors.error,
+                        weight: FontWeight.w500,
+                        value: true,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 8),
+                GlassPanel(
+                  radius: 28,
+                  reveal: reveal,
+                  child: button(
+                    MaterialLocalizations.of(dialogContext).cancelButtonLabel,
+                    key: const ValueKey('messages-cancel-delete'),
+                    color: colors.primary,
+                    weight: FontWeight.w600,
+                    value: false,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    },
+    transitionBuilder: (context, animation, _, child) => SlideTransition(
+      position: Tween(
+        begin: const Offset(0, 0.35),
+        end: Offset.zero,
+      ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOutCubic)),
+      child: child,
+    ),
+  );
+  return confirmed ?? false;
+}
+
+/// Material 3 Expressive's dialog with a hero icon: the icon in the error
+/// container, the question under it, the two choices side by side.
+Future<bool> _expressiveDeleteDialog(
+  BuildContext context, {
+  required String title,
+  required String note,
+}) async {
+  final confirmed = await showDialog<bool>(
+    context: context,
+    builder: (dialogContext) {
+      final theme = Theme.of(dialogContext);
+      final colors = theme.colorScheme;
+      return Dialog(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 56,
+                height: 56,
+                decoration: ShapeDecoration(
+                  color: colors.errorContainer,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18),
+                  ),
+                ),
+                child: AppIcon(
+                  Icons.delete_outline_rounded,
+                  size: 28,
+                  color: colors.onErrorContainer,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                title,
+                textAlign: TextAlign.center,
+                style: theme.textTheme.headlineSmall,
+              ),
+              const SizedBox(height: 12),
+              Text(
+                note,
+                textAlign: TextAlign.center,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: colors.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(height: 24),
+              Row(
+                children: [
+                  Expanded(
+                    child: FilledButton.tonal(
+                      onPressed: () => Navigator.pop(dialogContext, false),
+                      child: Text(
+                        MaterialLocalizations.of(dialogContext)
+                            .cancelButtonLabel,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: FilledButton(
+                      key: const ValueKey('messages-confirm-delete'),
+                      style: FilledButton.styleFrom(
+                        backgroundColor: colors.error,
+                        foregroundColor: colors.onError,
+                      ),
+                      onPressed: () => Navigator.pop(dialogContext, true),
+                      child: Text(context.tr('messagesDelete')),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+  return confirmed ?? false;
+}
+
 Future<void> _deleteMessages(
   BuildContext context,
   AppController controller,
@@ -871,31 +1311,7 @@ Future<void> _deleteMessages(
     controller.activeProfile?.id,
     controller.snapshot.profile.id,
   );
-  final confirmed = await showDialog<bool>(
-    context: context,
-    builder: (dialog) => AlertDialog(
-      title: Text(context.tr('messagesDeleteTitle')),
-      content: Text(
-        context.trArgs('messagesDeleteConfirm', {
-          'count': '${messages.length}',
-        }),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(dialog, false),
-          child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
-        ),
-        TextButton(
-          key: const ValueKey('messages-confirm-delete'),
-          onPressed: () => Navigator.pop(dialog, true),
-          style: TextButton.styleFrom(
-            foregroundColor: Theme.of(dialog).colorScheme.error,
-          ),
-          child: Text(context.tr('messagesDelete')),
-        ),
-      ],
-    ),
-  );
+  final confirmed = await _askDelete(context, messages.length);
   if (confirmed != true ||
       !context.mounted ||
       scope !=

@@ -32,6 +32,8 @@ abstract final class AppSymbols {
   static const chatBubbleOutline = IconData(0xe0cb, fontFamily: fontFamily);
   static const check = IconData(0xe668, fontFamily: fontFamily);
   static const checkCircle = IconData(0xf0be, fontFamily: fontFamily);
+  static const checkCircleOutline = IconData(0xf0be, fontFamily: fontFamily);
+  static const checklist = IconData(0xe6b1, fontFamily: fontFamily);
   static const chevronLeft = IconData(0xe5cb, fontFamily: fontFamily);
   static const chevronRight = IconData(0xe5cc, fontFamily: fontFamily);
   static const clear = IconData(0xe5cd, fontFamily: fontFamily);
@@ -103,7 +105,6 @@ abstract final class AppSymbols {
   static const school = IconData(0xe80c, fontFamily: fontFamily);
   static const search = IconData(0xef7a, fontFamily: fontFamily);
   static const searchOff = IconData(0xea76, fontFamily: fontFamily);
-  static const selectAll = IconData(0xe162, fontFamily: fontFamily);
   static const send = IconData(0xe163, fontFamily: fontFamily);
   static const settings = IconData(0xe8b8, fontFamily: fontFamily);
   static const shortText = IconData(0xe261, fontFamily: fontFamily);
@@ -154,8 +155,10 @@ abstract final class AppSymbols {
     Icons.campaign_rounded: campaign,
     Icons.chat_bubble_outline_rounded: chatBubbleOutline,
     Icons.chat_bubble_rounded: chatBubble,
+    Icons.check_circle_outline_rounded: checkCircleOutline,
     Icons.check_circle_rounded: checkCircle,
     Icons.check_rounded: check,
+    Icons.checklist_rounded: checklist,
     Icons.chevron_left_rounded: chevronLeft,
     Icons.chevron_right_rounded: chevronRight,
     Icons.clear_rounded: clear,
@@ -232,7 +235,6 @@ abstract final class AppSymbols {
     Icons.school_rounded: school,
     Icons.search_off_rounded: searchOff,
     Icons.search_rounded: search,
-    Icons.select_all_rounded: selectAll,
     Icons.send_rounded: send,
     Icons.settings_rounded: settings,
     Icons.short_text_rounded: shortText,
