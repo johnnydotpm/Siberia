@@ -170,16 +170,24 @@ class _Repository extends AppRepository {
   @override
   Future<AppSnapshot> load() async {
     final now = DateTime.now();
+    final midnight = DateTime(now.year, now.month, now.day);
     final base = studentSnapshot('s1', 'a');
-    Lesson lesson(String id, String subject, int start, int number) => Lesson(
-      id: id,
-      subject: subject,
-      teacher: 'Nauczyciel Testowy',
-      room: '12',
-      start: now.add(Duration(minutes: start)),
-      end: now.add(Duration(minutes: start + 45)),
-      lessonNumber: number,
-    );
+    // The lesson on now stays today's, also just after midnight: it starts
+    // no earlier than the day does.
+    Lesson lesson(String id, String subject, int start, int number) {
+      var from = now.add(Duration(minutes: start));
+      if (start < 0 && start > -45 && from.isBefore(midnight)) from = midnight;
+      return Lesson(
+        id: id,
+        subject: subject,
+        teacher: 'Nauczyciel Testowy',
+        room: '12',
+        start: from,
+        end: from.add(const Duration(minutes: 45)),
+        lessonNumber: number,
+      );
+    }
+
     return AppSnapshot(
       profile: base.profile,
       lessons: [

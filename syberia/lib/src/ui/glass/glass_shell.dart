@@ -7,8 +7,6 @@ import 'package:flutter/services.dart';
 
 import 'glass_fade.dart';
 import 'glass_items.dart';
-import 'glass_material.dart';
-import 'glass_plate.dart';
 import 'glass_platform.dart';
 import 'native_bar_buttons.dart';
 import 'native_glass_surface.dart';
@@ -173,7 +171,7 @@ class GlassShell extends StatefulWidget {
   final List<GlassBarButton>? leading;
 
   /// Shown in place of the tab bar while the page has picked something to
-  /// act on, usually a [GlassActionBar].
+  /// act on, usually a [GlassToolbar].
   final Widget? actionBar;
 
   @override
@@ -761,146 +759,6 @@ class _BottomBar extends StatelessWidget {
         else
           bar,
       ],
-    );
-  }
-}
-
-/// One action of a [GlassActionBar].
-@immutable
-class GlassAction {
-  const GlassAction({
-    required this.icon,
-    required this.label,
-    required this.onPressed,
-    this.destructive = false,
-    this.key,
-  });
-
-  final IconData icon;
-  final String label;
-
-  /// Null while the action cannot be taken.
-  final VoidCallback? onPressed;
-
-  /// Drawn in the error colour, as deleting is.
-  final bool destructive;
-  final Key? key;
-}
-
-/// A capsule of actions in place of the tab bar, while the page has picked
-/// something to act on: the tab bar's size, place and glass, its icons over
-/// their labels.
-class GlassActionBar extends StatelessWidget {
-  const GlassActionBar({required this.actions, super.key});
-
-  final List<GlassAction> actions;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-    final gap = RenderedGlassTabBar.bottomGap(
-      MediaQuery.viewPaddingOf(context).bottom,
-    );
-    // Like the tab bar's, the labels keep their size: the capsule has no
-    // room for larger ones.
-    return MediaQuery.withNoTextScaling(
-      child: Padding(
-        padding: EdgeInsets.fromLTRB(
-          RenderedGlassTabBar.margin,
-          RenderedGlassTabBar.headroom,
-          RenderedGlassTabBar.margin,
-          gap,
-        ),
-        child: SizedBox(
-          height: RenderedGlassTabBar.capsuleHeight,
-          child: _glass(
-            context,
-            Material(
-              type: MaterialType.transparency,
-              child: Padding(
-                padding: const EdgeInsets.all(4),
-                child: Row(
-                  children: [
-                    for (final action in actions)
-                      Expanded(
-                        child: _GlassActionButton(
-                          action,
-                          color: action.destructive
-                              ? colors.error
-                              : colors.primary,
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  /// The tab bar's own glass behind [child]: its material where Flutter
-  /// draws it, UIKit's regular glass, untinted as a bar's is, on iOS 26.
-  static Widget _glass(BuildContext context, Widget child) =>
-      GlassPlatform.backend == GlassBackend.rendered
-      ? GlassPlate(
-          look: GlassMaterial.chrome(Theme.of(context).brightness),
-          shape: const StadiumBorder(),
-          child: child,
-        )
-      : NativeGlassSurface(
-          radius: RenderedGlassTabBar.capsuleHeight / 2,
-          child: child,
-        );
-}
-
-class _GlassActionButton extends StatelessWidget {
-  const _GlassActionButton(this.action, {required this.color});
-
-  final GlassAction action;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    final enabled = action.onPressed != null;
-    return Semantics(
-      button: true,
-      enabled: enabled,
-      label: action.label,
-      excludeSemantics: true,
-      child: InkWell(
-        key: action.key,
-        onTap: action.onPressed == null
-            ? null
-            : () {
-                HapticFeedback.selectionClick();
-                action.onPressed!();
-              },
-        customBorder: const StadiumBorder(),
-        child: AnimatedOpacity(
-          opacity: enabled ? 1 : 0.38,
-          duration: const Duration(milliseconds: 150),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(action.icon, size: 24, color: color),
-              const SizedBox(height: 2),
-              Text(
-                action.label,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: color,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: -0.1,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }

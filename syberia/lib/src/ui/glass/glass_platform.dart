@@ -173,6 +173,34 @@ abstract final class GlassPlatform {
     }
   }
 
+  /// Asks before something that cannot be undone with UIKit's own action
+  /// sheet, where UIKit draws the glass. True once confirmed, false when
+  /// cancelled, and null where UIKit cannot ask, for Flutter to ask instead.
+  static Future<bool?> confirm({
+    required String title,
+    required String message,
+    required String action,
+    required String cancel,
+    required Color tint,
+    required bool dark,
+  }) async {
+    if (_backend != GlassBackend.uikit) return null;
+    try {
+      return await _channel.invokeMethod<bool>('confirm', {
+        'title': title,
+        'message': message,
+        'action': action,
+        'cancel': cancel,
+        'tint': tint.toARGB32(),
+        'dark': dark,
+      });
+    } on PlatformException {
+      return null;
+    } on MissingPluginException {
+      return null;
+    }
+  }
+
   static double _positive(Object? value, double fallback) =>
       value is num && value > 0 ? value.toDouble() : fallback;
 

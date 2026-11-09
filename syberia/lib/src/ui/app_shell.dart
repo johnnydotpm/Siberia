@@ -3,7 +3,6 @@ import 'dart:io' show Platform;
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 
-import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -47,6 +46,7 @@ import 'glass/glass_items.dart';
 import 'glass/glass_modals.dart';
 import 'glass/glass_platform.dart';
 import 'glass/glass_shell.dart';
+import 'glass/glass_toolbar.dart';
 import 'home_widget_settings.dart';
 import 'linked_text.dart';
 import 'profile_avatar.dart';

@@ -1073,13 +1073,25 @@ class _PickMark extends StatelessWidget {
   }
 }
 
-/// Asks before [count] messages are deleted, the way the design asks: a
-/// sheet from below as on an iPhone, Expressive's dialog with its icon, or
-/// the app's own dialog.
-Future<bool> _askDelete(BuildContext context, int count) {
+/// Asks before [count] messages are deleted, the way the design asks: in
+/// the glass design iOS's action sheet, UIKit's own on iOS 26 and drawn
+/// alike elsewhere; Expressive's dialog with its icon; or the app's own
+/// dialog.
+Future<bool> _askDelete(BuildContext context, int count) async {
   final title = _plural(context, count, 'messagesDeleteCount');
   final note = _plural(context, count, 'messagesDeleteNote');
   if (GlassStyle.of(context)) {
+    final theme = Theme.of(context);
+    final native = await GlassPlatform.confirm(
+      title: title,
+      message: note,
+      action: context.tr('messagesDelete'),
+      cancel: MaterialLocalizations.of(context).cancelButtonLabel,
+      tint: theme.colorScheme.primary,
+      dark: theme.brightness == Brightness.dark,
+    );
+    if (native != null) return native;
+    if (!context.mounted) return false;
     return _glassDeleteSheet(context, title: title, note: note);
   }
   if (ExpressiveStyle.of(context)) {
@@ -1094,8 +1106,9 @@ Future<bool> _askDelete(BuildContext context, int count) {
   );
 }
 
-/// An iOS action sheet on glass: what is about to go with the destructive
-/// button under it, and the way back apart, below.
+/// iOS's action sheet drawn on glass where UIKit does not draw it: what is
+/// about to go with the destructive button under it, and the way back
+/// apart, below.
 Future<bool> _glassDeleteSheet(
   BuildContext context, {
   required String title,
@@ -1182,7 +1195,8 @@ Future<bool> _glassDeleteSheet(
                       button(
                         context.tr('messagesDelete'),
                         key: const ValueKey('messages-confirm-delete'),
-                        color: colors.error,
+                        // The system's red, as UIKit's sheet has it.
+                        color: GlassToolbar.destructive(theme.brightness),
                         weight: FontWeight.w500,
                         value: true,
                       ),

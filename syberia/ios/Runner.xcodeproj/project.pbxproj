@@ -20,6 +20,7 @@
 		6C1A55B02F00000000000002 /* GlassTabBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C1A55F02F00000000000002 /* GlassTabBarView.swift */; };
 		6C1A55B02F00000000000003 /* GlassBarButtonsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C1A55F02F00000000000003 /* GlassBarButtonsView.swift */; };
 		6C1A55B02F00000000000004 /* GlassSurfaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C1A55F02F00000000000004 /* GlassSurfaceView.swift */; };
+		6C1A55B02F00000000000005 /* GlassToolbarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C1A55F02F00000000000005 /* GlassToolbarView.swift */; };
 		731FD488DFEFF8778A3C48C8 /* WidgetOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C06C7A0FF93D563503DBFB58 /* WidgetOptions.swift */; };
 		74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74858FAE1ED2DC5600515810 /* AppDelegate.swift */; };
 		7884E8682EC3CC0700C636F2 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7884E8672EC3CC0400C636F2 /* SceneDelegate.swift */; };
@@ -86,6 +87,7 @@
 		6C1A55F02F00000000000002 /* GlassTabBarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GlassTabBarView.swift; sourceTree = "<group>"; };
 		6C1A55F02F00000000000003 /* GlassBarButtonsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GlassBarButtonsView.swift; sourceTree = "<group>"; };
 		6C1A55F02F00000000000004 /* GlassSurfaceView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GlassSurfaceView.swift; sourceTree = "<group>"; };
+		6C1A55F02F00000000000005 /* GlassToolbarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GlassToolbarView.swift; sourceTree = "<group>"; };
 		74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Runner-Bridging-Header.h"; sourceTree = "<group>"; };
 		74858FAE1ED2DC5600515810 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7884E8672EC3CC0400C636F2 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -174,6 +176,7 @@
 				6C1A55F02F00000000000002 /* GlassTabBarView.swift */,
 				6C1A55F02F00000000000003 /* GlassBarButtonsView.swift */,
 				6C1A55F02F00000000000004 /* GlassSurfaceView.swift */,
+				6C1A55F02F00000000000005 /* GlassToolbarView.swift */,
 			);
 			path = LiquidGlass;
 			sourceTree = "<group>";
@@ -433,6 +436,7 @@
 				6C1A55B02F00000000000002 /* GlassTabBarView.swift in Sources */,
 				6C1A55B02F00000000000003 /* GlassBarButtonsView.swift in Sources */,
 				6C1A55B02F00000000000004 /* GlassSurfaceView.swift in Sources */,
+				6C1A55B02F00000000000005 /* GlassToolbarView.swift in Sources */,
 				5829FA54C3E82F3AFDD367F9 /* HomeWidgetPlugin.swift in Sources */,
 				4C7F3937BBAE2BD750A05E92 /* HomeWidgetStore.swift in Sources */,
 			);

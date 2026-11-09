@@ -470,23 +470,22 @@ class _ExpressiveSelectionToolbar extends StatelessWidget {
   }
 }
 
-/// The actions on the picked messages in place of the glass tab bar.
-GlassActionBar _glassSelectionActions(
+/// The actions on the picked messages in place of the glass tab bar: the
+/// toolbar iOS shows while you select.
+GlassToolbar _glassSelectionActions(
   BuildContext context,
   _Selection selection,
-) => GlassActionBar(
+) => GlassToolbar(
   key: const ValueKey('glass-selection-actions'),
   actions: [
     if (selection.readable)
       GlassAction(
-        key: const ValueKey('messages-mark-selected-read'),
-        icon: CupertinoIcons.envelope_open,
+        id: 'messages-mark-selected-read',
         label: context.tr('messagesReadShort'),
         onPressed: selection.read,
       ),
     GlassAction(
-      key: const ValueKey('messages-delete-selected'),
-      icon: CupertinoIcons.trash,
+      id: 'messages-delete-selected',
       label: context.tr('messagesDelete'),
       destructive: true,
       onPressed: selection.delete,

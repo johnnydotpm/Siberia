@@ -8,7 +8,7 @@ import 'package:syberia/src/state/app_controller.dart';
 import 'package:syberia/src/theme/wallpaper_colors.dart';
 import 'package:syberia/src/ui/expressive/expressive.dart';
 import 'package:syberia/src/ui/glass/glass_platform.dart';
-import 'package:syberia/src/ui/glass/glass_shell.dart';
+import 'package:syberia/src/ui/glass/glass_toolbar.dart';
 import 'package:syberia/src/ui/glass/rendered_tab_bar.dart';
 
 import 'support/profile_fakes.dart';
@@ -111,7 +111,7 @@ void main() {
     await tester.tap(key('messages-select'));
     await tester.pumpAndSettle();
     expect(find.byType(RenderedGlassTabBar), findsNothing);
-    expect(find.byType(GlassActionBar), findsOneWidget);
+    expect(find.byType(GlassToolbar), findsOneWidget);
     expect(key('glass-bar-button-menu'), findsNothing);
     expect(key('glass-bar-button-compose'), findsNothing);
 

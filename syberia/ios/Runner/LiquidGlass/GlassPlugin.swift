@@ -16,6 +16,8 @@ enum LiquidGlass {
       switch call.method {
       case "capabilities":
         result(LiquidGlass.capabilities)
+      case "confirm":
+        LiquidGlass.confirm(call.arguments, result: result)
       default:
         result(FlutterMethodNotImplemented)
       }
@@ -25,6 +27,55 @@ enum LiquidGlass {
     registrar.register(
       GlassBarButtonsFactory(messenger: messenger), withId: "siberia/glass_bar_buttons")
     registrar.register(GlassSurfaceFactory(messenger: messenger), withId: "siberia/glass_surface")
+    registrar.register(GlassToolbarFactory(messenger: messenger), withId: "siberia/glass_toolbar")
+  }
+
+  /// Asks before something that cannot be undone, the way iOS asks: an
+  /// action sheet with the destructive choice and Cancel apart below it.
+  /// Answers true once confirmed, false otherwise, and nil when there is
+  /// nothing to present it from.
+  static func confirm(_ arguments: Any?, result: @escaping FlutterResult) {
+    guard let args = arguments as? [String: Any], let presenter = topViewController() else {
+      result(nil)
+      return
+    }
+    // An iPad has no edge to bring a sheet up from, and asks in the middle.
+    let style: UIAlertController.Style =
+      UIDevice.current.userInterfaceIdiom == .pad ? .alert : .actionSheet
+    let sheet = UIAlertController(
+      title: args["title"] as? String,
+      message: args["message"] as? String,
+      preferredStyle: style)
+    var answered = false
+    func answer(_ value: Bool) {
+      guard !answered else { return }
+      answered = true
+      result(value)
+    }
+    sheet.addAction(
+      UIAlertAction(title: args["action"] as? String, style: .destructive) { _ in answer(true) })
+    sheet.addAction(
+      UIAlertAction(title: args["cancel"] as? String, style: .cancel) { _ in answer(false) })
+    if let dark = args["dark"] as? Bool {
+      sheet.overrideUserInterfaceStyle = dark ? .dark : .light
+    }
+    if let tint = args["tint"] as? NSNumber {
+      sheet.view.tintColor = UIColor(argb: tint.int64Value)
+    }
+    presenter.present(sheet, animated: true)
+  }
+
+  /// The view controller on top of the key window, which a sheet comes up
+  /// over.
+  private static func topViewController() -> UIViewController? {
+    let scenes = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }
+    let windows = scenes.flatMap { $0.windows }
+    let window = windows.first { $0.isKeyWindow } ?? windows.first
+    var top = window?.rootViewController
+    while let presented = top?.presentedViewController, !presented.isBeingDismissed {
+      top = presented
+    }
+    return top
   }
 
   /// Whether UIKit renders bars and effects as Liquid Glass in this process.

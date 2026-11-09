@@ -18,6 +18,7 @@ import 'package:syberia/src/ui/profile_avatar.dart';
 const _tabBar = 'siberia/glass_tab_bar';
 const _barButtons = 'siberia/glass_bar_buttons';
 const _surface = 'siberia/glass_surface';
+const _toolbar = 'siberia/glass_toolbar';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -97,9 +98,13 @@ void main() {
   /// A button of the top bar that Flutter draws.
   Finder barButton(String id) => find.byKey(ValueKey('glass-bar-button-$id'));
 
-  Future<AppController> pumpApp(WidgetTester tester, {int messages = 1}) async {
+  Future<AppController> pumpApp(
+    WidgetTester tester, {
+    int messages = 1,
+    _Repository? repository,
+  }) async {
     final controller = AppController(
-      _Repository(_snapshot(messages)),
+      repository ?? _Repository(_snapshot(messages)),
       updatesEnabled: false,
     );
     await controller.bootstrap();
@@ -189,6 +194,55 @@ void main() {
     await fromNative(_barButtons, 'tap', 'compose');
     await tester.pumpAndSettle();
     expect(find.text('New message'), findsOneWidget);
+  }, variant: onIos);
+
+  testWidgets('picking messages brings up UIKit\'s toolbar and action sheet', (
+    tester,
+  ) async {
+    useIphoneInsets(tester);
+    const glass = MethodChannel('siberia/glass');
+    final asked = <Map<Object?, Object?>>[];
+    var answer = false;
+    messenger.setMockMethodCallHandler(glass, (call) async {
+      if (call.method != 'confirm') return null;
+      asked.add(call.arguments as Map<Object?, Object?>);
+      return answer;
+    });
+    addTearDown(() => messenger.setMockMethodCallHandler(glass, null));
+    final repository = _Repository(_snapshot(3));
+    final controller = await pumpApp(tester, repository: repository);
+    controller.selectTab(5);
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const ValueKey('message-select-m0')));
+    await tester.pumpAndSettle();
+    // The toolbar takes the tab bar's place, as in Mail.
+    expect(created.values, contains(_toolbar));
+    expect(find.byType(NativeGlassTabBar), findsNothing);
+
+    // It reports its size; the room above it is the page's.
+    await fromNative(_toolbar, 'metrics', {'height': 50.0, 'room': 16.0});
+    await tester.pumpAndSettle();
+    expect(
+      tester.getSize(find.byKey(const ValueKey('glass-selection-actions'))),
+      const Size(393, 16 + 50 + 34.0),
+    );
+
+    // Deleting asks with UIKit's own sheet, and only a yes deletes.
+    await fromNative(_toolbar, 'tap', 'messages-delete-selected');
+    await tester.pumpAndSettle();
+    expect(asked.single['title'], 'Delete 1 message?');
+    expect(asked.single['action'], 'Delete');
+    expect(asked.single['cancel'], 'Cancel');
+    expect(repository.deleted, isEmpty);
+    expect(find.byKey(const ValueKey('messages-confirm-delete')), findsNothing);
+
+    answer = true;
+    await fromNative(_toolbar, 'tap', 'messages-delete-selected');
+    await tester.pumpAndSettle();
+    expect(repository.deleted, ['m0']);
+    // Nothing left picked: the tab bar is back.
+    expect(find.byType(NativeGlassTabBar), findsOneWidget);
   }, variant: onIos);
 
   testWidgets('tapping the open tab again scrolls its page to the top', (
@@ -602,6 +656,13 @@ AppSnapshot _snapshot(int messages) {
 class _Repository extends AppRepository {
   _Repository(this.data);
   final AppSnapshot data;
+  final deleted = <String>[];
+
+  @override
+  Future<void> deleteMessage(
+    SchoolMessage message, {
+    String? profileId,
+  }) async => deleted.add(message.id);
 
   @override
   Future<AppSnapshot> load() async => data;
