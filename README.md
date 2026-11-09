@@ -16,7 +16,7 @@ SiberiaGB to w pełni funkcjonalny, wieloplatformowy klient Librus napisany w fr
 </p>
 <!-- download-badges:end -->
 
-Tryb rodzica jest dobierany z rodzaju konta Librus; można zmienić rolę interfejsu w ustawieniach profilu bez zmiany konta pocztowego. Panel rodzica pokazuje dzieci, koniec lekcji i nieusprawiedliwione nieobecności. Prośbę o usprawiedliwienie można przygotować w sekcji Frekwencja, sprawdzić w podglądzie i wysłać do samodzielnie wybranego wychowawcy. Historia rozróżnia wysłanie wiadomości od akceptacji szkoły; NB zmienia się na U dopiero po synchronizacji danych ze szkołą. Domyślne godziny ciszy to 21:00–07:00, a podsumowania — 19:00; telefon może opóźnić zaplanowane powiadomienia. Integracja z osobnym modułem e-Usprawiedliwień wymaga jeszcze zweryfikowania protokołu.
+Tryb rodzica jest dobierany na podstawie rodzaju konta Librus; rolę interfejsu można zmienić w ustawieniach profilu bez zmiany jego skrzynki pocztowej. Panel rodzica pokazuje dzieci, godziny zakończenia lekcji i nieusprawiedliwione nieobecności. W sekcji Frekwencja wybierz nieobecności i wychowawcę, sprawdź podgląd prośby i potwierdź jej wysłanie. Historia rozróżnia wysłanie wiadomości od akceptacji przez szkołę: frekwencja zmienia się dopiero po synchronizacji danych ze szkołą. Domyślne godziny ciszy to 21:00–07:00, a podsumowania — 19:00; system operacyjny może opóźnić zaplanowane powiadomienia. Integracja z osobnym modułem e-Usprawiedliwienia wymaga jeszcze zweryfikowania protokołu.
 
 Librus jest wbudowanym pluginem i korzysta z tego samego interfejsu co pozostałe dzienniki. Fryderyk i MobiReg są dostępne jako pobierane pluginy w [`/plugins/`](plugins/README.md), wybierane na ekranie logowania. Obsługiwane funkcje i ograniczenia wersji 0.1 opisano przy każdym pluginie; protokoły sprawdzono na danych syntetycznych, bez kont szkolnych.
 
@@ -24,7 +24,6 @@ Librus jest wbudowanym pluginem i korzysta z tego samego interfejsu co pozostał
 
 - Logowanie z niewygasającymi sesjami
 - Kilka profili w jednej aplikacji: rodzic z dwójką dzieci albo uczeń w dwóch szkołach. Każdy profil ma własne dane, oceny, zadania i ustawienia średniej, a przełącza się jednym dotknięciem
-- Wsparcie dla dziennikow Librus, Fryderyk i MobiReg.
 - Tryb „Wszystkie razem”: dane kilku profili w jednym widoku, np. lekcje zwykłej i muzycznej szkoły na jednym planie. Każdy wpis ma znaczek swojego profilu, lekcje o tej samej godzinie stoją obok siebie, a wiadomość wysyła się z wybranego profilu
 - Plan lekcji jako oś czasu lub lista, z łączonymi lekcjami podwójnymi i sprawdzianami przy lekcjach, na które są zapowiedziane
 - Oceny w kolorach według wartości i obliczanie średniej, także ważonej, z własną wartością plusów i minusów
@@ -129,9 +128,10 @@ Gotowa aplikacja znajduje się w `build/linux/x64/release/bundle`.
 
 - Synchronizacja w tle na iOS (obecnie zadanie okresowe rejestruje się tylko na Androidzie)
 - Przeniesienie komunikatów o błędach Librusa do warstwy tłumaczeń (teraz są zapisane po polsku na stałe w kodzie klienta)
+- Rozszerzenie testów jednostkowych i testów integracyjnych na urządzeniach
 - Dalsze usprawnienia dostępności interfejsu
-- Wsparcie dla Vulcan.
-
+- Podział `lib/src/ui/app_shell.dart` na osobne pliki ekranów
+- Więcej języków
 
 ## Licencja i podziękowania
 
