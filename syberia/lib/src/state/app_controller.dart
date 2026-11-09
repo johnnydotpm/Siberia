@@ -1569,6 +1569,7 @@ class AppController extends ChangeNotifier {
     if (_design == design) return;
     _design = design;
     notifyListeners();
+    _sendWidgetDefaultTheme();
     await _repository.saveDesign(design);
   }
 
@@ -1576,7 +1577,30 @@ class AppController extends ChangeNotifier {
     if (_useWallpaperColors == enabled) return;
     _useWallpaperColors = enabled;
     notifyListeners();
+    _sendWidgetDefaultTheme();
     await _repository.saveUseWallpaperColors(enabled);
+  }
+
+  /// The theme of a home screen widget nobody has set up: the wallpaper's
+  /// colours while the Expressive design takes them, so the widget matches
+  /// the app, and the brand colour otherwise.
+  HomeWidgetTheme get widgetDefaultTheme =>
+      _design == AppDesign.expressive && themeWallpaperColors != null
+      ? HomeWidgetTheme.system
+      : HomeWidgetTheme.brand;
+
+  HomeWidgetTheme? _sentWidgetTheme;
+
+  void _sendWidgetDefaultTheme() {
+    final widget = homeWidget;
+    final theme = widgetDefaultTheme;
+    if (widget == null || theme == _sentWidgetTheme) return;
+    _sentWidgetTheme = theme;
+    unawaited(
+      widget.setDefaultTheme(theme).catchError((Object _) {
+        // A widget that cannot be told must not disturb the app.
+      }),
+    );
   }
 
   /// Asks the phone for the wallpaper's colours: as the app starts, before
@@ -1584,9 +1608,13 @@ class AppController extends ChangeNotifier {
   /// changed meanwhile.
   Future<void> refreshWallpaperColors() async {
     final colors = await WallpaperColors.load();
-    if (colors == _wallpaperColors) return;
-    _wallpaperColors = colors;
-    notifyListeners();
+    if (colors != _wallpaperColors) {
+      _wallpaperColors = colors;
+      notifyListeners();
+    }
+    // Only once the colours are known, so a widget is not drawn in the
+    // brand colour for a moment at every start.
+    _sendWidgetDefaultTheme();
   }
 
   void selectTab(int value) {

@@ -277,6 +277,13 @@ class HomeWidgetBridge {
     }
   }
 
+  /// The theme of the widgets nobody has set up (Android only); those on
+  /// the home screen are drawn again in it.
+  Future<void> setDefaultTheme(HomeWidgetTheme theme) async {
+    if (!configurableInApp) return;
+    await _invoke<void>('setDefaultTheme', {'theme': theme.name});
+  }
+
   Future<void> saveConfig(int id, HomeWidgetConfig config) => _invoke<void>(
     'saveConfig',
     {'id': id, 'config': jsonEncode(config.toJson())},

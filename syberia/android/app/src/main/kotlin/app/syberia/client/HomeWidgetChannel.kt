@@ -40,7 +40,19 @@ object HomeWidgetChannel {
                 "placedWidgets" -> result.success(NextLessonWidgetProvider.placedWidgets(app))
                 "loadConfig" -> {
                     val id = call.argument<Int>("id")
-                    result.success(id?.let { WidgetConfig.raw(app, it) })
+                    result.success(id?.let { WidgetConfig.rawOrDefaults(app, it) })
+                }
+                "setDefaultTheme" -> {
+                    val theme = call.argument<String>("theme")
+                    if (theme == null) {
+                        result.error("invalid_arguments", null, null)
+                    } else {
+                        if (theme != WidgetConfig.defaultTheme(app)) {
+                            WidgetConfig.saveDefaultTheme(app, theme)
+                            NextLessonWidgetProvider.refreshDefaults(app)
+                        }
+                        result.success(null)
+                    }
                 }
                 "saveConfig" -> {
                     val id = call.argument<Int>("id")

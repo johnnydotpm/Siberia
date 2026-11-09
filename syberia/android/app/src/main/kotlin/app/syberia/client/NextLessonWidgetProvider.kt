@@ -93,6 +93,11 @@ class NextLessonWidgetProvider : AppWidgetProvider() {
             render(context, AppWidgetManager.getInstance(context), id, payloadFor(context, id))
         }
 
+        /** Redraws the widgets nobody has set up, after the default theme changed. */
+        fun refreshDefaults(context: Context) {
+            widgetIds(context).filter { WidgetConfig.usesDefaults(context, it) }.forEach { refresh(context, it) }
+        }
+
         /**
          * The lessons widget [id] shows: its profile's, or the common ones
          * when it has none or the profile is gone.
