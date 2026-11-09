@@ -265,34 +265,102 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
   });
 
-  testWidgets('a short lesson keeps what it shows inside its card, alone or '
-      'beside another', (tester) async {
-    for (final together in [false, true]) {
-      final (controller, _, _, _) = await _family(
-        together: together,
+  testWidgets(
+    'active parallel lessons fit their progress and Now badge at large text sizes',
+    (tester) async {
+      final now = DateTime.now();
+      final start = DateTime(
+        now.year,
+        now.month,
+        now.day,
+        now.hour,
+        now.minute,
+      );
+      final (controller, _, regular, music) = await _family(
         changes: {
-          for (final (login, minute) in [('kid-regular', 0), ('kid-music', 5)])
+          for (final login in ['kid-regular', 'kid-music'])
             login: (data) => data.copyWith(
               lessons: [
                 Lesson(
-                  id: 'short',
+                  id: 'active',
                   subject: 'Matematyka',
                   teacher: 'Pan',
                   room: '1',
-                  start: _today(10, minute),
-                  end: _today(10, minute + 30),
+                  start: start,
+                  end: start.add(const Duration(minutes: 45)),
                 ),
               ],
             ),
         },
       );
-      await _pump(tester, controller);
+      tester.platformDispatcher.textScaleFactorTestValue = 1.3;
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
       controller.selectTab(1);
+      await _pump(tester, controller);
       await tester.pumpAndSettle();
-      expect(tester.takeException(), isNull, reason: 'together: $together');
+      for (final profile in [regular, music]) {
+        final card = find.byKey(
+          ValueKey('timeline-lesson-${sourcedId(profile.id, 'active')}'),
+        );
+        expect(card, findsOneWidget);
+        expect(
+          find.descendant(
+            of: card,
+            matching: find.byType(LinearProgressIndicator),
+          ),
+          findsOneWidget,
+        );
+      }
+      expect(tester.takeException(), isNull);
       await tester.pumpWidget(const SizedBox.shrink());
-    }
-  });
+      controller.dispose();
+    },
+  );
+
+  testWidgets(
+    'short active lessons keep their content inside the card, alone or beside another',
+    (tester) async {
+      final now = DateTime.now();
+      final start = DateTime(
+        now.year,
+        now.month,
+        now.day,
+        now.hour,
+        now.minute,
+      );
+      for (final duration in [10, 30]) {
+        for (final together in [false, true]) {
+          final (controller, _, _, _) = await _family(
+            together: together,
+            changes: {
+              for (final login in ['kid-regular', 'kid-music'])
+                login: (data) => data.copyWith(
+                  lessons: [
+                    Lesson(
+                      id: 'short',
+                      subject: 'Matematyka',
+                      teacher: 'Pan',
+                      room: '1',
+                      start: start,
+                      end: start.add(Duration(minutes: duration)),
+                    ),
+                  ],
+                ),
+            },
+          );
+          controller.selectTab(1);
+          await _pump(tester, controller);
+          expect(
+            tester.takeException(),
+            isNull,
+            reason: 'together: $together, duration: $duration',
+          );
+          await tester.pumpWidget(const SizedBox.shrink());
+          controller.dispose();
+        }
+      }
+    },
+  );
 
   testWidgets('a day off of one school says which, and a teacher away there '
       'is not away at the other school', (tester) async {
