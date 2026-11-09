@@ -430,7 +430,11 @@ class _TimelineLessonCard extends StatelessWidget {
                 decorationColor: foreground,
               );
               final detailsStyle = TextStyle(
-                color: foreground.withValues(alpha: 0.78),
+                // Expressive: the full text colour, as Material's roles have
+                // it; 78 % of it falls short of 4.5:1 in light mode.
+                color: expressive
+                    ? foreground
+                    : foreground.withValues(alpha: 0.78),
                 fontSize: 12.5,
                 fontWeight: FontWeight.w600,
               );
@@ -460,9 +464,16 @@ class _TimelineLessonCard extends StatelessWidget {
                           ),
                     );
               final detailsHeight = 2 + lineHeight(detailsStyle);
-              final progressHeight = current
-                  ? 3 + math.max(4, lineHeight(progressStyle) + 2)
-                  : 0;
+              // The bar of the lesson on now, when there is room for it as
+              // well as the subject; very large text leaves it out.
+              final progressRow =
+                  3 +
+                  math.max(
+                    expressive ? WavyProgressIndicator.height : 4,
+                    lineHeight(progressStyle) + 2,
+                  );
+              final showProgress = current && room >= firstLine + progressRow;
+              final progressHeight = showProgress ? progressRow : 0.0;
               // Beside another lesson the card is narrow: the mark takes a
               // line of its own when there is room, so the times stay whole.
               // 3 above the mark and 1 above and below its name.
@@ -546,7 +557,7 @@ class _TimelineLessonCard extends StatelessWidget {
                         ],
                       ),
                     ),
-                  if (current) ...[
+                  if (showProgress) ...[
                     const Spacer(),
                     Row(
                       children: [

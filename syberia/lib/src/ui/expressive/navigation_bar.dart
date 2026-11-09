@@ -45,9 +45,11 @@ class ExpressiveNavigationBar extends StatelessWidget {
       color: colors.surfaceContainer,
       child: SafeArea(
         top: false,
-        child: SizedBox(
-          height: height,
+        // 64 tall, taller only when large text needs it.
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: height),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               for (final (index, destination) in destinations.indexed)
                 Expanded(
@@ -104,6 +106,7 @@ class _NavigationItem extends StatelessWidget {
       child: _IndicatorInkWell(
         onTap: onTap,
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             const SizedBox(height: _top),
             SizedBox.fromSize(
@@ -132,14 +135,20 @@ class _NavigationItem extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 4),
-            Text(
-              destination.label,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: theme.textTheme.labelMedium!.copyWith(
-                color: selected ? colors.secondary : colors.onSurfaceVariant,
+            // Large text grows the label to 1.3 times at most, as Material's
+            // own navigation bar lets it.
+            MediaQuery.withClampedTextScaling(
+              maxScaleFactor: 1.3,
+              child: Text(
+                destination.label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: theme.textTheme.labelMedium!.copyWith(
+                  color: selected ? colors.secondary : colors.onSurfaceVariant,
+                ),
               ),
             ),
+            const SizedBox(height: _top),
           ],
         ),
       ),

@@ -1063,37 +1063,46 @@ class _DayChip extends StatelessWidget {
           onTap: onTap,
           child: SizedBox(
             height: 58,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  _shortWeekday(context, day),
-                  maxLines: 1,
-                  style: theme.textTheme.labelSmall?.copyWith(
-                    color: foreground,
-                    fontWeight: FontWeight.w600,
+            // The strip stays one row high: large text grows to 1.3 times
+            // here, as Material's own bars let their labels grow.
+            child: MediaQuery.withClampedTextScaling(
+              maxScaleFactor: 1.3,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    _shortWeekday(context, day),
+                    maxLines: 1,
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      color: foreground,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                ),
-                Text(
-                  '${day.day}',
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    color: foreground,
-                    fontWeight: FontWeight.w800,
-                    height: 1.15,
+                  Text(
+                    '${day.day}',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      color: foreground,
+                      fontWeight: FontWeight.w800,
+                      height: 1.15,
+                    ),
                   ),
-                ),
-                Container(
-                  width: 5,
-                  height: 5,
-                  margin: const EdgeInsets.only(top: 2),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: !hasEvents
-                        ? Colors.transparent
-                        : Color.lerp(colors.primary, colors.onPrimary, picked),
+                  Container(
+                    width: 5,
+                    height: 5,
+                    margin: const EdgeInsets.only(top: 2),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: !hasEvents
+                          ? Colors.transparent
+                          : Color.lerp(
+                              colors.primary,
+                              colors.onPrimary,
+                              picked,
+                            ),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

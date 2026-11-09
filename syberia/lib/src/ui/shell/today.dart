@@ -905,108 +905,138 @@ class _ExpressiveNowCard extends StatelessWidget {
         onTap: onTap,
         child: Padding(
           padding: const EdgeInsets.all(Space.large),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Row(
-                children: [
-                  if (number case final number?) ...[
-                    ShapeBadge(
-                      key: const ValueKey('today-now-number'),
-                      shape: ExpressiveShapes.cookie9,
-                      size: 64,
-                      color: colors.primary,
-                      child: Text(
-                        number,
-                        style: emphasized.headlineSmall?.copyWith(
-                          color: colors.onPrimary,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: Space.large),
-                  ],
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (whenOnItsLine) ...[
-                          Text(label, style: labelStyle),
-                          Text(
-                            when,
-                            style: theme.textTheme.titleSmall?.copyWith(
-                              color: on,
-                            ),
-                          ),
-                        ] else
-                          _RollingText(
-                            '$label · $when',
-                            key: const ValueKey('today-now-when'),
-                            style: labelStyle,
-                          ),
-                        Text(
-                          subject,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: emphasized.headlineMedium?.copyWith(color: on),
-                        ),
-                        if (details.isNotEmpty)
-                          Text(
-                            details,
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              color: on,
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                  if (mark case final mark?)
-                    Padding(
-                      padding: const EdgeInsetsDirectional.only(
-                        start: Space.small,
-                      ),
-                      child: mark,
-                    ),
-                  if (substitution)
-                    Padding(
-                      padding: const EdgeInsetsDirectional.only(
-                        start: Space.small,
-                      ),
-                      child: AppIcon(Icons.swap_horiz_rounded, color: on),
-                    ),
-                ],
-              ),
-              if (progress case final progress?) ...[
-                const SizedBox(height: Space.medium),
-                // On the coloured card the track takes the screen's colour.
-                WavyProgressIndicator(
-                  key: const ValueKey('today-now-progress'),
-                  value: progress,
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final badge = switch (number) {
+                null => null,
+                final number => ShapeBadge(
+                  key: const ValueKey('today-now-number'),
+                  shape: ExpressiveShapes.cookie9,
+                  size: 64,
                   color: colors.primary,
-                  trackColor: colors.surface,
-                ),
-                const SizedBox(height: Space.small),
-                Align(
-                  alignment: AlignmentDirectional.centerEnd,
-                  child: _RollingText(
-                    left!,
-                    key: const ValueKey('today-now-left'),
-                    style: theme.textTheme.labelLarge?.copyWith(
-                      color: on,
-                      fontFeatures: _tabular,
+                  child: Text(
+                    number,
+                    style: emphasized.headlineSmall?.copyWith(
+                      color: colors.onPrimary,
                     ),
                   ),
                 ),
-              ],
-              if (footer case final footer?) ...[
-                const SizedBox(height: Space.medium),
-                Text(
-                  footer,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: theme.textTheme.bodyMedium?.copyWith(color: on),
-                ),
-              ],
-            ],
+              };
+              // Beside the number a long subject would break inside a word
+              // on a narrow phone or with large text: there the number goes
+              // above it and the subject takes the whole width.
+              final stacked =
+                  badge != null &&
+                  (constraints.maxWidth - 64 - Space.large < 220 ||
+                      MediaQuery.textScalerOf(context).scale(10) > 13);
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  if (stacked) ...[
+                    Align(
+                      alignment: AlignmentDirectional.centerStart,
+                      child: badge,
+                    ),
+                    const SizedBox(height: Space.medium),
+                  ],
+                  Row(
+                    children: [
+                      if (badge != null && !stacked) ...[
+                        badge,
+                        const SizedBox(width: Space.large),
+                      ],
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (whenOnItsLine) ...[
+                              Text(label, style: labelStyle),
+                              Text(
+                                when,
+                                style: theme.textTheme.titleSmall?.copyWith(
+                                  color: on,
+                                ),
+                              ),
+                            ] else
+                              _RollingText(
+                                '$label · $when',
+                                key: const ValueKey('today-now-when'),
+                                style: labelStyle,
+                              ),
+                            // A headline is large already: it grows to 1.5 times
+                            // with large text, as Android 14 scales large text
+                            // less than small.
+                            MediaQuery.withClampedTextScaling(
+                              maxScaleFactor: 1.5,
+                              child: Text(
+                                subject,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: emphasized.headlineMedium?.copyWith(
+                                  color: on,
+                                ),
+                              ),
+                            ),
+                            if (details.isNotEmpty)
+                              Text(
+                                details,
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  color: on,
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                      if (mark case final mark?)
+                        Padding(
+                          padding: const EdgeInsetsDirectional.only(
+                            start: Space.small,
+                          ),
+                          child: mark,
+                        ),
+                      if (substitution)
+                        Padding(
+                          padding: const EdgeInsetsDirectional.only(
+                            start: Space.small,
+                          ),
+                          child: AppIcon(Icons.swap_horiz_rounded, color: on),
+                        ),
+                    ],
+                  ),
+                  if (progress case final progress?) ...[
+                    const SizedBox(height: Space.medium),
+                    // On the coloured card the track takes the screen's colour.
+                    WavyProgressIndicator(
+                      key: const ValueKey('today-now-progress'),
+                      value: progress,
+                      color: colors.primary,
+                      trackColor: colors.surface,
+                    ),
+                    const SizedBox(height: Space.small),
+                    Align(
+                      alignment: AlignmentDirectional.centerEnd,
+                      child: _RollingText(
+                        left!,
+                        key: const ValueKey('today-now-left'),
+                        style: theme.textTheme.labelLarge?.copyWith(
+                          color: on,
+                          fontFeatures: _tabular,
+                        ),
+                      ),
+                    ),
+                  ],
+                  if (footer case final footer?) ...[
+                    const SizedBox(height: Space.medium),
+                    Text(
+                      footer,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.bodyMedium?.copyWith(color: on),
+                    ),
+                  ],
+                ],
+              );
+            },
           ),
         ),
       ),
@@ -1508,11 +1538,16 @@ class _Metric extends StatelessWidget {
               children: [
                 AppIcon(icon, color: foreground),
                 const SizedBox(height: Space.small),
-                _CountingText(
-                  value,
-                  format: format,
-                  style: ExpressiveType.of(context).headlineMedium
-                      ?.copyWith(color: foreground, fontFeatures: _tabular),
+                // One line, smaller in a narrow tile: "4,05" stays whole.
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: AlignmentDirectional.centerStart,
+                  child: _CountingText(
+                    value,
+                    format: format,
+                    style: ExpressiveType.of(context).headlineMedium
+                        ?.copyWith(color: foreground, fontFeatures: _tabular),
+                  ),
                 ),
                 // One line, smaller if it must: a long word is not broken.
                 FittedBox(

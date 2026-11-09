@@ -133,7 +133,14 @@ class ShapeBadge extends StatelessWidget {
     dimension: size,
     child: DecoratedBox(
       decoration: ShapeDecoration(color: color, shape: shape),
-      child: Center(child: child),
+      // Kept inside the shape and on one line: smaller, with large text,
+      // rather than broken in two.
+      child: Padding(
+        padding: EdgeInsets.all(size * 0.14),
+        child: Center(
+          child: FittedBox(fit: BoxFit.scaleDown, child: child),
+        ),
+      ),
     ),
   );
 }

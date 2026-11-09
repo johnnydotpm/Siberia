@@ -320,8 +320,9 @@ class _ButtonContent extends StatelessWidget {
   final EdgeInsetsGeometry padding;
 
   @override
-  Widget build(BuildContext context) => SizedBox(
-    height: _height,
+  Widget build(BuildContext context) => ConstrainedBox(
+    // 40 tall, taller only when large text needs it.
+    constraints: const BoxConstraints(minHeight: _height),
     child: Padding(
       padding: padding,
       child: IconTheme.merge(
