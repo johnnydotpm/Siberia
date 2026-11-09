@@ -129,11 +129,9 @@ Gotowa aplikacja znajduje się w `build/linux/x64/release/bundle`.
 
 - Synchronizacja w tle na iOS (obecnie zadanie okresowe rejestruje się tylko na Androidzie)
 - Przeniesienie komunikatów o błędach Librusa do warstwy tłumaczeń (teraz są zapisane po polsku na stałe w kodzie klienta)
-- Rozszerzenie testów jednostkowych i integracyjnych na urządzeniach
 - Dalsze usprawnienia dostępności interfejsu
-- Podział `lib/src/ui/app_shell.dart` na osobne pliki ekranów
-- Więcej języków
-- Wsparcie dla innych dzienników elektronicznych m.in. MobiReg, Fryderyk, Vulcan, MobiDziennik i Prymus
+- Wsparcie dla Vulcan.
+
 
 ## Licencja i podziękowania
 
