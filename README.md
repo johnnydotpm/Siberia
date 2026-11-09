@@ -11,8 +11,8 @@ SiberiaGB to w pełni funkcjonalny, wieloplatformowy klient Librus napisany w fr
 
 <!-- download-badges:start -->
 <p align="center">
-  <a href="https://github.com/johnnydotpm/Siberia/releases/download/v1.5.1/SiberiaGB-1.5.1-Android.apk"><img src=".github/badges/download-apk.svg" alt="Download APK for Android" width="240" height="72"></a>
-  <a href="https://github.com/johnnydotpm/Siberia/releases/download/v1.5.1/SiberiaGB-1.5.1-iOS.ipa"><img src=".github/badges/download-ipa.svg" alt="Download IPA for iOS" width="240" height="72"></a>
+  <a href="https://github.com/johnnydotpm/Siberia/releases/download/v1.5.2/SiberiaGB-1.5.2-Android.apk"><img src=".github/badges/download-apk.svg" alt="Download APK for Android" width="240" height="72"></a>
+  <a href="https://github.com/johnnydotpm/Siberia/releases/download/v1.5.2/SiberiaGB-1.5.2-iOS.ipa"><img src=".github/badges/download-ipa.svg" alt="Download IPA for iOS" width="240" height="72"></a>
 </p>
 <!-- download-badges:end -->
 
