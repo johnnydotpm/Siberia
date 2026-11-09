@@ -1,7 +1,7 @@
 {
   "id": "fryderyk",
   "name": "Fryderyk",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "operations": [
     "authenticate",
     "accounts",
@@ -16,7 +16,8 @@
     "grades",
     "attendance",
     "homework",
-    "events"
+    "events",
+    "deleteMessage"
   ],
   "origins": [
     "https://swiadectwa.fryderyk.edu.pl"

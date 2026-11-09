@@ -303,6 +303,46 @@ class LibrusClient {
     return uri;
   }
 
+  /// Official Synergia removeMessage contract: PUT /Messages/{id}, JSON action.
+  /// Never replay a mutation after an ambiguous response or transport failure.
+  Future<void> deleteMessage(SchoolMessage message) async {
+    if (!RegExp(r'^[0-9]+$').hasMatch(message.id)) {
+      throw const LibrusException(LibrusErrorCode.messageContentFailed);
+    }
+    await _prepareFreshSession();
+    try {
+      final response = await _dio.request<Object?>(
+        '$_apiBase/Messages/${message.id}',
+        data: jsonEncode({'action': 'delete'}),
+        options: Options(
+          method: 'PUT',
+          contentType: 'application/json',
+          followRedirects: false,
+          headers: {
+            'Authorization': 'Bearer $_synergiaToken',
+            'Accept': 'application/json',
+            'User-Agent': _userAgent,
+          },
+          validateStatus: (status) => status != null && status < 600,
+        ),
+      );
+      final json = _map(response.data) ?? _decodeMap(response.data);
+      if ((response.statusCode == 200 &&
+              json != null &&
+              !json.containsKey('Error') &&
+              !json.containsKey('Errors')) ||
+          response.statusCode == 204) {
+        return;
+      }
+      throw LibrusException(
+        LibrusErrorCode.apiRejected,
+        detail: '${response.statusCode ?? 0}',
+      );
+    } on DioException catch (error) {
+      throw _networkException(error);
+    }
+  }
+
   Future<SchoolMessageContent> fetchMessageContent(
     SchoolMessage summary,
   ) async {

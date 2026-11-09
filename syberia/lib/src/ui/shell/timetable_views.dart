@@ -398,7 +398,13 @@ class _TimelineLessonCard extends StatelessWidget {
                 ? Border.all(color: palette.accent, width: 2)
                 : null,
           ),
-          padding: const EdgeInsets.fromLTRB(12, 7, 10, 7),
+          // The active border takes two pixels at each edge.
+          padding: EdgeInsets.fromLTRB(
+            12,
+            current ? 5 : 7,
+            10,
+            current ? 5 : 7,
+          ),
           child: LayoutBuilder(
             builder: (context, constraints) {
               // Measured, so a short card drops the details line before
@@ -465,15 +471,19 @@ class _TimelineLessonCard extends StatelessWidget {
                     );
               final detailsHeight = 2 + lineHeight(detailsStyle);
               // The bar of the lesson on now, when there is room for it as
-              // well as the subject; very large text leaves it out.
-              final progressRow =
-                  3 +
-                  math.max(
-                    expressive ? WavyProgressIndicator.height : 4,
-                    lineHeight(progressStyle) + 2,
-                  );
-              final showProgress = current && room >= firstLine + progressRow;
-              final progressHeight = showProgress ? progressRow : 0.0;
+              // well as the subject, and its text beside it when there is
+              // room for that too; very large text leaves them out.
+              final bar = expressive ? WavyProgressIndicator.height : 4.0;
+              final fullProgressHeight =
+                  3 + math.max(bar, lineHeight(progressStyle) + 2);
+              final showProgress = current && room >= firstLine + 3 + bar;
+              final showProgressText =
+                  showProgress && room >= firstLine + fullProgressHeight;
+              final progressHeight = showProgress
+                  ? showProgressText
+                        ? fullProgressHeight
+                        : 3 + bar
+                  : 0.0;
               // Beside another lesson the card is narrow: the mark takes a
               // line of its own when there is room, so the times stay whole.
               // 3 above the mark and 1 above and below its name.
@@ -496,6 +506,26 @@ class _TimelineLessonCard extends StatelessWidget {
                   (markLine ? markHeight : 0) +
                   progressHeight;
               final subjectLines = room - reserved >= subjectLine * 2 ? 2 : 1;
+              final progress = duration.inSeconds <= 0
+                  ? 0.0
+                  : (now.difference(lesson.start).inSeconds /
+                            duration.inSeconds)
+                        .clamp(0.0, 1.0);
+              // Glides as the lesson goes on, to the second; Expressive's
+              // wave on the subject's colour.
+              final Widget progressBar = expressive
+                  ? WavyProgressIndicator(
+                      value: progress,
+                      color: palette.accent,
+                      trackColor: Theme.of(context).colorScheme.surface,
+                    )
+                  : _GlidingProgress(
+                      value: progress,
+                      minHeight: 4,
+                      radius: 3,
+                      color: palette.accent,
+                      backgroundColor: foreground.withValues(alpha: 0.15),
+                    );
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -559,50 +589,21 @@ class _TimelineLessonCard extends StatelessWidget {
                     ),
                   if (showProgress) ...[
                     const Spacer(),
-                    Row(
-                      children: [
-                        Expanded(
-                          // Glides as the lesson goes on, to the second;
-                          // Expressive's wave on the subject's colour.
-                          child: expressive
-                              ? WavyProgressIndicator(
-                                  value: duration.inSeconds <= 0
-                                      ? 0
-                                      : (now
-                                                    .difference(lesson.start)
-                                                    .inSeconds /
-                                                duration.inSeconds)
-                                            .clamp(0.0, 1.0),
-                                  color: palette.accent,
-                                  trackColor: Theme.of(context)
-                                      .colorScheme
-                                      .surface,
-                                )
-                              : _GlidingProgress(
-                                  value: duration.inSeconds <= 0
-                                      ? 0
-                                      : (now
-                                                    .difference(lesson.start)
-                                                    .inSeconds /
-                                                duration.inSeconds)
-                                            .clamp(0.0, 1.0),
-                                  minHeight: 4,
-                                  radius: 3,
-                                  color: palette.accent,
-                                  backgroundColor: foreground.withValues(
-                                    alpha: 0.15,
-                                  ),
-                                ),
-                        ),
-                        const SizedBox(width: 8),
-                        // Long words, large text or a narrow card beside
-                        // another lesson cut it short rather than push the
-                        // badge out of the card; the bar keeps the rest.
-                        Flexible(
-                          child: ConstrainedBox(
-                            constraints: BoxConstraints(
-                              maxWidth: constraints.maxWidth * 0.55,
-                            ),
+                    if (!showProgressText)
+                      progressBar
+                    else
+                      Row(
+                        children: [
+                          Expanded(
+                            // Glides as the lesson goes on, to the second.
+                            child: progressBar,
+                          ),
+                          const SizedBox(width: 8),
+                          // Long words or large text cut it short rather than
+                          // push the badge out of the card; the bar keeps the
+                          // rest.
+                          Flexible(
+                            flex: 2,
                             child: Text(
                               context.trArgs('lessonProgress', {
                                 'elapsed': '$elapsed',
@@ -613,28 +614,34 @@ class _TimelineLessonCard extends StatelessWidget {
                               style: progressStyle,
                             ),
                           ),
-                        ),
-                        const SizedBox(width: 6),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 7,
-                            vertical: 1,
-                          ),
-                          decoration: BoxDecoration(
-                            color: palette.accent,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Text(
-                            context.tr('nowLesson'),
-                            style: TextStyle(
-                              color: palette.background,
-                              fontSize: 11,
-                              fontWeight: FontWeight.w900,
+                          const SizedBox(width: 6),
+                          ConstrainedBox(
+                            constraints: BoxConstraints(
+                              maxWidth: constraints.maxWidth * 0.45,
+                            ),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 7,
+                                vertical: 1,
+                              ),
+                              decoration: BoxDecoration(
+                                color: palette.accent,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Text(
+                                context.tr('nowLesson'),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  color: palette.background,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w900,
+                                ),
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
+                        ],
+                      ),
                   ],
                 ],
               );

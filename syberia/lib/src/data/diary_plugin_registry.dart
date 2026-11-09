@@ -101,6 +101,9 @@ class _DownloadedSession implements DiarySession {
   @override
   String? get studentKey => profile.pluginStudent;
   @override
+  Future<void> deleteMessage(SchoolMessage message) =>
+      host.deleteMessage(profile, message);
+  @override
   Future<AppSnapshot?> sync(AppSnapshot? previous, {Set<DiaryPart>? parts}) =>
       host.sync(
         profile,

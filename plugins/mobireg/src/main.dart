@@ -380,7 +380,7 @@ class MobiReg {
       '${mailBase()}$path',
       headers,
       jsonEncode(body),
-      method != 'GET',
+      method != 'GET' && method != 'DELETE',
     );
     if ((response['status'] == 401 || response['status'] == 403) && safe) {
       await mailLogin();
@@ -395,6 +395,7 @@ class MobiReg {
       );
     }
     checkStatus(response);
+    if (method == 'DELETE') return null;
     return jsonDecode(requiredString(response['body']));
   }
 
@@ -479,6 +480,15 @@ class MobiReg {
         flag(input['sent']),
         false,
       );
+    if (op == 'deleteMessage') {
+      await mailCall(
+        '/api/messages/${part(identity(input['id']))}',
+        'DELETE',
+        null,
+        false,
+      );
+      return {'deleted': true};
+    }
     if (op == 'sendMessage') {
       final recipients = array(input['recipients']);
       if (recipients.isEmpty) throw 'invalid_input';

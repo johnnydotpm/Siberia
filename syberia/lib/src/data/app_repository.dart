@@ -1495,6 +1495,18 @@ class AppRepository {
     return folder.messages;
   }
 
+  Future<void> deleteMessage(SchoolMessage message, {String? profileId}) async {
+    if (_demo != null) {
+      final demo = _demoOf(profileId);
+      demo.snapshot = demo.snapshot.withoutMessage(message);
+      return;
+    }
+    await _ensureReady();
+    final profile = _accountOf(profileId);
+    await _sessionFor(profile).deleteMessage(message);
+    await _updateCached(profile.id, (cached) => cached.withoutMessage(message));
+  }
+
   /// Opens [message] of the profile [profileId], or the open one.
   Future<SchoolMessageContent> fetchMessageContent(
     SchoolMessage message, {

@@ -1,4 +1,4 @@
-# MobiReg 0.1.0
+# MobiReg 0.1.1
 
 Enter the HTTPS diary server, school code, login and password. This adapter
 implements the modern 3.x JSON/form protocol. It sends the **original password
@@ -27,11 +27,11 @@ Implemented:
   The external module/`oldHomeworkModule` source selector is not guessed.
 - Separate mailbox SSO cookies, including cookies on 302 responses and preserved
   mailbox base paths. Inbox/sent pagination, reading a message, searching the
-  recipient directory and plain-message sending with opaque receiver keys.
+  recipient directory, confirmed deletion, and plain-message sending with opaque receiver keys.
 - Read-only provider-native justification records through the Bearer REST API.
 
 Not exposed in this release: QR enrollment, legacy protocol, external homework
-SSO/submissions, attachment transfers, mailbox star/delete/restore controls,
+SSO/submissions, attachment transfers, mailbox star/restore controls,
 announcement poll responses, justification submissions, and remote push
 registration. Homework-module configuration is reported as unavailable until its
 selection semantics and submission payloads are verified. Native justification
@@ -43,3 +43,5 @@ attachments are not arbitrary token-bearing requests. The account's credentials
 are shared by its children; their data and IDs remain separate.
 
 [Protocol provenance and verification limits](../RESEARCH.md).
+
+Version 0.1.1 adds confirmed message deletion without mutation retries. Version 0.1.0 remains immutable for existing installations.

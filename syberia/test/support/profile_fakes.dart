@@ -190,6 +190,16 @@ class FakeProfileClient extends LibrusClient {
       receivedAt: message.receivedAt,
     );
   }
+
+  @override
+  Future<void> deleteMessage(SchoolMessage message) async {
+    final login = profile!.synergiaLogin!;
+    world.deleted.add('$login:${message.id}');
+    await world.deleting;
+    if (world.deleteFailures.contains(login)) {
+      throw const LibrusException(LibrusErrorCode.apiRejected);
+    }
+  }
 }
 
 class FakeLibrusWorld {
@@ -218,6 +228,9 @@ class FakeLibrusWorld {
 
   /// The messages opened, as "login:message id".
   final opened = <String>[];
+  final deleted = <String>[];
+  final deleteFailures = <String>{};
+  Future<void> deleting = Future.value();
 
   /// The text of every message opened.
   String messageBody = 'Treść';

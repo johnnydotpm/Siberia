@@ -62,6 +62,8 @@ class AppController extends ChangeNotifier {
   Duration? _intro;
   SignInStage? _signInStage;
   bool _markingMessagesRead = false;
+  bool _deletingMessages = false;
+  bool get deletingMessages => _deletingMessages;
   bool _loadingSentMessages = false;
   AppError? _sentMessagesError;
   DateTime? _sentMessagesLoadedAt;
@@ -1170,10 +1172,14 @@ class AppController extends ChangeNotifier {
     _error = null;
     final source = message.source;
     if (source != null) return _fetchMessageContentOf(source, message);
-    final profileId = snapshot.profile.id;
+    final scope = (_syncKey, snapshot.profile.id);
+    final profileId = activeProfile?.id;
     try {
-      final content = await _repository.fetchMessageContent(message);
-      if (snapshot.profile.id == profileId) {
+      final content = await _repository.fetchMessageContent(
+        message,
+        profileId: profileId,
+      );
+      if ((_syncKey, snapshot.profile.id) == scope) {
         _snapshot = snapshot.withOpened(message, content);
         notifyListeners();
       }
@@ -1199,6 +1205,9 @@ class AppController extends ChangeNotifier {
         profileId: source,
       );
       _changePart(source, (data) => data.withOpened(own, content));
+      if (!_together && activeProfile?.id == source) {
+        _snapshot = snapshot.withOpened(own, content);
+      }
       notifyListeners();
       return SchoolMessageContent(
         id: message.id,
@@ -1223,19 +1232,19 @@ class AppController extends ChangeNotifier {
     await fetchMessageContent(message);
   }
 
-  Future<void> markAllMessagesRead() async {
-    if (_markingMessagesRead || syncing) return;
-    final profileId = snapshot.profile.id;
-    final unread = snapshot.messages
-        .where((message) => message.unread)
-        .toList();
+  Future<void> markAllMessagesRead() => markMessagesRead(snapshot.messages);
+
+  Future<void> markMessagesRead(Iterable<SchoolMessage> messages) async {
+    if (_markingMessagesRead || _deletingMessages || syncing) return;
+    final scope = (_syncKey, snapshot.profile.id);
+    final unread = messages.where((m) => !m.sent && m.unread).toList();
     _markingMessagesRead = true;
     _error = null;
     notifyListeners();
     Object? firstError;
     try {
       for (final message in unread) {
-        if (snapshot.profile.id != profileId) break;
+        if ((_syncKey, snapshot.profile.id) != scope) break;
         try {
           // GetMessage marks the message as read in Librus, just as opening it.
           await fetchMessageContent(message);
@@ -1250,6 +1259,47 @@ class AppController extends ChangeNotifier {
       }
     } finally {
       _markingMessagesRead = false;
+      notifyListeners();
+    }
+  }
+
+  /// Each message retains its own profile identity in the combined inbox.
+  /// Failed deletions stay visible; an ambiguous mutation is never retried.
+  Future<void> deleteMessages(Iterable<SchoolMessage> messages) async {
+    if (_deletingMessages || _markingMessagesRead || syncing) return;
+    final scope = (_syncKey, snapshot.profile.id);
+    final profileId = activeProfile?.id;
+    final pending = messages.toList();
+    _deletingMessages = true;
+    _error = null;
+    notifyListeners();
+    Object? firstError;
+    try {
+      for (final message in pending) {
+        if ((_syncKey, snapshot.profile.id) != scope) break;
+        final source = message.source;
+        final own = source == null
+            ? message
+            : message.withSource(null, id: localId(message.id, source));
+        try {
+          await _repository.deleteMessage(own, profileId: source ?? profileId);
+          if (source != null) {
+            _changePart(source, (data) => data.withoutMessage(own));
+            if (!_together && activeProfile?.id == source) {
+              _snapshot = snapshot.withoutMessage(own);
+            }
+          } else if ((_syncKey, snapshot.profile.id) == scope) {
+            _snapshot = snapshot.withoutMessage(own);
+          }
+          notifyListeners();
+        } on Object catch (error, stack) {
+          firstError ??= error;
+          _error = _failed(error, stack, 'deleteMessage');
+        }
+      }
+      if (firstError != null) throw firstError;
+    } finally {
+      _deletingMessages = false;
       notifyListeners();
     }
   }
@@ -1727,7 +1777,7 @@ class AppController extends ChangeNotifier {
     )?
     choose,
   }) async {
-    if (_signingIn || _markingMessagesRead) return false;
+    if (_signingIn || _deletingMessages || _markingMessagesRead) return false;
     _signingIn = true;
     _signInStage = SignInStage.checking;
     _error = null;
@@ -1825,7 +1875,9 @@ class AppController extends ChangeNotifier {
     Map<String, Object?> fields, {
     Future<List<PluginStudent>?> Function(List<PluginStudent>)? choose,
   }) async {
-    if (_signingIn || _markingMessagesRead || isDemo) return false;
+    if (_signingIn || _deletingMessages || _markingMessagesRead || isDemo) {
+      return false;
+    }
     _signingIn = true;
     _signInStage = SignInStage.checking;
     _error = null;
@@ -2025,7 +2077,10 @@ class AppController extends ChangeNotifier {
   Future<void> sync() async {
     if (_together) return _syncTogether();
     final key = _syncKey;
-    if (_syncingProfiles.contains(key) || _signingIn || _markingMessagesRead) {
+    if (_syncingProfiles.contains(key) ||
+        _signingIn ||
+        _deletingMessages ||
+        _markingMessagesRead) {
       return;
     }
     _syncingProfiles.add(key);
@@ -2066,6 +2121,7 @@ class AppController extends ChangeNotifier {
   Future<void> _syncTogether() async {
     if (_syncingProfiles.contains(togetherId) ||
         _signingIn ||
+        _deletingMessages ||
         _markingMessagesRead) {
       return;
     }

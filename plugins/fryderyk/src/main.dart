@@ -366,6 +366,14 @@ class Fryderyk {
       );
       return message(jsonEncode(raw), flag(input['sent']), true);
     }
+    if (op == 'deleteMessage') {
+      await call(
+        'messages/delete/${part(identity(input['id']))}',
+        'POST',
+        null,
+      );
+      return {'deleted': true};
+    }
     if (op == 'sendMessage') {
       final receivers = array(input['recipients']);
       if (receivers.isEmpty) throw 'invalid_input';

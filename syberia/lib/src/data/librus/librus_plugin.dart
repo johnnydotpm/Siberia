@@ -97,6 +97,9 @@ class _LibrusSession
   @override
   String? get studentKey => client.synergiaLogin;
   @override
+  Future<void> deleteMessage(SchoolMessage message) =>
+      client.deleteMessage(message);
+  @override
   Future<AppSnapshot?> sync(
     AppSnapshot? previous, {
     Set<DiaryPart>? parts,

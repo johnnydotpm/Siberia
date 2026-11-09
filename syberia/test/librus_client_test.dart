@@ -1500,6 +1500,46 @@ void main() {
       return client;
     }
 
+    test('deletion uses the documented Synergia PUT action without XML or redirect replay', () async {
+      final calls = <RequestOptions>[];
+      final client = await signedIn((options) {
+        if (options.method == 'PUT') {
+          calls.add(options);
+          return (200, {'Status': 'ok'});
+        }
+        return null;
+      });
+      final message = (await client.fetchSnapshot()).messages.first;
+      await client.deleteMessage(message);
+      expect(calls, hasLength(1));
+      expect(calls.single.uri.path, '/2.0/Messages/${message.id}');
+      expect(jsonDecode(calls.single.data as String), {'action': 'delete'});
+      expect(calls.single.headers['Authorization'], startsWith('Bearer '));
+      expect(calls.single.followRedirects, isFalse);
+    });
+
+    test('rejected or ambiguous deletions are not retried and never report success', () async {
+      for (final status in [401, 500, 200]) {
+        var attempts = 0;
+        final client = await signedIn((options) {
+          if (options.method == 'PUT') {
+            attempts++;
+            return (
+              status,
+              status == 200 ? '<html>login</html>' : {'Error': 'synthetic'},
+            );
+          }
+          return null;
+        });
+        final message = (await client.fetchSnapshot()).messages.first;
+        await expectLater(
+          client.deleteMessage(message),
+          throwsA(isA<LibrusException>()),
+        );
+        expect(attempts, 1);
+      }
+    });
+
     test('come from the XML outbox with who read them', () async {
       final client = await signedIn((_) => null);
       final sent = await client.fetchSentMessages();

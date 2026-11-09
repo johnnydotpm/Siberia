@@ -11,12 +11,12 @@ SiberiaGB to w pełni funkcjonalny, wieloplatformowy klient Librus napisany w fr
 
 <!-- download-badges:start -->
 <p align="center">
-  <a href="https://github.com/johnnydotpm/Siberia/releases/download/v1.4.0/SiberiaGB-1.4.0-Android.apk"><img src=".github/badges/download-apk.svg" alt="Download APK for Android" width="240" height="72"></a>
-  <a href="https://github.com/johnnydotpm/Siberia/releases/download/v1.4.0/SiberiaGB-1.4.0-iOS.ipa"><img src=".github/badges/download-ipa.svg" alt="Download IPA for iOS" width="240" height="72"></a>
+  <a href="https://github.com/johnnydotpm/Siberia/releases/download/v1.5.1/SiberiaGB-1.5.1-Android.apk"><img src=".github/badges/download-apk.svg" alt="Download APK for Android" width="240" height="72"></a>
+  <a href="https://github.com/johnnydotpm/Siberia/releases/download/v1.5.1/SiberiaGB-1.5.1-iOS.ipa"><img src=".github/badges/download-ipa.svg" alt="Download IPA for iOS" width="240" height="72"></a>
 </p>
 <!-- download-badges:end -->
 
-Tryb rodzica jest dobierany z rodzaju konta Librus; można zmienić rolę interfejsu w ustawieniach profilu bez zmiany konta pocztowego. Panel rodzica pokazuje dzieci, koniec lekcji i nieusprawiedliwione nieobecności. Prośbę o usprawiedliwienie można przygotować w sekcji Frekwencja, sprawdzić w podglądzie i wysłać do samodzielnie wybranego wychowawcy. Historia rozróżnia wysłanie wiadomości od akceptacji szkoły; NB zmienia się na U dopiero po synchronizacji danych ze szkołą. Domyślne godziny ciszy to 21:00–07:00, a podsumowania — 19:00; telefon może opóźnić zaplanowane powiadomienia. Integracja z osobnym modułem e-Usprawiedliwień wymaga jeszcze zweryfikowania protokołu.
+Tryb rodzica jest dobierany na podstawie rodzaju konta Librus; rolę interfejsu można zmienić w ustawieniach profilu bez zmiany jego skrzynki pocztowej. Panel rodzica pokazuje dzieci, godziny zakończenia lekcji i nieusprawiedliwione nieobecności. W sekcji Frekwencja wybierz nieobecności i wychowawcę, sprawdź podgląd prośby i potwierdź jej wysłanie. Historia rozróżnia wysłanie wiadomości od akceptacji przez szkołę: frekwencja zmienia się dopiero po synchronizacji danych ze szkołą. Domyślne godziny ciszy to 21:00–07:00, a podsumowania — 19:00; system operacyjny może opóźnić zaplanowane powiadomienia. Integracja z osobnym modułem e-Usprawiedliwienia wymaga jeszcze zweryfikowania protokołu.
 
 Librus jest wbudowanym pluginem i korzysta z tego samego interfejsu co pozostałe dzienniki. Fryderyk i MobiReg są dostępne jako pobierane pluginy w [`/plugins/`](plugins/README.md), wybierane na ekranie logowania. Obsługiwane funkcje i ograniczenia wersji 0.1 opisano przy każdym pluginie; protokoły sprawdzono na danych syntetycznych, bez kont szkolnych.
 
@@ -128,11 +128,10 @@ Gotowa aplikacja znajduje się w `build/linux/x64/release/bundle`.
 
 - Synchronizacja w tle na iOS (obecnie zadanie okresowe rejestruje się tylko na Androidzie)
 - Przeniesienie komunikatów o błędach Librusa do warstwy tłumaczeń (teraz są zapisane po polsku na stałe w kodzie klienta)
-- Rozszerzenie testów jednostkowych i integracyjnych na urządzeniach
+- Rozszerzenie testów jednostkowych i testów integracyjnych na urządzeniach
 - Dalsze usprawnienia dostępności interfejsu
 - Podział `lib/src/ui/app_shell.dart` na osobne pliki ekranów
 - Więcej języków
-- Wsparcie dla innych dzienników elektronicznych m.in. MobiReg, Fryderyk, Vulcan, MobiDziennik i Prymus
 
 ## Licencja i podziękowania
 

@@ -75,7 +75,13 @@ void main() {
       await tester.tap(find.byIcon(Icons.close_rounded).last);
       await tester.pumpAndSettle();
       expect(_unreadDots(), findsNWidgets(2));
-      await tester.tap(find.byTooltip('Mark all as read'));
+      await tester.tap(find.byKey(const ValueKey('messages-select')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('messages-select-all')));
+      await tester.pumpAndSettle();
+      await tester.tap(
+        find.byKey(const ValueKey('messages-mark-selected-read')),
+      );
       await tester.pumpAndSettle();
       expect(controller.snapshot.unreadMessages, 1);
       expect(_unreadDots(), findsOneWidget);
@@ -86,18 +92,219 @@ void main() {
         findsOneWidget,
       );
       client.failures.clear();
-      await tester.tap(find.byTooltip('Mark all as read'));
+      await tester.tap(
+        find.byKey(const ValueKey('messages-mark-selected-read')),
+      );
       await tester.pumpAndSettle();
       expect(_unreadDots(), findsNothing);
-      final button = tester.widget<IconButton>(
-        find.byKey(const ValueKey('messages-mark-all-read')),
+      expect(
+        find.byKey(const ValueKey('messages-mark-selected-read')),
+        findsNothing,
       );
-      expect(button.onPressed, isNull);
       expect(tester.takeException(), isNull);
       await tester.pumpWidget(const SizedBox.shrink());
       controller.dispose();
     },
   );
+
+  testWidgets(
+    'selection shows actions only after choosing messages; delete confirms and retains failures',
+    (tester) async {
+      final client = _ReadClient()..failures.add('b');
+      final controller = await load(client, _data());
+      controller.selectTab(5);
+      await tester.pumpWidget(SyberiaApp(controller: controller));
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('messages-delete-selected')),
+        findsNothing,
+      );
+      expect(
+        find.byKey(const ValueKey('messages-mark-selected-read')),
+        findsNothing,
+      );
+      await tester.tap(find.byKey(const ValueKey('messages-select')));
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('messages-delete-selected')),
+        findsNothing,
+      );
+      await tester.tap(find.byKey(const ValueKey('message-select-a')));
+      await tester.tap(find.text('Subject b'));
+      await tester.pumpAndSettle();
+      expect(
+        client.opened,
+        isEmpty,
+        reason: 'tapping in selection mode does not open mail',
+      );
+      expect(find.text('Selected: 2'), findsOneWidget);
+      await tester.tap(find.byKey(const ValueKey('messages-delete-selected')));
+      await tester.pumpAndSettle();
+      expect(client.deleted, isEmpty);
+      await tester.tap(find.text('Cancel').last);
+      await tester.pumpAndSettle();
+      expect(client.deleted, isEmpty);
+      expect(find.text('Subject a'), findsOneWidget);
+      await tester.tap(find.byKey(const ValueKey('messages-delete-selected')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('messages-confirm-delete')));
+      await tester.pumpAndSettle();
+      expect(client.deleted, ['a']);
+      expect(find.text('Subject a'), findsNothing);
+      expect(find.text('Subject b'), findsOneWidget);
+      expect(find.text('Selected: 1'), findsOneWidget);
+      expect(
+        find.text(
+          'Some deletions could not be confirmed. Refresh the mailbox to check their status.',
+        ),
+        findsOneWidget,
+      );
+      expect((await AppRepository().load()).messages.map((m) => m.id), [
+        'b',
+        'c',
+        'd',
+      ]);
+      client.failures.clear();
+      await tester.tap(find.byKey(const ValueKey('messages-delete-selected')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('messages-confirm-delete')));
+      await tester.pumpAndSettle();
+      expect(client.deleted, ['a', 'b']);
+      expect(
+        find.byKey(const ValueKey('messages-delete-selected')),
+        findsNothing,
+      );
+      expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox.shrink());
+      controller.dispose();
+    },
+  );
+
+  testWidgets(
+    'long press selects without reading and offers read and delete; folder changes clear selection',
+    (tester) async {
+      final client = _ReadClient();
+      final controller = await load(client, _data());
+      controller.selectTab(5);
+      await tester.pumpWidget(SyberiaApp(controller: controller));
+      await tester.pumpAndSettle();
+      await tester.longPress(find.text('Subject c'));
+      await tester.pumpAndSettle();
+      expect(client.opened, isEmpty);
+      expect(
+        find.byKey(const ValueKey('message-action-delete-c')),
+        findsOneWidget,
+      );
+      await tester.tap(find.byKey(const ValueKey('message-action-read-c')));
+      await tester.pumpAndSettle();
+      expect(client.opened, ['c']);
+      expect(
+        controller.snapshot.messages.firstWhere((m) => m.id == 'a').unread,
+        isTrue,
+      );
+      expect(
+        find.byKey(const ValueKey('messages-mark-selected-read')),
+        findsNothing,
+      );
+      await tester.longPress(find.text('Subject c'));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('message-action-read-c')), findsNothing);
+      await tester.tap(find.byKey(const ValueKey('message-action-delete-c')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('messages-confirm-delete')));
+      await tester.pumpAndSettle();
+      expect(client.deleted, ['c']);
+      await tester.tap(find.byKey(const ValueKey('messages-select')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('message-select-a')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Sent'));
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('messages-delete-selected')),
+        findsNothing,
+      );
+      await tester.tap(find.text('Inbox'));
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('messages-delete-selected')),
+        findsNothing,
+      );
+      expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox.shrink());
+      controller.dispose();
+    },
+  );
+
+  testWidgets(
+    'sent messages offer selection and deletion without a read action',
+    (tester) async {
+      final sent = SchoolMessage(
+        id: 'sent-1',
+        sender: '',
+        subject: 'Sent subject',
+        preview: '',
+        receivedAt: DateTime.now(),
+        unread: false,
+        hasAttachments: false,
+        sent: true,
+        recipients: const ['Teacher'],
+      );
+      final client = _ReadClient()..outbox = [sent];
+      final controller = await load(client, _data());
+      controller.selectTab(5);
+      await tester.pumpWidget(SyberiaApp(controller: controller));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Sent'));
+      await tester.pumpAndSettle();
+      await tester.longPress(find.text('Sent subject'));
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('message-action-read-sent-1')),
+        findsNothing,
+      );
+      expect(
+        find.byKey(const ValueKey('messages-mark-selected-read')),
+        findsNothing,
+      );
+      await tester.tap(
+        find.byKey(const ValueKey('message-action-delete-sent-1')),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('messages-confirm-delete')));
+      await tester.pumpAndSettle();
+      expect(client.deleted, ['sent-1']);
+      expect(controller.snapshot.sentMessages, isEmpty);
+      expect(controller.snapshot.messages, hasLength(4));
+      expect((await AppRepository().load()).sentMessages, isEmpty);
+      expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox.shrink());
+      controller.dispose();
+    },
+  );
+
+  testWidgets('selection controls wrap on a narrow phone with large text', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(320, 800);
+    tester.view.devicePixelRatio = 1;
+    tester.platformDispatcher.textScaleFactorTestValue = 1.7;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+    final controller = await load(_ReadClient(), _data());
+    controller.selectTab(5);
+    await tester.pumpWidget(SyberiaApp(controller: controller));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('messages-select')));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.byKey(const ValueKey('message-select-a')));
+    await tester.tap(find.byKey(const ValueKey('message-select-a')));
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    await tester.pumpWidget(const SizedBox.shrink());
+    controller.dispose();
+  });
 
   testWidgets('an attachment that fails to open says so inside the sheet', (
     tester,
@@ -266,6 +473,17 @@ AppSnapshot _data() => AppSnapshot(
 class _ReadClient extends LibrusClient {
   final opened = <String>[];
   final failures = <String>{};
+  final deleted = <String>[];
+  List<SchoolMessage> outbox = const [];
+  @override
+  Future<List<SchoolMessage>> fetchSentMessages() async => outbox;
+  @override
+  Future<void> deleteMessage(SchoolMessage message) async {
+    if (failures.contains(message.id)) {
+      throw const LibrusException(LibrusErrorCode.apiRejected);
+    }
+    deleted.add(message.id);
+  }
 
   @override
   Future<Uri> fetchMessageAttachmentUrl({

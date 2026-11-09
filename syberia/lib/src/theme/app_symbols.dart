@@ -45,6 +45,7 @@ abstract final class AppSymbols {
   static const dashboard = IconData(0xe871, fontFamily: fontFamily);
   static const dashboardCustomize = IconData(0xe99b, fontFamily: fontFamily);
   static const dateRange = IconData(0xe916, fontFamily: fontFamily);
+  static const deleteOutline = IconData(0xe92e, fontFamily: fontFamily);
   static const directionsBus = IconData(0xeff6, fontFamily: fontFamily);
   static const done = IconData(0xe876, fontFamily: fontFamily);
   static const doneAll = IconData(0xe877, fontFamily: fontFamily);
@@ -102,6 +103,7 @@ abstract final class AppSymbols {
   static const school = IconData(0xe80c, fontFamily: fontFamily);
   static const search = IconData(0xef7a, fontFamily: fontFamily);
   static const searchOff = IconData(0xea76, fontFamily: fontFamily);
+  static const selectAll = IconData(0xe162, fontFamily: fontFamily);
   static const send = IconData(0xe163, fontFamily: fontFamily);
   static const settings = IconData(0xe8b8, fontFamily: fontFamily);
   static const shortText = IconData(0xe261, fontFamily: fontFamily);
@@ -167,6 +169,7 @@ abstract final class AppSymbols {
     Icons.dashboard_customize_rounded: dashboardCustomize,
     Icons.dashboard_rounded: dashboard,
     Icons.date_range_rounded: dateRange,
+    Icons.delete_outline_rounded: deleteOutline,
     Icons.directions_bus_rounded: directionsBus,
     Icons.done_all_rounded: doneAll,
     Icons.done_rounded: done,
@@ -229,6 +232,7 @@ abstract final class AppSymbols {
     Icons.school_rounded: school,
     Icons.search_off_rounded: searchOff,
     Icons.search_rounded: search,
+    Icons.select_all_rounded: selectAll,
     Icons.send_rounded: send,
     Icons.settings_rounded: settings,
     Icons.short_text_rounded: shortText,
