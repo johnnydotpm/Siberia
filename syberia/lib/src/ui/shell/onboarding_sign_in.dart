@@ -178,8 +178,8 @@ class _SignInFlowState extends State<_SignInFlow>
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8),
                       child: AnimatedSize(
-                        duration: _motion(context, _Motion.list),
-                        curve: _Motion.curve,
+                        duration: _listMotion(context),
+                        curve: _motionCurve(context),
                         alignment: Alignment.topCenter,
                         child: Column(
                           children: [

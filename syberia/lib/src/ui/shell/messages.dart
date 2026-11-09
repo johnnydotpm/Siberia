@@ -577,7 +577,7 @@ class _MessageTile extends StatelessWidget {
                     // Read, the dot fades away rather than vanish.
                     if (!item.sent)
                       AnimatedSwitcher(
-                        duration: _motion(context, _Motion.list),
+                        duration: _listMotion(context),
                         transitionBuilder: (child, animation) =>
                             _Fade(opacity: animation, child: child),
                         child: unread

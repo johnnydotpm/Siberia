@@ -74,14 +74,14 @@ class _SyncNewsBannerState extends State<_SyncNewsBanner> {
                 // From nothing as it first shows; after that, from where
                 // it is.
                 tween: Tween(begin: 0, end: visible ? 1 : 0),
-                duration: _motion(context, _Motion.list),
+                duration: _listMotion(context),
                 builder: (context, shown, _) => shown <= 0
                     ? const SizedBox.shrink()
                     : _capsule(news, reveal: AlwaysStoppedAnimation(shown)),
               )
             : AnimatedOpacity(
                 opacity: visible ? 1 : 0,
-                duration: _motion(context, _Motion.list),
+                duration: _listMotion(context),
                 child: news == null ? const SizedBox.shrink() : _capsule(news),
               ),
       ),

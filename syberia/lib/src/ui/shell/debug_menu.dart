@@ -508,7 +508,8 @@ class _DebugMenuState extends State<_DebugMenu> {
               }}.',
             ),
           ),
-          SwitchListTile(
+          _SwitchTile(
+            adaptive: false,
             key: const ValueKey('debug-simulate-vpn'),
             contentPadding: EdgeInsets.zero,
             title: const Text('Simulate a VPN'),
@@ -539,7 +540,8 @@ class _DebugMenuState extends State<_DebugMenu> {
             height: 160,
             child: AnimatedBrandLogo(key: ValueKey(_preview), event: _preview),
           ),
-          SwitchListTile(
+          _SwitchTile(
+            adaptive: false,
             key: const ValueKey('debug-keep-logo'),
             contentPadding: EdgeInsets.zero,
             title: const Text('Show this logo at every launch'),
@@ -547,7 +549,8 @@ class _DebugMenuState extends State<_DebugMenu> {
             value: BrandEvents.override == _preview,
             onChanged: _keepLogo,
           ),
-          SwitchListTile(
+          _SwitchTile(
+            adaptive: false,
             key: const ValueKey('debug-slow-motion'),
             contentPadding: EdgeInsets.zero,
             title: const Text('Animations five times slower'),

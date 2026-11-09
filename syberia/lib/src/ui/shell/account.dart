@@ -411,7 +411,8 @@ class _ProfileTogetherSwitch extends StatelessWidget {
     builder: (context, _) {
       final current =
           controller.profileOf(profile.id)?.together ?? profile.together;
-      return SwitchListTile(
+      return _SwitchTile(
+        adaptive: false,
         key: const ValueKey('profile-together'),
         secondary: const AppIcon(Icons.layers_outlined),
         title: Text(context.tr('profileTogether')),

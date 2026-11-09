@@ -95,7 +95,7 @@ class _Settings extends StatelessWidget {
             // Only where the phone has wallpaper colours: Android 12 and newer.
             if (controller.design == AppDesign.expressive &&
                 controller.wallpaperColors != null)
-              SwitchListTile.adaptive(
+              _SwitchTile(
                 key: const ValueKey('settings-wallpaper-colors'),
                 secondary: const _SettingsIcon(Icons.palette_rounded),
                 title: Text(context.tr('wallpaperColors')),
@@ -116,7 +116,7 @@ class _Settings extends StatelessWidget {
         _SettingsSection(
           title: context.tr('settingsSyncNotifications'),
           children: [
-            SwitchListTile.adaptive(
+            _SwitchTile(
               secondary: const _SettingsIcon(Icons.sync_rounded),
               title: Text(context.tr('autoSyncOnOpen')),
               subtitle: Text(context.tr('autoSyncOnOpenDescription')),
@@ -278,7 +278,7 @@ class _Settings extends StatelessWidget {
                 ],
               ),
             ),
-            SwitchListTile.adaptive(
+            _SwitchTile(
               key: const ValueKey('grade-weighted'),
               secondary: const _SettingsIcon(Icons.balance_rounded),
               title: Text(context.tr('weightedAverage')),

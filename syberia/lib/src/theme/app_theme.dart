@@ -123,6 +123,22 @@ abstract final class AppTheme {
           borderRadius: BorderRadius.circular(Corners.largeIncreased),
         ),
       ),
+      // Pages open with Material's fade forwards and follow Android's
+      // predictive back gesture; iOS keeps its own slide.
+      pageTransitionsTheme: const PageTransitionsTheme(
+        builders: {
+          TargetPlatform.android: PredictiveBackPageTransitionsBuilder(),
+          TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+          TargetPlatform.macOS: CupertinoPageTransitionsBuilder(),
+        },
+      ),
+      // Buttons and icon buttons are round and, pressed, take the small
+      // corner (ButtonSmallTokens, SmallIconButtonTokens).
+      filledButtonTheme: FilledButtonThemeData(style: _pressMorph),
+      elevatedButtonTheme: ElevatedButtonThemeData(style: _pressMorph),
+      outlinedButtonTheme: OutlinedButtonThemeData(style: _pressMorph),
+      textButtonTheme: TextButtonThemeData(style: _pressMorph),
+      iconButtonTheme: IconButtonThemeData(style: _pressMorph),
       // The bar's menu, back and close buttons in Material Symbols too.
       actionIconTheme: ActionIconThemeData(
         drawerButtonIconBuilder: (context) => const Icon(AppSymbols.menu),
@@ -163,6 +179,19 @@ abstract final class AppTheme {
       ),
     );
   }
+
+  /// Round at rest, the small corner while pressed; Material moves from one
+  /// to the other.
+  static final _pressMorph = ButtonStyle(
+    shape: WidgetStateProperty.resolveWith(
+      (states) => states.contains(WidgetState.pressed)
+          ? RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(Corners.small),
+            )
+          : const StadiumBorder(),
+    ),
+    animationDuration: SpringCurve(Springs.fastSpatial).duration,
+  );
 
   /// The surfaces of [colors] made black, for screens that save power.
   static ColorScheme _black(ColorScheme colors) => colors.copyWith(

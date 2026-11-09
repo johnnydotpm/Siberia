@@ -918,9 +918,9 @@ class _NotificationsStepState extends State<_NotificationsStep> {
       ),
       // The full list unfolds under "choose".
       AnimatedSwitcher(
-        duration: _motion(context, _Motion.list),
-        switchInCurve: _Motion.curve,
-        switchOutCurve: _Motion.curve,
+        duration: _listMotion(context),
+        switchInCurve: _motionCurve(context),
+        switchOutCurve: _motionCurve(context),
         transitionBuilder: (child, animation) => SizeTransition(
           sizeFactor: animation,
           alignment: Alignment.topCenter,
@@ -1101,7 +1101,7 @@ class _ChildrenStep extends StatelessWidget {
           children: [
             _ChildRows(controller),
             if (controller.canBeTogether)
-              SwitchListTile.adaptive(
+              _SwitchTile(
                 key: const ValueKey('onboarding-together'),
                 secondary: const AppIcon(Icons.layers_outlined),
                 title: Text(context.tr('onboardingTogether')),

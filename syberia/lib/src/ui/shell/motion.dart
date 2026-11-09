@@ -20,6 +20,22 @@ bool _reduceMotion(BuildContext context) =>
 Duration _motion(BuildContext context, Duration duration) =>
     _reduceMotion(context) ? Duration.zero : duration;
 
+/// Expressive's spring for what fades, grows and shrinks: the default
+/// effects spring, which never overshoots.
+final _effectsSpring = SpringCurve(Springs.defaultEffects);
+
+/// How long rows take to come and go: the effects spring's time in the
+/// Expressive design, and none when the system asks for less motion.
+Duration _listMotion(BuildContext context) => _motion(
+  context,
+  ExpressiveStyle.of(context) ? _effectsSpring.duration : _Motion.list,
+);
+
+/// The curve rows come and go on: the effects spring in the Expressive
+/// design.
+Curve _motionCurve(BuildContext context) =>
+    ExpressiveStyle.of(context) ? _effectsSpring : _Motion.curve;
+
 /// Text whose changed part rolls when it changes, as numbers do in iOS: the
 /// old digits slide up and away, the new ones come in from below, and the
 /// rest stays still. "In 17 min" to "In 16 min" rolls only the 7. At rest,
@@ -360,8 +376,8 @@ class _AnimatedColumnState extends State<_AnimatedColumn>
                 size: entry.size,
                 opacity: entry.controller,
                 child: AnimatedPadding(
-                  duration: _motion(context, _Motion.list),
-                  curve: _Motion.curve,
+                  duration: _listMotion(context),
+                  curve: _motionCurve(context),
                   padding: EdgeInsets.only(top: entry.gap),
                   child: entry.widget,
                 ),

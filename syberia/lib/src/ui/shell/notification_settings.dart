@@ -98,7 +98,7 @@ class _NotificationSettingsBody extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         if (showMaster)
-          SwitchListTile.adaptive(
+          _SwitchTile(
             key: const ValueKey('notifications-master'),
             secondary: const _SettingsIcon(Icons.notifications_active_rounded),
             title: _WholeWords(
@@ -152,7 +152,7 @@ class _NotificationSettingsBody extends StatelessWidget {
                 onChosen: (changes) =>
                     controller.setNotificationKinds(timetable: changes),
               ),
-            _ => SwitchListTile.adaptive(
+            _ => _SwitchTile(
               key: ValueKey('notification-${category.name}'),
               secondary: _SettingsIcon(_notificationIcon(category)),
               title: Text(context.tr('notification_${category.name}')),
@@ -234,7 +234,7 @@ class _NotificationProfiles extends StatelessWidget {
           ),
         ),
         for (final profile in controller.profiles)
-          SwitchListTile.adaptive(
+          _SwitchTile(
             key: ValueKey('notification-profile-${profile.id}'),
             secondary: ProfileAvatar(
               name: profile.displayName,
@@ -485,7 +485,7 @@ class _ReminderSettings extends StatelessWidget {
         ),
         // A parent does not mark homework done, so has none left to do.
         if (!controller.isParent)
-          SwitchListTile.adaptive(
+          _SwitchTile(
             key: const ValueKey('reminder-homework'),
             secondary: const _SettingsIcon(Icons.assignment_rounded),
             title: Text(context.tr('reminderHomework')),

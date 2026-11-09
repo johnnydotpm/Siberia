@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 
 import '../../theme/app_symbols.dart';
 import '../../theme/expressive_tokens.dart';
-import 'motion.dart';
 
 /// The height of small buttons, of their groups and of the split button
 /// (ButtonSmallTokens, ConnectedButtonGroupSmallTokens).
@@ -289,7 +288,7 @@ class _SplitButtonState extends State<SplitButton> {
                 height: _height,
                 child: AnimatedRotation(
                   turns: widget.menuOpen ? 0.5 : 0,
-                  duration: _shapeSpring.duration,
+                  duration: _springTime(context, _shapeSpring),
                   curve: _shapeSpring,
                   child: Icon(
                     AppSymbols.expandMore,
@@ -349,16 +348,17 @@ class _ButtonContent extends StatelessWidget {
 }
 
 /// A button drawn in [shape] and [color], its ink clipped to the shape, that
-/// moves to a new shape or colour on a fast spatial spring.
-class SpringShapeButton extends ImplicitlyAnimatedWidget {
-  SpringShapeButton({
+/// moves to a new shape or colour on a fast spatial spring; at once when the
+/// phone asks for less motion.
+class SpringShapeButton extends StatelessWidget {
+  const SpringShapeButton({
     required this.shape,
     required this.color,
     required this.child,
     this.onTap,
     this.onHighlightChanged,
     super.key,
-  }) : super(duration: _shapeSpring.duration, curve: _shapeSpring);
+  });
 
   final ShapeBorder shape;
   final Color color;
@@ -367,12 +367,43 @@ class SpringShapeButton extends ImplicitlyAnimatedWidget {
   final ValueChanged<bool>? onHighlightChanged;
 
   @override
-  AnimatedWidgetBaseState<SpringShapeButton> createState() =>
-      _SpringShapeButtonState();
+  Widget build(BuildContext context) => _SpringShape(
+    shape: shape,
+    color: color,
+    onTap: onTap,
+    onHighlightChanged: onHighlightChanged,
+    duration: _springTime(context, _shapeSpring),
+    child: child,
+  );
 }
 
-class _SpringShapeButtonState
-    extends AnimatedWidgetBaseState<SpringShapeButton> {
+/// [spring]'s time, or none when the phone asks for less motion.
+Duration _springTime(BuildContext context, SpringCurve spring) =>
+    MediaQuery.maybeDisableAnimationsOf(context) ?? false
+    ? Duration.zero
+    : spring.duration;
+
+class _SpringShape extends ImplicitlyAnimatedWidget {
+  _SpringShape({
+    required this.shape,
+    required this.color,
+    required this.child,
+    required super.duration,
+    this.onTap,
+    this.onHighlightChanged,
+  }) : super(curve: _shapeSpring);
+
+  final ShapeBorder shape;
+  final Color color;
+  final Widget child;
+  final VoidCallback? onTap;
+  final ValueChanged<bool>? onHighlightChanged;
+
+  @override
+  AnimatedWidgetBaseState<_SpringShape> createState() => _SpringShapeState();
+}
+
+class _SpringShapeState extends AnimatedWidgetBaseState<_SpringShape> {
   ShapeBorderTween? _shape;
   ColorTween? _color;
 

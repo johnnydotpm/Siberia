@@ -7,7 +7,6 @@ import '../../theme/expressive_tokens.dart';
 import '../../theme/wallpaper_colors.dart';
 import 'button_groups.dart';
 import 'loading_indicator.dart';
-import 'motion.dart';
 import 'navigation_bar.dart';
 import 'shapes.dart';
 import 'wavy_progress.dart';
@@ -204,7 +203,10 @@ class _ExpressiveGalleryState extends State<ExpressiveGallery> {
                 child: AnimatedContainer(
                   width: 112,
                   height: 112,
-                  duration: _morphSpring.duration,
+                  duration:
+                      MediaQuery.maybeDisableAnimationsOf(context) ?? false
+                      ? Duration.zero
+                      : _morphSpring.duration,
                   curve: _morphSpring,
                   decoration: ShapeDecoration(
                     color: colors.primary,

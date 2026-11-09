@@ -382,6 +382,72 @@ TextStyle? _metaStyle(BuildContext context) =>
       fontWeight: ExpressiveStyle.of(context) ? null : FontWeight.w600,
     );
 
+/// A row with a switch. In the Expressive design the switch is Material's on
+/// every platform and a flip is felt; elsewhere it is the platform's own
+/// where [adaptive], as before.
+class _SwitchTile extends StatelessWidget {
+  const _SwitchTile({
+    required this.value,
+    required this.onChanged,
+    this.title,
+    this.subtitle,
+    this.secondary,
+    this.contentPadding,
+    this.adaptive = true,
+    Key? key,
+  }) : tileKey = key;
+
+  /// Given to the switch row itself, so it is found by it in every design.
+  final Key? tileKey;
+  final bool value;
+  final ValueChanged<bool>? onChanged;
+  final Widget? title;
+  final Widget? subtitle;
+  final Widget? secondary;
+  final EdgeInsetsGeometry? contentPadding;
+  final bool adaptive;
+
+  @override
+  Widget build(BuildContext context) {
+    final change = onChanged;
+    if (ExpressiveStyle.of(context)) {
+      return SwitchListTile(
+        key: tileKey,
+        value: value,
+        onChanged: change == null
+            ? null
+            : (value) {
+                HapticFeedback.selectionClick();
+                change(value);
+              },
+        title: title,
+        subtitle: subtitle,
+        secondary: secondary,
+        contentPadding: contentPadding,
+      );
+    }
+    return adaptive
+        ? SwitchListTile.adaptive(
+            key: tileKey,
+            value: value,
+            onChanged: change,
+            title: title,
+            subtitle: subtitle,
+            secondary: secondary,
+            contentPadding: contentPadding,
+          )
+        : SwitchListTile(
+            key: tileKey,
+            value: value,
+            onChanged: change,
+            title: title,
+            subtitle: subtitle,
+            secondary: secondary,
+            contentPadding: contentPadding,
+          );
+  }
+}
+
 /// A [SegmentedButton] for one value, or none with [emptySelectionAllowed];
 /// Material 3 Expressive's connected button group in that design.
 class _Segmented<T> extends StatelessWidget {

@@ -97,7 +97,7 @@ Future<void> _showParentSettings(
                     _showBottomTabsSheet(context, controller, profile: current),
               ),
               if (current.role == ProfileRole.parent) ...[
-                SwitchListTile.adaptive(
+                _SwitchTile(
                   key: const ValueKey('parent-quiet'),
                   title: Text(context.tr('quietHours')),
                   value: preferences.quiet,
@@ -124,7 +124,7 @@ Future<void> _showParentSettings(
                       ),
                     ],
                   ),
-                SwitchListTile.adaptive(
+                _SwitchTile(
                   title: Text(context.tr('parentDigest')),
                   value: preferences.digest,
                   onChanged: (value) => controller.setParentPreferences(
@@ -137,7 +137,7 @@ Future<void> _showParentSettings(
                     onPressed: () => changeTime(false, digest: true),
                     child: Text(time(preferences.digestAt)),
                   ),
-                SwitchListTile.adaptive(
+                _SwitchTile(
                   title: Text(context.tr('studentTools')),
                   value: preferences.studentTools,
                   onChanged: (value) => controller.setParentPreferences(

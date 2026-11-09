@@ -152,8 +152,8 @@ class _HomeworkState extends State<_Homework> {
       rows.add(
         AnimatedPadding(
           key: ValueKey('homework-row-${item.id}'),
-          duration: _motion(context, _Motion.list),
-          curve: _Motion.curve,
+          duration: _listMotion(context),
+          curve: _motionCurve(context),
           // The first of its group sits under the label; the next one under
           // it slides up when it goes.
           padding: EdgeInsets.only(top: first ? 0 : _Space.item),
@@ -183,8 +183,8 @@ class _HomeworkState extends State<_Homework> {
                 ),
                 child: AnimatedRotation(
                   turns: _showDone ? 0.5 : 0,
-                  duration: _motion(context, _Motion.list),
-                  curve: _Motion.curve,
+                  duration: _listMotion(context),
+                  curve: _motionCurve(context),
                   child: AppIcon(
                     Icons.expand_more_rounded,
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -201,8 +201,8 @@ class _HomeworkState extends State<_Homework> {
             AnimatedPadding(
               // Apart from its row above, so one moves out and one in.
               key: ValueKey('homework-done-row-${item.id}'),
-              duration: _motion(context, _Motion.list),
-              curve: _Motion.curve,
+              duration: _listMotion(context),
+              curve: _motionCurve(context),
               padding: EdgeInsets.only(top: index == 0 ? 0 : _Space.item),
               child: _HomeworkCard(item, now: now),
             ),

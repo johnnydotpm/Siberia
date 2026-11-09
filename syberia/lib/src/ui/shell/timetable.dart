@@ -45,7 +45,7 @@ Future<void> _showTimetableSettings(
               },
             ),
             const SizedBox(height: 12),
-            SwitchListTile.adaptive(
+            _SwitchTile(
               key: const ValueKey('settings-merge-lessons'),
               contentPadding: EdgeInsets.zero,
               title: Text(context.tr('mergeTimetableLessons')),
@@ -53,7 +53,7 @@ Future<void> _showTimetableSettings(
               value: controller.mergeTimetableLessons,
               onChanged: controller.setMergeTimetableLessons,
             ),
-            SwitchListTile.adaptive(
+            _SwitchTile(
               key: const ValueKey('settings-show-breaks'),
               contentPadding: EdgeInsets.zero,
               title: Text(context.tr('showTimetableBreaks')),

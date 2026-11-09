@@ -113,7 +113,10 @@ class _NavigationItem extends StatelessWidget {
                 children: [
                   TweenAnimationBuilder<double>(
                     tween: Tween(end: selected ? 1 : 0),
-                    duration: _indicatorSpring.duration,
+                    duration:
+                        MediaQuery.maybeDisableAnimationsOf(context) ?? false
+                        ? Duration.zero
+                        : _indicatorSpring.duration,
                     curve: _indicatorSpring,
                     builder: (context, progress, _) => Container(
                       width: _indicator.width * progress.clamp(0, 2),
