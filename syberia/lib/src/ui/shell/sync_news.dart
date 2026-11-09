@@ -136,7 +136,7 @@ class _SyncNewsBannerState extends State<_SyncNewsBanner> {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(icon, size: 18, color: colors.primary),
+                      AppIcon(icon, size: 18, color: colors.primary),
                       const SizedBox(width: 4),
                       Text(
                         '+$count',

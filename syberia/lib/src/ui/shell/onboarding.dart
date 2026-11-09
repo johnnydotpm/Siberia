@@ -319,7 +319,7 @@ class _SetupHeader extends StatelessWidget {
                 key: const ValueKey('onboarding-back'),
                 tooltip: MaterialLocalizations.of(context).backButtonTooltip,
                 onPressed: onBack,
-                icon: const Icon(Icons.arrow_back_rounded),
+                icon: const AppIcon(Icons.arrow_back_rounded),
               ),
             ),
           Semantics(
@@ -607,7 +607,7 @@ class _WelcomeStepState extends State<_WelcomeStep> {
                         : _ownNames[code]!,
                   ),
                   trailing: chosen == code
-                      ? Icon(Icons.check_rounded, color: colors.primary)
+                      ? AppIcon(Icons.check_rounded, color: colors.primary)
                       : null,
                   selected: chosen == code,
                   onTap: () {
@@ -740,7 +740,7 @@ class _AccountStepState extends State<_AccountStep> {
           OutlinedButton.icon(
             key: const ValueKey('onboarding-add-profile'),
             onPressed: () => _showAddProfile(context, controller),
-            icon: const Icon(Icons.person_add_alt_1_rounded),
+            icon: const AppIcon(Icons.person_add_alt_1_rounded),
             label: Text(context.tr('addProfile')),
           ),
         ] else
@@ -860,12 +860,12 @@ class _NotificationsStepState extends State<_NotificationsStep> {
                   transitionBuilder: (child, animation) =>
                       ScaleTransition(scale: animation, child: child),
                   child: chosen
-                      ? Icon(
+                      ? AppIcon(
                           Icons.check_circle_rounded,
                           key: ValueKey('notify-${choice.name}-chosen'),
                           color: colors.primary,
                         )
-                      : Icon(
+                      : AppIcon(
                           Icons.radio_button_unchecked_rounded,
                           key: const ValueKey('unchosen'),
                           color: colors.outline,
@@ -984,7 +984,7 @@ class _DoneStep extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(
+              AppIcon(
                 icon,
                 color: warning ? colors.onErrorContainer : colors.primary,
               ),
@@ -1103,7 +1103,7 @@ class _ChildrenStep extends StatelessWidget {
             if (controller.canBeTogether)
               SwitchListTile.adaptive(
                 key: const ValueKey('onboarding-together'),
-                secondary: const Icon(Icons.layers_outlined),
+                secondary: const AppIcon(Icons.layers_outlined),
                 title: Text(context.tr('onboardingTogether')),
                 subtitle: Text(context.tr('profileTogetherHint')),
                 value: controller.together,

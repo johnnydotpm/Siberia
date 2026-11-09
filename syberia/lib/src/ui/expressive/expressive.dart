@@ -2,6 +2,7 @@
 library;
 
 export 'button_groups.dart';
+export 'expressive_style.dart';
 export 'gallery.dart';
 export 'loading_indicator.dart';
 export 'motion.dart';

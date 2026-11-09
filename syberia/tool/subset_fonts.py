@@ -58,8 +58,8 @@ SYMBOL_RENAMES = {
 }
 # Symbols the Expressive design uses that no `Icons.name` brings in.
 SYMBOL_EXTRAS = [
-    'arrow_back', 'calendar_month', 'check', 'expand_more', 'home', 'mail',
-    'palette', 'school',
+    'arrow_back', 'calendar_month', 'check', 'close', 'expand_more', 'home',
+    'mail', 'menu', 'palette', 'school',
 ]
 DART_RESERVED = set(keyword.kwlist) | {
     'class', 'new', 'switch', 'default', 'case', 'enum', 'extends', 'final',

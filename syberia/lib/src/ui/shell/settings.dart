@@ -249,7 +249,7 @@ class _Settings extends StatelessWidget {
                     const SizedBox(height: 10),
                     SizedBox(
                       width: double.infinity,
-                      child: SegmentedButton<double>(
+                      child: _Segmented<double>(
                         key: ValueKey(key),
                         showSelectedIcon: false,
                         segments: [
@@ -329,7 +329,7 @@ class _Settings extends StatelessWidget {
               key: const ValueKey('settings-whats-new'),
               leading: const _SettingsIcon(Icons.new_releases_rounded),
               title: Text(context.tr('whatsNew')),
-              trailing: const Icon(Icons.open_in_new_rounded, size: 20),
+              trailing: const AppIcon(Icons.open_in_new_rounded, size: 20),
               onTap: () => _openLink(context, '$_repositoryUrl/releases'),
             ),
             ListTile(
@@ -337,7 +337,7 @@ class _Settings extends StatelessWidget {
               leading: const _SettingsIcon(Icons.code_rounded),
               title: Text(context.tr('sourceCode')),
               subtitle: const Text('github.com/johnnydotpm/Siberia'),
-              trailing: const Icon(Icons.open_in_new_rounded, size: 20),
+              trailing: const AppIcon(Icons.open_in_new_rounded, size: 20),
               onTap: () => _openLink(context, _repositoryUrl),
             ),
           ],
@@ -350,7 +350,7 @@ class _Settings extends StatelessWidget {
               foregroundColor: Theme.of(context).colorScheme.error,
             ),
             onPressed: () => _confirmResetSettings(context, controller),
-            icon: const Icon(Icons.restart_alt_rounded),
+            icon: const AppIcon(Icons.restart_alt_rounded),
             label: Text(context.tr('resetSettings')),
           ),
         ),
@@ -376,12 +376,22 @@ class _SettingsSection extends StatelessWidget {
           _GroupLabel(title, accent: true),
           Card(
             clipBehavior: Clip.antiAlias,
+            // Expressive: a group of the settings, rounded as the mockup's.
+            shape: ExpressiveStyle.of(context)
+                ? RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(Corners.extraLarge),
+                  )
+                : null,
             child: Column(
               children: [
                 for (final (index, child) in children.indexed) ...[
                   // From the text on, past the icon, as in the system's
                   // own settings.
-                  if (index > 0) const Divider(height: 1, indent: 66),
+                  if (index > 0)
+                    Divider(
+                      height: 1,
+                      indent: ExpressiveStyle.of(context) ? 72 : 66,
+                    ),
                   child,
                 ],
               ],
@@ -401,14 +411,19 @@ class _SettingsIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
+    final expressive = ExpressiveStyle.of(context);
     return Container(
-      width: 34,
-      height: 34,
+      width: expressive ? 40 : 34,
+      height: expressive ? 40 : 34,
       decoration: BoxDecoration(
         color: colors.primaryContainer,
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(expressive ? Corners.medium : 10),
       ),
-      child: Icon(icon, size: 20, color: colors.onPrimaryContainer),
+      child: AppIcon(
+        icon,
+        size: expressive ? 24 : 20,
+        color: colors.onPrimaryContainer,
+      ),
     );
   }
 }
@@ -475,7 +490,11 @@ class _SettingsProfile extends StatelessWidget {
                     const SizedBox(height: 4),
                     Row(
                       children: [
-                        Icon(Icons.cloud_done_rounded, size: 15, color: muted),
+                        AppIcon(
+                          Icons.cloud_done_rounded,
+                          size: 15,
+                          color: muted,
+                        ),
                         const SizedBox(width: 5),
                         Flexible(
                           // "przed chwilą" turns into "5 min temu" on its own.
@@ -507,7 +526,7 @@ class _SettingsProfile extends StatelessWidget {
                   key: const ValueKey('settings-sync'),
                   tooltip: context.tr('sync'),
                   onPressed: controller.sync,
-                  icon: const Icon(Icons.sync_rounded),
+                  icon: const AppIcon(Icons.sync_rounded),
                 ),
             ],
           ),
@@ -578,7 +597,7 @@ Future<void> _showLanguageSheet(
                 _languageName(sheetContext, code == null ? null : Locale(code)),
               ),
               trailing: controller.locale?.languageCode == code
-                  ? Icon(
+                  ? AppIcon(
                       Icons.check_rounded,
                       color: Theme.of(sheetContext).colorScheme.primary,
                     )
@@ -669,7 +688,7 @@ class _WidgetProfileRow extends StatelessWidget {
       orElse: () => controller.profiles.first,
     );
     Widget check(bool selected, BuildContext context) => selected
-        ? Icon(
+        ? AppIcon(
             Icons.check_rounded,
             color: Theme.of(context).colorScheme.primary,
           )
@@ -870,7 +889,7 @@ class _BottomTabsSheetState extends State<_BottomTabsSheet> {
         CheckboxListTile(
           key: ValueKey('bottom-tab-$tab'),
           contentPadding: EdgeInsets.zero,
-          secondary: Icon(_tabLooks[tab].selectedIcon),
+          secondary: AppIcon(_tabLooks[tab].selectedIcon),
           title: Text(context.tr(_tabLooks[tab].label)),
           value: chosen.contains(tab),
           // Three at most: one comes off before another goes on.
@@ -940,7 +959,7 @@ class _ExcuseWording extends StatelessWidget {
           // Above its choices: beside them it does not fit a narrow phone.
           Text(context.tr('excuseChildWord')),
           const SizedBox(height: 6),
-          SegmentedButton<ExcuseChild>(
+          _Segmented<ExcuseChild>(
             key: const ValueKey('settings-excuse-child'),
             showSelectedIcon: false,
             segments: [

@@ -130,7 +130,12 @@ class _TodayState extends State<_Today> {
           ],
           Text(
             _capitalize(DateFormat.MMMMEEEEd(locale).format(now)),
-            style: Theme.of(context).textTheme.titleMedium,
+            // Expressive: under the large title, as the mockup has it.
+            style: ExpressiveStyle.of(context)
+                ? Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  )
+                : Theme.of(context).textTheme.titleMedium,
           ),
           if (controller.snapshot.lastSync.millisecondsSinceEpoch != 0)
             _LastSync(controller, now: now),
@@ -440,7 +445,7 @@ class _TodayState extends State<_Today> {
                       if (waiting.isNotEmpty)
                         FilledButton.tonalIcon(
                           key: const ValueKey('today-excuse-button'),
-                          icon: const Icon(Icons.edit_note_rounded),
+                          icon: const AppIcon(Icons.edit_note_rounded),
                           label: Text(context.tr('excuseButton')),
                           onPressed: () =>
                               _showExcuseSheet(context, controller),
@@ -649,6 +654,30 @@ class _NowCard extends StatelessWidget {
         ? 0.0
         : (now.difference(lesson.start).inSeconds / duration).clamp(0.0, 1.0);
     final minutesLeft = (lesson.end.difference(now).inSeconds / 60).ceil();
+    if (ExpressiveStyle.of(context)) {
+      return _ExpressiveNowCard(
+        key: const ValueKey('today-now-card'),
+        number: featured.number,
+        label: label,
+        when: when,
+        whenOnItsLine: !sameDay && current == null,
+        subject: _SubjectScope.of(context, lesson.subject),
+        details: [
+          if (current == null) '${_time(lesson.start)}–${_time(lesson.end)}',
+          _blockDetails(context, featured),
+        ].where((value) => value.isNotEmpty).join(' · '),
+        progress: current == null ? null : progress,
+        left: current == null
+            ? null
+            : context.trArgs('lessonEndsIn', {'minutes': '$minutesLeft'}),
+        footer: footer,
+        substitution: lesson.substitution,
+        mark: controller.profileMark(lesson.source) == null
+            ? null
+            : _ProfileMark(lesson.source),
+        onTap: () => controller.openTimetableDay(lesson.start),
+      );
+    }
     return Material(
       key: const ValueKey('today-now-card'),
       color: palette.background,
@@ -750,7 +779,10 @@ class _NowCard extends StatelessWidget {
                   if (lesson.substitution)
                     Padding(
                       padding: const EdgeInsets.only(left: 8, top: 4),
-                      child: Icon(Icons.swap_horiz_rounded, color: foreground),
+                      child: AppIcon(
+                        Icons.swap_horiz_rounded,
+                        color: foreground,
+                      ),
                     ),
                 ],
               ),
@@ -806,6 +838,172 @@ class _NowCard extends StatelessWidget {
                     color: foreground,
                     fontWeight: FontWeight.w700,
                   ),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// The lesson on now, or the next one, in the Expressive design: a card of
+/// the primary container, the lesson's number on a nine-sided cookie, its
+/// subject in Headline Medium and a wavy bar for how far along it is.
+class _ExpressiveNowCard extends StatelessWidget {
+  const _ExpressiveNowCard({
+    required this.number,
+    required this.label,
+    required this.when,
+    required this.whenOnItsLine,
+    required this.subject,
+    required this.details,
+    required this.progress,
+    required this.left,
+    required this.footer,
+    required this.substitution,
+    required this.mark,
+    required this.onTap,
+    super.key,
+  });
+
+  final String? number;
+  final String label;
+  final String when;
+
+  /// Another day's date goes on a line of its own, under the label.
+  final bool whenOnItsLine;
+  final String subject;
+  final String details;
+
+  /// How far along the lesson on now is; null for one still to come.
+  final double? progress;
+  final String? left;
+  final String? footer;
+  final bool substitution;
+  final Widget? mark;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    final emphasized = ExpressiveType.of(context);
+    final on = colors.onPrimaryContainer;
+    final labelStyle = theme.textTheme.labelMedium?.copyWith(
+      color: on,
+      fontFeatures: _tabular,
+    );
+    return Material(
+      color: colors.primaryContainer,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(Corners.extraLarge),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(Space.large),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
+                children: [
+                  if (number case final number?) ...[
+                    ShapeBadge(
+                      key: const ValueKey('today-now-number'),
+                      shape: ExpressiveShapes.cookie9,
+                      size: 64,
+                      color: colors.primary,
+                      child: Text(
+                        number,
+                        style: emphasized.headlineSmall?.copyWith(
+                          color: colors.onPrimary,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: Space.large),
+                  ],
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (whenOnItsLine) ...[
+                          Text(label, style: labelStyle),
+                          Text(
+                            when,
+                            style: theme.textTheme.titleSmall?.copyWith(
+                              color: on,
+                            ),
+                          ),
+                        ] else
+                          _RollingText(
+                            '$label · $when',
+                            key: const ValueKey('today-now-when'),
+                            style: labelStyle,
+                          ),
+                        Text(
+                          subject,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: emphasized.headlineMedium?.copyWith(color: on),
+                        ),
+                        if (details.isNotEmpty)
+                          Text(
+                            details,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: on,
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                  if (mark case final mark?)
+                    Padding(
+                      padding: const EdgeInsetsDirectional.only(
+                        start: Space.small,
+                      ),
+                      child: mark,
+                    ),
+                  if (substitution)
+                    Padding(
+                      padding: const EdgeInsetsDirectional.only(
+                        start: Space.small,
+                      ),
+                      child: AppIcon(Icons.swap_horiz_rounded, color: on),
+                    ),
+                ],
+              ),
+              if (progress case final progress?) ...[
+                const SizedBox(height: Space.medium),
+                // On the coloured card the track takes the screen's colour.
+                WavyProgressIndicator(
+                  key: const ValueKey('today-now-progress'),
+                  value: progress,
+                  color: colors.primary,
+                  trackColor: colors.surface,
+                ),
+                const SizedBox(height: Space.small),
+                Align(
+                  alignment: AlignmentDirectional.centerEnd,
+                  child: _RollingText(
+                    left!,
+                    key: const ValueKey('today-now-left'),
+                    style: theme.textTheme.labelLarge?.copyWith(
+                      color: on,
+                      fontFeatures: _tabular,
+                    ),
+                  ),
+                ),
+              ],
+              if (footer case final footer?) ...[
+                const SizedBox(height: Space.medium),
+                Text(
+                  footer,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.bodyMedium?.copyWith(color: on),
                 ),
               ],
             ],
@@ -969,7 +1167,7 @@ class _LastSync extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(
+              AppIcon(
                 calm == null ? Icons.sync_rounded : Icons.cloud_off_rounded,
                 size: 14,
                 color: color,
@@ -1057,11 +1255,11 @@ Future<void> _showTodayLayoutSheet(
                           key: ValueKey('today-block-${entry.block.name}'),
                           leading: ReorderableDragStartListener(
                             index: index,
-                            child: const Icon(Icons.drag_indicator_rounded),
+                            child: const AppIcon(Icons.drag_indicator_rounded),
                           ),
                           title: Row(
                             children: [
-                              Icon(_todayBlockIcon(entry.block), size: 20),
+                              AppIcon(_todayBlockIcon(entry.block), size: 20),
                               const SizedBox(width: 12),
                               Expanded(
                                 child: Text(
@@ -1133,7 +1331,7 @@ class _UpdateBanner extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.only(top: 3),
-            child: Icon(
+            child: AppIcon(
               Icons.system_update_alt_rounded,
               color: Theme.of(context).colorScheme.onTertiaryContainer,
             ),
@@ -1160,7 +1358,7 @@ class _UpdateBanner extends StatelessWidget {
           ),
           IconButton(
             onPressed: controller.dismissUpdate,
-            icon: const Icon(Icons.close_rounded),
+            icon: const AppIcon(Icons.close_rounded),
             tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
           ),
         ],
@@ -1183,6 +1381,47 @@ class _Summary extends StatelessWidget {
     final present = data.attendance
         .where((item) => item.kind.countsAsPresence)
         .length;
+    final colors = Theme.of(context).colorScheme;
+    if (ExpressiveStyle.of(context)) {
+      // Each figure a tile of its own colour, rounded as the mockup's, all
+      // as tall as the tallest.
+      return IntrinsicHeight(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: _spacedRow([
+            _Metric(
+              average,
+              (value) => _decimal(context, value),
+              context.tr('averageGrade'),
+              Icons.school_rounded,
+              key: const ValueKey('summary-grades'),
+              onTap: () => controller.selectTab(2),
+              tile: (colors.tertiaryContainer, colors.onTertiaryContainer),
+            ),
+            _Metric(
+              data.attendance.isEmpty
+                  ? null
+                  : present / data.attendance.length * 100,
+              (value) => _percent(context, value),
+              context.tr('attendanceRate'),
+              Icons.fact_check_rounded,
+              key: const ValueKey('summary-absences'),
+              onTap: () => controller.selectTab(6),
+              tile: (colors.secondaryContainer, colors.onSecondaryContainer),
+            ),
+            _Metric(
+              data.unreadMessages.toDouble(),
+              (value) => '${value.round()}',
+              context.tr('messagesUnread'),
+              Icons.mail_rounded,
+              key: const ValueKey('summary-messages'),
+              onTap: () => controller.selectTab(5),
+              tile: (colors.primaryContainer, colors.onPrimaryContainer),
+            ),
+          ]),
+        ),
+      );
+    }
     return Card(
       color: Theme.of(context).colorScheme.primaryContainer,
       clipBehavior: Clip.antiAlias,
@@ -1236,6 +1475,7 @@ class _Metric extends StatelessWidget {
     this.label,
     this.icon, {
     required this.onTap,
+    this.tile,
     super.key,
   });
 
@@ -1245,8 +1485,57 @@ class _Metric extends StatelessWidget {
   final String label;
   final IconData icon;
   final VoidCallback onTap;
+
+  /// The Expressive design's tile: its container and content colours.
+  final (Color, Color)? tile;
+
   @override
-  Widget build(BuildContext context) => InkWell(
+  Widget build(BuildContext context) {
+    if (tile case (final background, final foreground)) {
+      final theme = Theme.of(context);
+      return Material(
+        color: background,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(Corners.extraLarge),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.all(Space.large),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                AppIcon(icon, color: foreground),
+                const SizedBox(height: Space.small),
+                _CountingText(
+                  value,
+                  format: format,
+                  style: ExpressiveType.of(context).headlineMedium
+                      ?.copyWith(color: foreground, fontFeatures: _tabular),
+                ),
+                // One line, smaller if it must: a long word is not broken.
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: AlignmentDirectional.centerStart,
+                  child: Text(
+                    label,
+                    maxLines: 1,
+                    style: theme.textTheme.labelMedium?.copyWith(
+                      color: foreground,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+    return _plainMetric(context);
+  }
+
+  Widget _plainMetric(BuildContext context) => InkWell(
     // The card's corner less its padding, so the two curves follow.
     borderRadius: BorderRadius.circular(10),
     onTap: onTap,
@@ -1254,7 +1543,7 @@ class _Metric extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
       child: Column(
         children: [
-          Icon(icon, color: Theme.of(context).colorScheme.primary),
+          AppIcon(icon, color: Theme.of(context).colorScheme.primary),
           const SizedBox(height: 4),
           _CountingText(
             value,
@@ -1394,7 +1683,7 @@ class _TogetherSummary extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
               child: Row(
                 children: [
-                  Icon(Icons.mail_rounded, size: 20, color: colors.primary),
+                  AppIcon(Icons.mail_rounded, size: 20, color: colors.primary),
                   const SizedBox(width: 10),
                   Expanded(
                     child: Text(

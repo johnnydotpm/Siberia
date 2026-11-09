@@ -72,6 +72,7 @@ abstract final class AppSymbols {
   static const mail = IconData(0xe159, fontFamily: fontFamily);
   static const mailOutline = IconData(0xe159, fontFamily: fontFamily);
   static const markEmailRead = IconData(0xf18c, fontFamily: fontFamily);
+  static const menu = IconData(0xe5d2, fontFamily: fontFamily);
   static const moreHoriz = IconData(0xe5d3, fontFamily: fontFamily);
   static const newReleases = IconData(0xef76, fontFamily: fontFamily);
   static const nightsStay = IconData(0xf174, fontFamily: fontFamily);

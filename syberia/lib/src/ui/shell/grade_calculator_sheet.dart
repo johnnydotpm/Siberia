@@ -137,7 +137,7 @@ class _GradeCalculatorState extends State<_GradeCalculator> {
                     children: [
                       _AveragePill(current, large: true),
                       Expanded(
-                        child: Icon(
+                        child: AppIcon(
                           Icons.arrow_forward_rounded,
                           color: theme.colorScheme.outline,
                         ),
@@ -172,7 +172,7 @@ class _GradeCalculatorState extends State<_GradeCalculator> {
               Expanded(
                 child: Text(context.tr('gradeCalculatorAdd'), style: heading),
               ),
-              SegmentedButton<int>(
+              _Segmented<int>(
                 key: const ValueKey('calculator-modifier'),
                 showSelectedIcon: false,
                 emptySelectionAllowed: true,
@@ -272,7 +272,7 @@ class _GradeCalculatorState extends State<_GradeCalculator> {
               IconButton.outlined(
                 key: const ValueKey('calculator-target-down'),
                 onPressed: _target > 1 ? () => _moveTarget(-0.25) : null,
-                icon: const Icon(Icons.remove_rounded),
+                icon: const AppIcon(Icons.remove_rounded),
               ),
               SizedBox(
                 width: 64,
@@ -288,7 +288,7 @@ class _GradeCalculatorState extends State<_GradeCalculator> {
               IconButton.outlined(
                 key: const ValueKey('calculator-target-up'),
                 onPressed: _target < 6 ? () => _moveTarget(0.25) : null,
-                icon: const Icon(Icons.add_rounded),
+                icon: const AppIcon(Icons.add_rounded),
               ),
             ],
           ),
@@ -297,7 +297,7 @@ class _GradeCalculatorState extends State<_GradeCalculator> {
             Row(
               key: const ValueKey('calculator-reached'),
               children: [
-                Icon(
+                AppIcon(
                   Icons.check_circle_rounded,
                   color: theme.colorScheme.primary,
                 ),

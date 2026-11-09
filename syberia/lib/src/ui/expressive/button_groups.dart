@@ -36,29 +36,90 @@ class ConnectedButtonGroup<T> extends StatelessWidget {
   final ValueChanged<T>? onSelected;
 
   @override
-  Widget build(BuildContext context) => Row(
+  Widget build(BuildContext context) => _GroupRow(
     children: [
-      for (final (index, option) in options.indexed) ...[
-        if (index > 0) const SizedBox(width: Space.connected),
-        Expanded(
-          child: _GroupButton(
-            key: option.key,
-            label: option.label,
-            icon: option.icon,
-            selected: option.value == selected,
-            first: index == 0,
-            last: index == options.length - 1,
-            onTap: onSelected == null
-                ? null
-                : () {
-                    if (option.value == selected) return;
-                    HapticFeedback.selectionClick();
-                    onSelected!(option.value);
-                  },
-          ),
+      for (final (index, option) in options.indexed)
+        _GroupButton(
+          key: option.key,
+          label: Text(option.label),
+          icon: option.icon == null ? null : Icon(option.icon),
+          selected: option.value == selected,
+          first: index == 0,
+          last: index == options.length - 1,
+          onTap: onSelected == null
+              ? null
+              : () {
+                  if (option.value == selected) return;
+                  HapticFeedback.selectionClick();
+                  onSelected!(option.value);
+                },
         ),
-      ],
     ],
+  );
+}
+
+/// A connected button group made of [ButtonSegment]s, for the places a
+/// [SegmentedButton] picks one value (or none, with
+/// [emptySelectionAllowed]) in the other designs.
+class SegmentedGroup<T> extends StatelessWidget {
+  const SegmentedGroup({
+    required this.segments,
+    required this.selected,
+    required this.onSelectionChanged,
+    this.emptySelectionAllowed = false,
+    super.key,
+  });
+
+  final List<ButtonSegment<T>> segments;
+  final Set<T> selected;
+  final ValueChanged<Set<T>>? onSelectionChanged;
+  final bool emptySelectionAllowed;
+
+  @override
+  Widget build(BuildContext context) => _GroupRow(
+    children: [
+      for (final (index, segment) in segments.indexed)
+        _GroupButton(
+          label: segment.label ?? const SizedBox.shrink(),
+          icon: segment.icon,
+          tooltip: segment.tooltip,
+          selected: selected.contains(segment.value),
+          first: index == 0,
+          last: index == segments.length - 1,
+          onTap: onSelectionChanged == null || !segment.enabled
+              ? null
+              : () {
+                  final chosen = selected.contains(segment.value);
+                  if (chosen && !emptySelectionAllowed) return;
+                  HapticFeedback.selectionClick();
+                  onSelectionChanged!(chosen ? <T>{} : {segment.value});
+                },
+        ),
+    ],
+  );
+}
+
+/// The buttons of a group 2 points apart: sharing the width when it is
+/// bounded, each as wide as it needs where it is not.
+class _GroupRow extends StatelessWidget {
+  const _GroupRow({required this.children});
+
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (context, constraints) {
+      final fill = constraints.hasBoundedWidth;
+      return Row(
+        mainAxisSize: fill ? MainAxisSize.max : MainAxisSize.min,
+        children: [
+          for (final (index, child) in children.indexed) ...[
+            if (index > 0) const SizedBox(width: Space.connected),
+            if (fill) Expanded(child: child) else child,
+          ],
+        ],
+      );
+    },
   );
 }
 
@@ -70,11 +131,13 @@ class _GroupButton extends StatefulWidget {
     required this.first,
     required this.last,
     required this.onTap,
+    this.tooltip,
     super.key,
   });
 
-  final String label;
-  final IconData? icon;
+  final Widget label;
+  final Widget? icon;
+  final String? tooltip;
   final bool selected;
   final bool first;
   final bool last;
@@ -110,7 +173,7 @@ class _GroupButtonState extends State<_GroupButton> {
         : widget.selected
         ? (colors.primary, colors.onPrimary)
         : (colors.surfaceContainer, colors.onSurfaceVariant);
-    return Semantics(
+    Widget button = Semantics(
       button: true,
       selected: widget.selected,
       inMutuallyExclusiveGroup: true,
@@ -128,6 +191,10 @@ class _GroupButtonState extends State<_GroupButton> {
         ),
       ),
     );
+    if (widget.tooltip case final tooltip?) {
+      button = Tooltip(message: tooltip, child: button);
+    }
+    return button;
   }
 }
 
@@ -193,8 +260,8 @@ class _SplitButtonState extends State<SplitButton> {
             onHighlightChanged: (pressed) =>
                 setState(() => _leadingPressed = pressed),
             child: _ButtonContent(
-              label: widget.label,
-              icon: widget.icon,
+              label: Text(widget.label),
+              icon: widget.icon == null ? null : Icon(widget.icon),
               color: leadingContent,
               padding: const EdgeInsetsDirectional.only(start: 16, end: 12),
             ),
@@ -248,8 +315,8 @@ class _ButtonContent extends StatelessWidget {
     required this.padding,
   });
 
-  final String label;
-  final IconData? icon;
+  final Widget label;
+  final Widget? icon;
   final Color color;
   final EdgeInsetsGeometry padding;
 
@@ -258,24 +325,24 @@ class _ButtonContent extends StatelessWidget {
     height: _height,
     child: Padding(
       padding: padding,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          if (icon case final icon?) ...[
-            Icon(icon, size: 20, color: color),
-            const SizedBox(width: Space.small),
-          ],
-          Flexible(
-            child: Text(
-              label,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: Theme.of(context).textTheme.labelLarge!
-                  .copyWith(color: color),
-            ),
+      child: IconTheme.merge(
+        data: IconThemeData(size: 20, color: color),
+        child: DefaultTextStyle.merge(
+          style: Theme.of(context).textTheme.labelLarge!.copyWith(color: color),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (icon case final icon?) ...[
+                icon,
+                const SizedBox(width: Space.small),
+              ],
+              Flexible(child: label),
+            ],
           ),
-        ],
+        ),
       ),
     ),
   );

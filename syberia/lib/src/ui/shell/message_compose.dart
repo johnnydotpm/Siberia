@@ -241,7 +241,7 @@ class _ComposeMessageSheetState extends State<_ComposeMessageSheet> {
                   ),
                   IconButton(
                     onPressed: sending ? null : () => Navigator.pop(context),
-                    icon: const Icon(Icons.close_rounded),
+                    icon: const AppIcon(Icons.close_rounded),
                     tooltip: MaterialLocalizations.of(context)
                         .closeButtonTooltip,
                   ),
@@ -342,7 +342,7 @@ class _ComposeMessageSheetState extends State<_ComposeMessageSheet> {
                                       decoration: InputDecoration(
                                         labelText: context.tr('recipient'),
                                         hintText: context.tr('searchRecipient'),
-                                        prefixIcon: const Icon(
+                                        prefixIcon: const AppIcon(
                                           Icons.person_search_rounded,
                                         ),
                                       ),
@@ -455,7 +455,7 @@ class _ComposeMessageSheetState extends State<_ComposeMessageSheet> {
                           dimension: 18,
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
-                      : const Icon(Icons.send_rounded),
+                      : const AppIcon(Icons.send_rounded),
                   label: Text(context.tr(sending ? 'sending' : 'send')),
                 ),
               ),
@@ -479,7 +479,7 @@ class _RecipientError extends StatelessWidget {
       padding: const EdgeInsets.all(12),
       child: Row(
         children: [
-          Icon(
+          AppIcon(
             Icons.error_outline_rounded,
             color: Theme.of(context).colorScheme.onErrorContainer,
           ),
@@ -494,7 +494,7 @@ class _RecipientError extends StatelessWidget {
           ),
           IconButton(
             onPressed: onRetry,
-            icon: const Icon(Icons.refresh_rounded),
+            icon: const AppIcon(Icons.refresh_rounded),
             tooltip: MaterialLocalizations.of(context)
                 .refreshIndicatorSemanticLabel,
           ),

@@ -61,8 +61,11 @@ class _Heading extends StatelessWidget {
       Expanded(
         child: Text(
           text,
-          style: Theme.of(context).textTheme.titleMedium
-              ?.copyWith(fontWeight: FontWeight.w800),
+          // Expressive: Title Large, as the mockup's section titles.
+          style: ExpressiveStyle.of(context)
+              ? Theme.of(context).textTheme.titleLarge
+              : Theme.of(context).textTheme.titleMedium
+                    ?.copyWith(fontWeight: FontWeight.w800),
         ),
       ),
       if (onAll != null)
@@ -76,7 +79,7 @@ class _Heading extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(context.tr('all')),
-              const Icon(Icons.chevron_right_rounded, size: 20),
+              const AppIcon(Icons.chevron_right_rounded, size: 20),
             ],
           ),
         ),
@@ -101,13 +104,31 @@ class _Empty extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final expressive = ExpressiveStyle.of(context);
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(40),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 44, color: color ?? theme.colorScheme.outline),
+            if (expressive)
+              // The page's symbol on one of Material's shapes.
+              ShapeBadge(
+                shape: ExpressiveShapes.cookie9,
+                size: 88,
+                color: theme.colorScheme.surfaceContainerHigh,
+                child: AppIcon(
+                  icon,
+                  size: 40,
+                  color: color ?? theme.colorScheme.onSurfaceVariant,
+                ),
+              )
+            else
+              AppIcon(
+                icon,
+                size: 44,
+                color: color ?? theme.colorScheme.outline,
+              ),
             const SizedBox(height: 12),
             Text(
               text,
@@ -131,7 +152,7 @@ const _tabular = [FontFeature.tabularFigures()];
 class _Chevron extends StatelessWidget {
   const _Chevron();
   @override
-  Widget build(BuildContext context) => Icon(
+  Widget build(BuildContext context) => AppIcon(
     Icons.chevron_right_rounded,
     size: 20,
     color: Theme.of(context).colorScheme.outline,
@@ -153,7 +174,7 @@ class _InfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Card(
     child: ListTile(
-      leading: Icon(icon, color: color),
+      leading: AppIcon(icon, color: color),
       title: Text(text, style: TextStyle(color: color)),
       trailing: trailing,
     ),
@@ -225,7 +246,7 @@ class _VpnHintState extends State<_VpnHint> {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(
+                      AppIcon(
                         Icons.vpn_lock_rounded,
                         color: colors.onSecondaryContainer,
                       ),
@@ -293,6 +314,14 @@ List<Widget> _spaced(Iterable<Widget> items, [double gap = _Space.item]) => [
   ],
 ];
 
+/// [items] side by side, sharing the width, [gap] apart.
+List<Widget> _spacedRow(Iterable<Widget> items, [double gap = Space.small]) => [
+  for (final (index, item) in items.indexed) ...[
+    if (index > 0) SizedBox(width: gap),
+    Expanded(child: item),
+  ],
+];
+
 /// "{count} days" in the right form: Polish, Russian and Ukrainian have
 /// three of them, English and German two. [key] names the three texts:
 /// `${key}One`, `${key}Few` and `${key}Many`.
@@ -310,16 +339,20 @@ class _GroupLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final color = accent
+        ? theme.colorScheme.primary
+        : theme.colorScheme.onSurfaceVariant;
     return Padding(
       padding: EdgeInsetsDirectional.fromSTEB(12, top, 12, _Space.heading),
       child: Text(
         text,
-        style: theme.textTheme.labelLarge?.copyWith(
-          color: accent
-              ? theme.colorScheme.primary
-              : theme.colorScheme.onSurfaceVariant,
-          fontWeight: FontWeight.w800,
-        ),
+        // Expressive: a list's subheader, Title Small.
+        style: ExpressiveStyle.of(context)
+            ? theme.textTheme.titleSmall?.copyWith(color: color)
+            : theme.textTheme.labelLarge?.copyWith(
+                color: color,
+                fontWeight: FontWeight.w800,
+              ),
       ),
     );
   }
@@ -330,22 +363,62 @@ final _wideButton = FilledButton.styleFrom(
   minimumSize: const Size.fromHeight(48),
 );
 
-/// A sheet's title.
-TextStyle? _sheetTitleStyle(BuildContext context) =>
-    Theme.of(context).textTheme.headlineSmall
-        ?.copyWith(fontWeight: FontWeight.w800);
+/// A sheet's title. Expressive: Headline Small, Emphasized.
+TextStyle? _sheetTitleStyle(BuildContext context) => ExpressiveStyle.of(context)
+    ? ExpressiveType.of(context).headlineSmall
+    : Theme.of(context).textTheme.headlineSmall
+          ?.copyWith(fontWeight: FontWeight.w800);
 
-/// A row's title in a list of cards.
-TextStyle? _rowTitleStyle(BuildContext context) =>
-    Theme.of(context).textTheme.titleSmall
-        ?.copyWith(fontWeight: FontWeight.w700);
+/// A row's title in a list of cards. Expressive: Title Small, Emphasized.
+TextStyle? _rowTitleStyle(BuildContext context) => ExpressiveStyle.of(context)
+    ? ExpressiveType.of(context).titleSmall
+    : Theme.of(context).textTheme.titleSmall
+          ?.copyWith(fontWeight: FontWeight.w700);
 
 /// The quiet line under or beside a row's title: a date, a teacher.
 TextStyle? _metaStyle(BuildContext context) =>
     Theme.of(context).textTheme.labelMedium?.copyWith(
       color: Theme.of(context).colorScheme.onSurfaceVariant,
-      fontWeight: FontWeight.w600,
+      fontWeight: ExpressiveStyle.of(context) ? null : FontWeight.w600,
     );
+
+/// A [SegmentedButton] for one value, or none with [emptySelectionAllowed];
+/// Material 3 Expressive's connected button group in that design.
+class _Segmented<T> extends StatelessWidget {
+  const _Segmented({
+    required this.segments,
+    required this.selected,
+    required this.onSelectionChanged,
+    this.emptySelectionAllowed = false,
+    this.showSelectedIcon = true,
+    this.style,
+    super.key,
+  });
+
+  final List<ButtonSegment<T>> segments;
+  final Set<T> selected;
+  final ValueChanged<Set<T>>? onSelectionChanged;
+  final bool emptySelectionAllowed;
+  final bool showSelectedIcon;
+  final ButtonStyle? style;
+
+  @override
+  Widget build(BuildContext context) => ExpressiveStyle.of(context)
+      ? SegmentedGroup<T>(
+          segments: segments,
+          selected: selected,
+          onSelectionChanged: onSelectionChanged,
+          emptySelectionAllowed: emptySelectionAllowed,
+        )
+      : SegmentedButton<T>(
+          segments: segments,
+          selected: selected,
+          onSelectionChanged: onSelectionChanged,
+          emptySelectionAllowed: emptySelectionAllowed,
+          showSelectedIcon: showSelectedIcon,
+          style: style,
+        );
+}
 
 /// The square in front of a row that stands for a kind of thing; people
 /// get a round avatar instead.
@@ -374,7 +447,7 @@ class _IconTile extends StatelessWidget {
       borderRadius: BorderRadius.circular(12),
     ),
     child: icon != null
-        ? Icon(icon, size: 22, color: foreground)
+        ? AppIcon(icon, size: 22, color: foreground)
         : Text(
             label ?? '',
             maxLines: 1,
@@ -531,11 +604,15 @@ class _PageList extends StatelessWidget {
     ];
     final scope = GlassPageScope.maybeOf(context);
     if (scope == null) {
+      final expressiveTitle = ExpressivePageScope.maybeOf(context)?.largeTitle;
       return ListView(
         // A search field's keyboard goes once the list is moved.
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         padding: padding,
-        children: contents,
+        children: [
+          if (expressiveTitle != null) ExpressiveLargeTitle(expressiveTitle),
+          ...contents,
+        ],
       );
     }
     final insets = MediaQuery.paddingOf(context);
@@ -573,7 +650,20 @@ class _PageEmpty extends StatelessWidget {
   Widget build(BuildContext context) {
     final message = _moduleIssue(context) ?? text;
     final scope = GlassPageScope.maybeOf(context);
-    if (scope == null) return _Empty(message, icon: icon);
+    if (scope == null) {
+      final title = ExpressivePageScope.maybeOf(context)?.largeTitle;
+      if (title == null) return _Empty(message, icon: icon);
+      return Padding(
+        padding: const EdgeInsets.all(_Space.page),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            ExpressiveLargeTitle(title),
+            Expanded(child: _Empty(message, icon: icon)),
+          ],
+        ),
+      );
+    }
     final insets = MediaQuery.paddingOf(context);
     final title = scope.largeTitle;
     return Padding(
@@ -654,7 +744,7 @@ class _SwipeAction extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, color: colors.onPrimaryContainer),
+          AppIcon(icon, color: colors.onPrimaryContainer),
           const SizedBox(width: 8),
           Text(
             label,
@@ -715,7 +805,7 @@ Future<void> _showItemActions(
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: _Space.sheet,
               ),
-              leading: Icon(action.icon),
+              leading: AppIcon(action.icon),
               title: Text(action.label),
               onTap: () {
                 Navigator.pop(sheet);

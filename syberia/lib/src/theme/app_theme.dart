@@ -123,6 +123,12 @@ abstract final class AppTheme {
           borderRadius: BorderRadius.circular(Corners.largeIncreased),
         ),
       ),
+      // The bar's menu, back and close buttons in Material Symbols too.
+      actionIconTheme: ActionIconThemeData(
+        drawerButtonIconBuilder: (context) => const Icon(AppSymbols.menu),
+        backButtonIconBuilder: (context) => const Icon(AppSymbols.arrowBack),
+        closeButtonIconBuilder: (context) => const Icon(AppSymbols.close),
+      ),
       // A check on the handle of a switch that is on.
       switchTheme: SwitchThemeData(
         thumbIcon: WidgetStateProperty.resolveWith(

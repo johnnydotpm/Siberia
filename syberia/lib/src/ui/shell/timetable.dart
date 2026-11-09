@@ -23,19 +23,19 @@ Future<void> _showTimetableSettings(
               style: _sheetTitleStyle(context),
             ),
             const SizedBox(height: 12),
-            SegmentedButton<TimetableView>(
+            _Segmented<TimetableView>(
               key: const ValueKey('settings-timetable-style'),
               showSelectedIcon: false,
               segments: [
                 ButtonSegment(
                   value: TimetableView.timeline,
                   label: Text(context.tr('timetableStyleClassic')),
-                  icon: const Icon(Icons.view_timeline_rounded),
+                  icon: const AppIcon(Icons.view_timeline_rounded),
                 ),
                 ButtonSegment(
                   value: TimetableView.list,
                   label: Text(context.tr('timetableStyleCompact')),
-                  icon: const Icon(Icons.view_agenda_rounded),
+                  icon: const AppIcon(Icons.view_agenda_rounded),
                 ),
               ],
               selected: {controller.timetableView},
@@ -443,9 +443,15 @@ class _TimetableState extends State<_Timetable> {
       child: Row(
         children: [
           for (final (index, day) in days.indexed) ...[
-            if (index > 0) const SizedBox(width: 6),
+            // Expressive: a connected button group, 2 points apart.
+            if (index > 0)
+              SizedBox(
+                width: ExpressiveStyle.of(context) ? Space.connected : 6,
+              ),
             Expanded(
               child: _DayChip(
+                first: index == 0,
+                last: index == days.length - 1,
                 key: ValueKey(
                   'timetable-day-${DateFormat('yyyy-MM-dd').format(day)}',
                 ),
@@ -481,7 +487,7 @@ class _TimetableState extends State<_Timetable> {
                           dimension: 20,
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
-                      : const Icon(Icons.calendar_month_rounded),
+                      : const AppIcon(Icons.calendar_month_rounded),
                   tooltip: context.tr('chooseDate'),
                 ),
                 Expanded(
@@ -829,7 +835,11 @@ class _TestPill extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.quiz_rounded, size: 13, color: colors.onErrorContainer),
+            AppIcon(
+              Icons.quiz_rounded,
+              size: 13,
+              color: colors.onErrorContainer,
+            ),
             const SizedBox(width: 4),
             Flexible(
               child: Text(
@@ -971,6 +981,8 @@ class _DayChip extends StatelessWidget {
     required this.hasLessons,
     required this.hasEvents,
     required this.onTap,
+    this.first = false,
+    this.last = false,
   });
 
   final DateTime day;
@@ -978,6 +990,11 @@ class _DayChip extends StatelessWidget {
   final bool hasLessons;
   final bool hasEvents;
   final VoidCallback onTap;
+
+  /// Its place in the strip, for the Expressive design's connected group:
+  /// the ends are rounded fully on the outside.
+  final bool first;
+  final bool last;
 
   @override
   Widget build(BuildContext context) {
@@ -998,16 +1015,43 @@ class _DayChip extends StatelessWidget {
     final plain = hasLessons
         ? colors.onSurface
         : colors.onSurface.withValues(alpha: 0.38);
-    final foreground = Color.lerp(plain, colors.onPrimary, picked)!;
+    final expressive = ExpressiveStyle.of(context);
+    final foreground = expressive
+        ? Color.lerp(
+            hasLessons
+                ? colors.onSurfaceVariant
+                : colors.onSurfaceVariant.withValues(
+                    alpha: StateLayer.disabledContent,
+                  ),
+            colors.onPrimary,
+            picked,
+          )!
+        : Color.lerp(plain, colors.onPrimary, picked)!;
     final border = today ? colors.primary : colors.outlineVariant;
+    // Expressive: outer corners fully round, inner ones 8; the chosen day
+    // rounds fully, as in a connected button group.
+    const full = Radius.circular(29);
+    final inner = Radius.lerp(
+      const Radius.circular(Corners.small),
+      full,
+      picked,
+    )!;
+    final radius = expressive
+        ? BorderRadiusDirectional.horizontal(
+            start: first ? full : inner,
+            end: last ? full : inner,
+          )
+        : BorderRadius.circular(14);
     return Semantics(
       selected: selected,
       button: true,
       child: Material(
-        color: colors.primary.withValues(alpha: picked),
+        color: expressive
+            ? Color.lerp(colors.surfaceContainer, colors.primary, picked)
+            : colors.primary.withValues(alpha: picked),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(14),
-          side: picked == 1
+          borderRadius: radius,
+          side: picked == 1 || (expressive && !today)
               ? BorderSide.none
               : BorderSide(
                   color: border.withValues(alpha: border.a * (1 - picked)),
@@ -1123,7 +1167,7 @@ class _TimetableCalendarDialogState extends State<_TimetableCalendarDialog> {
                   ),
                   IconButton(
                     onPressed: () => Navigator.pop(context),
-                    icon: const Icon(Icons.close_rounded),
+                    icon: const AppIcon(Icons.close_rounded),
                     tooltip: localizations.closeButtonTooltip,
                   ),
                 ],
@@ -1136,7 +1180,7 @@ class _TimetableCalendarDialogState extends State<_TimetableCalendarDialog> {
                             () => month = DateTime(month.year, month.month - 1),
                           )
                         : null,
-                    icon: const Icon(Icons.chevron_left_rounded),
+                    icon: const AppIcon(Icons.chevron_left_rounded),
                     tooltip: localizations.previousMonthTooltip,
                   ),
                   Expanded(
@@ -1152,7 +1196,7 @@ class _TimetableCalendarDialogState extends State<_TimetableCalendarDialog> {
                             () => month = DateTime(month.year, month.month + 1),
                           )
                         : null,
-                    icon: const Icon(Icons.chevron_right_rounded),
+                    icon: const AppIcon(Icons.chevron_right_rounded),
                     tooltip: localizations.nextMonthTooltip,
                   ),
                 ],
@@ -1226,7 +1270,7 @@ class _TimetableCalendarDialogState extends State<_TimetableCalendarDialog> {
                             ),
                           ),
                           if (!hasLessons)
-                            Icon(
+                            AppIcon(
                               Icons.close_rounded,
                               size: 27,
                               color: colors.outline.withAlpha(150),

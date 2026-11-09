@@ -366,7 +366,7 @@ class _ExcuseSheetState extends State<_ExcuseSheet> {
       context: context,
       builder: (context) => AlertDialog(
         key: const ValueKey('excuse-confirm'),
-        icon: const Icon(Icons.send_rounded),
+        icon: const AppIcon(Icons.send_rounded),
         title: Text(
           context.tr(planned ? 'excuseConfirmPlanned' : 'excuseConfirmTitle'),
         ),
@@ -548,7 +548,7 @@ class _ExcuseSheetState extends State<_ExcuseSheet> {
                 ),
               ),
             ),
-            Icon(
+            AppIcon(
               Icons.arrow_drop_down_rounded,
               color: theme.colorScheme.onSecondaryContainer,
             ),
@@ -635,7 +635,10 @@ class _ExcuseSheetState extends State<_ExcuseSheet> {
           margin: EdgeInsets.zero,
           child: ListTile(
             key: const ValueKey('excuse-teacher'),
-            leading: Icon(Icons.send_rounded, color: theme.colorScheme.primary),
+            leading: AppIcon(
+              Icons.send_rounded,
+              color: theme.colorScheme.primary,
+            ),
             title: Text(context.tr('excuseSendTo'), style: _metaStyle(context)),
             subtitle: Text(
               lookingForTeacher
@@ -655,7 +658,7 @@ class _ExcuseSheetState extends State<_ExcuseSheet> {
         if (planned) ...[
           OutlinedButton.icon(
             key: const ValueKey('excuse-dates'),
-            icon: const Icon(Icons.date_range_rounded),
+            icon: const AppIcon(Icons.date_range_rounded),
             label: Text(
               range == null
                   ? context.tr('excuseDates')
@@ -777,7 +780,7 @@ class _ExcuseSheetState extends State<_ExcuseSheet> {
           runSpacing: 6,
           children: [
             Text(context.tr('excuseText'), style: label),
-            SegmentedButton<bool>(
+            _Segmented<bool>(
               segments: [
                 ButtonSegment(
                   value: false,
@@ -873,7 +876,7 @@ class _ExcuseSheetState extends State<_ExcuseSheet> {
                   dimension: 18,
                   child: CircularProgressIndicator(strokeWidth: 2),
                 )
-              : const Icon(Icons.send_rounded),
+              : const AppIcon(Icons.send_rounded),
           label: Text(context.tr(planned ? 'excuseSendPlanned' : 'excuseSend')),
           onPressed: _ready ? _send : null,
         ),

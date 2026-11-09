@@ -178,7 +178,7 @@ class _StepBadgeState extends State<_StepBadge>
         final t = _play.value;
         var background = colors.primaryContainer;
         var scale = 1.0;
-        Widget glyph = Icon(
+        Widget glyph = AppIcon(
           widget.icon,
           size: 36,
           color: colors.onPrimaryContainer,

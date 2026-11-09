@@ -330,7 +330,7 @@ class _NotificationKindsTileState<T extends Enum>
               AnimatedRotation(
                 turns: expanded ? 0.5 : 0,
                 duration: const Duration(milliseconds: 200),
-                child: Icon(
+                child: AppIcon(
                   Icons.expand_more_rounded,
                   color: theme.colorScheme.onSurfaceVariant,
                 ),
@@ -404,7 +404,10 @@ class _PermissionDeniedNotice extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(Icons.notifications_off_rounded, color: scheme.onErrorContainer),
+          AppIcon(
+            Icons.notifications_off_rounded,
+            color: scheme.onErrorContainer,
+          ),
           const SizedBox(width: 12),
           Expanded(
             child: Text(

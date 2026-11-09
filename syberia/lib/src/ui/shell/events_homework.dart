@@ -185,7 +185,7 @@ class _HomeworkState extends State<_Homework> {
                   turns: _showDone ? 0.5 : 0,
                   duration: _motion(context, _Motion.list),
                   curve: _Motion.curve,
-                  child: Icon(
+                  child: AppIcon(
                     Icons.expand_more_rounded,
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
@@ -247,11 +247,11 @@ class _HomeworkState extends State<_Homework> {
             textInputAction: TextInputAction.search,
             decoration: InputDecoration(
               hintText: context.tr('homeworkSearch'),
-              prefixIcon: const Icon(Icons.search_rounded),
+              prefixIcon: const AppIcon(Icons.search_rounded),
               suffixIcon: _search.text.isEmpty
                   ? null
                   : IconButton(
-                      icon: const Icon(Icons.clear_rounded),
+                      icon: const AppIcon(Icons.clear_rounded),
                       tooltip: MaterialLocalizations.of(context)
                           .deleteButtonTooltip,
                       onPressed: () => setState(_search.clear),
@@ -265,7 +265,7 @@ class _HomeworkState extends State<_Homework> {
             ),
           ),
           const SizedBox(height: 12),
-          SegmentedButton<bool>(
+          _Segmented<bool>(
             key: const ValueKey('homework-filter'),
             showSelectedIcon: false,
             segments: [
@@ -594,7 +594,7 @@ class _HomeworkCard extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 8),
-            Icon(
+            AppIcon(
               Icons.event_rounded,
               size: 14,
               color: soon && !done ? colors.error : colors.onSurfaceVariant,
@@ -823,7 +823,7 @@ class _DoneCheckState extends State<_DoneCheck> {
                   ),
                 ),
                 child: ticked
-                    ? Icon(
+                    ? AppIcon(
                         Icons.check_rounded,
                         size: 16,
                         color: colors.onPrimary,
@@ -891,7 +891,7 @@ void _showHomeworkDetails(BuildContext context, SchoolEvent item) {
               const SizedBox(height: 12),
               Row(
                 children: [
-                  Icon(
+                  AppIcon(
                     Icons.event_rounded,
                     size: 18,
                     color: theme.colorScheme.onSurfaceVariant,
@@ -921,14 +921,14 @@ void _showHomeworkDetails(BuildContext context, SchoolEvent item) {
                             key: const ValueKey('homework-sheet-not-done'),
                             onPressed: () =>
                                 controller.setHomeworkDone(item, false),
-                            icon: const Icon(Icons.undo_rounded),
+                            icon: const AppIcon(Icons.undo_rounded),
                             label: Text(context.tr('homeworkMarkNotDone')),
                           )
                         : FilledButton.tonalIcon(
                             key: const ValueKey('homework-sheet-done'),
                             onPressed: () =>
                                 controller.setHomeworkDone(item, true),
-                            icon: const Icon(Icons.check_rounded),
+                            icon: const AppIcon(Icons.check_rounded),
                             label: Text(context.tr('homeworkMarkDone')),
                           );
                     return SizedBox(width: double.infinity, child: button);

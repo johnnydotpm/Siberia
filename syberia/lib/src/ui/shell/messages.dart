@@ -145,11 +145,11 @@ class _MessagesState extends State<_Messages> {
         textInputAction: TextInputAction.search,
         decoration: InputDecoration(
           hintText: context.tr('messagesSearch'),
-          prefixIcon: const Icon(Icons.search_rounded),
+          prefixIcon: const AppIcon(Icons.search_rounded),
           suffixIcon: _search.text.isEmpty
               ? null
               : IconButton(
-                  icon: const Icon(Icons.clear_rounded),
+                  icon: const AppIcon(Icons.clear_rounded),
                   tooltip: MaterialLocalizations.of(context)
                       .deleteButtonTooltip,
                   onPressed: () => setState(_search.clear),
@@ -165,13 +165,13 @@ class _MessagesState extends State<_Messages> {
       const SizedBox(height: 12),
       SizedBox(
         width: double.infinity,
-        child: SegmentedButton<_MessageFolder>(
+        child: _Segmented<_MessageFolder>(
           key: const ValueKey('messages-folder'),
           showSelectedIcon: false,
           segments: [
             ButtonSegment(
               value: _MessageFolder.inbox,
-              icon: const Icon(Icons.inbox_rounded),
+              icon: const AppIcon(Icons.inbox_rounded),
               // One line on a narrow phone with large text.
               label: FittedBox(
                 fit: BoxFit.scaleDown,
@@ -180,7 +180,7 @@ class _MessagesState extends State<_Messages> {
             ),
             ButtonSegment(
               value: _MessageFolder.sent,
-              icon: const Icon(Icons.send_rounded),
+              icon: const AppIcon(Icons.send_rounded),
               // One line on a narrow phone with large text.
               label: FittedBox(
                 fit: BoxFit.scaleDown,
@@ -225,7 +225,7 @@ class _MessagesState extends State<_Messages> {
                       height: 18,
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
-                  : const Icon(Icons.refresh_rounded),
+                  : const AppIcon(Icons.refresh_rounded),
             )
           else
             IconButton(
@@ -243,7 +243,7 @@ class _MessagesState extends State<_Messages> {
                       height: 18,
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
-                  : const Icon(Icons.done_all_rounded),
+                  : const AppIcon(Icons.done_all_rounded),
             ),
           IconButton(
             key: const ValueKey('messages-style-toggle'),
@@ -257,7 +257,7 @@ class _MessagesState extends State<_Messages> {
                   ? MessageListStyle.cards
                   : MessageListStyle.list,
             ),
-            icon: Icon(
+            icon: AppIcon(
               style == MessageListStyle.list
                   ? Icons.view_agenda_rounded
                   : Icons.view_list_rounded,
@@ -273,7 +273,7 @@ class _MessagesState extends State<_Messages> {
           text: context.trError(error),
           color: Theme.of(context).colorScheme.error,
           trailing: IconButton(
-            icon: const Icon(Icons.refresh_rounded),
+            icon: const AppIcon(Icons.refresh_rounded),
             tooltip: MaterialLocalizations.of(context)
                 .refreshIndicatorSemanticLabel,
             onPressed: (sentFolder ? loadingSent : controller.syncing)
@@ -318,6 +318,7 @@ class _MessagesState extends State<_Messages> {
     }
     final insets = _chromeInsets(context);
     final title = scope?.largeTitle;
+    final expressiveTitle = ExpressivePageScope.maybeOf(context)?.largeTitle;
     return Column(
       children: [
         SizedBox(height: insets.top),
@@ -329,6 +330,19 @@ class _MessagesState extends State<_Messages> {
             child: Align(
               alignment: AlignmentDirectional.centerStart,
               child: GlassLargeTitle(title),
+            ),
+          )
+        else if (expressiveTitle != null)
+          Padding(
+            padding: const EdgeInsetsDirectional.fromSTEB(
+              _Space.page,
+              _Space.page,
+              _Space.page,
+              0,
+            ),
+            child: Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: ExpressiveLargeTitle(expressiveTitle),
             ),
           ),
         Padding(
@@ -342,7 +356,7 @@ class _MessagesState extends State<_Messages> {
             alignment: AlignmentDirectional.centerEnd,
             child: FilledButton.icon(
               onPressed: () => _showComposeMessage(context, controller),
-              icon: const Icon(Icons.edit_rounded),
+              icon: const AppIcon(Icons.edit_rounded),
               label: Text(context.tr('newMessage')),
             ),
           ),
@@ -522,7 +536,7 @@ class _MessageTile extends StatelessWidget {
                     if (item.hasAttachments)
                       Padding(
                         padding: const EdgeInsets.only(left: 4),
-                        child: Icon(
+                        child: AppIcon(
                           Icons.attach_file_rounded,
                           size: 16,
                           color: colors.onSurfaceVariant,
@@ -714,7 +728,7 @@ class _SentAvatar extends StatelessWidget {
               shape: BoxShape.circle,
               border: Border.all(color: colors.surface, width: 2),
             ),
-            child: Icon(
+            child: AppIcon(
               Icons.north_east_rounded,
               size: 11,
               color: colors.onPrimary,
@@ -790,7 +804,7 @@ class _ReadMark extends StatelessWidget {
     final colors = Theme.of(context).colorScheme;
     return Tooltip(
       message: context.tr(read ? 'messageRead' : 'messageNotRead'),
-      child: Icon(
+      child: AppIcon(
         read ? Icons.done_all_rounded : Icons.done_rounded,
         size: 18,
         color: read ? colors.primary : colors.onSurfaceVariant,
@@ -935,7 +949,7 @@ class _MessageDetailSheetState extends State<_MessageDetailSheet> {
               ),
               IconButton(
                 onPressed: () => Navigator.pop(context),
-                icon: const Icon(Icons.close_rounded),
+                icon: const AppIcon(Icons.close_rounded),
                 tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
               ),
             ],
@@ -1038,7 +1052,7 @@ class _MessageDetailSheetState extends State<_MessageDetailSheet> {
                         margin: const EdgeInsets.only(bottom: _Space.item),
                         clipBehavior: Clip.antiAlias,
                         child: ListTile(
-                          leading: const Icon(Icons.attach_file_rounded),
+                          leading: const AppIcon(Icons.attach_file_rounded),
                           title: Text(attachment.name),
                           trailing: openingAttachment == attachment.id
                               ? const SizedBox.square(
@@ -1047,7 +1061,7 @@ class _MessageDetailSheetState extends State<_MessageDetailSheet> {
                                     strokeWidth: 2,
                                   ),
                                 )
-                              : const Icon(Icons.open_in_new_rounded),
+                              : const AppIcon(Icons.open_in_new_rounded),
                           enabled: openingAttachment == null,
                           onTap: openingAttachment == null
                               ? () => openAttachment(attachment)

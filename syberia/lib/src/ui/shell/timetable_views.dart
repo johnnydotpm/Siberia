@@ -367,6 +367,7 @@ class _TimelineLessonCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final lesson = block.lesson;
+    final expressive = ExpressiveStyle.of(context);
     final palette = SubjectColors.colors(hue, Theme.of(context).brightness);
     final foreground = palette.foreground;
     final duration = lesson.end.difference(lesson.start);
@@ -389,8 +390,11 @@ class _TimelineLessonCard extends StatelessWidget {
         child: Container(
           decoration: BoxDecoration(
             color: palette.background,
-            borderRadius: BorderRadius.circular(14),
-            border: current
+            // Expressive: rounder, and the badge and wave say it is on.
+            borderRadius: BorderRadius.circular(
+              expressive ? Corners.largeIncreased : 14,
+            ),
+            border: current && !expressive
                 ? Border.all(color: palette.accent, width: 2)
                 : null,
           ),
@@ -507,7 +511,7 @@ class _TimelineLessonCard extends StatelessWidget {
                       if (lesson.substitution)
                         Padding(
                           padding: const EdgeInsets.only(left: 6),
-                          child: Icon(
+                          child: AppIcon(
                             Icons.swap_horiz_rounded,
                             color: foreground,
                             size: 18,
@@ -547,18 +551,37 @@ class _TimelineLessonCard extends StatelessWidget {
                     Row(
                       children: [
                         Expanded(
-                          // Glides as the lesson goes on, to the second.
-                          child: _GlidingProgress(
-                            value: duration.inSeconds <= 0
-                                ? 0
-                                : (now.difference(lesson.start).inSeconds /
-                                          duration.inSeconds)
-                                      .clamp(0.0, 1.0),
-                            minHeight: 4,
-                            radius: 3,
-                            color: palette.accent,
-                            backgroundColor: foreground.withValues(alpha: 0.15),
-                          ),
+                          // Glides as the lesson goes on, to the second;
+                          // Expressive's wave on the subject's colour.
+                          child: expressive
+                              ? WavyProgressIndicator(
+                                  value: duration.inSeconds <= 0
+                                      ? 0
+                                      : (now
+                                                    .difference(lesson.start)
+                                                    .inSeconds /
+                                                duration.inSeconds)
+                                            .clamp(0.0, 1.0),
+                                  color: palette.accent,
+                                  trackColor: Theme.of(context)
+                                      .colorScheme
+                                      .surface,
+                                )
+                              : _GlidingProgress(
+                                  value: duration.inSeconds <= 0
+                                      ? 0
+                                      : (now
+                                                    .difference(lesson.start)
+                                                    .inSeconds /
+                                                duration.inSeconds)
+                                            .clamp(0.0, 1.0),
+                                  minHeight: 4,
+                                  radius: 3,
+                                  color: palette.accent,
+                                  backgroundColor: foreground.withValues(
+                                    alpha: 0.15,
+                                  ),
+                                ),
                         ),
                         const SizedBox(width: 8),
                         // Long words, large text or a narrow card beside
@@ -716,7 +739,9 @@ class _TimetableRow extends StatelessWidget {
             ? palette.background.withValues(alpha: 0.6)
             // The cards' colour, as on every other page.
             : theme.cardTheme.color ?? theme.colorScheme.surface,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(
+          ExpressiveStyle.of(context) ? Corners.largeIncreased : 14,
+        ),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: () => _showLessonDetails(context, block),
@@ -825,7 +850,7 @@ class _TimetableRow extends StatelessWidget {
                 if (lesson.substitution)
                   Padding(
                     padding: const EdgeInsets.only(left: 8),
-                    child: Icon(
+                    child: AppIcon(
                       Icons.swap_horiz_rounded,
                       size: 20,
                       color: theme.colorScheme.tertiary,
@@ -898,7 +923,7 @@ void _showLessonDetails(BuildContext context, _LessonBlock block) {
                 const SizedBox(height: 14),
                 Row(
                   children: [
-                    const Icon(Icons.swap_horiz_rounded),
+                    const AppIcon(Icons.swap_horiz_rounded),
                     const SizedBox(width: 8),
                     Text(
                       lesson.cancelled
@@ -931,7 +956,7 @@ void _showLessonDetails(BuildContext context, _LessonBlock block) {
                 Row(
                   key: const ValueKey('lesson-teacher-absent'),
                   children: [
-                    Icon(
+                    AppIcon(
                       Icons.person_off_rounded,
                       color: Theme.of(context).colorScheme.error,
                     ),
@@ -962,7 +987,7 @@ void _showLessonDetails(BuildContext context, _LessonBlock block) {
                         color: Theme.of(context).colorScheme.errorContainer,
                         shape: BoxShape.circle,
                       ),
-                      child: Icon(
+                      child: AppIcon(
                         Icons.quiz_rounded,
                         size: 20,
                         color: Theme.of(context).colorScheme.onErrorContainer,

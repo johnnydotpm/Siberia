@@ -306,7 +306,7 @@ class _DebugMenuState extends State<_DebugMenu> {
             key: const ValueKey('debug-copy-report'),
             style: _wideButton,
             onPressed: _copyReport,
-            icon: const Icon(Icons.copy_rounded),
+            icon: const AppIcon(Icons.copy_rounded),
             label: const Text('Copy report'),
           ),
           const SizedBox(height: 24),
@@ -391,7 +391,7 @@ class _DebugMenuState extends State<_DebugMenu> {
                     dimension: 18,
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
-                : const Icon(Icons.cloud_sync_rounded),
+                : const AppIcon(Icons.cloud_sync_rounded),
             label: const Text('Run background check now'),
           ),
           if (_checked case final checked?)
@@ -409,7 +409,7 @@ class _DebugMenuState extends State<_DebugMenu> {
                 const SnackBar(content: Text('Widgets drawn again.')),
               );
             },
-            icon: const Icon(Icons.widgets_rounded),
+            icon: const AppIcon(Icons.widgets_rounded),
             label: const Text('Refresh widgets'),
           ),
           const SizedBox(height: 8),
@@ -423,7 +423,7 @@ class _DebugMenuState extends State<_DebugMenu> {
                 ),
               ),
             ),
-            icon: const Icon(Icons.auto_awesome_rounded),
+            icon: const AppIcon(Icons.auto_awesome_rounded),
             label: const Text('Expressive components'),
           ),
           const SizedBox(height: 8),
@@ -431,7 +431,7 @@ class _DebugMenuState extends State<_DebugMenu> {
             key: const ValueKey('debug-recipient-groups'),
             style: _wideButton,
             onPressed: _groupsLoading ? null : _recipientGroups,
-            icon: const Icon(Icons.groups_rounded),
+            icon: const AppIcon(Icons.groups_rounded),
             label: const Text('Recipient groups'),
           ),
           if (_groups case final groups?)
@@ -447,7 +447,7 @@ class _DebugMenuState extends State<_DebugMenu> {
             key: const ValueKey('debug-excuse-probe'),
             style: _wideButton,
             onPressed: _probing ? null : _probeExcuses,
-            icon: const Icon(Icons.fact_check_rounded),
+            icon: const AppIcon(Icons.fact_check_rounded),
             label: const Text('Librus: e-Usprawiedliwienia'),
           ),
           if (_probe case final probe?)
@@ -465,7 +465,7 @@ class _DebugMenuState extends State<_DebugMenu> {
               minimumSize: const Size.fromHeight(48),
             ),
             onPressed: _sendProbing ? null : _probeExcuseSend,
-            icon: const Icon(Icons.outbox_rounded),
+            icon: const AppIcon(Icons.outbox_rounded),
             label: const Text('Librus: test sending (empty request)'),
           ),
           const SizedBox(height: 8),
@@ -485,7 +485,7 @@ class _DebugMenuState extends State<_DebugMenu> {
                         'which names it reads.',
                     check: _controller.probeLibrusFields,
                   ),
-            icon: const Icon(Icons.rule_rounded),
+            icon: const AppIcon(Icons.rule_rounded),
             label: const Text('Librus: check field names (no dates)'),
           ),
           if (_sendProbe case final probe?)

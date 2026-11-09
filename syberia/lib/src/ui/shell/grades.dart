@@ -33,7 +33,7 @@ class _GradesState extends State<_Grades> {
           Row(
             children: [
               Expanded(
-                child: SegmentedButton<int>(
+                child: _Segmented<int>(
                   showSelectedIcon: false,
                   segments: [
                     ButtonSegment(value: 1, label: Text(context.tr('period1'))),
@@ -58,7 +58,7 @@ class _GradesState extends State<_Grades> {
                       ? GradesView.cards
                       : GradesView.compact,
                 ),
-                icon: Icon(
+                icon: AppIcon(
                   view == GradesView.compact
                       ? Icons.view_agenda_rounded
                       : Icons.view_list_rounded,
@@ -134,8 +134,20 @@ class _GradesOverview extends StatelessWidget {
       final bucket = value.round().clamp(1, 6);
       buckets[bucket] = (buckets[bucket] ?? 0) + 1;
     }
+    // Expressive: the average on a soft burst, on the tertiary container.
+    final expressive = ExpressiveStyle.of(context);
+    final colors = theme.colorScheme;
+    final muted = expressive
+        ? colors.onTertiaryContainer
+        : colors.onSurfaceVariant;
     return Card(
       key: const ValueKey('grades-overview'),
+      color: expressive ? colors.tertiaryContainer : null,
+      shape: expressive
+          ? RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(Corners.extraLarge),
+            )
+          : null,
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -143,7 +155,23 @@ class _GradesOverview extends StatelessWidget {
           children: [
             Row(
               children: [
-                _AveragePill(average, large: true),
+                if (expressive)
+                  ShapeBadge(
+                    key: const ValueKey('average-pill'),
+                    shape: ExpressiveShapes.softBurst,
+                    size: 104,
+                    color: colors.tertiary,
+                    child: Text(
+                      average == null ? '—' : _decimal(context, average),
+                      style: ExpressiveType.of(context).headlineMedium
+                          ?.copyWith(
+                            color: colors.onTertiary,
+                            fontFeatures: _tabular,
+                          ),
+                    ),
+                  )
+                else
+                  _AveragePill(average, large: true),
                 const SizedBox(width: 16),
                 Expanded(
                   child: Column(
@@ -151,9 +179,12 @@ class _GradesOverview extends StatelessWidget {
                     children: [
                       Text(
                         context.tr('averageGrade'),
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w800,
-                        ),
+                        style: expressive
+                            ? ExpressiveType.of(context).titleMedium
+                                  ?.copyWith(color: muted)
+                            : theme.textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.w800,
+                              ),
                       ),
                       const SizedBox(height: 4),
                       Text(
@@ -162,7 +193,7 @@ class _GradesOverview extends StatelessWidget {
                           if (fresh > 0) _plural(context, fresh, 'gradesNew'),
                         ].join(' · '),
                         style: theme.textTheme.bodyMedium?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant,
+                          color: muted,
                         ),
                       ),
                     ],
@@ -218,13 +249,14 @@ class _GradesOverview extends StatelessWidget {
                           const SizedBox(width: 6),
                           Text(
                             '$bucket',
-                            style: const TextStyle(fontWeight: FontWeight.w800),
+                            style: TextStyle(
+                              fontWeight: FontWeight.w800,
+                              color: expressive ? muted : null,
+                            ),
                           ),
                           Text(
                             ' × ${buckets[bucket]}',
-                            style: TextStyle(
-                              color: theme.colorScheme.onSurfaceVariant,
-                            ),
+                            style: TextStyle(color: muted),
                           ),
                         ],
                       ),
@@ -375,6 +407,8 @@ class _GradeChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    // Expressive: round, as the mockup's grades are.
+    final expressive = ExpressiveStyle.of(context);
     final palette = SubjectColors.grade(
       settings.valueOf(grade.value),
       theme.brightness,
@@ -386,7 +420,9 @@ class _GradeChip extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: size * 0.16),
       decoration: BoxDecoration(
         color: palette.background,
-        borderRadius: BorderRadius.circular(size * 0.32),
+        borderRadius: BorderRadius.circular(
+          expressive ? size / 2 : size * 0.32,
+        ),
       ),
       // As wide as the grade, never wider.
       child: Center(
@@ -397,7 +433,7 @@ class _GradeChip extends StatelessWidget {
           style: TextStyle(
             color: palette.foreground,
             fontSize: size * 0.42,
-            fontWeight: FontWeight.w800,
+            fontWeight: expressive ? FontWeight.w500 : FontWeight.w800,
           ),
         ),
       ),
@@ -584,7 +620,7 @@ class _SubjectGradesTile extends StatelessWidget {
                       grades,
                       settings,
                     ),
-                    icon: const Icon(Icons.calculate_rounded),
+                    icon: const AppIcon(Icons.calculate_rounded),
                     label: Text(context.tr('gradeCalculator')),
                   ),
                 ),
@@ -678,7 +714,7 @@ Future<void> _showSubjectGrades(
                   key: const ValueKey('grade-calculator-open'),
                   onPressed: () =>
                       _showGradeCalculator(context, subject, grades, settings),
-                  icon: const Icon(Icons.calculate_rounded),
+                  icon: const AppIcon(Icons.calculate_rounded),
                   label: Text(context.tr('gradeCalculator')),
                 ),
               ),
@@ -739,7 +775,7 @@ Future<void> _showGradeDetails(BuildContext context, Grade grade) {
                     Center(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 6),
-                        child: Icon(
+                        child: AppIcon(
                           Icons.arrow_upward_rounded,
                           color: Theme.of(context).colorScheme.primary,
                         ),

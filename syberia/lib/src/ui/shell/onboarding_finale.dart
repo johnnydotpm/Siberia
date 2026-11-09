@@ -185,7 +185,7 @@ class _WidgetTipState extends State<_WidgetTip> with WidgetsBindingObserver {
         ? Row(
             key: const ValueKey('onboarding-widget-added'),
             children: [
-              Icon(Icons.check_circle_rounded, color: colors.primary),
+              AppIcon(Icons.check_circle_rounded, color: colors.primary),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
@@ -204,7 +204,7 @@ class _WidgetTipState extends State<_WidgetTip> with WidgetsBindingObserver {
             child: FilledButton.tonalIcon(
               key: const ValueKey('onboarding-pin-widget'),
               onPressed: _pin,
-              icon: const Icon(Icons.add_to_home_screen_rounded),
+              icon: const AppIcon(Icons.add_to_home_screen_rounded),
               label: Text(context.tr('onboardingPinWidget')),
             ),
           )

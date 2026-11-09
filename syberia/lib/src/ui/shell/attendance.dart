@@ -63,14 +63,14 @@ class _AttendanceState extends State<_Attendance> {
               child: FilledButton.tonalIcon(
                 key: const ValueKey('attendance-excuse'),
                 style: _wideButton,
-                icon: const Icon(Icons.edit_note_rounded),
+                icon: const AppIcon(Icons.edit_note_rounded),
                 label: Text(context.tr('excuseAttendance')),
                 onPressed: () => _showExcuseSheet(context, widget.controller),
               ),
             ),
           SizedBox(
             width: double.infinity,
-            child: SegmentedButton<_AttendancePeriod>(
+            child: _Segmented<_AttendancePeriod>(
               showSelectedIcon: false,
               selected: {period},
               onSelectionChanged: (value) {
@@ -235,7 +235,7 @@ class _AttendanceNoSubjects extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
         child: Row(
           children: [
-            Icon(Icons.info_outline_rounded, color: colors.onSurfaceVariant),
+            AppIcon(Icons.info_outline_rounded, color: colors.onSurfaceVariant),
             const SizedBox(width: 12),
             Expanded(
               child: Text(
@@ -710,7 +710,7 @@ class _AttendanceCalendar extends StatelessWidget {
                 IconButton(
                   onPressed: () =>
                       onMonthChanged(DateTime(month.year, month.month - 1)),
-                  icon: const Icon(Icons.chevron_left_rounded),
+                  icon: const AppIcon(Icons.chevron_left_rounded),
                   tooltip: MaterialLocalizations.of(context)
                       .previousMonthTooltip,
                 ),
@@ -724,7 +724,7 @@ class _AttendanceCalendar extends StatelessWidget {
                 IconButton(
                   onPressed: () =>
                       onMonthChanged(DateTime(month.year, month.month + 1)),
-                  icon: const Icon(Icons.chevron_right_rounded),
+                  icon: const AppIcon(Icons.chevron_right_rounded),
                   tooltip: MaterialLocalizations.of(context).nextMonthTooltip,
                 ),
               ],

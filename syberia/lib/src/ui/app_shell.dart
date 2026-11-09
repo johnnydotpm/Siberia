@@ -37,6 +37,7 @@ import '../school_notifications.dart';
 import '../state/app_controller.dart';
 import '../test_reminders.dart';
 import '../theme/app_theme.dart';
+import '../theme/expressive_tokens.dart';
 import 'brand/brand_mark.dart';
 import 'brand/brand_wordmark.dart';
 import 'brand_logo.dart';
@@ -95,13 +96,18 @@ class _AppShellState extends State<AppShell> {
   /// the app rebuilds only the page on screen. Pages not opened yet are not
   /// built at all.
   final _pages = <int, Widget>{};
-  (bool, bool)? _pagesLayout;
+  (bool, bool, bool)? _pagesLayout;
   List<Lesson>? _colorLessons;
   Set<String> _colorSubjects = const {};
   SubjectColors _colors = SubjectColors.empty;
 
   /// The vertical list last scrolled on each page, to take back to the top.
   final _lists = <int, BuildContext>{};
+
+  /// In the Expressive design: whether each page has scrolled its large
+  /// title away, so the top bar shows it. [_titleScroll] ticks on a change.
+  final _titleAway = <int, bool>{};
+  final _titleScroll = ValueNotifier(0);
 
   /// The page whose tab was tapped while open, for the page to act on.
   final _reselected = _Reselect();
@@ -111,6 +117,7 @@ class _AppShellState extends State<AppShell> {
   @override
   void dispose() {
     _reselected.dispose();
+    _titleScroll.dispose();
     super.dispose();
   }
 
@@ -141,6 +148,11 @@ class _AppShellState extends State<AppShell> {
         notification.metrics.axis == Axis.vertical &&
         notification.context != null) {
       _lists[controller.tabIndex] = notification.context!;
+      final away = notification.metrics.pixels > ExpressiveLargeTitle.extent;
+      if (_titleAway[controller.tabIndex] != away) {
+        _titleAway[controller.tabIndex] = away;
+        _titleScroll.value++;
+      }
     }
     return false;
   }
@@ -191,6 +203,7 @@ class _AppShellState extends State<AppShell> {
         // In the glass design the bars, compact sheets and menus are glass:
         // UIKit's own on iOS 26, drawn by Flutter elsewhere.
         final glass = GlassStyle.of(context);
+        final expressive = ExpressiveStyle.of(context);
         Widget wrap(int index, Widget page) => glass
             ? GlassPageScope(
                 // The timetable keeps its day strip under the bar, so it has
@@ -199,10 +212,15 @@ class _AppShellState extends State<AppShell> {
                 barActions: !wide,
                 child: page,
               )
+            : expressive
+            ? ExpressivePageScope(
+                largeTitle: index == 1 ? null : _title(context, index),
+                child: page,
+              )
             : page;
         // Pages kept from another layout would have the wrong wrapper.
-        if (_pagesLayout != (glass, wide)) {
-          _pagesLayout = (glass, wide);
+        if (_pagesLayout != (glass, wide, expressive)) {
+          _pagesLayout = (glass, wide, expressive);
           _pages.clear();
         }
         final current = controller.tabIndex;
@@ -333,18 +351,36 @@ class _AppShellState extends State<AppShell> {
             child: SafeArea(child: _SideNavigation(controller: controller)),
           ),
           appBar: AppBar(
-            title: Text(_title(context, controller.tabIndex)),
+            // In the Expressive design the page opens with its own large
+            // title; the bar shows it once that has scrolled away.
+            title: expressive && controller.tabIndex != 1
+                ? ValueListenableBuilder(
+                    valueListenable: _titleScroll,
+                    builder: (context, _, child) => AnimatedOpacity(
+                      opacity: _titleAway[controller.tabIndex] ?? false ? 1 : 0,
+                      duration: const Duration(milliseconds: 150),
+                      child: child,
+                    ),
+                    child: Text(_title(context, controller.tabIndex)),
+                  )
+                : Text(_title(context, controller.tabIndex)),
             actions: [
               // One sign of a sync: the button turns into its spinner.
               IconButton(
                 key: const ValueKey('sync-button'),
                 onPressed: controller.syncing ? null : controller.sync,
                 icon: controller.syncing
-                    ? const SizedBox.square(
-                        dimension: 18,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Icon(Icons.sync_rounded),
+                    ? expressive
+                          // Expressive's own: shapes that morph as they turn.
+                          ? const SizedBox.square(
+                              dimension: 28,
+                              child: FittedBox(child: LoadingIndicator()),
+                            )
+                          : const SizedBox.square(
+                              dimension: 18,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                    : const AppIcon(Icons.sync_rounded),
                 tooltip: context.tr('sync'),
               ),
               IconButton(
@@ -520,7 +556,7 @@ NavigationDestination _destination(
       badgeText(badge),
       style: const TextStyle(fontFeatures: _tabular),
     ),
-    child: Icon(data),
+    child: AppIcon(data),
   );
   return NavigationDestination(
     icon: badged(icon),
@@ -620,7 +656,7 @@ class _SideNavigation extends StatelessWidget {
                     ),
                     child: ListTile(
                       selected: controller.tabIndex == index,
-                      leading: Icon(entry.$1),
+                      leading: AppIcon(entry.$1),
                       title: Text(context.tr(entry.$2)),
                       trailing:
                           index == 5 && controller.snapshot.unreadMessages > 0

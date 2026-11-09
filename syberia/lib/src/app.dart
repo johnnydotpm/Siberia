@@ -11,6 +11,7 @@ import 'state/app_controller.dart';
 import 'theme/app_theme.dart';
 import 'ui/app_shell.dart';
 import 'ui/brand/brand_events.dart';
+import 'ui/expressive/expressive_style.dart';
 import 'ui/glass/glass_platform.dart';
 import 'ui/screen_transitions.dart';
 
@@ -120,7 +121,10 @@ class _SyberiaAppState extends State<SyberiaApp> with WidgetsBindingObserver {
             builder: (context, child) => ScreenTransitions(
               enabled: !(glass && GlassPlatform.backend == GlassBackend.uikit),
               revealing: _revealing,
-              child: GlassStyle(enabled: glass, child: child!),
+              child: GlassStyle(
+                enabled: glass,
+                child: ExpressiveStyle(enabled: expressive, child: child!),
+              ),
             ),
             home: _SystemNavigationStyle(
               child: AppShell(controller: widget.controller),

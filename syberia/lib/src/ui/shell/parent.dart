@@ -417,7 +417,7 @@ class _AbsenceSheetState extends State<_AbsenceSheet> {
                 const SizedBox(height: 4),
                 TextButton.icon(
                   key: ValueKey('absence-write-${request.id}'),
-                  icon: const Icon(Icons.reply_rounded),
+                  icon: const AppIcon(Icons.reply_rounded),
                   label: Text(context.tr('excuseWriteTeacher')),
                   onPressed: () {
                     final view = widget.controller.snapshot.profile.id;
@@ -598,7 +598,7 @@ class _AbsenceSheetState extends State<_AbsenceSheet> {
         FilledButton.tonalIcon(
           key: const ValueKey('absence-history-new'),
           style: _wideButton,
-          icon: const Icon(Icons.edit_note_rounded),
+          icon: const AppIcon(Icons.edit_note_rounded),
           label: Text(context.tr('excuseAttendance')),
           onPressed: () async {
             await _showExcuseSheet(context, widget.controller);

@@ -59,7 +59,7 @@ class _LoginRequired extends StatelessWidget {
                       showDragHandle: true,
                       builder: (_) => _Login(controller),
                     ),
-                    icon: const Icon(Icons.login_rounded),
+                    icon: const AppIcon(Icons.login_rounded),
                     label: Text(context.tr('connect')),
                   ),
                 ),
@@ -199,7 +199,7 @@ class _ProfilesSheet extends StatelessWidget {
                     Navigator.pop(context);
                     _showAddProfile(outer, controller);
                   },
-            icon: const Icon(Icons.person_add_alt_1_rounded),
+            icon: const AppIcon(Icons.person_add_alt_1_rounded),
             label: Text(context.tr('addProfile')),
           ),
         const SizedBox(height: 12),
@@ -227,7 +227,7 @@ class _ProfilesSheet extends StatelessWidget {
                     await controller.logout();
                   }
                 },
-          icon: const Icon(Icons.logout_rounded),
+          icon: const AppIcon(Icons.logout_rounded),
           label: Text(context.tr(several ? 'logoutAll' : 'logout')),
         ),
       ],
@@ -293,7 +293,7 @@ class _ProfileRow extends StatelessWidget {
               if (active)
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: Icon(
+                  child: AppIcon(
                     Icons.check_rounded,
                     color: theme.colorScheme.primary,
                     semanticLabel: context.tr('profileOpen'),
@@ -303,7 +303,7 @@ class _ProfileRow extends StatelessWidget {
                 IconButton(
                   tooltip: context.trArgs('profileActions', {'name': name}),
                   onPressed: onMore,
-                  icon: const Icon(Icons.more_horiz_rounded),
+                  icon: const AppIcon(Icons.more_horiz_rounded),
                 ),
             ],
           ),
@@ -379,7 +379,7 @@ class _TogetherRow extends StatelessWidget {
                   if (open)
                     Padding(
                       padding: const EdgeInsetsDirectional.only(start: 8),
-                      child: Icon(
+                      child: AppIcon(
                         Icons.check_rounded,
                         color: theme.colorScheme.primary,
                         semanticLabel: context.tr('profileOpen'),
@@ -413,7 +413,7 @@ class _ProfileTogetherSwitch extends StatelessWidget {
           controller.profileOf(profile.id)?.together ?? profile.together;
       return SwitchListTile(
         key: const ValueKey('profile-together'),
-        secondary: const Icon(Icons.layers_outlined),
+        secondary: const AppIcon(Icons.layers_outlined),
         title: Text(context.tr('profileTogether')),
         subtitle: Text(context.tr('profileTogetherHint')),
         value: current,
@@ -437,7 +437,7 @@ class _RolePicker extends StatelessWidget {
   final String prefix;
 
   @override
-  Widget build(BuildContext context) => SegmentedButton<ProfileRole>(
+  Widget build(BuildContext context) => _Segmented<ProfileRole>(
     segments: [
       for (final (value, label, icon) in [
         (ProfileRole.student, 'roleStudent', Icons.school_outlined),
@@ -449,7 +449,7 @@ class _RolePicker extends StatelessWidget {
             context.tr(label),
             key: ValueKey('$prefix-${value.name}'),
           ),
-          icon: Icon(icon),
+          icon: AppIcon(icon),
         ),
     ],
     selected: {?role},
@@ -531,7 +531,7 @@ Future<void> _showProfileActions(
         ),
         ListTile(
           key: const ValueKey('profile-role-settings'),
-          leading: const Icon(Icons.family_restroom_rounded),
+          leading: const AppIcon(Icons.family_restroom_rounded),
           title: Text(sheetContext.tr('profileRole')),
           onTap: () {
             Navigator.pop(sheetContext);
@@ -540,7 +540,7 @@ Future<void> _showProfileActions(
         ),
         ListTile(
           key: const ValueKey('profile-rename'),
-          leading: const Icon(Icons.edit_rounded),
+          leading: const AppIcon(Icons.edit_rounded),
           title: Text(sheetContext.tr('renameProfile')),
           onTap: () {
             Navigator.pop(sheetContext);
@@ -549,7 +549,7 @@ Future<void> _showProfileActions(
         ),
         ListTile(
           key: const ValueKey('profile-color'),
-          leading: const Icon(Icons.palette_outlined),
+          leading: const AppIcon(Icons.palette_outlined),
           title: Text(sheetContext.tr('profileColor')),
           onTap: () {
             Navigator.pop(sheetContext);
@@ -564,7 +564,7 @@ Future<void> _showProfileActions(
             key: const ValueKey('profile-remove'),
             iconColor: error,
             textColor: error,
-            leading: const Icon(Icons.person_remove_rounded),
+            leading: const AppIcon(Icons.person_remove_rounded),
             title: Text(sheetContext.tr('removeProfile')),
             onTap: () async {
               Navigator.pop(sheetContext);
@@ -818,7 +818,7 @@ class _AddProfileState extends State<_AddProfile> {
             contentPadding: EdgeInsets.zero,
             title: Text(context.trError(AppError.from(result.error!))),
             trailing: IconButton(
-              icon: const Icon(Icons.refresh_rounded),
+              icon: const AppIcon(Icons.refresh_rounded),
               tooltip: MaterialLocalizations.of(context)
                   .refreshIndicatorSemanticLabel,
               onPressed: () => setState(() {
@@ -852,7 +852,7 @@ class _AddProfileState extends State<_AddProfile> {
               subtitle: Text(
                 context.tr(student.parent ? 'parentAccount' : 'studentAccount'),
               ),
-              trailing: const Icon(Icons.add_rounded),
+              trailing: const AppIcon(Icons.add_rounded),
               onTap: () => add(student),
             ),
           const Divider(height: 24),
@@ -871,7 +871,7 @@ class _AddProfileState extends State<_AddProfile> {
                     builder: (_) => _Login(widget.controller),
                   );
                 },
-          icon: const Icon(Icons.login_rounded),
+          icon: const AppIcon(Icons.login_rounded),
           label: Text(context.tr('addAnotherDiary')),
         ),
       ],
@@ -1195,7 +1195,7 @@ class _LoginState extends State<_Login> {
         autofillHints: const [AutofillHints.email],
         decoration: InputDecoration(
           labelText: context.tr('email'),
-          prefixIcon: const Icon(Icons.alternate_email_rounded),
+          prefixIcon: const AppIcon(Icons.alternate_email_rounded),
         ),
         validator: (value) => value == null || value.trim().isEmpty
             ? context.tr('requiredEmail')
@@ -1209,10 +1209,10 @@ class _LoginState extends State<_Login> {
         onFieldSubmitted: (_) => submit(),
         decoration: InputDecoration(
           labelText: context.tr('password'),
-          prefixIcon: const Icon(Icons.lock_outline_rounded),
+          prefixIcon: const AppIcon(Icons.lock_outline_rounded),
           suffixIcon: IconButton(
             onPressed: () => setState(() => obscure = !obscure),
-            icon: Icon(
+            icon: AppIcon(
               obscure ? Icons.visibility_rounded : Icons.visibility_off_rounded,
             ),
           ),
@@ -1265,7 +1265,7 @@ class _ChildRows extends StatelessWidget {
           ),
           title: Text(profile.displayName),
           subtitle: profile.school.isEmpty ? null : Text(profile.school),
-          trailing: const Icon(Icons.chevron_right_rounded),
+          trailing: const AppIcon(Icons.chevron_right_rounded),
           onTap: () => _showProfileActions(context, controller, profile),
         ),
     ],
