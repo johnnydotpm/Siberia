@@ -142,8 +142,10 @@ class FakeProfileClient extends LibrusClient {
 
   @override
   Future<List<Lesson>> fetchTimetableWeek(DateTime day) async {
-    world.weeks.add(profile!.synergiaLogin ?? '');
-    return const [];
+    final login = profile!.synergiaLogin ?? '';
+    world.weeks.add(login);
+    await world.weekHolds[login]?.future;
+    return world.weekLessons[login] ?? const [];
   }
 
   @override
@@ -225,6 +227,12 @@ class FakeLibrusWorld {
 
   /// The logins whose timetable weeks were asked for, in turn.
   final weeks = <String>[];
+
+  /// Timetable weeks of a login wait for its completer.
+  final weekHolds = <String, Completer<void>>{};
+
+  /// Login → the lessons its timetable weeks bring; none by default.
+  final weekLessons = <String, List<Lesson>>{};
 
   /// The messages opened, as "login:message id".
   final opened = <String>[];

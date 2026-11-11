@@ -6,6 +6,7 @@ import 'package:syberia/src/app.dart';
 import 'package:syberia/src/data/app_repository.dart';
 import 'package:syberia/src/domain/models.dart';
 import 'package:syberia/src/state/app_controller.dart';
+import 'package:syberia/src/ui/glass/glass_platform.dart';
 
 AttendanceRecord _record(String id, DateTime date, AttendanceKind kind) =>
     AttendanceRecord(
@@ -79,6 +80,30 @@ void main() {
   setUp(
     () => SharedPreferences.setMockInitialValues({'app_design_v1': 'classic'}),
   );
+
+  testWidgets('under glass bars the calendar days follow their weekdays', (
+    tester,
+  ) async {
+    SharedPreferences.setMockInitialValues({'app_design_v1': 'glass'});
+    GlassPlatform.debugSetBackend(GlassBackend.rendered);
+    addTearDown(() => GlassPlatform.debugSetBackend(GlassBackend.none));
+    // A phone's notch and home indicator, which the page passes on.
+    tester.view.padding = const FakeViewPadding(top: 47, bottom: 34);
+    final controller = await _pump(tester, locale: const Locale('ru'));
+    controller.selectTab(6);
+    await tester.pumpAndSettle();
+
+    final weekdays = tester.getRect(find.text('Пн'));
+    final grid = tester.getRect(find.byType(GridView));
+    final first = tester.getRect(
+      find.descendant(of: find.byType(GridView), matching: find.text('1')),
+    );
+    // In the first row, right below, not after the screen's safe area.
+    final cell = grid.width / 7;
+    expect(first.center.dy - weekdays.bottom, lessThan(cell));
+    expect(tester.takeException(), isNull);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
 
   testWidgets('the attendance calendar and rate follow the app language', (
     tester,

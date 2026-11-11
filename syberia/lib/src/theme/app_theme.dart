@@ -193,18 +193,27 @@ abstract final class AppTheme {
     animationDuration: SpringCurve(Springs.fastSpatial).duration,
   );
 
-  /// The surfaces of [colors] made black, for screens that save power.
-  static ColorScheme _black(ColorScheme colors) => colors.copyWith(
-    surface: Colors.black,
-    surfaceDim: Colors.black,
-    surfaceBright: Colors.black,
-    surfaceContainerLowest: Colors.black,
-    surfaceContainerLow: Colors.black,
-    surfaceContainer: Colors.black,
-    surfaceContainerHigh: Colors.black,
-    surfaceContainerHighest: Colors.black,
-    surfaceTint: Colors.transparent,
-  );
+  /// [colors] for screens that save power: the page black, and what sits on
+  /// it darker than in the dark theme but still apart from the page, in the
+  /// same steps and tint. All black, fields, cards and button groups would
+  /// lose their shapes.
+  static ColorScheme _black(ColorScheme colors) {
+    Color near(Color dark) => Color.lerp(Colors.black, dark, _blackLift)!;
+    return colors.copyWith(
+      surface: Colors.black,
+      surfaceDim: Colors.black,
+      surfaceBright: near(colors.surfaceBright),
+      surfaceContainerLowest: Colors.black,
+      surfaceContainerLow: near(colors.surfaceContainerLow),
+      surfaceContainer: near(colors.surfaceContainer),
+      surfaceContainerHigh: near(colors.surfaceContainerHigh),
+      surfaceContainerHighest: near(colors.surfaceContainerHighest),
+      surfaceTint: Colors.transparent,
+    );
+  }
+
+  /// How much of the dark theme's containers the black one keeps.
+  static const double _blackLift = 0.6;
 
   // Flutter picks the status bar icons from the bar's colour. A transparent
   // bar reads as dark, which left white icons on the light page, so the
@@ -262,7 +271,7 @@ abstract final class AppTheme {
       cardTheme: CardThemeData(
         elevation: 0,
         color: amoled
-            ? Colors.black
+            ? colors.surfaceContainerLow
             : brightness == Brightness.light
             ? Colors.white
             : const Color(0xFF1B2226),

@@ -562,6 +562,8 @@ class AppController extends ChangeNotifier {
     await notifications?.saveSettings(const SchoolNotificationSettings());
     await _loadPreferences();
     notifyListeners();
+    // The design and the wallpaper colours are back to theirs.
+    _sendWidgetDefaultTheme();
     _updateHomeWidget();
     await configureBackground();
     await _updateReminders();
@@ -1319,8 +1321,11 @@ class AppController extends ChangeNotifier {
   Future<List<Lesson>> fetchTimetableWeek(DateTime day) async {
     _error = null;
     if (_together) return _fetchTimetableWeekTogether(day);
+    final scope = (_syncKey, snapshot.profile.id);
     try {
       final lessons = await _repository.fetchTimetableWeek(day);
+      // Another profile opened meanwhile: the week is not its own.
+      if ((_syncKey, snapshot.profile.id) != scope) return lessons;
       _snapshot = snapshot.copyWith(
         lessons: _withWeek(snapshot.lessons, lessons, day),
       );
@@ -1999,6 +2004,7 @@ class AppController extends ChangeNotifier {
     final remaining = await _repository.removeProfile(profileId);
     _profiles = _repository.profiles;
     _profileNews = {..._profileNews}..remove(profileId);
+    _absenceHistory.remove(profileId);
     final wasTogether = _together;
     if (_together && canBeTogether) {
       _parts = {..._parts}..remove(profileId);
@@ -2095,9 +2101,14 @@ class AppController extends ChangeNotifier {
         return;
       }
       final sameProfile = result.profile.id == snapshot.profile.id;
-      // A Sent folder loaded or a message sent while this sync ran stays.
+      // A Sent folder loaded, a message sent or read while this sync ran
+      // stays.
       _snapshot = sameProfile
-          ? result.copyWith(sentMessages: snapshot.sentMessages)
+          ? _keepReadMeanwhile(
+              result.copyWith(sentMessages: snapshot.sentMessages),
+              before: before,
+              now: snapshot,
+            )
           : result;
       // Nothing is news on the first sync or for another account.
       final news = sameProfile && before.lastSync.millisecondsSinceEpoch != 0
@@ -2115,6 +2126,32 @@ class AppController extends ChangeNotifier {
     }
   }
 
+  /// [result] with the messages read on the phone while it was fetched
+  /// read too, as it was fetched before they were opened.
+  static AppSnapshot _keepReadMeanwhile(
+    AppSnapshot result, {
+    required AppSnapshot before,
+    required AppSnapshot now,
+  }) {
+    final unreadBefore = {
+      for (final message in before.messages)
+        if (message.unread) message.id,
+    };
+    final read = {
+      for (final message in now.messages)
+        if (!message.unread && unreadBefore.contains(message.id)) message.id,
+    };
+    if (read.isEmpty) return result;
+    return result.copyWith(
+      messages: [
+        for (final message in result.messages)
+          message.unread && read.contains(message.id)
+              ? message.copyWith(unread: false)
+              : message,
+      ],
+    );
+  }
+
   /// Syncs every profile in the view together, one after another, as a
   /// Librus login two of them share renews its session once at a time. A
   /// profile that fails leaves the others' data, and the error names it.
@@ -2130,16 +2167,23 @@ class AppController extends ChangeNotifier {
     _errorSource = null;
     notifyListeners();
     final before = snapshot;
+    // Each profile's data as the sync began: the ones synced later wait on
+    // the first, and a message may be read meanwhile.
+    final partsBefore = _parts;
     (SchoolProfile, Object, StackTrace)? failed;
     try {
       for (final profile in togetherProfiles) {
         _syncingProfiles.add(profile.id);
         try {
           final result = await _repository.syncProfile(profile.id);
-          // A Sent folder loaded or a message sent meanwhile stays.
+          // A Sent folder loaded, a message sent or read meanwhile stays.
           _changePart(
             profile.id,
-            (data) => result.copyWith(sentMessages: data.sentMessages),
+            (data) => _keepReadMeanwhile(
+              result.copyWith(sentMessages: data.sentMessages),
+              before: partsBefore[profile.id] ?? data,
+              now: data,
+            ),
           );
           await _notify(result, profile);
         } on Object catch (error, stack) {
@@ -2175,6 +2219,7 @@ class AppController extends ChangeNotifier {
     _snapshot = await _repository.logout();
     _profiles = const [];
     _profileNews = const {};
+    _absenceHistory.clear();
     await _loadProfileSettings();
     _syncNews = null;
     _forgetSentMessages();

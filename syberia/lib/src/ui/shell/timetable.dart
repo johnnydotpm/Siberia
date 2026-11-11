@@ -341,9 +341,11 @@ class _TimetableState extends State<_Timetable> {
     }
   }
 
-  void _selectFromStrip(DateTime requested, Iterable<DateTime> lessonDays) {
+  /// A day picked in the strip opens as it is, free or not, as a swipe
+  /// would show it.
+  void _selectFromStrip(DateTime day) {
     HapticFeedback.selectionClick();
-    _goTo(_nearestDayWithLessons(requested, lessonDays));
+    _goTo(_day(day));
   }
 
   /// Slides the pages to [day], or shows it at once when it is far.
@@ -459,7 +461,7 @@ class _TimetableState extends State<_Timetable> {
                 today: _sameDay(day, today),
                 hasLessons: groups.containsKey(day),
                 hasEvents: eventDays.contains(day),
-                onTap: () => _selectFromStrip(day, groups.keys),
+                onTap: () => _selectFromStrip(day),
               ),
             ),
           ],
@@ -1230,6 +1232,7 @@ class _TimetableCalendarDialogState extends State<_TimetableCalendarDialog> {
               GridView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
+                padding: EdgeInsets.zero,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 7,
                   mainAxisSpacing: 4,

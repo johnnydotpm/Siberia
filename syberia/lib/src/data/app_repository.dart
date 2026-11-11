@@ -1381,6 +1381,7 @@ class AppRepository {
       _gradesViewKey,
       _todayLayoutKey,
       _autoSyncKey,
+      _wallpaperColorsKey,
     ]) {
       await preferences.remove(key);
     }

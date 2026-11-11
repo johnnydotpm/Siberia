@@ -5,6 +5,7 @@ import 'package:syberia/src/app.dart';
 import 'package:syberia/src/data/app_repository.dart';
 import 'package:syberia/src/domain/models.dart';
 import 'package:syberia/src/state/app_controller.dart';
+import 'package:syberia/src/theme/app_theme.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -44,9 +45,18 @@ void main() {
       expect(currentTheme().brightness, Brightness.dark);
       expect(currentTheme().scaffoldBackgroundColor, Colors.black);
       expect(currentTheme().colorScheme.surface, Colors.black);
-      expect(currentTheme().colorScheme.surfaceContainerHigh, Colors.black);
-      expect(currentTheme().cardTheme.color, Colors.black);
       expect(currentTheme().navigationBarTheme.backgroundColor, Colors.black);
+      // Cards and fields stay apart from the black page, darker than in
+      // the dark theme.
+      final black = currentTheme().colorScheme;
+      final dark = AppTheme.dark().colorScheme;
+      expect(black.surfaceContainerHigh, isNot(Colors.black));
+      expect(
+        black.surfaceContainerHigh.computeLuminance(),
+        lessThan(dark.surfaceContainerHigh.computeLuminance()),
+      );
+      expect(currentTheme().cardTheme.color, black.surfaceContainerLow);
+      expect(currentTheme().cardTheme.color, isNot(Colors.black));
       final restored = AppController(AppRepository(), updatesEnabled: false);
       await restored.bootstrap();
       expect(restored.colorMode, AppColorMode.amoled);

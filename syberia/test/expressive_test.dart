@@ -146,11 +146,28 @@ void main() {
       expect(theme.textTheme.bodyMedium!.fontSize, 14);
     });
 
-    test('in black mode the surfaces are black', () {
+    test('in black mode the page is black and containers stand apart', () {
       final theme = AppTheme.expressive(Brightness.dark, amoled: true);
-      expect(theme.colorScheme.surface, Colors.black);
-      expect(theme.colorScheme.surfaceContainer, Colors.black);
-      expect(theme.colorScheme.primary, isNot(Colors.black));
+      final dark = AppTheme.expressive(Brightness.dark).colorScheme;
+      final colors = theme.colorScheme;
+      expect(colors.surface, Colors.black);
+      expect(theme.scaffoldBackgroundColor, Colors.black);
+      expect(colors.primary, isNot(Colors.black));
+      // Each step lighter than the one below, all darker than in dark.
+      final steps = [
+        colors.surface,
+        colors.surfaceContainerLow,
+        colors.surfaceContainer,
+        colors.surfaceContainerHigh,
+        colors.surfaceContainerHighest,
+      ].map((color) => color.computeLuminance()).toList();
+      for (var step = 1; step < steps.length; step++) {
+        expect(steps[step], greaterThan(steps[step - 1]));
+      }
+      expect(
+        colors.surfaceContainer.computeLuminance(),
+        lessThan(dark.surfaceContainer.computeLuminance()),
+      );
     });
 
     test('takes the wallpaper colours when given', () {

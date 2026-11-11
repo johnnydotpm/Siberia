@@ -32,7 +32,7 @@ class LibrusClient {
     LibrusLogins? logins,
     this._account,
     this._synergiaLogin,
-  }) : _dio = dio ?? Dio(),
+  }) : _dio = dio ?? Dio(_timeouts()),
        _clock = clock ?? DateTime.now,
        _referenceCache = referenceCache ?? LibrusReferenceCache(),
        _logins =
@@ -40,6 +40,14 @@ class LibrusClient {
     // Every request goes in the debug menu's log, without its query.
     Diagnostics.instance.watch(_dio);
   }
+
+  /// A connection that hangs fails in time, instead of keeping the sync
+  /// (and everything that waits for it) going until the system drops it.
+  /// Each client gets options of its own, as Dio may change them.
+  static BaseOptions _timeouts() => BaseOptions(
+    connectTimeout: const Duration(seconds: 15),
+    receiveTimeout: const Duration(seconds: 30),
+  );
 
   static const _portalBase = 'https://portal.librus.pl';
   static const _portalApi = '$_portalBase/api/v3';
@@ -2624,8 +2632,11 @@ String _htmlDecode(String value) => value
     .replaceAll('&lt;', '<')
     .replaceAll('&gt;', '>');
 LibrusException _networkException(DioException error) => switch (error.type) {
-  DioExceptionType.connectionTimeout || DioExceptionType.receiveTimeout =>
-    const LibrusException(LibrusErrorCode.networkTimeout),
+  DioExceptionType.connectionTimeout ||
+  DioExceptionType.sendTimeout ||
+  DioExceptionType.receiveTimeout => const LibrusException(
+    LibrusErrorCode.networkTimeout,
+  ),
   DioExceptionType.connectionError => const LibrusException(
     LibrusErrorCode.networkUnavailable,
   ),

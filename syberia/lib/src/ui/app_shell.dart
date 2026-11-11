@@ -242,11 +242,16 @@ class _AppShellState extends State<AppShell> {
           _pages.clear();
         }
         final current = controller.tabIndex;
+        // IndexedStack keeps hidden pages animating: their tickers stop
+        // here, so a page out of sight draws no frames.
         final pages = [
           for (var index = 0; index < _pageCount; index++)
-            index == current
-                ? _pages[index] = wrap(index, _page(index))
-                : _pages[index] ?? const SizedBox.shrink(),
+            TickerMode(
+              enabled: index == current,
+              child: index == current
+                  ? _pages[index] = wrap(index, _page(index))
+                  : _pages[index] ?? const SizedBox.shrink(),
+            ),
         ];
         final body = _SubjectScope(
           studentTools: controller.canUseStudentTools,

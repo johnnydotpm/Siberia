@@ -53,7 +53,11 @@ void main() {
     await tester.tap(key('message-select-m1'));
     await tester.pumpAndSettle();
     expect(find.text('1 selected'), findsOneWidget);
-    await tester.ensureVisible(find.text('Szkolna liga szachowa'));
+    // Below the screen on some days, when it falls into an earlier month's
+    // section; built all the same.
+    await tester.ensureVisible(
+      find.text('Szkolna liga szachowa', skipOffstage: false),
+    );
     await tester.pumpAndSettle();
     await tester.longPress(find.text('Szkolna liga szachowa'));
     await tester.pumpAndSettle();
