@@ -1437,8 +1437,12 @@ class _Summary extends StatelessWidget {
       return LayoutBuilder(
         builder: (context, constraints) {
           final style = Theme.of(context).textTheme.labelMedium!;
+          // A few points to spare: the drawn text can come out a hair
+          // wider than measured.
           final room =
-              (constraints.maxWidth - 2 * Space.small) / 3 - 2 * Space.large;
+              (constraints.maxWidth - 2 * Space.small) / 3 -
+              2 * Space.large -
+              4;
           var widest = 0.0;
           for (final label in labels) {
             final painter = TextPainter(
