@@ -296,6 +296,7 @@ class DiaryPlugins {
       'events',
       'notices',
       'announcements',
+      'luckyNumbers',
     };
     if (result.errorCode == 'session_expired' &&
         safeReads.contains(operation) &&
@@ -379,6 +380,7 @@ class DiaryPlugins {
         .map((part) => part.name)
         .toList();
     final modules = <String, Object?>{};
+    final skippedOptional = <String>{};
     final issues = {...previous.moduleErrors}
       ..removeWhere((key, _) => wanted.contains(key));
     // Each module is a separate VM invocation and credential checkpoint. One
@@ -389,6 +391,10 @@ class DiaryPlugins {
             ? await _mailbox(profile, 'inbox')
             : (await invoke(profile, name, _range(DateTime.now()))).data;
       } on PluginException catch (error) {
+        if (name == 'luckyNumbers' && error.code == 'unsupported_operation') {
+          skippedOptional.add(name);
+          continue;
+        }
         if (error.code == 'session_expired' && name != 'messages') rethrow;
         issues[name] = error.code == 'unsupported_operation'
             ? 'module_unavailable'
@@ -400,6 +406,7 @@ class DiaryPlugins {
     final providerData = {...previous.providerData};
     var applied = 0;
     for (final name in wanted) {
+      if (skippedOptional.contains(name)) continue;
       final module = modules[name];
       if (module == null) {
         issues.putIfAbsent(name, () => 'module_unavailable');
@@ -407,9 +414,16 @@ class DiaryPlugins {
       }
       try {
         final normalized = (module as Map).cast<String, dynamic>();
-        final items = (normalized['items'] as List)
-            .map((row) => _row(profile, row))
-            .toList();
+        final items = (normalized['items'] as List).map((row) {
+          if (name != 'luckyNumbers') return _row(profile, row);
+          final value = row as Map;
+          final number = LuckyNumber.fromJson({
+            'number': value['number'],
+            'day': value['day'],
+          });
+          if (number == null) throw const PluginException('protocol_error');
+          return number.toJson();
+        }).toList();
         final candidate = {...cached};
         if (name == 'events' || name == 'homework') {
           final events = cached['events'] as List;

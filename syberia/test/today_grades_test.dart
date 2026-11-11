@@ -102,8 +102,9 @@ void main() {
     ));
     // The days off, added later, come right after the lesson card.
     expect(layout.blocks[1], (block: TodayBlock.freeDays, visible: true));
-    expect(layout.blocks[2], (block: TodayBlock.grades, visible: false));
-    expect(layout.blocks[3].block, TodayBlock.events);
+    expect(layout.blocks[2], (block: TodayBlock.luckyNumber, visible: true));
+    expect(layout.blocks[3], (block: TodayBlock.grades, visible: false));
+    expect(layout.blocks[4].block, TodayBlock.events);
     // Blocks the saved list did not know about come back, visible.
     expect(layout.blocks, hasLength(TodayBlock.values.length));
     expect(layout.visible, isNot(contains(TodayBlock.grades)));

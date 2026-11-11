@@ -205,6 +205,46 @@ class _TodayState extends State<_Today> {
           key: const ValueKey('today-free-days'),
           child: _FreeDayCard(next, now: now),
         );
+      case TodayBlock.luckyNumber:
+        final numbers = data.luckyNumbers
+            .where((number) => number.isFor(now))
+            .toList();
+        if (numbers.isEmpty) return null;
+        return Card(
+          key: const ValueKey('today-lucky-numbers'),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              for (final number in numbers)
+                ListTile(
+                  leading: const Icon(Icons.casino_outlined),
+                  title: _MarkedTitle(
+                    Text(
+                      context.tr('luckyNumbers'),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    number.source,
+                  ),
+                  trailing: SizedBox(
+                    width: 64,
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: AlignmentDirectional.centerEnd,
+                      child: Text(
+                        '${number.number}',
+                        style: Theme.of(context).textTheme.headlineMedium
+                            ?.copyWith(
+                              fontWeight: FontWeight.w800,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        );
       case TodayBlock.summary:
         return _Summary(controller);
       case TodayBlock.grades:
@@ -871,6 +911,7 @@ Future<void> _showTodayLayoutSheet(
 String _todayBlockLabel(TodayBlock block) => switch (block) {
   TodayBlock.currentLesson => 'todayCurrentLesson',
   TodayBlock.freeDays => 'freeDays',
+  TodayBlock.luckyNumber => 'luckyNumbers',
   TodayBlock.summary => 'todayBlockSummary',
   TodayBlock.grades => 'todayRecentGrades',
   TodayBlock.homework => 'homework',
@@ -881,6 +922,7 @@ String _todayBlockLabel(TodayBlock block) => switch (block) {
 IconData _todayBlockIcon(TodayBlock block) => switch (block) {
   TodayBlock.currentLesson => Icons.schedule_rounded,
   TodayBlock.freeDays => Icons.beach_access_rounded,
+  TodayBlock.luckyNumber => Icons.casino_outlined,
   TodayBlock.summary => Icons.dashboard_rounded,
   TodayBlock.grades => Icons.school_rounded,
   TodayBlock.homework => Icons.assignment_rounded,
@@ -894,45 +936,51 @@ class _UpdateBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Card(
+    key: const ValueKey('update-banner'),
     color: Theme.of(context).colorScheme.tertiaryContainer,
-    child: Padding(
-      padding: const EdgeInsets.fromLTRB(16, 12, 6, 12),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 3),
-            child: Icon(
-              Icons.system_update_alt_rounded,
-              color: Theme.of(context).colorScheme.onTertiaryContainer,
+    clipBehavior: Clip.antiAlias,
+    child: InkWell(
+      key: const ValueKey('update-banner-link'),
+      onTap: () => _openLink(context, '$_repositoryUrl/releases/latest'),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 12, 6, 12),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 3),
+              child: Icon(
+                Icons.system_update_alt_rounded,
+                color: Theme.of(context).colorScheme.onTertiaryContainer,
+              ),
             ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  context.tr('updateAvailableTitle'),
-                  style: Theme.of(context).textTheme.titleSmall
-                      ?.copyWith(fontWeight: FontWeight.w800),
-                ),
-                const SizedBox(height: 3),
-                Text(
-                  context.trArgs('updateAvailableText', {
-                    'current': AppBuildInfo.version,
-                    'latest': controller.latestVersion ?? '',
-                  }),
-                ),
-              ],
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    context.tr('updateAvailableTitle'),
+                    style: Theme.of(context).textTheme.titleSmall
+                        ?.copyWith(fontWeight: FontWeight.w800),
+                  ),
+                  const SizedBox(height: 3),
+                  Text(
+                    context.trArgs('updateAvailableText', {
+                      'current': AppBuildInfo.version,
+                      'latest': controller.latestVersion ?? '',
+                    }),
+                  ),
+                ],
+              ),
             ),
-          ),
-          IconButton(
-            onPressed: controller.dismissUpdate,
-            icon: const Icon(Icons.close_rounded),
-            tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
-          ),
-        ],
+            IconButton(
+              onPressed: controller.dismissUpdate,
+              icon: const Icon(Icons.close_rounded),
+              tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
+            ),
+          ],
+        ),
       ),
     ),
   );

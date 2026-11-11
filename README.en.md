@@ -31,6 +31,7 @@ Librus is a bundled plugin using the same interface as the other diaries. Fryder
 - Schedule, calendar, and upcoming events
 - Homework grouped by due date, with search
 - A Today screen with the current and next lesson and blocks you can hide and reorder
+- The daily lucky number from Librus, when provided by the school, shown separately for each profile
 - A "Next lesson" home screen widget (Android and iOS), with per-widget settings on Android, including which profile it shows, or all of them together
 - Full messaging support
 - Announcements

@@ -167,6 +167,11 @@ AppSnapshot mergeSnapshots(List<(SchoolProfile, AppSnapshot)> parts) {
           item.withSource(profile, id: sourcedId(profile, item.id)),
       (a, b) => a.from.compareTo(b.from),
     ),
+    luckyNumbers: all(
+      (snapshot) => snapshot.luckyNumbers,
+      (item, profile) => item.withSource(profile),
+      (a, b) => a.day.compareTo(b.day),
+    ),
     lastSync: synced.isEmpty
         ? DateTime.fromMillisecondsSinceEpoch(0)
         : synced.reduce((a, b) => a.isBefore(b) ? a : b),

@@ -16,6 +16,13 @@ full/partial sync, timetable, recipients, sending, sent messages, message detail
 attachments and account cleanup. Bundled and downloaded plugins return the same
 school DTOs; the app keeps local data and settings per profile.
 
+Optional lucky numbers use the documented `GET /LuckyNumbers` response's
+`LuckyNumber` and `LuckyNumberDay` fields. Draws are cached with their calendar
+date, kept separate between profiles and shown on Today only for that date.
+Unsupported or failed reads do not block other modules. The contract comes from
+`providers/librus/operations.json` (`LIB-8afa616da0`) in the research branch
+linked in [protocol provenance](../RESEARCH.md); tests use synthetic responses.
+
 Existing Librus login keys, Synergia account choices, profile IDs and snapshots
 are retained. `LibrusPart` remains a compatibility alias for the shared
 `DiaryPart` enum. `usesDownloadedPlugin` describes installation; Librus is a

@@ -296,6 +296,7 @@ void main() {
     final initial = await repo.syncProfile(profiles.first.id);
     expect(initial.grades.single.value, '5');
     expect(initial.moduleErrors['announcements'], 'module_unavailable');
+    expect(initial.moduleErrors.containsKey('luckyNumbers'), isFalse);
     expect(initial.attendanceComplete, false);
     expect(secrets.values.single, contains('REFRESH'));
     expect(secrets.values.single, isNot(contains('  secret  ')));

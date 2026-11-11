@@ -61,6 +61,7 @@ class DemoData {
         ),
     ];
     snapshot = AppSnapshot(
+      luckyNumbers: [LuckyNumber(number: firstHour == 8 ? 7 : 12, day: today)],
       profile: StudentProfile(
         id: studentId,
         name: 'Alex Demo',

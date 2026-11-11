@@ -387,6 +387,7 @@ enum GradesView { compact, cards }
 enum TodayBlock {
   currentLesson,
   freeDays,
+  luckyNumber,
   summary,
   grades,
   homework,
@@ -401,6 +402,7 @@ class TodayLayout {
   static const defaults = TodayLayout([
     (block: TodayBlock.currentLesson, visible: true),
     (block: TodayBlock.freeDays, visible: true),
+    (block: TodayBlock.luckyNumber, visible: true),
     (block: TodayBlock.summary, visible: true),
     (block: TodayBlock.grades, visible: true),
     (block: TodayBlock.homework, visible: true),
@@ -422,7 +424,7 @@ class TodayLayout {
   /// Reads [encode]'s output. Unknown names are skipped and blocks added in
   /// a later version are visible. The lesson card is inserted first for
   /// layouts saved before it became configurable, and the days off right
-  /// after it.
+  /// after it, followed by the lucky number.
   factory TodayLayout.decode(List<String> saved) {
     final blocks = <({TodayBlock block, bool visible})>[];
     for (final item in saved) {
@@ -443,6 +445,11 @@ class TodayLayout {
             (entry) => entry.block == TodayBlock.currentLesson,
           );
           blocks.insert(lesson + 1, (block: block, visible: true));
+        } else if (block == TodayBlock.luckyNumber) {
+          final daysOff = blocks.indexWhere(
+            (entry) => entry.block == TodayBlock.freeDays,
+          );
+          blocks.insert(daysOff + 1, (block: block, visible: true));
         } else {
           blocks.add((block: block, visible: true));
         }
@@ -781,6 +788,58 @@ class StudentNotice {
       );
 }
 
+/// A school's draw for a calendar date, scoped to its profile when combined.
+/// A date is deliberately stored without UTC conversion: it is not an instant.
+class LuckyNumber {
+  const LuckyNumber({required this.number, required this.day, this.source});
+  final int number;
+  final DateTime day;
+  final String? source;
+
+  bool isFor(DateTime date) =>
+      day.year == date.year && day.month == date.month && day.day == date.day;
+
+  LuckyNumber withSource(String profileId) =>
+      LuckyNumber(number: number, day: day, source: profileId);
+
+  Map<String, Object?> toJson() => {
+    'number': number,
+    'day':
+        '${day.year.toString().padLeft(4, '0')}-${day.month.toString().padLeft(2, '0')}-${day.day.toString().padLeft(2, '0')}',
+    if (source != null) 'source': source,
+  };
+
+  static LuckyNumber? fromJson(Object? raw) {
+    if (raw is! Map) return null;
+    final value = raw['number'];
+    final number = value is int
+        ? value
+        : value is String
+        ? int.tryParse(value)
+        : null;
+    final date = raw['day'];
+    if (number == null ||
+        number <= 0 ||
+        date is! String ||
+        !RegExp(r'^\d{4}-\d{2}-\d{2}$').hasMatch(date)) {
+      return null;
+    }
+    final day = DateTime.tryParse(date);
+    if (day == null ||
+        day.year < 1 ||
+        day.year != int.parse(date.substring(0, 4)) ||
+        day.month != int.parse(date.substring(5, 7)) ||
+        day.day != int.parse(date.substring(8, 10))) {
+      return null;
+    }
+    return LuckyNumber(
+      number: number,
+      day: day,
+      source: raw['source'] is String ? raw['source'] as String : null,
+    );
+  }
+}
+
 class AppSnapshot {
   const AppSnapshot({
     required this.profile,
@@ -798,6 +857,7 @@ class AppSnapshot {
     this.attendanceComplete = true,
     this.sentMessages = const [],
     this.freeDays = const [],
+    this.luckyNumbers = const [],
   });
   final StudentProfile profile;
   final Map<String, Object?> providerData;
@@ -817,6 +877,7 @@ class AppSnapshot {
 
   /// Holidays, the class's days off and teachers' absences.
   final List<FreeDay> freeDays;
+  final List<LuckyNumber> luckyNumbers;
   final DateTime lastSync;
   int get unreadMessages => messages.where((item) => item.unread).length;
   int get absences => attendance
@@ -832,6 +893,7 @@ class AppSnapshot {
     List<SchoolMessage>? messages,
     List<SchoolMessage>? sentMessages,
     List<FreeDay>? freeDays,
+    List<LuckyNumber>? luckyNumbers,
     DateTime? lastSync,
   }) => AppSnapshot(
     profile: profile,
@@ -848,6 +910,7 @@ class AppSnapshot {
     announcements: announcements,
     notices: notices,
     freeDays: freeDays ?? this.freeDays,
+    luckyNumbers: luckyNumbers ?? this.luckyNumbers,
     lastSync: lastSync ?? this.lastSync,
   );
 

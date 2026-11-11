@@ -31,6 +31,7 @@ Librus jest wbudowanym pluginem i korzysta z tego samego interfejsu co pozostał
 - Terminarz, kalendarz oraz nadchodzące wydarzenia
 - Lista zadań domowych pogrupowana według terminu, z wyszukiwaniem
 - Ekran „Dzisiaj” z bieżącą i następną lekcją oraz blokami, które można ukrywać i przestawiać
+- Szczęśliwy numerek dnia z Librusa, jeśli szkoła go udostępnia, pokazywany osobno dla każdego profilu
 - Widżet „Następna lekcja” na ekranie głównym (Android i iOS), z osobnymi ustawieniami dla każdego widżetu na Androidzie, także z wyborem profilu albo „Wszystkie razem”
 - Pełna obsługa wiadomości
 - Ogłoszenia

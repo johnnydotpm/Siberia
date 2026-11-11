@@ -22,6 +22,83 @@ void main() {
         TestFlutterSecureStoragePlatform({}),
   );
 
+  test('lucky numbers use the authenticated documented endpoint and retain the draw date', () async {
+    final requests = <RequestOptions>[];
+    final client = LibrusClient(
+      dio: Dio()
+        ..httpClientAdapter = _FixtureAdapter((options) {
+          if (options.uri.path.endsWith('/LuckyNumbers')) {
+            requests.add(options);
+            return (
+              200,
+              {
+                'LuckyNumber': {
+                  'LuckyNumber': '7',
+                  'LuckyNumberDay': '2026-11-11',
+                },
+              },
+            );
+          }
+          return _successfulResponse(options);
+        }),
+    );
+    final snapshot = await client.loginAndFetch(
+      username: 'parent@example.com',
+      password: 'secret',
+    );
+    expect(requests, hasLength(1));
+    expect(requests.single.method, 'GET');
+    expect(requests.single.headers['Authorization'], startsWith('Bearer '));
+    expect(snapshot.luckyNumbers.single.number, 7);
+    expect(snapshot.luckyNumbers.single.isFor(DateTime(2026, 11, 11)), isTrue);
+    await client.fetchSnapshot(parts: {LibrusPart.messages});
+    expect(
+      requests,
+      hasLength(1),
+      reason: 'a message-only sync does not request unrelated data',
+    );
+  });
+
+  test('absent or invalid lucky numbers never break the rest of the school snapshot', () async {
+    for (final response in <(int, Object)>[
+      (404, {}),
+      (200, {'LuckyNumber': null}),
+      (
+        200,
+        {
+          'LuckyNumber': {'LuckyNumber': 0, 'LuckyNumberDay': '2026-11-11'},
+        },
+      ),
+      (
+        200,
+        {
+          'LuckyNumber': {'LuckyNumber': 7, 'LuckyNumberDay': '2026-02-30'},
+        },
+      ),
+      (
+        200,
+        {
+          'LuckyNumber': {'LuckyNumber': 7},
+        },
+      ),
+    ]) {
+      final client = LibrusClient(
+        dio: Dio()
+          ..httpClientAdapter = _FixtureAdapter((options) {
+            return options.uri.path.endsWith('/LuckyNumbers')
+                ? response
+                : _successfulResponse(options);
+          }),
+      );
+      final snapshot = await client.loginAndFetch(
+        username: 'parent@example.com',
+        password: 'secret',
+      );
+      expect(snapshot.luckyNumbers, isEmpty);
+      expect(snapshot.grades, isNotEmpty);
+    }
+  });
+
   test('reference lists come from the cache on the next sync', () async {
     final requests = <String>[];
     final client = LibrusClient(

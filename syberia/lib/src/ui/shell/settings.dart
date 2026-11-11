@@ -745,8 +745,12 @@ class _CheckUpdatesRowState extends State<_CheckUpdatesRow> {
     } else if (isNewerVersion(latest, AppBuildInfo.version)) {
       messenger.showSnackBar(
         SnackBar(
-          content: Text(
-            context.trArgs('updateAvailableShort', {'version': latest}),
+          content: InkWell(
+            key: const ValueKey('update-snackbar-link'),
+            onTap: () => _openLink(context, '$_repositoryUrl/releases/latest'),
+            child: Text(
+              context.trArgs('updateAvailableShort', {'version': latest}),
+            ),
           ),
           action: SnackBarAction(
             label: context.tr('openRelease'),

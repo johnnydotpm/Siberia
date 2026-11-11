@@ -29,6 +29,7 @@ abstract final class SnapshotCache {
     ],
     'notices': [for (final item in value.notices) _notice(item)],
     'freeDays': [for (final item in value.freeDays) _freeDay(item)],
+    'luckyNumbers': [for (final item in value.luckyNumbers) item.toJson()],
   });
 
   static AppSnapshot? decode(String? raw) {
@@ -36,6 +37,12 @@ abstract final class SnapshotCache {
     try {
       final value = _map(jsonDecode(raw));
       return AppSnapshot(
+        luckyNumbers: value['luckyNumbers'] is List
+            ? (value['luckyNumbers'] as List)
+                  .map(LuckyNumber.fromJson)
+                  .whereType<LuckyNumber>()
+                  .toList()
+            : const [],
         providerData: value['providerData'] is Map
             ? _map(value['providerData'])
             : const {},
