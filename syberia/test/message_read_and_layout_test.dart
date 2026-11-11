@@ -419,7 +419,7 @@ void main() {
       controller.selectTab(3);
       await tester.pumpWidget(SyberiaApp(controller: controller));
       await tester.pumpAndSettle();
-      final picker = find.byType(CalendarDatePicker);
+      final picker = find.byKey(const ValueKey('events-calendar'));
       final grid = find
           .descendant(of: picker, matching: find.byType(GridView))
           .first;
@@ -432,7 +432,14 @@ void main() {
       final day = tester.getRect(lastDay);
       expect(day.top, greaterThanOrEqualTo(viewport.top));
       expect(day.bottom, lessThanOrEqualTo(viewport.bottom));
-      expect(MediaQuery.paddingOf(tester.element(grid)), EdgeInsets.zero);
+      // The glass insets do not push the days down inside the grid.
+      final firstDay = find
+          .descendant(of: picker, matching: find.text('1'))
+          .first;
+      expect(
+        tester.getRect(firstDay).top - viewport.top,
+        lessThan(viewport.width / 7),
+      );
       await tester.ensureVisible(lastDay);
       await tester.tap(lastDay);
       await tester.pumpAndSettle();

@@ -514,16 +514,29 @@ class _MessagesState extends State<_Messages> {
                 _Space.page,
                 0,
               ),
-              child: Align(
-                alignment: AlignmentDirectional.centerStart,
-                // While picking, the count is the title.
-                child: picking
-                    ? _PickedHeadline(selection.count)
-                    : ExpressiveLargeTitle(expressiveTitle),
-              ),
+              // While picking, the count is the title and the bars hold
+              // what there is to do; otherwise writing sits beside it, as
+              // in the mockup.
+              child: picking
+                  ? Align(
+                      alignment: AlignmentDirectional.centerStart,
+                      child: _PickedHeadline(selection.count),
+                    )
+                  : Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Expanded(child: ExpressiveLargeTitle(expressiveTitle)),
+                        const SizedBox(width: Space.medium),
+                        _ExpressiveCompose(
+                          onPressed: () =>
+                              _showComposeMessage(context, controller),
+                        ),
+                      ],
+                    ),
             ),
-          // While picking, the bars hold what there is to do.
-          if (!picking)
+          // A classic page in the shell has writing in its top bar; on a
+          // wide screen, with no bar of the page's own, it keeps a row.
+          if (!picking && expressiveTitle == null && !hosted)
             Padding(
               padding: const EdgeInsets.fromLTRB(
                 _Space.page,
@@ -534,6 +547,7 @@ class _MessagesState extends State<_Messages> {
               child: Align(
                 alignment: AlignmentDirectional.centerEnd,
                 child: FilledButton.icon(
+                  key: const ValueKey('messages-compose'),
                   onPressed: () => _showComposeMessage(context, controller),
                   icon: const AppIcon(Icons.edit_rounded),
                   label: Text(context.tr('newMessage')),
@@ -577,6 +591,41 @@ class _MessagesState extends State<_Messages> {
 
 /// The count of picked messages as the Expressive page's large title, the
 /// number in the accent colour.
+/// Writing a message, beside the Expressive page's title: a 56 square of
+/// the primary container with the large corner, as Material's floating
+/// action button is.
+class _ExpressiveCompose extends StatelessWidget {
+  const _ExpressiveCompose({required this.onPressed});
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return Tooltip(
+      message: context.tr('newMessage'),
+      child: Material(
+        key: const ValueKey('messages-compose'),
+        color: colors.primaryContainer,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(Corners.large),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onPressed,
+          child: SizedBox.square(
+            dimension: 56,
+            child: AppIcon(
+              Icons.edit_rounded,
+              color: colors.onPrimaryContainer,
+              semanticLabel: context.tr('newMessage'),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _PickedHeadline extends StatelessWidget {
   const _PickedHeadline(this.count);
 

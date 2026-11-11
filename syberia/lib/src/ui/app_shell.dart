@@ -81,6 +81,7 @@ part 'shell/debug_menu.dart';
 part 'shell/together.dart';
 part 'shell/excuse.dart';
 part 'shell/selection_bars.dart';
+part 'shell/month_calendar.dart';
 
 class AppShell extends StatefulWidget {
   const AppShell({required this.controller, super.key});
@@ -402,6 +403,9 @@ class _AppShellState extends State<AppShell> {
           ),
           appBar: picking == null
               ? AppBar(
+                  // A bar of its own for each page: one scrolled under does
+                  // not leave the next page's bar filled.
+                  key: ValueKey('app-bar-${controller.tabIndex}'),
                   // In the Expressive design the page opens with its own large
                   // title; the bar shows it once that has scrolled away.
                   title: expressive && controller.tabIndex != 1
@@ -418,6 +422,16 @@ class _AppShellState extends State<AppShell> {
                         )
                       : Text(_title(context, controller.tabIndex)),
                   actions: [
+                    // Writing is the messages' own action, in the bar as in
+                    // glass. Expressive keeps it beside the page's title.
+                    if (!expressive && controller.tabIndex == _messagesTab)
+                      IconButton(
+                        key: const ValueKey('messages-compose'),
+                        onPressed: () =>
+                            _showComposeMessage(context, controller),
+                        icon: const AppIcon(Icons.edit_rounded),
+                        tooltip: context.tr('newMessage'),
+                      ),
                     // One sign of a sync: the button turns into its spinner.
                     IconButton(
                       key: const ValueKey('sync-button'),

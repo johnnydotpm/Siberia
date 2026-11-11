@@ -143,7 +143,7 @@ void main() {
       ];
       controller.selectTab(5);
       await _pump(tester, controller);
-      await tester.tap(find.text('New message').first);
+      await tester.tap(find.byKey(const ValueKey('messages-compose')));
       await tester.pumpAndSettle();
       await tester.enterText(
         find.widgetWithText(TextField, 'Recipient'),

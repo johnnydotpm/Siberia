@@ -9,6 +9,7 @@ class _Events extends StatefulWidget {
 
 class _EventsState extends State<_Events> {
   DateTime selected = DateTime.now();
+  late DateTime month = DateTime(selected.year, selected.month);
 
   @override
   Widget build(BuildContext context) {
@@ -28,22 +29,31 @@ class _EventsState extends State<_Events> {
         (events.where((item) => !item.date.isBefore(from)).toList()
               ..sort((a, b) => a.date.compareTo(b.date)))
             .take(8);
+    final eventDays = {
+      for (final item in events)
+        DateTime(item.date.year, item.date.month, item.date.day),
+    };
+    final colors = Theme.of(context).colorScheme;
     return _Refresh(
       controller: widget.controller,
       child: _PageList(
         padding: const EdgeInsets.all(_Space.page),
         children: [
           Card(
-            child: MediaQuery.removePadding(
-              context: context,
-              removeTop: true,
-              removeBottom: true,
-              child: PrimaryScrollController.none(
-                child: CalendarDatePicker(
-                  initialDate: selected,
-                  firstDate: DateTime(today.year - 2),
-                  lastDate: DateTime(today.year + 3, 12, 31),
-                  onDateChanged: (value) => setState(() => selected = value),
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              // The app's one calendar, a dot on each day with entries.
+              child: _MonthCalendar(
+                key: const ValueKey('events-calendar'),
+                month: month,
+                selected: selected,
+                first: DateTime(today.year - 2),
+                last: DateTime(today.year + 3, 12, 31),
+                onMonthChanged: (value) => setState(() => month = value),
+                onDaySelected: (value) => setState(() => selected = value),
+                dayOf: (date) => _CalendarDay(
+                  key: ValueKey('events-day-${date.toIso8601String()}'),
+                  dot: eventDays.contains(date) ? colors.primary : null,
                 ),
               ),
             ),
@@ -52,7 +62,8 @@ class _EventsState extends State<_Events> {
           _Heading(context.tr('selectedDay')),
           const SizedBox(height: _Space.heading),
           if (selectedEvents.isEmpty)
-            _Empty(context.tr('emptyEvents'), icon: Icons.event_note_rounded)
+            // One quiet line: the coming events below stay in sight.
+            _EmptyDay(context.tr('emptyEvents'))
           else
             ..._spaced(selectedEvents.map(_EventTile.new)),
           const SizedBox(height: _Space.section),
@@ -62,6 +73,38 @@ class _EventsState extends State<_Events> {
             _Empty(context.tr('emptyEvents'), icon: Icons.event_note_rounded)
           else
             ..._spaced(upcoming.map(_EventTile.new)),
+        ],
+      ),
+    );
+  }
+}
+
+/// A day with nothing on it, in a line.
+class _EmptyDay extends StatelessWidget {
+  const _EmptyDay(this.text);
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return Padding(
+      key: const ValueKey('events-day-empty'),
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+      child: Row(
+        children: [
+          AppIcon(
+            Icons.event_note_rounded,
+            size: 20,
+            color: colors.onSurfaceVariant,
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              text,
+              style: Theme.of(context).textTheme.bodyMedium
+                  ?.copyWith(color: colors.onSurfaceVariant),
+            ),
+          ),
         ],
       ),
     );
@@ -572,42 +615,73 @@ class _HomeworkCard extends StatelessWidget {
     final due = _dueLabel(context, item.date, now);
     final controller = _markingController(context);
     final done = controller?.isHomeworkDone(item) ?? false;
+    final subject = _MarkedTitle(
+      Text(
+        item.subject.isEmpty
+            ? context.tr('homeworkItem')
+            : _SubjectScope.of(context, item.subject),
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: theme.textTheme.labelLarge?.copyWith(
+          color: palette.accent,
+          fontWeight: FontWeight.w800,
+        ),
+      ),
+      item.source,
+    );
+    final dueStyle = theme.textTheme.labelMedium?.copyWith(
+      color: soon && !done ? colors.error : colors.onSurfaceVariant,
+      fontWeight: soon && !done ? FontWeight.w800 : FontWeight.w600,
+    );
+    final dueRow = Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        AppIcon(
+          Icons.event_rounded,
+          size: 14,
+          color: soon && !done ? colors.error : colors.onSurfaceVariant,
+        ),
+        const SizedBox(width: 4),
+        Flexible(
+          child: Text(
+            due,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: dueStyle,
+          ),
+        ),
+      ],
+    );
     final content = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            Expanded(
-              child: _MarkedTitle(
-                Text(
-                  item.subject.isEmpty
-                      ? context.tr('homeworkItem')
-                      : _SubjectScope.of(context, item.subject),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: theme.textTheme.labelLarge?.copyWith(
-                    color: palette.accent,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-                item.source,
-              ),
-            ),
-            const SizedBox(width: 8),
-            AppIcon(
-              Icons.event_rounded,
-              size: 14,
-              color: soon && !done ? colors.error : colors.onSurfaceVariant,
-            ),
-            const SizedBox(width: 4),
-            Text(
-              due,
-              style: theme.textTheme.labelMedium?.copyWith(
-                color: soon && !done ? colors.error : colors.onSurfaceVariant,
-                fontWeight: soon && !done ? FontWeight.w800 : FontWeight.w600,
-              ),
-            ),
-          ],
+        // The due date beside the subject while it takes at most half the
+        // row; with large text on a narrow screen it goes on a line of its
+        // own instead of past the edge.
+        LayoutBuilder(
+          builder: (context, constraints) {
+            final painter = TextPainter(
+              text: TextSpan(text: due, style: dueStyle),
+              textDirection: Directionality.of(context),
+              textScaler: MediaQuery.textScalerOf(context),
+              maxLines: 1,
+            )..layout();
+            final dueWidth = painter.width + 14 + 4;
+            painter.dispose();
+            if (dueWidth <= constraints.maxWidth / 2) {
+              return Row(
+                children: [
+                  Expanded(child: subject),
+                  const SizedBox(width: 8),
+                  dueRow,
+                ],
+              );
+            }
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [subject, const SizedBox(height: 2), dueRow],
+            );
+          },
         ),
         const SizedBox(height: 4),
         Text(

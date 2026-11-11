@@ -691,56 +691,69 @@ class _NowCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  if (current != null)
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 3,
-                      ),
-                      decoration: BoxDecoration(
-                        color: palette.accent,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Text(
-                        label,
-                        style: TextStyle(
-                          color: palette.background,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w900,
+              LayoutBuilder(
+                builder: (context, header) => Row(
+                  children: [
+                    if (current != null)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 3,
+                        ),
+                        decoration: BoxDecoration(
+                          color: palette.accent,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text(
+                          label,
+                          style: TextStyle(
+                            color: palette.background,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
+                      )
+                    else
+                      // All the room the time leaves: beside a Spacer it
+                      // got only half of it, and "Next lesson" broke in two.
+                      Expanded(
+                        child: Text(
+                          label,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.labelLarge?.copyWith(
+                            color: muted,
+                            fontWeight: FontWeight.w800,
+                          ),
                         ),
                       ),
-                    )
-                  else
-                    // All the room the time leaves: beside a Spacer it
-                    // got only half of it, and "Next lesson" broke in two.
-                    Expanded(
-                      child: Text(
-                        label,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: theme.textTheme.labelLarge?.copyWith(
-                          color: muted,
-                          fontWeight: FontWeight.w800,
+                    if (sameDay || current != null) ...[
+                      if (current != null) const Spacer(),
+                      const SizedBox(width: 8),
+                      // At most 60% of the row, smaller rather than past the
+                      // edge with large text on a narrow screen.
+                      ConstrainedBox(
+                        constraints: BoxConstraints(
+                          maxWidth: header.maxWidth * 0.6,
+                        ),
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          alignment: AlignmentDirectional.centerEnd,
+                          // "In 17 min" rolls to 16, as numbers do in iOS.
+                          child: _RollingText(
+                            when,
+                            key: const ValueKey('today-now-when'),
+                            style: theme.textTheme.labelLarge?.copyWith(
+                              color: foreground,
+                              fontWeight: FontWeight.w800,
+                              fontFeatures: _tabular,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  if (sameDay || current != null) ...[
-                    if (current != null) const Spacer(),
-                    const SizedBox(width: 8),
-                    // "In 17 min" rolls to 16, as numbers do in iOS.
-                    _RollingText(
-                      when,
-                      key: const ValueKey('today-now-when'),
-                      style: theme.textTheme.labelLarge?.copyWith(
-                        color: foreground,
-                        fontWeight: FontWeight.w800,
-                        fontFeatures: _tabular,
-                      ),
-                    ),
+                    ],
                   ],
-                ],
+                ),
               ),
               if (!sameDay && current == null) ...[
                 const SizedBox(height: 2),
@@ -1413,47 +1426,37 @@ class _Summary extends StatelessWidget {
         .length;
     final colors = Theme.of(context).colorScheme;
     if (ExpressiveStyle.of(context)) {
+      final labels = [
+        context.tr('averageGrade'),
+        context.tr('attendanceRate'),
+        context.tr('messagesUnread'),
+      ];
       // Each figure a tile of its own colour, rounded as the mockup's, all
-      // as tall as the tallest.
-      return IntrinsicHeight(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: _spacedRow([
-            _Metric(
-              average,
-              (value) => _decimal(context, value),
-              context.tr('averageGrade'),
-              Icons.school_rounded,
-              key: const ValueKey('summary-grades'),
-              onTap: () => controller.selectTab(2),
-              tile: (colors.tertiaryContainer, colors.onTertiaryContainer),
-            ),
-            _Metric(
-              data.attendance.isEmpty
-                  ? null
-                  : present / data.attendance.length * 100,
-              (value) => _percent(context, value),
-              context.tr('attendanceRate'),
-              Icons.fact_check_rounded,
-              key: const ValueKey('summary-absences'),
-              onTap: () => controller.selectTab(6),
-              tile: (colors.secondaryContainer, colors.onSecondaryContainer),
-            ),
-            _Metric(
-              data.unreadMessages.toDouble(),
-              (value) => '${value.round()}',
-              context.tr('messagesUnread'),
-              Icons.mail_rounded,
-              key: const ValueKey('summary-messages'),
-              onTap: () => controller.selectTab(5),
-              tile: (colors.primaryContainer, colors.onPrimaryContainer),
-            ),
-          ]),
-        ),
+      // as tall as the tallest, their labels of one size: the size at
+      // which the longest fits its tile.
+      return LayoutBuilder(
+        builder: (context, constraints) {
+          final style = Theme.of(context).textTheme.labelMedium!;
+          final room =
+              (constraints.maxWidth - 2 * Space.small) / 3 - 2 * Space.large;
+          var widest = 0.0;
+          for (final label in labels) {
+            final painter = TextPainter(
+              text: TextSpan(text: label, style: style),
+              textDirection: Directionality.of(context),
+              textScaler: MediaQuery.textScalerOf(context),
+              maxLines: 1,
+            )..layout();
+            if (painter.width > widest) widest = painter.width;
+            painter.dispose();
+          }
+          final labelScale = widest > room && room > 0 ? room / widest : 1.0;
+          return _metricTiles(context, labels, labelScale, average, present);
+        },
       );
     }
     return Card(
-      color: Theme.of(context).colorScheme.primaryContainer,
+      color: colors.primaryContainer,
       clipBehavior: Clip.antiAlias,
       child: Padding(
         padding: const EdgeInsets.all(8),
@@ -1496,6 +1499,57 @@ class _Summary extends StatelessWidget {
       ),
     );
   }
+
+  /// The Expressive tiles, their labels at [labelScale] of their size.
+  Widget _metricTiles(
+    BuildContext context,
+    List<String> labels,
+    double labelScale,
+    double? average,
+    int present,
+  ) {
+    final data = controller.snapshot;
+    final colors = Theme.of(context).colorScheme;
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: _spacedRow([
+          _Metric(
+            average,
+            (value) => _decimal(context, value),
+            labels[0],
+            Icons.school_rounded,
+            key: const ValueKey('summary-grades'),
+            onTap: () => controller.selectTab(2),
+            tile: (colors.tertiaryContainer, colors.onTertiaryContainer),
+            labelScale: labelScale,
+          ),
+          _Metric(
+            data.attendance.isEmpty
+                ? null
+                : present / data.attendance.length * 100,
+            (value) => _percent(context, value),
+            labels[1],
+            Icons.fact_check_rounded,
+            key: const ValueKey('summary-absences'),
+            onTap: () => controller.selectTab(6),
+            tile: (colors.secondaryContainer, colors.onSecondaryContainer),
+            labelScale: labelScale,
+          ),
+          _Metric(
+            data.unreadMessages.toDouble(),
+            (value) => '${value.round()}',
+            labels[2],
+            Icons.mail_rounded,
+            key: const ValueKey('summary-messages'),
+            onTap: () => controller.selectTab(5),
+            tile: (colors.primaryContainer, colors.onPrimaryContainer),
+            labelScale: labelScale,
+          ),
+        ]),
+      ),
+    );
+  }
 }
 
 class _Metric extends StatelessWidget {
@@ -1506,6 +1560,7 @@ class _Metric extends StatelessWidget {
     this.icon, {
     required this.onTap,
     this.tile,
+    this.labelScale = 1,
     super.key,
   });
 
@@ -1518,6 +1573,10 @@ class _Metric extends StatelessWidget {
 
   /// The Expressive design's tile: its container and content colours.
   final (Color, Color)? tile;
+
+  /// The size of the tile's label against the theme's, the same for every
+  /// tile of a row.
+  final double labelScale;
 
   @override
   Widget build(BuildContext context) {
@@ -1549,16 +1608,18 @@ class _Metric extends StatelessWidget {
                         ?.copyWith(color: foreground, fontFeatures: _tabular),
                   ),
                 ),
-                // One line, smaller if it must: a long word is not broken.
-                FittedBox(
-                  fit: BoxFit.scaleDown,
-                  alignment: AlignmentDirectional.centerStart,
-                  child: Text(
-                    label,
-                    maxLines: 1,
-                    style: theme.textTheme.labelMedium?.copyWith(
-                      color: foreground,
-                    ),
+                // One line at the row's size: a long word is not broken and
+                // no label is smaller than the others.
+                Text(
+                  label,
+                  maxLines: 1,
+                  softWrap: false,
+                  overflow: TextOverflow.fade,
+                  style: theme.textTheme.labelMedium?.copyWith(
+                    color: foreground,
+                    fontSize:
+                        (theme.textTheme.labelMedium?.fontSize ?? 12) *
+                        labelScale,
                   ),
                 ),
               ],
@@ -1623,7 +1684,13 @@ class _TogetherSummary extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text(value, maxLines: 1, style: valueStyle),
+              // Smaller rather than past the edge, when the figures get
+              // little room.
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: AlignmentDirectional.centerEnd,
+                child: Text(value, maxLines: 1, style: valueStyle),
+              ),
               Text(
                 label,
                 maxLines: 1,
@@ -1634,108 +1701,128 @@ class _TogetherSummary extends StatelessWidget {
             ],
           ),
         );
-    final width = MediaQuery.textScalerOf(context).scale(72).clamp(72.0, 110.0);
+    final scaled = MediaQuery.textScalerOf(context)
+        .scale(72)
+        .clamp(72.0, 110.0);
     return Card(
       key: const ValueKey('today-together-summary'),
       color: colors.primaryContainer,
       clipBehavior: Clip.antiAlias,
-      child: Column(
-        children: [
-          for (final profile in controller.togetherProfiles)
-            InkWell(
-              key: ValueKey('summary-profile-${profile.id}'),
-              onTap: () => controller.selectTab(2),
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(14, 10, 14, 10),
-                child: Row(
-                  children: [
-                    ProfileAvatar(
-                      name: controller.togetherSign(profile),
-                      color: profile.color,
-                      radius: 15,
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Text(
-                        controller.profileMark(profile.id)?.name ??
-                            profile.displayName,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: theme.textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.w700,
-                          color: colors.onPrimaryContainer,
-                        ),
-                      ),
-                    ),
-                    figure(
-                      switch (controller
-                          .gradeAverageFor(profile.id)
-                          .average(
-                            data.grades.where(
-                              (grade) =>
-                                  grade.source == profile.id &&
-                                  grade.semester == semester,
-                            ),
-                          )) {
-                        final average? => _decimal(context, average),
-                        null => '—',
-                      },
-                      context.tr('averageGrade'),
-                      width: width,
-                    ),
-                    const SizedBox(width: 8),
-                    figure(
-                      switch (data.attendance
-                          .where((item) => item.source == profile.id)
-                          .toList()) {
-                        final own when own.isNotEmpty => _percent(
-                          context,
-                          own
-                                  .where((item) => item.kind.countsAsPresence)
-                                  .length /
-                              own.length *
-                              100,
-                        ),
-                        _ => '—',
-                      },
-                      context.tr('attendanceRate'),
-                      width: width,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          Divider(
-            height: 1,
-            indent: 14,
-            endIndent: 14,
-            color: colors.onPrimaryContainer.withValues(alpha: 0.15),
-          ),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          // The figures grow with the text, but leave the name its room:
+          // the row's padding, the avatar and its gaps, and 56 for the name.
+          final room = (constraints.maxWidth - 28 - 30 - 10 - 8 - 56) / 2;
+          final width = room < scaled ? room.clamp(40.0, scaled) : scaled;
+          return _summaryRows(context, figure, width, semester);
+        },
+      ),
+    );
+  }
+
+  Widget _summaryRows(
+    BuildContext context,
+    Widget Function(String value, String label, {required double width}) figure,
+    double width,
+    int semester,
+  ) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    final data = controller.snapshot;
+    return Column(
+      children: [
+        for (final profile in controller.togetherProfiles)
           InkWell(
-            key: const ValueKey('summary-messages'),
-            onTap: () => controller.selectTab(5),
+            key: ValueKey('summary-profile-${profile.id}'),
+            onTap: () => controller.selectTab(2),
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
+              padding: const EdgeInsets.fromLTRB(14, 10, 14, 10),
               child: Row(
                 children: [
-                  AppIcon(Icons.mail_rounded, size: 20, color: colors.primary),
+                  ProfileAvatar(
+                    name: controller.togetherSign(profile),
+                    color: profile.color,
+                    radius: 15,
+                  ),
                   const SizedBox(width: 10),
                   Expanded(
                     child: Text(
-                      '${context.tr('messagesUnread')}: ${data.unreadMessages}',
+                      controller.profileMark(profile.id)?.name ??
+                          profile.displayName,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: theme.textTheme.titleSmall?.copyWith(
                         fontWeight: FontWeight.w700,
                         color: colors.onPrimaryContainer,
                       ),
                     ),
                   ),
-                  const _Chevron(),
+                  figure(
+                    switch (controller
+                        .gradeAverageFor(profile.id)
+                        .average(
+                          data.grades.where(
+                            (grade) =>
+                                grade.source == profile.id &&
+                                grade.semester == semester,
+                          ),
+                        )) {
+                      final average? => _decimal(context, average),
+                      null => '—',
+                    },
+                    context.tr('averageGrade'),
+                    width: width,
+                  ),
+                  const SizedBox(width: 8),
+                  figure(
+                    switch (data.attendance
+                        .where((item) => item.source == profile.id)
+                        .toList()) {
+                      final own when own.isNotEmpty => _percent(
+                        context,
+                        own.where((item) => item.kind.countsAsPresence).length /
+                            own.length *
+                            100,
+                      ),
+                      _ => '—',
+                    },
+                    context.tr('attendanceRate'),
+                    width: width,
+                  ),
                 ],
               ),
             ),
           ),
-        ],
-      ),
+        Divider(
+          height: 1,
+          indent: 14,
+          endIndent: 14,
+          color: colors.onPrimaryContainer.withValues(alpha: 0.15),
+        ),
+        InkWell(
+          key: const ValueKey('summary-messages'),
+          onTap: () => controller.selectTab(5),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
+            child: Row(
+              children: [
+                AppIcon(Icons.mail_rounded, size: 20, color: colors.primary),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    '${context.tr('messagesUnread')}: ${data.unreadMessages}',
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: colors.onPrimaryContainer,
+                    ),
+                  ),
+                ),
+                const _Chevron(),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

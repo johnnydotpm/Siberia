@@ -717,7 +717,7 @@ void main() {
     await tester.tap(find.text('Sent'));
     await tester.pumpAndSettle();
     expect(find.byKey(const ValueKey('sent-loading')), findsNothing);
-    await tester.tap(find.text('New message'));
+    await tester.tap(find.byKey(const ValueKey('messages-compose')));
     await tester.pumpAndSettle();
     expect(find.byKey(const ValueKey('recipients-loading')), findsNothing);
     await tester.tap(find.byIcon(Icons.close_rounded));

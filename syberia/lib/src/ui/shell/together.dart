@@ -126,12 +126,19 @@ class _MarkedTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     final app = controller ?? _ControllerScope.maybeOf(context);
     if (app?.profileMark(source) == null) return title;
-    return Row(
-      children: [
-        Flexible(child: title),
-        const SizedBox(width: 6),
-        _ProfileMark(source, controller: app),
-      ],
+    // The mark gives way before it takes the row: at most a bit under half
+    // of it, so a narrow screen or large text never pushes it off the edge.
+    return LayoutBuilder(
+      builder: (context, constraints) => Row(
+        children: [
+          Flexible(child: title),
+          const SizedBox(width: 6),
+          ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: constraints.maxWidth * 0.45),
+            child: _ProfileMark(source, controller: app),
+          ),
+        ],
+      ),
     );
   }
 }

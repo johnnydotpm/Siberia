@@ -682,11 +682,6 @@ class _AttendanceCalendar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final first = DateTime(month.year, month.month);
-    final count = DateTime(month.year, month.month + 1, 0).day;
-    final leading = first.weekday - 1;
-    final cells = leading + count;
-    final locale = Localizations.localeOf(context).toLanguageTag();
     // One pass over the records: a year holds a thousand or more, and this
     // runs on every tap of a day.
     final byDay = <int, List<AttendanceRecord>>{};
@@ -705,101 +700,15 @@ class _AttendanceCalendar extends StatelessWidget {
         padding: const EdgeInsets.all(12),
         child: Column(
           children: [
-            Row(
-              children: [
-                IconButton(
-                  onPressed: () =>
-                      onMonthChanged(DateTime(month.year, month.month - 1)),
-                  icon: const AppIcon(Icons.chevron_left_rounded),
-                  tooltip: MaterialLocalizations.of(context)
-                      .previousMonthTooltip,
-                ),
-                Expanded(
-                  child: Text(
-                    _capitalize(DateFormat.yMMMM(locale).format(month)),
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontWeight: FontWeight.w800),
-                  ),
-                ),
-                IconButton(
-                  onPressed: () =>
-                      onMonthChanged(DateTime(month.year, month.month + 1)),
-                  icon: const AppIcon(Icons.chevron_right_rounded),
-                  tooltip: MaterialLocalizations.of(context).nextMonthTooltip,
-                ),
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 6),
-              child: Row(
-                children: [
-                  // 1 January 2024 was a Monday.
-                  for (var weekday = 0; weekday < 7; weekday++)
-                    Expanded(
-                      child: Text(
-                        _shortWeekday(context, DateTime(2024, 1, 1 + weekday)),
-                        textAlign: TextAlign.center,
-                        maxLines: 1,
-                        style: const TextStyle(fontWeight: FontWeight.w700),
-                      ),
-                    ),
-                ],
+            _MonthCalendar(
+              month: month,
+              selected: selectedDay,
+              onMonthChanged: onMonthChanged,
+              onDaySelected: onDaySelected,
+              dayOf: (date) => _CalendarDay(
+                key: ValueKey('attendance-day-${date.toIso8601String()}'),
+                background: days[date.day]?.color,
               ),
-            ),
-            GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              // Not the screen's safe area, which a page under glass bars
-              // passes on.
-              padding: EdgeInsets.zero,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 7,
-                mainAxisSpacing: 4,
-                crossAxisSpacing: 4,
-              ),
-              itemCount: ((cells + 6) ~/ 7) * 7,
-              itemBuilder: (context, index) {
-                final dayNumber = index - leading + 1;
-                if (dayNumber < 1 || dayNumber > count) {
-                  return const SizedBox.shrink();
-                }
-                final date = DateTime(month.year, month.month, dayNumber);
-                final color = days[dayNumber]?.color;
-                final active =
-                    selectedDay != null && _sameDay(selectedDay!, date);
-                return InkWell(
-                  borderRadius: BorderRadius.circular(10),
-                  onTap: () => onDaySelected(date),
-                  child: Container(
-                    key: ValueKey('attendance-day-${date.toIso8601String()}'),
-                    decoration: BoxDecoration(
-                      color: color,
-                      borderRadius: BorderRadius.circular(10),
-                      border: active
-                          ? Border.all(
-                              color: Theme.of(context).colorScheme.primary,
-                              width: 2,
-                            )
-                          : null,
-                    ),
-                    alignment: Alignment.center,
-                    child: Text(
-                      '$dayNumber',
-                      style: TextStyle(
-                        fontWeight: color == null
-                            ? FontWeight.w400
-                            : FontWeight.w800,
-                        color: color == null
-                            ? null
-                            : ThemeData.estimateBrightnessForColor(color) ==
-                                  Brightness.light
-                            ? const Color(0xFF101416)
-                            : Colors.white,
-                      ),
-                    ),
-                  ),
-                );
-              },
             ),
             if (shown.isNotEmpty)
               Padding(

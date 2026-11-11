@@ -293,7 +293,7 @@ void main() {
 
       controller.selectTab(5);
       await tester.pumpAndSettle();
-      expect(find.text('New message'), findsOneWidget);
+      expect(find.byKey(const ValueKey('messages-compose')), findsOneWidget);
       await tester.tap(find.text('Test message'));
       await tester.pumpAndSettle();
       expect(find.text('Full message body'), findsOneWidget);

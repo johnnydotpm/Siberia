@@ -478,8 +478,9 @@ class _TimetableState extends State<_Timetable> {
         children: [
           SizedBox(height: insets.top),
           Padding(
-            // With the strip's own 3, the last day stays 4 from the edge.
-            padding: const EdgeInsets.fromLTRB(4, 8, 1, 0),
+            // With the strip's own 3, the last day ends 16 from the edge,
+            // as the cards below do; the calendar's symbol starts at 16.
+            padding: const EdgeInsets.fromLTRB(4, 8, 13, 0),
             child: Row(
               children: [
                 IconButton(
@@ -1143,22 +1144,10 @@ class _TimetableCalendarDialogState extends State<_TimetableCalendarDialog> {
   bool _hasLessons(DateTime day) =>
       widget.lessonDays.contains(DateTime(day.year, day.month, day.day));
 
-  bool _monthBefore(DateTime left, DateTime right) =>
-      left.year < right.year ||
-      (left.year == right.year && left.month < right.month);
-
   @override
   Widget build(BuildContext context) {
     final localizations = MaterialLocalizations.of(context);
-    final first = DateTime(month.year, month.month);
-    final dayCount = DateTime(month.year, month.month + 1, 0).day;
-    final leading = first.weekday - 1;
-    final cellCount = ((leading + dayCount + 6) ~/ 7) * 7;
-    final firstMonth = DateTime(widget.firstDate.year, widget.firstDate.month);
-    final lastMonth = DateTime(widget.lastDate.year, widget.lastDate.month);
-    final narrowWeekdays = localizations.narrowWeekdays;
-    final weekdayLabels = [...narrowWeekdays.skip(1), narrowWeekdays.first];
-
+    final colors = Theme.of(context).colorScheme;
     return AppDialog(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 420),
@@ -1183,129 +1172,25 @@ class _TimetableCalendarDialogState extends State<_TimetableCalendarDialog> {
                   ),
                 ],
               ),
-              Row(
-                children: [
-                  IconButton(
-                    onPressed: _monthBefore(firstMonth, month)
-                        ? () => setState(
-                            () => month = DateTime(month.year, month.month - 1),
-                          )
-                        : null,
-                    icon: const AppIcon(Icons.chevron_left_rounded),
-                    tooltip: localizations.previousMonthTooltip,
-                  ),
-                  Expanded(
-                    child: Text(
-                      localizations.formatMonthYear(month),
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(fontWeight: FontWeight.w800),
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: _monthBefore(month, lastMonth)
-                        ? () => setState(
-                            () => month = DateTime(month.year, month.month + 1),
-                          )
-                        : null,
-                    icon: const AppIcon(Icons.chevron_right_rounded),
-                    tooltip: localizations.nextMonthTooltip,
-                  ),
-                ],
-              ),
-              Row(
-                children: weekdayLabels
-                    .map(
-                      (label) => Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8),
-                          child: Text(
-                            label,
-                            textAlign: TextAlign.center,
-                            style: Theme.of(context).textTheme.labelMedium
-                                ?.copyWith(fontWeight: FontWeight.w700),
-                          ),
-                        ),
-                      ),
-                    )
-                    .toList(),
-              ),
-              GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                padding: EdgeInsets.zero,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 7,
-                  mainAxisSpacing: 4,
-                  crossAxisSpacing: 4,
-                ),
-                itemCount: cellCount,
-                itemBuilder: (context, index) {
-                  final dayNumber = index - leading + 1;
-                  if (dayNumber < 1 || dayNumber > dayCount) {
-                    return const SizedBox.shrink();
-                  }
-                  final day = DateTime(month.year, month.month, dayNumber);
-                  final enabled =
-                      !day.isBefore(widget.firstDate) &&
-                      !day.isAfter(widget.lastDate);
-                  final selected = _sameDay(day, widget.initialDate);
-                  final today = _sameDay(day, DateTime.now());
+              // The app's one calendar; days marked as in the strip.
+              _MonthCalendar(
+                month: month,
+                selected: widget.initialDate,
+                first: widget.firstDate,
+                last: widget.lastDate,
+                onMonthChanged: (value) => setState(() => month = value),
+                onDaySelected: (day) => Navigator.pop(context, day),
+                dayOf: (day) {
                   final hasLessons = _hasLessons(day);
-                  final colors = Theme.of(context).colorScheme;
-                  return InkWell(
+                  return _CalendarDay(
                     key: ValueKey('timetable-day-${day.toIso8601String()}'),
-                    borderRadius: BorderRadius.circular(12),
-                    onTap: enabled ? () => Navigator.pop(context, day) : null,
-                    // Marked as in the strip of days above it.
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: selected ? colors.primary : null,
-                        borderRadius: BorderRadius.circular(12),
-                        border: today && !selected
-                            ? Border.all(color: colors.primary, width: 1.5)
-                            : null,
-                      ),
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Text(
-                            '$dayNumber',
-                            style: TextStyle(
-                              color: selected
-                                  ? colors.onPrimary
-                                  : enabled
-                                  ? null
-                                  : colors.onSurface.withValues(alpha: 0.38),
-                              fontWeight: selected || hasLessons
-                                  ? FontWeight.w800
-                                  : FontWeight.w500,
-                            ),
-                          ),
-                          if (!hasLessons)
-                            AppIcon(
-                              Icons.close_rounded,
-                              size: 27,
-                              color: colors.outline.withAlpha(150),
-                            )
-                          else
-                            Positioned(
-                              bottom: 5,
-                              child: Container(
-                                key: ValueKey(
-                                  'timetable-lessons-${day.toIso8601String()}',
-                                ),
-                                width: 5,
-                                height: 5,
-                                decoration: BoxDecoration(
-                                  color: selected
-                                      ? colors.onPrimary
-                                      : colors.primary,
-                                  shape: BoxShape.circle,
-                                ),
-                              ),
-                            ),
-                        ],
-                      ),
+                    enabled:
+                        !day.isBefore(widget.firstDate) &&
+                        !day.isAfter(widget.lastDate),
+                    crossed: !hasLessons,
+                    dot: hasLessons ? colors.primary : null,
+                    dotKey: ValueKey(
+                      'timetable-lessons-${day.toIso8601String()}',
                     ),
                   );
                 },

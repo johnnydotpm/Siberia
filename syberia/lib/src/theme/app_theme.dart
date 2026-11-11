@@ -109,11 +109,14 @@ abstract final class AppTheme {
         centerTitle: false,
         elevation: 0,
         scrolledUnderElevation: 0,
-        backgroundColor: colors.surface,
+        backgroundColor: _scrolledBar(colors.surface, colors.surfaceContainer),
         surfaceTintColor: Colors.transparent,
         systemOverlayStyle: _statusBar(brightness),
         titleTextStyle: text.titleLarge!.copyWith(color: colors.onSurface),
       ),
+      // Material 3's filled fields: the highest container, the top corners
+      // rounded, a line under. Search fields set a look of their own.
+      inputDecorationTheme: const InputDecorationTheme(filled: true),
       // Flat cards on the low container, rounded as the mockup's lists.
       cardTheme: CardThemeData(
         elevation: 0,
@@ -215,6 +218,14 @@ abstract final class AppTheme {
   /// How much of the dark theme's containers the black one keeps.
   static const double _blackLift = 0.6;
 
+  /// A top bar in [rest] that fills with [scrolled] once the page scrolls
+  /// under it, as Material 3's does, so the page does not end in a cut.
+  static Color _scrolledBar(Color rest, Color scrolled) =>
+      WidgetStateColor.resolveWith(
+        (states) =>
+            states.contains(WidgetState.scrolledUnder) ? scrolled : rest,
+      );
+
   // Flutter picks the status bar icons from the bar's colour. A transparent
   // bar reads as dark, which left white icons on the light page, so the
   // theme's brightness decides instead.
@@ -258,7 +269,10 @@ abstract final class AppTheme {
         centerTitle: false,
         elevation: 0,
         scrolledUnderElevation: 0,
-        backgroundColor: Colors.transparent,
+        backgroundColor: _scrolledBar(
+          Colors.transparent,
+          colors.surfaceContainer,
+        ),
         surfaceTintColor: Colors.transparent,
         systemOverlayStyle: _statusBar(brightness),
         titleTextStyle: TextStyle(

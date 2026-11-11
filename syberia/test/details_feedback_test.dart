@@ -98,7 +98,7 @@ SchoolMessage _message(String id, String subject, {bool unread = false}) =>
 const _hapticSelection = 'HapticFeedbackType.selectionClick';
 
 Future<void> _openCompose(WidgetTester tester) async {
-  await tester.tap(find.text('New message').first);
+  await tester.tap(find.byKey(const ValueKey('messages-compose')));
   await tester.pumpAndSettle();
 }
 

@@ -418,7 +418,7 @@ void main() {
     await _pump(tester, controller);
     controller.selectTab(5);
     await tester.pumpAndSettle();
-    await tester.tap(find.text('New message'));
+    await tester.tap(find.byKey(const ValueKey('messages-compose')));
     await tester.pumpAndSettle();
     expect(find.byKey(const ValueKey('compose-from')), findsOneWidget);
     ChoiceChip chip(SchoolProfile profile) =>

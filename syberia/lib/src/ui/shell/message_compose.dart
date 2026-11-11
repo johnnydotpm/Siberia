@@ -410,7 +410,9 @@ class _ComposeMessageSheetState extends State<_ComposeMessageSheet> {
                         labelText: context.tr('subject'),
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    // As far from the subject as the subject from the
+                    // recipient.
+                    const SizedBox(height: 16),
                     TextField(
                       key: const ValueKey('compose-body'),
                       controller: bodyController,

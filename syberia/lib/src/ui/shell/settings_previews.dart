@@ -242,6 +242,7 @@ class _DesignPreview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (design == AppDesign.expressive) return const _ExpressivePreview();
+    if (design == AppDesign.classic) return const _ClassicPreview();
     final colors = Theme.of(context).colorScheme;
     final glass = design == AppDesign.glass;
     Widget bar({required bool top}) => Container(
@@ -273,6 +274,82 @@ class _DesignPreview extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [bar(top: true), bar(top: false)],
+      ),
+    );
+  }
+}
+
+/// A page of the classic design in miniature, in the app's colours: the
+/// bar with the title, a card with two lines, and the navigation bar with
+/// the open tab. It shows in the black theme too, where the containers are
+/// near black.
+class _ClassicPreview extends StatelessWidget {
+  const _ClassicPreview();
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    Widget line(double width) => Container(
+      width: width,
+      height: 4,
+      decoration: BoxDecoration(
+        color: colors.outlineVariant,
+        borderRadius: BorderRadius.circular(2),
+      ),
+    );
+    Widget dot(Color color, {double width = 8}) => Container(
+      width: width,
+      height: 6,
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(3),
+      ),
+    );
+    return ColoredBox(
+      color: theme.scaffoldBackgroundColor,
+      child: Column(
+        children: [
+          Container(
+            height: 12,
+            padding: const EdgeInsets.symmetric(horizontal: 6),
+            alignment: Alignment.centerLeft,
+            child: dot(colors.primary, width: 18),
+          ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(6, 2, 6, 4),
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(5),
+                decoration: BoxDecoration(
+                  color: colors.surfaceContainerHigh,
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    line(double.infinity),
+                    const SizedBox(height: 3),
+                    line(22),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Container(
+            height: 12,
+            color: colors.surfaceContainer,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                dot(colors.primary.withValues(alpha: 0.35), width: 14),
+                dot(colors.onSurfaceVariant.withValues(alpha: 0.4)),
+                dot(colors.onSurfaceVariant.withValues(alpha: 0.4)),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

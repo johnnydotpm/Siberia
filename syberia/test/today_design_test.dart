@@ -216,7 +216,7 @@ void main() {
     }
     await tester.tap(
       find.descendant(
-        of: find.byType(CalendarDatePicker),
+        of: find.byKey(const ValueKey('events-calendar')),
         matching: find.text('${tomorrow.day}'),
       ),
     );
