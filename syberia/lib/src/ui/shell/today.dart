@@ -221,7 +221,7 @@ class _TodayState extends State<_Today> {
             children: [
               for (final number in numbers)
                 ListTile(
-                  leading: const Icon(Icons.casino_outlined),
+                  leading: const AppIcon(Icons.casino_outlined),
                   title: _MarkedTitle(
                     Text(
                       context.tr('luckyNumbers'),

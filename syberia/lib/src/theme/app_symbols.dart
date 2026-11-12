@@ -28,6 +28,7 @@ abstract final class AppSymbols {
   static const calendarMonth = IconData(0xebcc, fontFamily: fontFamily);
   static const calendarViewWeek = IconData(0xefe8, fontFamily: fontFamily);
   static const campaign = IconData(0xef49, fontFamily: fontFamily);
+  static const casino = IconData(0xeb40, fontFamily: fontFamily);
   static const chatBubble = IconData(0xe0cb, fontFamily: fontFamily);
   static const chatBubbleOutline = IconData(0xe0cb, fontFamily: fontFamily);
   static const check = IconData(0xe668, fontFamily: fontFamily);
@@ -153,6 +154,7 @@ abstract final class AppSymbols {
     Icons.calendar_view_week_rounded: calendarViewWeek,
     Icons.campaign_outlined: campaign,
     Icons.campaign_rounded: campaign,
+    Icons.casino_outlined: casino,
     Icons.chat_bubble_outline_rounded: chatBubbleOutline,
     Icons.chat_bubble_rounded: chatBubble,
     Icons.check_circle_outline_rounded: checkCircleOutline,
