@@ -155,6 +155,16 @@ void main() {
     expect(controller.absenceHistoryOf(profiles[0].id), isEmpty);
   });
 
+  test('together, the short names are merged once for each change', () async {
+    final (_, controller, _) = await open();
+    await controller.openTogether();
+    final names = controller.subjectShortNames;
+    expect(identical(controller.subjectShortNames, names), isTrue);
+    await controller.setSubjectShortName('Matematyka', 'Mat');
+    expect(controller.subjectShortNames['Matematyka'], 'Mat');
+    expect(identical(controller.subjectShortNames, names), isFalse);
+  });
+
   test('resetting the settings takes the wallpaper colours back', () async {
     final repository = AppRepository();
     final controller = AppController(repository, updatesEnabled: false);

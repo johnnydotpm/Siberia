@@ -29,7 +29,7 @@ class NativeGlassBarButtons extends StatefulWidget {
 
 class _NativeGlassBarButtonsState extends State<NativeGlassBarButtons> {
   static final _gestures = <Factory<OneSequenceGestureRecognizer>>{
-    Factory<EagerGestureRecognizer>(EagerGestureRecognizer.new),
+    const Factory<EagerGestureRecognizer>(EagerGestureRecognizer.new),
   };
 
   late final _link = NativeViewLink(

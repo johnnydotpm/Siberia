@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -960,7 +961,9 @@ class AppRepository {
 
   /// The background check of the open profile. [parts] are what
   /// notifications are on for; the rest is kept from the saved snapshot
-  /// instead of being downloaded.
+  /// instead of being downloaded. The app checks every profile with
+  /// [fetchBackgroundSnapshots]; tests check one with this.
+  @visibleForTesting
   Future<AppSnapshot?> fetchBackgroundSnapshot({Set<DiaryPart>? parts}) async {
     await _ensureReady();
     final profile = activeProfile;
@@ -1076,9 +1079,6 @@ class AppRepository {
     await _legacySnapshots.clear();
     return _emptySnapshot(_signedOutProfile);
   }
-
-  Future<void> saveCredential(String value) =>
-      _secureStorage.write(key: _credentialKey, value: value);
 
   Future<void> clearCredential() => _secureStorage.delete(key: _credentialKey);
 

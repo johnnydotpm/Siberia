@@ -305,7 +305,7 @@ class _Settings extends StatelessWidget {
           children: [
             ListTile(
               leading: const _SettingsIcon(Icons.info_outline_rounded),
-              title: Text('SiberiaGB ${AppBuildInfo.version}'),
+              title: const Text('SiberiaGB ${AppBuildInfo.version}'),
               subtitle: Text(
                 '${context.tr('buildCommit')}: ${AppBuildInfo.shortCommit}',
               ),

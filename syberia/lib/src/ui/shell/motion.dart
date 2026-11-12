@@ -648,12 +648,12 @@ class _LessonsSkeleton extends StatelessWidget {
     child: Column(
       children: [
         for (var index = 0; index < 5; index++)
-          Padding(
-            padding: const EdgeInsets.only(bottom: 8),
+          const Padding(
+            padding: EdgeInsets.only(bottom: 8),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(
+                SizedBox(
                   width: _TimetableTimeline._axisWidth,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -665,7 +665,7 @@ class _LessonsSkeleton extends StatelessWidget {
                     ],
                   ),
                 ),
-                const Expanded(child: _Bone(height: 72, radius: 14)),
+                Expanded(child: _Bone(height: 72, radius: 14)),
               ],
             ),
           ),

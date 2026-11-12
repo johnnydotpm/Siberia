@@ -321,11 +321,11 @@ void main() {
         scrollable: find.byType(Scrollable).first,
       );
       await tester.pumpAndSettle();
-      final attendanceDay = tester.widget<Container>(
+      final attendanceDay = tester.widget<DecoratedBox>(
         find.byKey(attendanceDayKey).first,
       );
       expect(
-        (attendanceDay.decoration! as BoxDecoration).color,
+        (attendanceDay.decoration as BoxDecoration).color,
         const Color(0xFFF28C28),
       );
       // The calendar explains its colours.

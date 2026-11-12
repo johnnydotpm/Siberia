@@ -159,10 +159,6 @@ class Grade {
   /// Earlier grade records, ordered from oldest to newest.
   final List<Grade> previousGrades;
 
-  List<String> get replacedValues => [
-    for (final grade in previousGrades) grade.value,
-  ];
-
   bool get wasChanged => previousGrades.isNotEmpty;
 
   /// The profile it comes from when every profile is shown together, its

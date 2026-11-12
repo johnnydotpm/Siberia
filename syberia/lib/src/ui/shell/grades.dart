@@ -581,7 +581,7 @@ class _SubjectGradesTile extends StatelessWidget {
         'grades-subject-${source == null ? '' : '$source|'}$subject',
       ),
       clipBehavior: Clip.antiAlias,
-      child: Container(
+      child: DecoratedBox(
         decoration: BoxDecoration(
           border: Border(left: BorderSide(color: accent, width: 4)),
         ),

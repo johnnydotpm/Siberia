@@ -185,7 +185,7 @@ class _MonthCalendar extends StatelessWidget {
     return InkWell(
       borderRadius: BorderRadius.circular(12),
       onTap: spec.enabled ? () => onDaySelected(day) : null,
-      child: Container(
+      child: DecoratedBox(
         key: spec.key,
         decoration: BoxDecoration(
           color: fill,

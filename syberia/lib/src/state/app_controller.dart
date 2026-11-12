@@ -436,9 +436,21 @@ class AppController extends ChangeNotifier {
 
   /// The subjects' short names; in the view together, those of every
   /// profile in it, the first profile's where two differ.
-  Map<String, String> get subjectShortNames => !_together
-      ? _subjectShortNames
-      : {for (final names in _shortNamesOf.values.toList().reversed) ...names};
+  Map<String, String> get subjectShortNames {
+    if (!_together) return _subjectShortNames;
+    // Merged once for each change of the names, not for every subject on
+    // screen: the names are replaced, never changed in place.
+    if (!identical(_mergedShortNamesFrom, _shortNamesOf)) {
+      _mergedShortNamesFrom = _shortNamesOf;
+      _mergedShortNames = Map.unmodifiable({
+        for (final names in _shortNamesOf.values.toList().reversed) ...names,
+      });
+    }
+    return _mergedShortNames;
+  }
+
+  Map<String, Map<String, String>>? _mergedShortNamesFrom;
+  Map<String, String> _mergedShortNames = const {};
   TimetableView get timetableView => _timetableView;
   bool get mergeTimetableLessons => _mergeTimetableLessons;
   bool get showTimetableBreaks => _showTimetableBreaks;
@@ -519,11 +531,6 @@ class AppController extends ChangeNotifier {
     _todayLayout = await _repository.loadTodayLayout();
     _excuseSignature = await _repository.loadExcuseSignature();
     _autoSyncOnOpen = await _repository.loadAutoSyncOnOpen();
-    if (notifications != null) {
-      _notificationSettings = await notifications!.settingsForProfile(
-        activeProfile,
-      );
-    }
   }
 
   /// The settings each profile keeps for itself.
@@ -1233,8 +1240,6 @@ class AppController extends ChangeNotifier {
     if (!message.unread) return;
     await fetchMessageContent(message);
   }
-
-  Future<void> markAllMessagesRead() => markMessagesRead(snapshot.messages);
 
   Future<void> markMessagesRead(Iterable<SchoolMessage> messages) async {
     if (_markingMessagesRead || _deletingMessages || syncing) return;

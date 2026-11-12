@@ -781,7 +781,9 @@ class SchoolNotificationService {
 
   /// Schedules the reminders for the tests in [snapshot] with the saved
   /// settings, replacing the ones scheduled before. Signed out, or with
-  /// reminders off, none are left.
+  /// reminders off, none are left. The app goes through
+  /// [updateAllReminders], for every profile at once.
+  @visibleForTesting
   Future<void> updateReminders(AppSnapshot snapshot, {DateTime? now}) =>
       updateAllReminders([ReminderSource(snapshot)], now: now);
 

@@ -102,6 +102,9 @@ class LibrusClient {
     _messagesSessionExpiresAt = null;
   }
 
+  /// Signs in and fetches everything at once. The app signs in and fetches
+  /// in steps; tests of the parsing take this shortcut.
+  @visibleForTesting
   Future<AppSnapshot> loginAndFetch({
     required String username,
     required String password,
@@ -642,7 +645,7 @@ class LibrusClient {
 
   Future<_PortalSession> _loginWithPortal(String email, String password) async {
     try {
-      final page = await _request('GET', _authorizeUrl, stopAtExternal: true);
+      final page = await _request('GET', _authorizeUrl);
       final html = page.data?.toString() ?? '';
       final hidden = _hiddenInputs(html);
       final csrf = _firstMatch(
@@ -662,7 +665,6 @@ class LibrusClient {
           'X-Requested-With': 'pl.librus.synergiaDru2',
           if (csrf != null) 'X-CSRF-TOKEN': _htmlDecode(csrf),
         },
-        stopAtExternal: true,
       );
       final combined =
           '${login.realUri}\n${login.headers.value('location') ?? ''}\n${login.data ?? ''}';
@@ -1579,12 +1581,12 @@ class LibrusClient {
     Object? data,
     String? contentType,
     Map<String, Object>? headers,
-    bool stopAtExternal = false,
     bool stopAtMessagesAutoLogon = false,
   }) async {
     var uri = Uri.parse(url);
     var requestMethod = method;
     var requestData = data;
+    var requestContentType = contentType;
     for (var redirects = 0; redirects < 18; redirects++) {
       final cookieHeader = _cookieHeader(uri);
       final response = await _dio.requestUri<Object?>(
@@ -1592,7 +1594,7 @@ class LibrusClient {
         data: requestData,
         options: Options(
           method: requestMethod,
-          contentType: contentType,
+          contentType: requestContentType,
           followRedirects: false,
           validateStatus: (status) => status != null && status < 600,
           headers: {
@@ -1618,16 +1620,14 @@ class LibrusClient {
           )) {
         return response;
       }
-      if (next.scheme != 'http' && next.scheme != 'https') {
-        if (stopAtExternal) return response;
-        return response;
-      }
+      // Somewhere outside the web, as an app's own link: nothing to follow.
+      if (next.scheme != 'http' && next.scheme != 'https') return response;
       uri = next;
       if (status == 303 ||
           ((status == 301 || status == 302) && requestMethod == 'POST')) {
         requestMethod = 'GET';
         requestData = null;
-        contentType = null;
+        requestContentType = null;
       }
     }
     throw DioException(

@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 
 import 'glass_material.dart';
@@ -10,6 +9,7 @@ import 'glass_plate.dart';
 import 'glass_platform.dart';
 import 'native_view_link.dart';
 import 'rendered_tab_bar.dart';
+import 'top_pass_through.dart';
 
 /// One action of a [GlassToolbar].
 @immutable
@@ -71,7 +71,7 @@ class _NativeGlassToolbar extends StatefulWidget {
 class _NativeGlassToolbarState extends State<_NativeGlassToolbar> {
   static final _gestures = <Factory<OneSequenceGestureRecognizer>>{
     // UIKit must see every touch at once, as a pressed item swells.
-    Factory<EagerGestureRecognizer>(EagerGestureRecognizer.new),
+    const Factory<EagerGestureRecognizer>(EagerGestureRecognizer.new),
   };
 
   late final _link = NativeViewLink('siberia/glass_toolbar', onCall: _onCall);
@@ -143,7 +143,7 @@ class _NativeGlassToolbarState extends State<_NativeGlassToolbar> {
     height: _room + _height + MediaQuery.viewPaddingOf(context).bottom,
     // The room above only lets the glass cast its shadow; touches there
     // belong to the page behind the toolbar.
-    child: _TopPassThrough(
+    child: TopPassThrough(
       extent: _room,
       child: UiKitView(
         viewType: _link.viewType,
@@ -295,34 +295,4 @@ class _ToolbarItemState extends State<_ToolbarItem> {
       ),
     );
   }
-}
-
-/// Leaves the top [extent] of its child out of hit testing, so touches there
-/// reach whatever is painted underneath.
-class _TopPassThrough extends SingleChildRenderObjectWidget {
-  const _TopPassThrough({required this.extent, super.child});
-
-  final double extent;
-
-  @override
-  RenderObject createRenderObject(BuildContext context) =>
-      _RenderTopPassThrough(extent);
-
-  @override
-  void updateRenderObject(
-    BuildContext context,
-    _RenderTopPassThrough renderObject,
-  ) {
-    renderObject.extent = extent;
-  }
-}
-
-class _RenderTopPassThrough extends RenderProxyBox {
-  _RenderTopPassThrough(this.extent);
-
-  double extent;
-
-  @override
-  bool hitTest(BoxHitTestResult result, {required Offset position}) =>
-      position.dy >= extent && super.hitTest(result, position: position);
 }

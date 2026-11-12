@@ -1,12 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 
 import 'glass_items.dart';
 import 'glass_platform.dart';
 import 'native_view_link.dart';
+import 'top_pass_through.dart';
 
 /// The system tab bar, hosted as a platform view.
 ///
@@ -37,7 +37,7 @@ class _NativeGlassTabBarState extends State<NativeGlassTabBar> {
   static final _gestures = <Factory<OneSequenceGestureRecognizer>>{
     // UIKit must see every touch at once, or the selection lens cannot be
     // dragged.
-    Factory<EagerGestureRecognizer>(EagerGestureRecognizer.new),
+    const Factory<EagerGestureRecognizer>(EagerGestureRecognizer.new),
   };
 
   late final _link = NativeViewLink('siberia/glass_tab_bar', onCall: _onCall);
@@ -94,7 +94,7 @@ class _NativeGlassTabBarState extends State<NativeGlassTabBar> {
             height - headroom - MediaQuery.viewPaddingOf(context).bottom;
         if (content <= 0) return;
         GlassPlatform.metrics.value = GlassPlatform.metrics.value.copyWith(
-          tabBarHeight: content.toDouble(),
+          tabBarHeight: content,
           tabBarHeadroom: headroom.toDouble(),
         );
     }
@@ -110,7 +110,7 @@ class _NativeGlassTabBarState extends State<NativeGlassTabBar> {
           MediaQuery.viewPaddingOf(context).bottom,
       // The headroom only makes room for the selection lens; touches there
       // belong to the page behind the bar.
-      child: _TopPassThrough(extent: metrics.tabBarHeadroom, child: child),
+      child: TopPassThrough(extent: metrics.tabBarHeadroom, child: child),
     ),
     child: UiKitView(
       viewType: _link.viewType,
@@ -120,34 +120,4 @@ class _NativeGlassTabBarState extends State<NativeGlassTabBar> {
       gestureRecognizers: _gestures,
     ),
   );
-}
-
-/// Leaves the top [extent] of its child out of hit testing, so touches there
-/// reach whatever is painted underneath.
-class _TopPassThrough extends SingleChildRenderObjectWidget {
-  const _TopPassThrough({required this.extent, super.child});
-
-  final double extent;
-
-  @override
-  RenderObject createRenderObject(BuildContext context) =>
-      _RenderTopPassThrough(extent);
-
-  @override
-  void updateRenderObject(
-    BuildContext context,
-    _RenderTopPassThrough renderObject,
-  ) {
-    renderObject.extent = extent;
-  }
-}
-
-class _RenderTopPassThrough extends RenderProxyBox {
-  _RenderTopPassThrough(this.extent);
-
-  double extent;
-
-  @override
-  bool hitTest(BoxHitTestResult result, {required Offset position}) =>
-      position.dy >= extent && super.hitTest(result, position: position);
 }

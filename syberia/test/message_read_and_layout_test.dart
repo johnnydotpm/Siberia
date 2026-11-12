@@ -51,7 +51,7 @@ void main() {
     final client = _ReadClient()..failures.add('b');
     final controller = await load(client, _data());
     await expectLater(
-      controller.markAllMessagesRead(),
+      controller.markMessagesRead(controller.snapshot.messages),
       throwsA(isA<LibrusException>()),
     );
     expect(client.opened, ['a', 'b', 'c']);
@@ -64,11 +64,11 @@ void main() {
     final restored = await AppRepository().load();
     expect(restored.messages.where((m) => m.unread).map((m) => m.id), ['b']);
     client.failures.clear();
-    await controller.markAllMessagesRead();
+    await controller.markMessagesRead(controller.snapshot.messages);
     expect(client.opened, ['a', 'b', 'c', 'b']);
     expect(controller.snapshot.unreadMessages, 0);
     expect(controller.error, isNull);
-    await controller.markAllMessagesRead();
+    await controller.markMessagesRead(controller.snapshot.messages);
     expect(client.opened, hasLength(4));
     controller.dispose();
   });

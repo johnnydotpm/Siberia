@@ -55,8 +55,8 @@ Future<void> _showNotificationSettings(
                 afterMaster: ValueListenableBuilder(
                   valueListenable: permissionDenied,
                   builder: (context, shown, _) => shown
-                      ? _PermissionDeniedNotice(
-                          key: const ValueKey('notification-permission-denied'),
+                      ? const _PermissionDeniedNotice(
+                          key: ValueKey('notification-permission-denied'),
                         )
                       : const SizedBox.shrink(),
                 ),

@@ -263,7 +263,7 @@ void main() {
     expect(snapshot.lessons.single.substitution, isTrue);
     expect(snapshot.lessons.single.originalSubject, 'Fizyka');
     expect(snapshot.grades.single.value, '5');
-    expect(snapshot.grades.single.replacedValues, ['-']);
+    expect(snapshot.grades.single.previousGrades.map((g) => g.value), ['-']);
     expect(snapshot.grades.single.semester, 2);
     expect(snapshot.grades.single.category, 'Sprawdzian');
     expect(snapshot.grades.single.description, 'Rozdział 1');
@@ -974,7 +974,10 @@ void main() {
     expect(snapshot.grades, hasLength(2));
     expect(snapshot.grades.first.id, '50');
     expect(snapshot.grades.first.value, '4+');
-    expect(snapshot.grades.first.replacedValues, ['0', '1']);
+    expect(snapshot.grades.first.previousGrades.map((g) => g.value), [
+      '0',
+      '1',
+    ]);
     expect(snapshot.grades.first.previousGrades.map((grade) => grade.id), [
       '48',
       '49',

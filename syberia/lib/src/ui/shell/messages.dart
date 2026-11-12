@@ -1037,7 +1037,7 @@ class _MessageTile extends StatelessWidget {
                   ? onSelect
                   : () => _showMessageDetail(context, controller, item),
               onLongPress: busy ? null : longPress,
-              child: Container(
+              child: DecoratedBox(
                 decoration: BoxDecoration(
                   border: Border(
                     left: BorderSide(
