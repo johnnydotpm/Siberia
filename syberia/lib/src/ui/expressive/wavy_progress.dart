@@ -20,6 +20,7 @@ class WavyProgressIndicator extends StatefulWidget {
     this.trackColor,
     this.semanticsLabel,
     this.semanticsValue,
+    this.flat = false,
     super.key,
   });
 
@@ -36,6 +37,10 @@ class WavyProgressIndicator extends StatefulWidget {
 
   /// What a screen reader says for the value; "62%" by default.
   final String? semanticsValue;
+
+  /// Material's flat indicator: the same gap and dot without the wave, for
+  /// a bar too short to show one.
+  final bool flat;
 
   static const height = 10.0;
   static const thickness = 4.0;
@@ -56,7 +61,7 @@ class _WavyProgressIndicatorState extends State<WavyProgressIndicator>
   late final _amplitude = AnimationController(
     vsync: this,
     duration: const Duration(milliseconds: 500),
-    value: WavyProgressIndicator.amplitudeFor(_value),
+    value: _target,
   )..addListener(_moveOrRest);
   late final Ticker _wave = createTicker(
     (elapsed) => _offset.value = elapsed.inMicroseconds % 1000000 / 1000000,
@@ -65,6 +70,9 @@ class _WavyProgressIndicatorState extends State<WavyProgressIndicator>
   bool _still = false;
 
   double get _value => widget.value.isFinite ? widget.value.clamp(0, 1) : 0;
+
+  double get _target =>
+      widget.flat ? 0 : WavyProgressIndicator.amplitudeFor(_value);
 
   @override
   void didChangeDependencies() {
@@ -76,7 +84,7 @@ class _WavyProgressIndicatorState extends State<WavyProgressIndicator>
   @override
   void didUpdateWidget(WavyProgressIndicator old) {
     super.didUpdateWidget(old);
-    final target = WavyProgressIndicator.amplitudeFor(_value);
+    final target = _target;
     if (target == _amplitude.value && !_amplitude.isAnimating) return;
     if (_still) {
       _amplitude.value = target;

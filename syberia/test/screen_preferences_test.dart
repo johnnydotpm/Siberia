@@ -80,7 +80,7 @@ void main() {
       expect(find.byKey(const ValueKey('timeline-lesson-a1')), findsOneWidget);
       expect(find.byKey(const ValueKey('timeline-lesson-a2')), findsOneWidget);
       expect(find.text('Break 5 min'), findsNothing);
-      expect(find.text('Break 20 min'), findsNothing);
+      expect(find.text('Long break · 20 min'), findsNothing);
 
       await settings(tester, controller, 'settings-timetable');
       expect(find.text('Timetable style'), findsWidgets);
@@ -97,7 +97,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byKey(const ValueKey('timetable-row-a1')), findsOneWidget);
       expect(find.byKey(const ValueKey('timetable-row-a2')), findsNothing);
-      expect(find.text('Break 20 min'), findsOneWidget);
+      expect(find.text('Long break · 20 min'), findsOneWidget);
 
       await settings(tester, controller, 'settings-timetable');
       await tester.tap(find.byKey(const ValueKey('settings-merge-lessons')));
@@ -106,7 +106,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byKey(const ValueKey('timetable-row-a2')), findsOneWidget);
       expect(find.text('Break 5 min'), findsOneWidget);
-      expect(find.text('Break 20 min'), findsOneWidget);
+      expect(find.text('Long break · 20 min'), findsOneWidget);
 
       await settings(tester, controller, 'settings-timetable');
       await tester.tap(find.text('Classic'));
@@ -115,7 +115,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byKey(const ValueKey('timeline-lesson-a2')), findsOneWidget);
       expect(find.text('Break 5 min'), findsOneWidget);
-      expect(find.text('Break 20 min'), findsOneWidget);
+      expect(find.text('Long break · 20 min'), findsOneWidget);
       final first = tester.getRect(
         find.byKey(const ValueKey('timeline-lesson-a1')),
       );

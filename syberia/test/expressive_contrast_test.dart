@@ -113,6 +113,18 @@ void main() {
         // The "Now" badge: the card's colour on its accent.
         final badge = contrast(palette.background, palette.accent);
         if (badge < 3) failures.add('badge $hue: ${badge.toStringAsFixed(2)}');
+        // The room and teacher under the subject on a timetable card: one
+        // neutral colour over every subject's.
+        final neutral = Color.alphaBlend(
+          brightness == Brightness.dark
+              ? Colors.white.withValues(alpha: 0.84)
+              : Colors.black.withValues(alpha: 0.7),
+          palette.background,
+        );
+        final details = contrast(neutral, palette.background);
+        if (details < 4.5) {
+          failures.add('details $hue: ${details.toStringAsFixed(2)}');
+        }
       }
       expect(failures, isEmpty);
     });

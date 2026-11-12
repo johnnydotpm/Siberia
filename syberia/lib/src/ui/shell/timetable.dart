@@ -732,7 +732,7 @@ class _TimetableDayState extends State<_TimetableDay> {
               child: Text(
                 widget.title,
                 style: Theme.of(context).textTheme.titleLarge
-                    ?.copyWith(fontWeight: FontWeight.w800),
+                    ?.copyWith(fontWeight: FontWeight.w700),
               ),
             ),
             if (widget.onToday != null)
@@ -813,54 +813,111 @@ _placeTests(List<_LessonBlock> blocks, Iterable<SchoolEvent> tests) {
   return (byLesson: byLesson, unplaced: unplaced);
 }
 
-/// "Kartkówka" on a lesson card; "+1" when there is more than one test.
+/// "Kartkówka" on a lesson card in the colour and with the icon of its kind,
+/// as in the calendar; "+1" when there is more than one test.
 class _TestPill extends StatelessWidget {
-  const _TestPill(this.tests);
+  const _TestPill(this.tests, {this.hue, this.compact = false});
   final List<SchoolEvent> tests;
 
-  @override
-  Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
+  /// The hue index of the card below, if it has one: a test of a near hue
+  /// gets an outline so it does not melt into the card.
+  final int? hue;
+
+  /// Only the icon, in a narrow card.
+  final bool compact;
+
+  static const _maxWidth = 130.0;
+
+  /// The icon alone, with its padding and outline.
+  static const compactWidth = 12.0 + 10 + 2;
+  static const _labelStyle = TextStyle(
+    fontSize: 11.5,
+    height: 1.2,
+    fontWeight: FontWeight.w600,
+  );
+
+  /// "Kartkówka", or "Kartkówka +1" for two tests.
+  static String labelOf(BuildContext context, List<SchoolEvent> tests) {
     final first = tests.first;
-    final label = [
+    return [
       first.typeLabel.isNotEmpty ? first.typeLabel : context.tr('lessonTest'),
       if (tests.length > 1) '+${tests.length - 1}',
     ].join(' ');
-    return ConstrainedBox(
-      constraints: const BoxConstraints(maxWidth: 130),
-      child: Container(
-        key: ValueKey('timetable-test-${first.id}'),
-        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-        decoration: BoxDecoration(
-          color: colors.errorContainer,
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            AppIcon(
-              Icons.quiz_rounded,
-              size: 13,
-              color: colors.onErrorContainer,
+  }
+
+  /// How wide the whole label stands: icon, text and padding.
+  static double fullWidth(BuildContext context, List<SchoolEvent> tests) =>
+      math.min(
+        _maxWidth,
+        12 +
+            4 +
+            16 +
+            2 +
+            _textWidth(context, labelOf(context, tests), _labelStyle),
+      );
+
+  @override
+  Widget build(BuildContext context) {
+    final first = tests.first;
+    final type = _eventType(first).type;
+    final colors = type.colors(Theme.of(context).brightness);
+    final label = labelOf(context, tests);
+    final near =
+        hue != null &&
+        type.hue != null &&
+        _hueDistance(hue! * 360 / SubjectColors.hueCount, type.hue!) < 45;
+    return Semantics(
+      label: label,
+      excludeSemantics: true,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: compact ? 40 : _maxWidth),
+        child: DecoratedBox(
+          key: ValueKey('timetable-test-${first.id}'),
+          decoration: BoxDecoration(
+            color: colors.background,
+            borderRadius: BorderRadius.circular(
+              ExpressiveStyle.of(context) ? 8 : 11,
             ),
-            const SizedBox(width: 4),
-            Flexible(
-              child: Text(
-                label,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: colors.onErrorContainer,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w800,
-                ),
+            border: near
+                ? Border.all(color: colors.foreground.withValues(alpha: 0.35))
+                : null,
+          ),
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: compact ? 5 : 8,
+              vertical: 3,
+            ),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(minHeight: 15),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  AppIcon(type.icon, size: 12, color: colors.foreground),
+                  if (!compact) ...[
+                    const SizedBox(width: 4),
+                    Flexible(
+                      child: Text(
+                        label,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: _labelStyle.copyWith(color: colors.foreground),
+                      ),
+                    ),
+                  ],
+                ],
               ),
             ),
-          ],
+          ),
         ),
       ),
     );
   }
+}
+
+/// How far apart two hues are around the colour wheel, in degrees.
+double _hueDistance(double a, double b) {
+  final distance = (a - b).abs() % 360;
+  return distance > 180 ? 360 - distance : distance;
 }
 
 /// A lesson as the timetable shows it: a double lesson is one block.

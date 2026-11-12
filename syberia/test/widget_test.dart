@@ -379,7 +379,7 @@ void main() {
     },
   );
 
-  testWidgets('marks the current lesson and shows elapsed progress', (
+  testWidgets('marks the current lesson and shows the time left', (
     tester,
   ) async {
     final now = DateTime.now();
@@ -427,12 +427,15 @@ void main() {
     // Past the fade from Today, which shows the lesson too.
     await tester.pump(const Duration(milliseconds: 300));
 
-    expect(find.text('Now'), findsOneWidget);
-    expect(
-      find.byKey(const ValueKey('timetable-current-time-current')),
-      findsOneWidget,
-    );
-    expect(find.textContaining('45 min'), findsOneWidget);
+    final card = find.byKey(const ValueKey('timeline-lesson-current'));
+    Finder inCard(Finder matching) =>
+        find.descendant(of: card, matching: matching);
+    // The card says how long is left beside its bar, in place of the
+    // teacher, and needs no "Now" of its own.
+    expect(inCard(find.byKey(const ValueKey('timeline-time-left'))), findsOne);
+    expect(inCard(find.textContaining('30 min')), findsOneWidget);
+    expect(inCard(find.textContaining('Nauczyciel A')), findsNothing);
+    expect(inCard(find.text('Now')), findsNothing);
 
     await tester.pumpWidget(const SizedBox.shrink());
     await tester.pump();
@@ -575,14 +578,12 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
   });
 
-  testWidgets('keeps the current-time marker visible during a break', (
-    tester,
-  ) async {
+  testWidgets('marks the break on now even with breaks hidden', (tester) async {
     final now = DateTime.now();
-    final beforeStart = now.subtract(const Duration(minutes: 2));
-    final afterEnd = now.add(const Duration(minutes: 2));
-    // A school break cannot span two calendar days. Avoid a false failure if
-    // this wall-clock test happens to run within two minutes of midnight.
+    final beforeStart = now.subtract(const Duration(minutes: 46));
+    final afterEnd = now.add(const Duration(minutes: 46));
+    // A school day cannot span two calendar days. Avoid a false failure if
+    // this wall-clock test happens to run within 46 minutes of midnight.
     if (!DateUtils.isSameDay(beforeStart, afterEnd)) return;
     final snapshot = AppSnapshot(
       profile: const StudentProfile(
@@ -626,17 +627,20 @@ void main() {
     controller.selectTab(1);
     await tester.pump();
 
-    expect(
-      find.byKey(
-        const ValueKey('timetable-current-time-break-before-break-after-break'),
-      ),
-      findsOneWidget,
-    );
-    final dot = tester.getRect(find.byKey(const ValueKey('timetable-now-dot')));
-    final firstLesson = tester.getRect(
+    // Breaks are hidden by default; the one on now still has its label, in
+    // colour, with the minutes it has left, between the two lessons.
+    final label = find.byKey(const ValueKey('timetable-current-break'));
+    expect(label, findsOneWidget);
+    expect(find.text('Break 2 min · 1 min left'), findsOneWidget);
+    final before = tester.getRect(
       find.byKey(const ValueKey('timeline-lesson-before-break')),
     );
-    expect(dot.center.dx, greaterThan(firstLesson.center.dx));
+    final after = tester.getRect(
+      find.byKey(const ValueKey('timeline-lesson-after-break')),
+    );
+    final rect = tester.getRect(label);
+    expect(rect.top, greaterThanOrEqualTo(before.bottom));
+    expect(rect.bottom, lessThanOrEqualTo(after.top));
 
     await tester.pumpWidget(const SizedBox.shrink());
     await tester.pump();
