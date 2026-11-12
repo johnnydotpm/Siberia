@@ -111,7 +111,18 @@ void main() {
   test('parts follow the notification settings', () {
     expect(
       backgroundParts(const SchoolNotificationSettings()),
-      LibrusPart.values.toSet(),
+      // Lucky numbers have no notification category; this check follows the
+      // enabled categories rather than every optional diary module.
+      {
+        LibrusPart.grades,
+        LibrusPart.timetable,
+        LibrusPart.events,
+        LibrusPart.homework,
+        LibrusPart.attendance,
+        LibrusPart.announcements,
+        LibrusPart.notices,
+        LibrusPart.messages,
+      },
     );
     expect(
       backgroundParts(

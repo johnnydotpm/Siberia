@@ -461,6 +461,7 @@ class LibrusClient {
         data(LibrusPart.notices, 'Notes', optional: true),
         data(LibrusPart.grades, 'Grades/Comments', optional: true),
         data(LibrusPart.timetable, 'TeacherFreeDays', optional: true),
+        data(LibrusPart.luckyNumbers, 'LuckyNumbers', optional: true),
       ]),
       if (withMessages)
         _apiGet(_apiInboxEndpoint).then<Object?>(
@@ -509,6 +510,17 @@ class LibrusClient {
       }
     }
     return AppSnapshot(
+      providerData: {
+        if (wanted.contains(LibrusPart.luckyNumbers))
+          'luckyNumbers': fetched[9],
+      },
+      luckyNumbers: [
+        if (_map(fetched[9]['LuckyNumber']) case final draw?)
+          ?LuckyNumber.fromJson({
+            'number': draw['LuckyNumber'],
+            'day': draw['LuckyNumberDay'],
+          }),
+      ],
       profile: parsed.profile,
       lessons: parsed.lessons,
       grades: parsed.grades,

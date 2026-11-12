@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syberia/src/app.dart';
@@ -256,11 +257,30 @@ void main() {
   testWidgets('a check for updates says whether there is a newer version', (
     tester,
   ) async {
+    final opened = <String>[];
+    const channel = MethodChannel('plugins.flutter.io/url_launcher');
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(channel, (
+      call,
+    ) async {
+      if (call.method == 'launch') {
+        opened.add((call.arguments as Map)['url'] as String);
+      }
+      return true;
+    });
+    addTearDown(
+      () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        channel,
+        null,
+      ),
+    );
     await _pump(tester, latestVersion: '99.0.0');
     await tester.tap(find.byKey(const ValueKey('settings-check-updates')));
     await tester.pumpAndSettle();
     expect(find.text('Version 99.0.0 is available'), findsOneWidget);
     expect(find.text('Open'), findsOneWidget);
+    await tester.tap(find.text('Version 99.0.0 is available'));
+    await tester.pumpAndSettle();
+    expect(opened, ['https://github.com/johnnydotpm/Siberia/releases/latest']);
     await tester.pumpWidget(const SizedBox.shrink());
 
     await _pump(tester, latestVersion: AppBuildInfo.version);

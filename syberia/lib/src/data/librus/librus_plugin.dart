@@ -104,7 +104,17 @@ class _LibrusSession
     AppSnapshot? previous, {
     Set<DiaryPart>? parts,
   }) async {
-    final fetched = await client.restoreAndFetch(parts: parts);
+    var fetched = await client.restoreAndFetch(parts: parts);
+    // An unsupported endpoint or temporary failure is not a new draw. Keep
+    // the last known number; the UI still requires an exact date match.
+    final draw = fetched?.providerData['luckyNumbers'];
+    if (fetched != null &&
+        previous != null &&
+        previous.profile.id == fetched.profile.id &&
+        draw is Map &&
+        !draw.containsKey('LuckyNumber')) {
+      fetched = fetched.copyWith(luckyNumbers: previous.luckyNumbers);
+    }
     if (fetched == null ||
         previous == null ||
         parts == null ||
@@ -150,6 +160,11 @@ class _LibrusSession
       ),
       notices: pick(DiaryPart.notices, fetched.notices, previous.notices),
       freeDays: pick(DiaryPart.timetable, fetched.freeDays, previous.freeDays),
+      luckyNumbers: pick(
+        DiaryPart.luckyNumbers,
+        fetched.luckyNumbers,
+        previous.luckyNumbers,
+      ),
       lastSync: fetched.lastSync,
     );
   }

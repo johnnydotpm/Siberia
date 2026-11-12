@@ -8,4 +8,5 @@ enum DiaryPart {
   announcements,
   notices,
   messages,
+  luckyNumbers,
 }
