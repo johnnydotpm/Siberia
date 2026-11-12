@@ -7,7 +7,8 @@ class _Events extends StatefulWidget {
   State<_Events> createState() => _EventsState();
 }
 
-class _EventsState extends State<_Events> {
+class _EventsState extends State<_Events>
+    with SingleTickerProviderStateMixin, _ContentFade {
   DateTime selected = DateTime.now();
   late DateTime month = DateTime(selected.year, selected.month);
 
@@ -50,7 +51,10 @@ class _EventsState extends State<_Events> {
                 first: DateTime(today.year - 2),
                 last: DateTime(today.year + 3, 12, 31),
                 onMonthChanged: (value) => setState(() => month = value),
-                onDaySelected: (value) => setState(() => selected = value),
+                onDaySelected: (value) {
+                  setState(() => selected = value);
+                  refade();
+                },
                 dayOf: (date) => _CalendarDay(
                   key: ValueKey('events-day-${date.toIso8601String()}'),
                   dot: eventDays.contains(date) ? colors.primary : null,
@@ -61,11 +65,12 @@ class _EventsState extends State<_Events> {
           const SizedBox(height: _Space.section),
           _Heading(context.tr('selectedDay')),
           const SizedBox(height: _Space.heading),
+          // Another day's entries fade in.
           if (selectedEvents.isEmpty)
             // One quiet line: the coming events below stay in sight.
-            _EmptyDay(context.tr('emptyEvents'))
+            fading(_EmptyDay(context.tr('emptyEvents')))
           else
-            ..._spaced(selectedEvents.map(_EventTile.new)),
+            ..._spaced(selectedEvents.map((item) => fading(_EventTile(item)))),
           const SizedBox(height: _Space.section),
           _Heading(context.tr('upcomingEvents')),
           const SizedBox(height: _Space.heading),

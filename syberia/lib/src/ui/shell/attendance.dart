@@ -9,7 +9,8 @@ class _Attendance extends StatefulWidget {
   State<_Attendance> createState() => _AttendanceState();
 }
 
-class _AttendanceState extends State<_Attendance> {
+class _AttendanceState extends State<_Attendance>
+    with SingleTickerProviderStateMixin, _ContentFade {
   _AttendancePeriod period = _AttendancePeriod.year;
   DateTime month = DateTime(DateTime.now().year, DateTime.now().month);
   DateTime? selectedDay;
@@ -76,6 +77,7 @@ class _AttendanceState extends State<_Attendance> {
               onSelectionChanged: (value) {
                 HapticFeedback.selectionClick();
                 setState(() => period = value.first);
+                refade();
               },
               segments: [
                 ButtonSegment(
@@ -94,19 +96,24 @@ class _AttendanceState extends State<_Attendance> {
             ),
           ),
           const SizedBox(height: _Space.card),
+          // Another period fades in, item by item on one animation.
           if (!widget.controller.snapshot.attendanceComplete)
             Text(context.tr('attendanceIncomplete'))
           else
-            _AttendanceChart(
-              counts: counts,
-              style: widget.controller.attendanceChartStyle,
+            fading(
+              _AttendanceChart(
+                counts: counts,
+                style: widget.controller.attendanceChartStyle,
+              ),
             ),
           if (widget.controller.snapshot.attendanceComplete &&
               records.any((item) => item.subject.trim().isNotEmpty)) ...[
             const SizedBox(height: 16),
-            _AttendanceBySubject(
-              records: records,
-              style: widget.controller.attendanceChartStyle,
+            fading(
+              _AttendanceBySubject(
+                records: records,
+                style: widget.controller.attendanceChartStyle,
+              ),
             ),
           ] else if (records.isNotEmpty) ...[
             // Said, not hidden: a sync may still bring the subjects.
@@ -143,7 +150,7 @@ class _AttendanceState extends State<_Attendance> {
             const SizedBox(height: _Space.section),
             _Heading(context.tr('attendanceEntries')),
             const SizedBox(height: _Space.heading),
-            ..._spaced(records.map(_AttendanceTile.new)),
+            ..._spaced(records.map((item) => fading(_AttendanceTile(item)))),
           ],
         ],
       ),

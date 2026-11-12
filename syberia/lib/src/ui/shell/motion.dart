@@ -673,3 +673,171 @@ class _LessonsSkeleton extends StatelessWidget {
     ),
   );
 }
+
+/// The app's pages, one shown at a time, as an [IndexedStack] keeps them,
+/// with Material's fade through between them when [animate]: the page left
+/// fades out in the first 30% of 300 ms, the one opened fades in over the
+/// rest as it grows from 92%. Only the page on screen has running tickers.
+class _TabSwitch extends StatefulWidget {
+  const _TabSwitch({
+    required this.index,
+    required this.children,
+    required this.animate,
+  });
+
+  final int index;
+  final List<Widget> children;
+  final bool animate;
+
+  @override
+  State<_TabSwitch> createState() => _TabSwitchState();
+}
+
+class _TabSwitchState extends State<_TabSwitch>
+    with SingleTickerProviderStateMixin {
+  late final _switch = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 300),
+    value: 1,
+  );
+  late final Animation<double> _out = Tween<double>(begin: 1, end: 0).animate(
+    CurvedAnimation(
+      parent: _switch,
+      curve: const Interval(0, 0.3, curve: Easing.emphasizedAccelerate),
+    ),
+  );
+  late final Animation<double> _in = CurvedAnimation(
+    parent: _switch,
+    curve: const Interval(0.3, 1, curve: Easing.emphasizedDecelerate),
+  );
+  late final Animation<double> _grow = Tween<double>(
+    begin: 0.92,
+    end: 1,
+  ).animate(_in);
+
+  /// The page fading out, while it does.
+  int? _previous;
+
+  @override
+  void initState() {
+    super.initState();
+    _switch.addStatusListener((status) {
+      if (status == AnimationStatus.completed && _previous != null) {
+        setState(() => _previous = null);
+      }
+    });
+  }
+
+  @override
+  void didUpdateWidget(_TabSwitch oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.index == widget.index) return;
+    if (!widget.animate || _reduceMotion(context)) {
+      _previous = null;
+      _switch.value = 1;
+      return;
+    }
+    _previous = oldWidget.index;
+    _switch.forward(from: 0);
+  }
+
+  @override
+  void dispose() {
+    _switch.dispose();
+    super.dispose();
+  }
+
+  /// Whether the page [index] is out of sight: neither open nor still
+  /// fading out. The one left is gone once it has faded, in the first 30%.
+  bool _hidden(int index) =>
+      index != widget.index && (index != _previous || _switch.value >= 0.3);
+
+  @override
+  Widget build(BuildContext context) => Stack(
+    fit: StackFit.expand,
+    children: [
+      for (final (index, child) in widget.children.indexed)
+        // The same wrappers around every page at every moment, so none
+        // loses its state as it comes and goes.
+        AnimatedBuilder(
+          animation: _switch,
+          builder: (context, page) =>
+              Offstage(offstage: _hidden(index), child: page),
+          child: IgnorePointer(
+            ignoring: index != widget.index,
+            child: TickerMode(
+              enabled: index == widget.index,
+              child: FadeTransition(
+                opacity: index == widget.index
+                    ? _in
+                    : index == _previous
+                    ? _out
+                    : kAlwaysCompleteAnimation,
+                child: ScaleTransition(
+                  scale: index == widget.index
+                      ? _grow
+                      : kAlwaysCompleteAnimation,
+                  child: child,
+                ),
+              ),
+            ),
+          ),
+        ),
+    ],
+  );
+}
+
+/// Material's fade through for one piece of a page as its key changes: the
+/// old fades out in the first 35% of the time, the new fades in after it,
+/// so the two never show over one another. At once when the system asks
+/// for less motion.
+class _FadeThroughSwitcher extends StatelessWidget {
+  const _FadeThroughSwitcher({required this.child, super.key});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => AnimatedSwitcher(
+    duration: _motion(context, const Duration(milliseconds: 250)),
+    switchInCurve: const Interval(0.35, 1, curve: Easing.emphasizedDecelerate),
+    switchOutCurve: const Interval(0.65, 1, curve: Easing.emphasizedAccelerate),
+    layoutBuilder: (current, previous) => Stack(
+      alignment: Alignment.topCenter,
+      children: [...previous, ?current],
+    ),
+    child: child,
+  );
+}
+
+/// Content that fades in afresh when what it shows is changed by hand, as
+/// a semester, a period or a day is picked. Each item of a page fades on
+/// the one animation, so a list stays lazy: an item scrolled to later does
+/// not flash.
+mixin _ContentFade<T extends StatefulWidget> on State<T>, TickerProvider {
+  late final AnimationController _contentFade = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 200),
+    value: 1,
+  );
+  late final Animation<double> _contentOpacity = CurvedAnimation(
+    parent: _contentFade,
+    curve: Easing.emphasizedDecelerate,
+  );
+
+  /// Fades the content in again, or does nothing when the system asks for
+  /// less motion.
+  void refade() {
+    if (_reduceMotion(context)) return;
+    _contentFade.forward(from: 0);
+  }
+
+  /// [child], fading with the rest of the content.
+  Widget fading(Widget child) =>
+      FadeTransition(opacity: _contentOpacity, child: child);
+
+  @override
+  void dispose() {
+    _contentFade.dispose();
+    super.dispose();
+  }
+}

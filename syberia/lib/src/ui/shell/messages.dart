@@ -246,7 +246,9 @@ class _MessagesState extends State<_Messages> {
         );
         lastSection = section;
       } else if (style == MessageListStyle.cards) {
-        rows.add(const SizedBox(height: _Space.item));
+        rows.add(
+          SizedBox(key: ValueKey('gap-${item.id}'), height: _Space.item),
+        );
       }
       rows.add(
         _MessageTile(
@@ -472,7 +474,18 @@ class _MessagesState extends State<_Messages> {
           )
         else
           _Empty(context.tr('emptyMessages'), icon: Icons.mail_rounded),
-      ...rows,
+      // Another folder, filter or look fades through; within one, messages
+      // deleted fold away and new ones open, as on Today. A search shows
+      // its matches at once.
+      // Keyed, so a row coming above it, as the skeleton of the Sent
+      // folder, does not make it start afresh.
+      _FadeThroughSwitcher(
+        key: const ValueKey('messages-rows'),
+        child: KeyedSubtree(
+          key: ValueKey(('messages', _folder, _unreadOnly, style)),
+          child: _AnimatedColumn(key: ValueKey(query), children: rows),
+        ),
+      ),
     ];
     final scope = GlassPageScope.maybeOf(context);
     // Under a glass top bar the compose button lives in the bar.
@@ -517,22 +530,38 @@ class _MessagesState extends State<_Messages> {
               // While picking, the count is the title and the bars hold
               // what there is to do; otherwise writing sits beside it, as
               // in the mockup.
-              child: picking
-                  ? Align(
-                      alignment: AlignmentDirectional.centerStart,
-                      child: _PickedHeadline(selection.count),
-                    )
-                  : Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Expanded(child: ExpressiveLargeTitle(expressiveTitle)),
-                        const SizedBox(width: Space.medium),
-                        _ExpressiveCompose(
-                          onPressed: () =>
-                              _showComposeMessage(context, controller),
+              // Both at least as tall as the button, so the list below
+              // does not jump as one fades into the other.
+              child: AnimatedSwitcher(
+                duration: _motion(context, const Duration(milliseconds: 200)),
+                layoutBuilder: (current, previous) => Stack(
+                  alignment: AlignmentDirectional.bottomStart,
+                  children: [...previous, ?current],
+                ),
+                child: ConstrainedBox(
+                  key: ValueKey(picking),
+                  constraints: const BoxConstraints(minHeight: 56),
+                  child: picking
+                      ? Align(
+                          alignment: AlignmentDirectional.bottomStart,
+                          heightFactor: 1,
+                          child: _PickedHeadline(selection.count),
+                        )
+                      : Row(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Expanded(
+                              child: ExpressiveLargeTitle(expressiveTitle),
+                            ),
+                            const SizedBox(width: Space.medium),
+                            _ExpressiveCompose(
+                              onPressed: () =>
+                                  _showComposeMessage(context, controller),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                ),
+              ),
             ),
           // A classic page in the shell has writing in its top bar; on a
           // wide screen, with no bar of the page's own, it keeps a row.
@@ -589,8 +618,6 @@ class _MessagesState extends State<_Messages> {
   );
 }
 
-/// The count of picked messages as the Expressive page's large title, the
-/// number in the accent colour.
 /// Writing a message, beside the Expressive page's title: a 56 square of
 /// the primary container with the large corner, as Material's floating
 /// action button is.
@@ -626,6 +653,8 @@ class _ExpressiveCompose extends StatelessWidget {
   }
 }
 
+/// The count of picked messages as the Expressive page's large title, the
+/// number in the accent colour.
 class _PickedHeadline extends StatelessWidget {
   const _PickedHeadline(this.count);
 

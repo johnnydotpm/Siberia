@@ -303,7 +303,7 @@ void main() {
       // A day with no lessons, as the timetable opens on one here. It fits,
       // and moves only to be pulled to refresh, as every other page.
       await _pump(tester, tab: 1);
-      final day = find.byType(IndexedStack);
+      final day = find.byType(Scaffold).first;
       expect(
         find.descendant(of: day, matching: find.byType(RefreshIndicator)),
         findsOneWidget,

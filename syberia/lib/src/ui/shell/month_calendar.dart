@@ -116,30 +116,39 @@ class _MonthCalendar extends StatelessWidget {
             ],
           ),
         ),
-        GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          // Not the screen's safe area, which a page under glass bars
-          // passes on.
-          padding: EdgeInsets.zero,
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 7,
-            mainAxisSpacing: 4,
-            crossAxisSpacing: 4,
+        // Another month fades in where the last one was.
+        AnimatedSwitcher(
+          duration: _motion(context, const Duration(milliseconds: 150)),
+          layoutBuilder: (current, previous) => Stack(
+            alignment: Alignment.topCenter,
+            children: [...previous, ?current],
           ),
-          itemCount: ((leading + count + 6) ~/ 7) * 7,
-          itemBuilder: (context, index) {
-            final number = index - leading + 1;
-            if (number < 1 || number > count) return const SizedBox.shrink();
-            final day = DateTime(month.year, month.month, number);
-            return _dayCell(
-              context,
-              day,
-              dayOf(day),
-              picked: selected != null && _sameDay(selected!, day),
-              today: _sameDay(day, today),
-            );
-          },
+          child: GridView.builder(
+            key: ValueKey(start),
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            // Not the screen's safe area, which a page under glass bars
+            // passes on.
+            padding: EdgeInsets.zero,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 7,
+              mainAxisSpacing: 4,
+              crossAxisSpacing: 4,
+            ),
+            itemCount: ((leading + count + 6) ~/ 7) * 7,
+            itemBuilder: (context, index) {
+              final number = index - leading + 1;
+              if (number < 1 || number > count) return const SizedBox.shrink();
+              final day = DateTime(month.year, month.month, number);
+              return _dayCell(
+                context,
+                day,
+                dayOf(day),
+                picked: selected != null && _sameDay(selected!, day),
+                today: _sameDay(day, today),
+              );
+            },
+          ),
         ),
       ],
     );

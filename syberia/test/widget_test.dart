@@ -424,6 +424,8 @@ void main() {
     await tester.pumpWidget(SyberiaApp(controller: controller));
     controller.selectTab(1);
     await tester.pump();
+    // Past the fade from Today, which shows the lesson too.
+    await tester.pump(const Duration(milliseconds: 300));
 
     expect(find.text('Now'), findsOneWidget);
     expect(

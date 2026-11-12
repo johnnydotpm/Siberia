@@ -8,7 +8,8 @@ class _Grades extends StatefulWidget {
   State<_Grades> createState() => _GradesState();
 }
 
-class _GradesState extends State<_Grades> {
+class _GradesState extends State<_Grades>
+    with SingleTickerProviderStateMixin, _ContentFade {
   late int semester = _preferredSemester(widget.controller.snapshot.grades);
 
   @override
@@ -43,6 +44,7 @@ class _GradesState extends State<_Grades> {
                   onSelectionChanged: (selection) {
                     HapticFeedback.selectionClick();
                     setState(() => semester = selection.first);
+                    refade();
                   },
                 ),
               ),
@@ -53,11 +55,14 @@ class _GradesState extends State<_Grades> {
                       ? 'gradesViewCards'
                       : 'gradesViewCompact',
                 ),
-                onPressed: () => controller.setGradesView(
-                  view == GradesView.compact
-                      ? GradesView.cards
-                      : GradesView.compact,
-                ),
+                onPressed: () {
+                  refade();
+                  controller.setGradesView(
+                    view == GradesView.compact
+                        ? GradesView.cards
+                        : GradesView.compact,
+                  );
+                },
                 icon: AppIcon(
                   view == GradesView.compact
                       ? Icons.view_agenda_rounded
@@ -68,32 +73,39 @@ class _GradesState extends State<_Grades> {
           ),
           const SizedBox(height: _Space.card),
           // An average of nothing is left out, not shown as "—".
+          // Another semester or look fades in, item by item on one
+          // animation.
           if (subjects.isNotEmpty) ...[
-            if (controller.together)
-              _TogetherGradesOverview(controller, grades)
-            else
-              _GradesOverview(grades, controller.gradeAverage),
+            fading(
+              controller.together
+                  ? _TogetherGradesOverview(controller, grades)
+                  : _GradesOverview(grades, controller.gradeAverage),
+            ),
             const SizedBox(height: _Space.card),
           ],
           if (subjects.isEmpty)
-            _Empty(context.tr('emptyGrades'), icon: Icons.school_rounded)
+            fading(
+              _Empty(context.tr('emptyGrades'), icon: Icons.school_rounded),
+            )
           else
             for (final (index, MapEntry(key: (source, subject), value: items))
                 in subjects.indexed) ...[
               if (index > 0) const SizedBox(height: _Space.item),
-              view == GradesView.compact
-                  ? _SubjectGradesRow(
-                      subject: subject,
-                      grades: items,
-                      settings: controller.gradeAverageFor(source),
-                      source: source,
-                    )
-                  : _SubjectGradesTile(
-                      subject: subject,
-                      grades: items,
-                      settings: controller.gradeAverageFor(source),
-                      source: source,
-                    ),
+              fading(
+                view == GradesView.compact
+                    ? _SubjectGradesRow(
+                        subject: subject,
+                        grades: items,
+                        settings: controller.gradeAverageFor(source),
+                        source: source,
+                      )
+                    : _SubjectGradesTile(
+                        subject: subject,
+                        grades: items,
+                        settings: controller.gradeAverageFor(source),
+                        source: source,
+                      ),
+              ),
             ],
         ],
       ),

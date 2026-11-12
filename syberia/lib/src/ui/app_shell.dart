@@ -243,16 +243,11 @@ class _AppShellState extends State<AppShell> {
           _pages.clear();
         }
         final current = controller.tabIndex;
-        // IndexedStack keeps hidden pages animating: their tickers stop
-        // here, so a page out of sight draws no frames.
         final pages = [
           for (var index = 0; index < _pageCount; index++)
-            TickerMode(
-              enabled: index == current,
-              child: index == current
-                  ? _pages[index] = wrap(index, _page(index))
-                  : _pages[index] ?? const SizedBox.shrink(),
-            ),
+            index == current
+                ? _pages[index] = wrap(index, _page(index))
+                : _pages[index] ?? const SizedBox.shrink(),
         ];
         final body = _SubjectScope(
           studentTools: controller.canUseStudentTools,
@@ -270,7 +265,14 @@ class _AppShellState extends State<AppShell> {
                   children: [
                     NotificationListener<ScrollNotification>(
                       onNotification: _onScroll,
-                      child: IndexedStack(index: current, children: pages),
+                      // Pages fade through one another, as Material's
+                      // navigation bar asks; glass switches at once, as
+                      // iOS does.
+                      child: _TabSwitch(
+                        index: current,
+                        animate: !glass,
+                        children: pages,
+                      ),
                     ),
                     // Under the top bar, over the page.
                     Positioned(
@@ -401,142 +403,166 @@ class _AppShellState extends State<AppShell> {
           drawer: Drawer(
             child: SafeArea(child: _SideNavigation(controller: controller)),
           ),
-          appBar: picking == null
-              ? AppBar(
-                  // A bar of its own for each page: one scrolled under does
-                  // not leave the next page's bar filled.
-                  key: ValueKey('app-bar-${controller.tabIndex}'),
-                  // In the Expressive design the page opens with its own large
-                  // title; the bar shows it once that has scrolled away.
-                  title: expressive && controller.tabIndex != 1
-                      ? ValueListenableBuilder(
-                          valueListenable: _titleScroll,
-                          builder: (context, _, child) => AnimatedOpacity(
-                            opacity: _titleAway[controller.tabIndex] ?? false
-                                ? 1
-                                : 0,
-                            duration: const Duration(milliseconds: 150),
-                            child: child,
-                          ),
-                          child: Text(_title(context, controller.tabIndex)),
-                        )
-                      : Text(_title(context, controller.tabIndex)),
-                  actions: [
-                    // Writing is the messages' own action, in the bar as in
-                    // glass. Expressive keeps it beside the page's title.
-                    if (!expressive && controller.tabIndex == _messagesTab)
-                      IconButton(
-                        key: const ValueKey('messages-compose'),
-                        onPressed: () =>
-                            _showComposeMessage(context, controller),
-                        icon: const AppIcon(Icons.edit_rounded),
-                        tooltip: context.tr('newMessage'),
-                      ),
-                    // One sign of a sync: the button turns into its spinner.
-                    IconButton(
-                      key: const ValueKey('sync-button'),
-                      onPressed: controller.syncing ? null : controller.sync,
-                      icon: controller.syncing
-                          ? expressive
-                                // Expressive's own: shapes that morph as they turn.
-                                ? const SizedBox.square(
-                                    dimension: 28,
-                                    child: FittedBox(child: LoadingIndicator()),
-                                  )
-                                : const SizedBox.square(
-                                    dimension: 18,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                    ),
-                                  )
-                          : const AppIcon(Icons.sync_rounded),
-                      tooltip: context.tr('sync'),
-                    ),
-                    IconButton(
-                      key: const ValueKey('profile-button'),
-                      tooltip: context.tr('profiles'),
-                      onPressed: () => _showProfiles(context, controller),
-                      icon: _OpenProfileSign(
-                        controller,
-                        radius: 15,
-                        news: controller.otherProfilesHaveNews,
-                      ),
-                    ),
-                  ],
-                )
-              : expressive
-              ? _expressiveSelectionBar(
-                  context,
-                  picking,
-                  title: ValueListenableBuilder(
-                    valueListenable: _titleScroll,
-                    builder: (context, _, child) => AnimatedOpacity(
-                      opacity: _titleAway[controller.tabIndex] ?? false ? 1 : 0,
-                      duration: const Duration(milliseconds: 150),
-                      child: child,
-                    ),
-                    child: Text(titleOf(controller.tabIndex)),
-                  ),
-                )
-              : _ClassicSelectionBar(picking),
-          body: body,
-          bottomNavigationBar: picking != null
-              ? expressive
-                    ? null
-                    : _ClassicSelectionActions(picking)
-              : controller.design == AppDesign.expressive
-              ? ExpressiveNavigationBar(
-                  selectedIndex: selected,
-                  onSelected: selectBottomTab,
-                  destinations: [
-                    for (final tab in bottomTabs)
-                      (
-                        icon: _tabLooks[tab].icon,
-                        label: context.tr(_tabLooks[tab].label),
-                        badge: tab == 5
-                            ? controller.snapshot.unreadMessages
-                            : 0,
-                        badgeText: badgeText(
-                          tab == 5 ? controller.snapshot.unreadMessages : 0,
-                        ),
-                      ),
-                  ],
-                )
-              // A page opened from the menu has no tab, so none looks
-              // selected. NavigationBar always selects one, so the first is
-              // drawn plain.
-              : NavigationBarTheme(
-                  data: selected >= 0
-                      ? NavigationBarTheme.of(context)
-                      : NavigationBarTheme.of(context).copyWith(
-                          indicatorColor: Colors.transparent,
-                          iconTheme: WidgetStatePropertyAll(
-                            IconThemeData(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onSurfaceVariant,
+          // The bars fade from one to the next: a page's to another's,
+          // and to the picking ones.
+          appBar: _SwitchedBar(
+            picking == null
+                ? AppBar(
+                    // A bar of its own for each page: one scrolled under does
+                    // not leave the next page's bar filled.
+                    key: ValueKey('app-bar-${controller.tabIndex}'),
+                    // In the Expressive design the page opens with its own large
+                    // title; the bar shows it once that has scrolled away.
+                    title: expressive && controller.tabIndex != 1
+                        ? ValueListenableBuilder(
+                            valueListenable: _titleScroll,
+                            builder: (context, _, child) => AnimatedOpacity(
+                              opacity: _titleAway[controller.tabIndex] ?? false
+                                  ? 1
+                                  : 0,
+                              duration: const Duration(milliseconds: 150),
+                              child: child,
                             ),
-                          ),
+                            child: Text(_title(context, controller.tabIndex)),
+                          )
+                        : Text(_title(context, controller.tabIndex)),
+                    actions: [
+                      // Writing is the messages' own action, in the bar as in
+                      // glass. Expressive keeps it beside the page's title.
+                      if (!expressive && controller.tabIndex == _messagesTab)
+                        IconButton(
+                          key: const ValueKey('messages-compose'),
+                          onPressed: () =>
+                              _showComposeMessage(context, controller),
+                          icon: const AppIcon(Icons.edit_rounded),
+                          tooltip: context.tr('newMessage'),
                         ),
-                  child: NavigationBar(
-                    selectedIndex: selected < 0 ? 0 : selected,
-                    onDestinationSelected: selectBottomTab,
+                      // One sign of a sync: the button turns into its spinner.
+                      IconButton(
+                        key: const ValueKey('sync-button'),
+                        onPressed: controller.syncing ? null : controller.sync,
+                        icon: controller.syncing
+                            ? expressive
+                                  // Expressive's own: shapes that morph as they turn.
+                                  ? const SizedBox.square(
+                                      dimension: 28,
+                                      child: FittedBox(
+                                        child: LoadingIndicator(),
+                                      ),
+                                    )
+                                  : const SizedBox.square(
+                                      dimension: 18,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                      ),
+                                    )
+                            : const AppIcon(Icons.sync_rounded),
+                        tooltip: context.tr('sync'),
+                      ),
+                      IconButton(
+                        key: const ValueKey('profile-button'),
+                        tooltip: context.tr('profiles'),
+                        onPressed: () => _showProfiles(context, controller),
+                        icon: _OpenProfileSign(
+                          controller,
+                          radius: 15,
+                          news: controller.otherProfilesHaveNews,
+                        ),
+                      ),
+                    ],
+                  )
+                : expressive
+                ? KeyedSubtree(
+                    key: const ValueKey('selection-bar'),
+                    child: _expressiveSelectionBar(
+                      context,
+                      picking,
+                      title: ValueListenableBuilder(
+                        valueListenable: _titleScroll,
+                        builder: (context, _, child) => AnimatedOpacity(
+                          opacity: _titleAway[controller.tabIndex] ?? false
+                              ? 1
+                              : 0,
+                          duration: const Duration(milliseconds: 150),
+                          child: child,
+                        ),
+                        child: Text(titleOf(controller.tabIndex)),
+                      ),
+                    ),
+                  )
+                : KeyedSubtree(
+                    key: const ValueKey('selection-bar'),
+                    child: _ClassicSelectionBar(picking),
+                  ),
+          ),
+          body: body,
+          // Expressive's bar slides away under its floating actions; the
+          // classic one gives way to the actions in its place.
+          bottomNavigationBar: _SwitchedBottom(
+            collapse: expressive,
+            child: picking != null
+                ? expressive
+                      ? const SizedBox.shrink(key: ValueKey('no-bar'))
+                      : KeyedSubtree(
+                          key: const ValueKey('selection-actions'),
+                          child: _ClassicSelectionActions(picking),
+                        )
+                : controller.design == AppDesign.expressive
+                ? ExpressiveNavigationBar(
+                    key: const ValueKey('navigation-bar'),
+                    selectedIndex: selected,
+                    onSelected: selectBottomTab,
                     destinations: [
                       for (final tab in bottomTabs)
-                        _destination(
-                          _tabLooks[tab].icon,
-                          // Off the bar, Today stands selected only for show.
-                          tab == 0 && selected < 0
-                              ? _tabLooks[tab].icon
-                              : _tabLooks[tab].selectedIcon,
-                          context.tr(_tabLooks[tab].label),
+                        (
+                          icon: _tabLooks[tab].icon,
+                          label: context.tr(_tabLooks[tab].label),
                           badge: tab == 5
                               ? controller.snapshot.unreadMessages
                               : 0,
+                          badgeText: badgeText(
+                            tab == 5 ? controller.snapshot.unreadMessages : 0,
+                          ),
                         ),
                     ],
+                  )
+                // A page opened from the menu has no tab, so none looks
+                // selected. NavigationBar always selects one, so the first is
+                // drawn plain.
+                : NavigationBarTheme(
+                    key: const ValueKey('navigation-bar'),
+                    data: selected >= 0
+                        ? NavigationBarTheme.of(context)
+                        : NavigationBarTheme.of(context).copyWith(
+                            indicatorColor: Colors.transparent,
+                            iconTheme: WidgetStatePropertyAll(
+                              IconThemeData(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSurfaceVariant,
+                              ),
+                            ),
+                          ),
+                    child: NavigationBar(
+                      selectedIndex: selected < 0 ? 0 : selected,
+                      onDestinationSelected: selectBottomTab,
+                      destinations: [
+                        for (final tab in bottomTabs)
+                          _destination(
+                            _tabLooks[tab].icon,
+                            // Off the bar, Today stands selected only for show.
+                            tab == 0 && selected < 0
+                                ? _tabLooks[tab].icon
+                                : _tabLooks[tab].selectedIcon,
+                            context.tr(_tabLooks[tab].label),
+                            badge: tab == 5
+                                ? controller.snapshot.unreadMessages
+                                : 0,
+                          ),
+                      ],
+                    ),
                   ),
-                ),
+          ),
           // Expressive's actions float where its navigation bar was.
           floatingActionButton: picking != null && expressive
               ? _ExpressiveSelectionToolbar(picking)

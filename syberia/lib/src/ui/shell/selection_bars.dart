@@ -171,8 +171,9 @@ class _ClassicSelectionBar extends StatelessWidget
 
   final _Selection selection;
 
+  /// As tall as the bar it stands in for, so the page does not move.
   @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight + 8);
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 
   @override
   Widget build(BuildContext context) {
@@ -189,7 +190,7 @@ class _ClassicSelectionBar extends StatelessWidget
         child: SafeArea(
           bottom: false,
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(12, 4, 12, 4),
+            padding: const EdgeInsets.fromLTRB(12, 2, 12, 2),
             child: Material(
               color: _pickedTint(theme),
               shape: const StadiumBorder(),
@@ -492,3 +493,58 @@ GlassToolbar _glassSelectionActions(
     ),
   ],
 );
+
+/// The top bar of the shell, fading from one to the next as its key
+/// changes: from a page's to another's, and to the picking one and back.
+/// Every bar it shows is a toolbar tall, so the page under it stays put.
+class _SwitchedBar extends StatelessWidget implements PreferredSizeWidget {
+  const _SwitchedBar(this.child);
+
+  final Widget child;
+
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+
+  @override
+  Widget build(BuildContext context) => AnimatedSwitcher(
+    duration: _motion(context, const Duration(milliseconds: 200)),
+    layoutBuilder: (current, previous) =>
+        Stack(fit: StackFit.expand, children: [...previous, ?current]),
+    child: child,
+  );
+}
+
+/// The bottom bar of the shell, changing as its key does: the classic
+/// navigation and the actions on what is picked fade into one another, as
+/// tall as each other; with [collapse], as in Expressive, the navigation
+/// slides down and away and the page takes its room.
+class _SwitchedBottom extends StatelessWidget {
+  const _SwitchedBottom({required this.child, required this.collapse});
+
+  final Widget child;
+  final bool collapse;
+
+  @override
+  Widget build(BuildContext context) => AnimatedSwitcher(
+    duration: collapse
+        ? _listMotion(context)
+        : _motion(context, const Duration(milliseconds: 200)),
+    switchInCurve: collapse ? _motionCurve(context) : Curves.linear,
+    switchOutCurve: collapse ? _motionCurve(context) : Curves.linear,
+    layoutBuilder: (current, previous) => Stack(
+      alignment: Alignment.bottomCenter,
+      children: [...previous, ?current],
+    ),
+    transitionBuilder: (child, animation) => FadeTransition(
+      opacity: animation,
+      child: collapse
+          ? SizeTransition(
+              sizeFactor: animation,
+              alignment: Alignment.topCenter,
+              child: child,
+            )
+          : child,
+    ),
+    child: child,
+  );
+}
