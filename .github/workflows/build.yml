@@ -35,6 +35,9 @@ concurrency:
   group: siberiagb-flutter-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  DIARY_PLUGIN_SOURCE: ${{ github.ref == 'refs/heads/dev' && 'https://raw.githubusercontent.com/johnnydotpm/Siberia/dev/plugins/' || 'https://raw.githubusercontent.com/johnnydotpm/Siberia/main/plugins/' }}
+
 jobs:
   quality:
     name: Analyze and validate
@@ -135,7 +138,7 @@ jobs:
       - name: Build Android APK
         run: |
           APP_VERSION="$(sed -n 's/^version: \([^+]*\).*/\1/p' pubspec.yaml)"
-          flutter build apk --release --dart-define=APP_VERSION="$APP_VERSION" --dart-define=GIT_COMMIT="$GITHUB_SHA"
+          flutter build apk --release --dart-define=APP_VERSION="$APP_VERSION" --dart-define=GIT_COMMIT="$GITHUB_SHA" --dart-define=DIARY_PLUGIN_SOURCE="$DIARY_PLUGIN_SOURCE"
       - name: Check the APK's signature
         run: |
           APKSIGNER="$(find "$ANDROID_HOME/build-tools" -name apksigner -type f | sort -V | tail -n 1)"
@@ -169,7 +172,7 @@ jobs:
       - name: Build unsigned iOS app
         run: |
           APP_VERSION="$(sed -n 's/^version: \([^+]*\).*/\1/p' pubspec.yaml)"
-          flutter build ios --release --no-codesign --dart-define=APP_VERSION="$APP_VERSION" --dart-define=GIT_COMMIT="$GITHUB_SHA"
+          flutter build ios --release --no-codesign --dart-define=APP_VERSION="$APP_VERSION" --dart-define=GIT_COMMIT="$GITHUB_SHA" --dart-define=DIARY_PLUGIN_SOURCE="$DIARY_PLUGIN_SOURCE"
       - name: Package unsigned IPA for external signing
         run: |
           mkdir -p build/ipa/Payload

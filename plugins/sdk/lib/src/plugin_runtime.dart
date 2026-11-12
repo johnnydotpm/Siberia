@@ -286,6 +286,9 @@ bool _reportProviderError(List<Object> args, Object? error) {
     'module_unavailable',
     'invalid_input',
     'page_limit',
+    'invalid_synergia_login',
+    'unsupported_account_role',
+    'account_action_required',
   };
   if (error is! String || !codes.contains(error)) return false;
   final request = jsonDecode(args[2] as String) as Map;

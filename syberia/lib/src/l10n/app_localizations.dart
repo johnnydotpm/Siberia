@@ -45,6 +45,12 @@ class AppLocalizations {
       'todayCustomizeSettings': 'Dostosuj ekran „Dzisiaj”',
       'todayCurrentLesson': 'Aktualna lub następna lekcja',
       'luckyNumbers': 'Szczęśliwy numerek',
+      'synergiaLogin': 'Login Synergii',
+      'invalidSynergiaLogin':
+          'Podaj cyfrowy login Synergii, z opcjonalną końcówką u.',
+      'unsupportedAccountRole':
+          'Ten typ konta nie jest obsługiwany. Użyj konta ucznia lub rodzica.',
+      'diaryAccountActionRequired': 'Konto wymaga dodatkowej czynności w Synergii, np. CAPTCHA lub zmiany hasła. Zaloguj się tam i spróbuj ponownie.',
       'startingApp': 'Uruchamianie aplikacji',
       'startupFailed': 'Nie udało się uruchomić aplikacji. Spróbuj ponownie.',
       'markAllRead': 'Oznacz wszystkie jako przeczytane',
@@ -544,6 +550,11 @@ class AppLocalizations {
       'todayCustomizeSettings': 'Customise Today screen',
       'todayCurrentLesson': 'Current or next lesson',
       'luckyNumbers': 'Lucky number',
+      'synergiaLogin': 'Synergia login',
+      'invalidSynergiaLogin':
+          'Enter your numeric Synergia login, optionally ending in u.',
+      'unsupportedAccountRole': 'This account type is not supported. Use a student or parent account.',
+      'diaryAccountActionRequired': 'Your account requires an additional step in Synergia, such as a CAPTCHA or password change. Sign in there and try again.',
       'startingApp': 'Starting the app',
       'startupFailed': 'The app could not start. Please try again.',
       'markAllRead': 'Mark all as read',
@@ -1043,6 +1054,11 @@ class AppLocalizations {
       'todayCustomizeSettings': 'Настроить экран «Сегодня»',
       'todayCurrentLesson': 'Текущий или следующий урок',
       'luckyNumbers': 'Счастливый номер',
+      'synergiaLogin': 'Логин Synergia',
+      'invalidSynergiaLogin':
+          'Введите цифровой логин Synergia, при необходимости с u на конце.',
+      'unsupportedAccountRole': 'Этот тип аккаунта не поддерживается. Используйте аккаунт ученика или родителя.',
+      'diaryAccountActionRequired': 'Аккаунт требует дополнительного действия в Synergia, например CAPTCHA или смены пароля. Войдите там и попробуйте снова.',
       'startingApp': 'Запуск приложения',
       'startupFailed': 'Не удалось запустить приложение. Повторите попытку.',
       'markAllRead': 'Отметить все как прочитанные',
@@ -1543,6 +1559,10 @@ class AppLocalizations {
       'todayCustomizeSettings': 'Heute-Bildschirm anpassen',
       'todayCurrentLesson': 'Aktuelle oder nächste Stunde',
       'luckyNumbers': 'Glückszahl',
+      'synergiaLogin': 'Synergia-Login',
+      'invalidSynergiaLogin': 'Gib den numerischen Synergia-Login ein, gegebenenfalls mit u am Ende.',
+      'unsupportedAccountRole': 'Dieser Kontotyp wird nicht unterstützt. Verwende ein Schüler- oder Elternkonto.',
+      'diaryAccountActionRequired': 'Dein Konto erfordert einen weiteren Schritt in Synergia, etwa ein CAPTCHA oder eine Passwortänderung. Melde dich dort an und versuche es erneut.',
       'startingApp': 'App wird gestartet',
       'startupFailed':
           'Die App konnte nicht gestartet werden. Bitte erneut versuchen.',
@@ -2050,6 +2070,11 @@ class AppLocalizations {
       'todayCustomizeSettings': 'Налаштувати екран «Сьогодні»',
       'todayCurrentLesson': 'Поточний або наступний урок',
       'luckyNumbers': 'Щасливий номер',
+      'synergiaLogin': 'Логін Synergia',
+      'invalidSynergiaLogin':
+          'Введіть цифровий логін Synergia, за потреби з u в кінці.',
+      'unsupportedAccountRole': 'Цей тип облікового запису не підтримується. Використайте обліковий запис учня або батьків.',
+      'diaryAccountActionRequired': 'Обліковий запис потребує додаткової дії в Synergia, наприклад CAPTCHA або зміни пароля. Увійдіть там і спробуйте ще раз.',
       'startingApp': 'Запуск застосунку',
       'startupFailed': 'Не вдалося запустити застосунок. Спробуйте ще раз.',
       'markAllRead': 'Позначити всі як прочитані',
@@ -2628,6 +2653,13 @@ extension LocalizedError on BuildContext {
   String trError(AppError error) {
     final plugin = error.pluginCode;
     if (plugin != null) {
+      if (plugin == 'invalid_synergia_login') return tr('invalidSynergiaLogin');
+      if (plugin == 'unsupported_account_role') {
+        return tr('unsupportedAccountRole');
+      }
+      if (plugin == 'account_action_required') {
+        return tr('diaryAccountActionRequired');
+      }
       if (plugin == 'send_uncertain') return tr('messageSendUncertain');
       if (plugin == 'session_expired') return tr('sessionExpired');
       if (plugin == 'invalid_credentials') return tr('invalidCredentials');
