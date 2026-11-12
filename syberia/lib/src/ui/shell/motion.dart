@@ -796,11 +796,17 @@ class _FadeThroughSwitcher extends StatelessWidget {
 
   final Widget child;
 
+  /// The new one's curve: still for the first 35%, then in.
+  static const inCurve = Interval(0.35, 1, curve: Easing.emphasizedDecelerate);
+
+  /// The old one's, run backwards: out in the first 35%.
+  static const outCurve = Interval(0.65, 1, curve: Easing.emphasizedAccelerate);
+
   @override
   Widget build(BuildContext context) => AnimatedSwitcher(
     duration: _motion(context, const Duration(milliseconds: 250)),
-    switchInCurve: const Interval(0.35, 1, curve: Easing.emphasizedDecelerate),
-    switchOutCurve: const Interval(0.65, 1, curve: Easing.emphasizedAccelerate),
+    switchInCurve: inCurve,
+    switchOutCurve: outCurve,
     layoutBuilder: (current, previous) => Stack(
       alignment: Alignment.topCenter,
       children: [...previous, ?current],

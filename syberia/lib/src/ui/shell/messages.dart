@@ -533,7 +533,9 @@ class _MessagesState extends State<_Messages> {
               // Both at least as tall as the button, so the list below
               // does not jump as one fades into the other.
               child: AnimatedSwitcher(
-                duration: _motion(context, const Duration(milliseconds: 200)),
+                duration: _motion(context, const Duration(milliseconds: 250)),
+                switchInCurve: _FadeThroughSwitcher.inCurve,
+                switchOutCurve: _FadeThroughSwitcher.outCurve,
                 layoutBuilder: (current, previous) => Stack(
                   alignment: AlignmentDirectional.bottomStart,
                   children: [...previous, ?current],

@@ -507,7 +507,10 @@ class _SwitchedBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) => AnimatedSwitcher(
-    duration: _motion(context, const Duration(milliseconds: 200)),
+    duration: _motion(context, const Duration(milliseconds: 250)),
+    // Fading through, so two titles never show over one another.
+    switchInCurve: _FadeThroughSwitcher.inCurve,
+    switchOutCurve: _FadeThroughSwitcher.outCurve,
     layoutBuilder: (current, previous) =>
         Stack(fit: StackFit.expand, children: [...previous, ?current]),
     child: child,
