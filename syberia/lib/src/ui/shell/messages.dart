@@ -888,7 +888,14 @@ class _MessagesSectionLabel extends StatelessWidget {
     final glass = GlassStyle.of(context);
     return Padding(
       padding: EdgeInsetsDirectional.fromSTEB(
-        expressive ? 8 : _MessageRow.gutter,
+        expressive
+            ? 8
+            : glass
+            // Over the text, past the senders' pictures.
+            ? _MessageRow.gutter +
+                  _MessageRow.avatarSize +
+                  _MessageRow.avatarGap
+            : _MessageRow.gutter,
         top,
         12,
         expressive ? 8 : 6,
@@ -964,6 +971,10 @@ class _MessageRow extends StatelessWidget {
 
   /// The room before the text, where the unread dot and the check stand.
   static const double gutter = 28;
+
+  /// The sender's picture in the glass design, and the room after it.
+  static const double avatarSize = 42;
+  static const double avatarGap = 12;
 
   Future<bool> _markRead(BuildContext context) async {
     final messenger = ScaffoldMessenger.of(context);
@@ -1182,6 +1193,21 @@ class _MessageRow extends StatelessWidget {
             padding: EdgeInsets.only(top: expressive || onCard ? 0 : 10),
             child: mark,
           ),
+          // Glass, as Mail on iOS 26: who it is from, or to, on a picture
+          // before the text.
+          if (glass)
+            Padding(
+              padding: EdgeInsetsDirectional.only(
+                top: onCard ? 0 : 12,
+                end: _MessageRow.avatarGap,
+              ),
+              child: ExcludeSemantics(
+                child: _SenderAvatar(
+                  item.sent ? item.recipients.firstOrNull ?? '' : item.sender,
+                  radius: _MessageRow.avatarSize / 2,
+                ),
+              ),
+            ),
           Expanded(
             child: expressive || onCard
                 ? text

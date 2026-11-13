@@ -274,6 +274,21 @@ void main() {
       'symbols and its back button returns', (tester) async {
     GlassPlatform.debugSetBackend(GlassBackend.rendered);
     await _open(tester, design: 'glass');
+    // As in Mail on iOS 26, each row has its sender's picture, between the
+    // unread dot and the text.
+    final avatar = find.descendant(
+      of: _key('message-tile-m0'),
+      matching: find.text('TM'),
+    );
+    expect(avatar, findsOneWidget);
+    expect(
+      tester.getCenter(_key('message-unread-m0')).dx,
+      lessThan(tester.getRect(avatar).left),
+    );
+    expect(
+      tester.getRect(avatar).right,
+      lessThan(tester.getRect(find.text('Teacher m0')).left),
+    );
     await tester.tap(find.text('Subject m0'));
     await tester.pumpAndSettle();
     expect(
