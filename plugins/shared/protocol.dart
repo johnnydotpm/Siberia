@@ -87,6 +87,9 @@ String errorCode(dynamic error) {
     'module_unavailable',
     'invalid_input',
     'page_limit',
+    'invalid_synergia_login',
+    'unsupported_account_role',
+    'account_action_required',
   ];
   return known.contains(text) ? text : 'protocol_error';
 }
