@@ -101,6 +101,9 @@ class AppRepository {
   static const _timetableViewKey = 'timetable_view_v1';
   static const _mergeTimetableLessonsKey = 'merge_timetable_lessons_v1';
   static const _showTimetableBreaksKey = 'show_timetable_breaks_v1';
+
+  /// The look of the message list older versions let one pick; only cleared
+  /// now, with the other settings.
   static const _messageListStyleKey = 'message_list_style_v1';
   static const _gradesViewKey = 'grades_view_v1';
   static const _todayLayoutKey = 'today_layout_v1';
@@ -1174,17 +1177,6 @@ class AppRepository {
 
   Future<void> saveShowTimetableBreaks(bool enabled) async =>
       (await _preferences).setBool(_showTimetableBreaksKey, enabled);
-
-  Future<MessageListStyle> loadMessageListStyle() async {
-    final saved = (await _preferences).getString(_messageListStyleKey);
-    return MessageListStyle.values.firstWhere(
-      (style) => style.name == saved,
-      orElse: () => MessageListStyle.list,
-    );
-  }
-
-  Future<void> saveMessageListStyle(MessageListStyle style) async =>
-      (await _preferences).setString(_messageListStyleKey, style.name);
 
   Future<GradesView> loadGradesView() async {
     final saved = (await _preferences).getString(_gradesViewKey);

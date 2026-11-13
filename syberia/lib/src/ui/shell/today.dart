@@ -313,11 +313,17 @@ class _TodayState extends State<_Today> {
                 .map(
                   (item) => (
                     item.id,
-                    _MessageTile(
-                      controller,
-                      item,
-                      style: MessageListStyle.cards,
-                      now: now,
+                    // Each on a card of its own, as Today's other entries.
+                    Card(
+                      margin: EdgeInsets.zero,
+                      clipBehavior: Clip.antiAlias,
+                      child: _MessageRow(
+                        controller,
+                        item,
+                        now: now,
+                        onCard: true,
+                        folder: context.tr('today'),
+                      ),
                     ),
                   ),
                 ),

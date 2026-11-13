@@ -254,10 +254,7 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey('attendance-subject-Fizyka')));
     await check('subject attendance');
-    controller.selectTab(5);
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Temat'));
-    await check('message');
+    // A message opens on a page of its own, not a sheet.
     controller.selectTab(9);
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey('settings-today-screen')));

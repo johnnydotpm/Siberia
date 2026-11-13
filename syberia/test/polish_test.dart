@@ -712,9 +712,11 @@ void main() {
     expect(controller.snapshot.unreadMessages, unread - 1);
     await tester.tap(find.text('Project feedback').first);
     await tester.pumpAndSettle();
-    await tester.tap(find.byIcon(Icons.close_rounded));
+    await tester.tap(find.byKey(const ValueKey('message-page-back')));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Sent'));
+    await tester.tap(find.byKey(const ValueKey('messages-folder')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('messages-folder-sent')));
     await tester.pumpAndSettle();
     expect(find.byKey(const ValueKey('sent-loading')), findsNothing);
     await tester.tap(find.byKey(const ValueKey('messages-compose')));

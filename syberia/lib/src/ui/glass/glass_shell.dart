@@ -307,6 +307,93 @@ class _GlassShellState extends State<GlassShell> {
   }
 }
 
+/// A page opened over a tab, as a message from the list: the same floating
+/// top bar, with a way back in place of the menu, and the page's own actions
+/// floating at the bottom in place of the tab bar. On iOS 26 the bars are
+/// UIKit's; elsewhere Flutter draws them, as in the rest of the app.
+class GlassPage extends StatefulWidget {
+  const GlassPage({
+    required this.leading,
+    required this.body,
+    this.title = '',
+    this.actions = const [],
+    this.actionBar,
+    super.key,
+  });
+
+  /// Shown in the bar once the page has scrolled; none, as in Mail, by
+  /// default.
+  final String title;
+
+  /// Usually the one button back.
+  final List<GlassBarButton> leading;
+  final List<GlassBarButton> actions;
+  final Widget body;
+
+  /// Usually a [GlassToolbar].
+  final Widget? actionBar;
+
+  @override
+  State<GlassPage> createState() => _GlassPageState();
+}
+
+class _GlassPageState extends State<GlassPage> {
+  final _edge = ValueNotifier<double>(0);
+  final _barTitle = ValueNotifier<double>(0);
+
+  @override
+  void dispose() {
+    _edge.dispose();
+    _barTitle.dispose();
+    super.dispose();
+  }
+
+  bool _onScroll(ScrollNotification notification) {
+    if (notification.depth == 0 && notification.metrics.axis == Axis.vertical) {
+      final pixels = math.max(0.0, notification.metrics.pixels);
+      _edge.value = (pixels / _GlassShellState._edgeDistance).clamp(0.0, 1.0);
+      _barTitle.value =
+          ((pixels - GlassLargeTitle.extent / 2) / (GlassLargeTitle.extent / 4))
+              .clamp(0.0, 1.0);
+    }
+    return false;
+  }
+
+  @override
+  Widget build(BuildContext context) => ValueListenableBuilder<GlassMetrics>(
+    valueListenable: GlassPlatform.metrics,
+    builder: (context, metrics, _) => Scaffold(
+      extendBody: true,
+      extendBodyBehindAppBar: true,
+      appBar: _TopBar(
+        height: metrics.navigationBarHeight,
+        buttonsCenter: metrics.navigationBarCenter,
+        room: metrics.navigationBarRoom,
+        title: widget.title,
+        // The page scrolls under the bar as a page with a large title does,
+        // so the bar blurs what passes under it.
+        largeTitle: true,
+        edge: _edge,
+        barTitle: _barTitle,
+        leading: widget.leading,
+        trailing: widget.actions,
+      ),
+      body: NotificationListener<ScrollNotification>(
+        onNotification: _onScroll,
+        child: widget.body,
+      ),
+      bottomNavigationBar: widget.actionBar == null
+          ? null
+          : _BottomBar(
+              tabs: const [],
+              selectedIndex: null,
+              onSelected: (_) {},
+              actionBar: widget.actionBar,
+            ),
+    ),
+  );
+}
+
 /// The floating top bar: glass buttons over a title drawn by Flutter.
 ///
 /// Everything else Flutter paints here sits below the buttons. Where they are

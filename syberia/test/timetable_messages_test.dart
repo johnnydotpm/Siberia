@@ -439,7 +439,14 @@ void main() {
       findsOneWidget,
     );
     expect(find.text('Sign up by Friday'), findsOneWidget);
-    expect(find.text('TA'), findsOneWidget);
+    // How many are unread, beside the filter.
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey('messages-status')),
+        matching: find.text('2 unread'),
+      ),
+      findsOneWidget,
+    );
 
     await tester.enterText(
       find.byKey(const ValueKey('messages-search')),
@@ -451,7 +458,7 @@ void main() {
     await tester.enterText(find.byKey(const ValueKey('messages-search')), '');
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Unread (2)'));
+    await tester.tap(find.byKey(const ValueKey('messages-filter')));
     await tester.pumpAndSettle();
     expect(find.text('Civic education'), findsNothing);
     expect(find.text('Trip to Italy'), findsOneWidget);
@@ -463,15 +470,9 @@ void main() {
     await tester.pumpAndSettle();
     expect(repository.opened, ['m1']);
     expect(controller.snapshot.messages.first.unread, isFalse);
-    expect(find.text('Unread (1)'), findsOneWidget);
-
-    await tester.tap(find.byKey(const ValueKey('messages-style-toggle')));
-    await tester.pumpAndSettle();
-    expect(find.byType(Card), findsWidgets);
-    expect(
-      await AppRepository().loadMessageListStyle(),
-      MessageListStyle.cards,
-    );
+    expect(controller.snapshot.unreadMessages, 1);
+    // Read under the filter, it stays until the filter changes.
+    expect(find.text('Trip to Italy'), findsOneWidget);
     expect(tester.takeException(), isNull);
     await tester.pumpWidget(const SizedBox.shrink());
   });

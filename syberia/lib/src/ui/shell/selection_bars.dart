@@ -90,18 +90,24 @@ class _SelectionScope extends InheritedWidget {
   const _SelectionScope({
     required this.selection,
     required this.hosted,
+    required this.folder,
     required super.child,
   });
 
   final _SelectionBars selection;
   final bool hosted;
 
+  /// The folder of messages open, which the glass bar is titled after.
+  final ValueNotifier<_MessageFolder> folder;
+
   static _SelectionScope? maybeOf(BuildContext context) =>
       context.dependOnInheritedWidgetOfExactType<_SelectionScope>();
 
   @override
   bool updateShouldNotify(_SelectionScope oldWidget) =>
-      oldWidget.selection != selection || oldWidget.hosted != hosted;
+      oldWidget.selection != selection ||
+      oldWidget.hosted != hosted ||
+      oldWidget.folder != folder;
 }
 
 /// "3 wybrane", or a call to pick some while none is.

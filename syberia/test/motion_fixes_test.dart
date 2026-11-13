@@ -198,7 +198,9 @@ void main() {
     expect(row, findsNothing);
     expect(find.text('Wycieczka'), findsOneWidget);
 
-    await tester.tap(find.text('Sent'));
+    await tester.tap(find.byKey(const ValueKey('messages-folder')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('messages-folder-sent')));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 60));
     // The inbox fading out, before the Sent folder comes in.

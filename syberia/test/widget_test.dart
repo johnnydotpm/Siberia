@@ -298,7 +298,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('Full message body'), findsOneWidget);
       expect(find.text('attachment.pdf'), findsOneWidget);
-      await tester.tap(find.byIcon(Icons.close_rounded).last);
+      await tester.tap(find.byKey(const ValueKey('message-page-back')));
       await tester.pumpAndSettle();
 
       controller.selectTab(6);

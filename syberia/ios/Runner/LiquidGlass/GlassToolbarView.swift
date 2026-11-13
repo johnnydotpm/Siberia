@@ -102,17 +102,24 @@ final class GlassToolbarView: NSObject, FlutterPlatformView, UIToolbarDelegate {
     let signature =
       specs
       .map { spec in
-        ["id", "label"].map { spec[$0] as? String ?? "" }.joined(separator: "\u{1F}")
+        ["id", "label", "symbol"].map { spec[$0] as? String ?? "" }.joined(separator: "\u{1F}")
       }
       .joined(separator: "\u{1E}")
     if signature != itemsSignature {
       itemsSignature = signature
       actions = specs.map { spec -> (item: UIBarButtonItem, id: String) in
-        let item = UIBarButtonItem(
-          title: spec["label"] as? String,
-          style: .plain,
-          target: self,
-          action: #selector(didTap(_:)))
+        let label = spec["label"] as? String
+        let item: UIBarButtonItem
+        // A symbol stands in for the label, as under a message in Mail; the
+        // label is still what VoiceOver says.
+        if let name = spec["symbol"] as? String, let image = UIImage(systemName: name) {
+          item = UIBarButtonItem(
+            image: image, style: .plain, target: self, action: #selector(didTap(_:)))
+          item.accessibilityLabel = label
+        } else {
+          item = UIBarButtonItem(
+            title: label, style: .plain, target: self, action: #selector(didTap(_:)))
+        }
         return (item: item, id: spec["id"] as? String ?? "")
       }
       // A lone action stands at the trailing edge, where deleting goes.

@@ -277,7 +277,9 @@ void main() {
     }
 
     Future<void> openSent(WidgetTester tester) async {
-      await tester.tap(find.text('Sent'));
+      await tester.tap(find.byKey(const ValueKey('messages-folder')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('messages-folder-sent')));
       await tester.pumpAndSettle();
     }
 
@@ -320,7 +322,9 @@ void main() {
         // No unread dot or swipe for messages that went out.
         expect(find.byType(Dismissible), findsNothing);
         // Coming back within a short while does not load it again.
-        await tester.tap(find.text('Inbox'));
+        await tester.tap(find.byKey(const ValueKey('messages-folder')));
+        await tester.pumpAndSettle();
+        await tester.tap(find.byKey(const ValueKey('messages-folder-inbox')));
         await tester.pumpAndSettle();
         await openSent(tester);
         expect(client.sentLoads, 1);
@@ -403,7 +407,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('Received r1'), findsOneWidget);
       expect(find.text('Received r2'), findsNothing);
-      expect(find.text('Unread (1)'), findsOneWidget);
+      expect(find.text('Filter: unread'), findsOneWidget);
       await tester.pumpWidget(const SizedBox.shrink());
     });
   });

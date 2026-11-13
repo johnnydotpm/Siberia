@@ -656,9 +656,13 @@ String? _moduleIssue(BuildContext context) {
 /// A page's own list. Inside the glass chrome it starts below the top bar,
 /// ends above the tab bar and opens with the page's large title.
 class _PageList extends StatelessWidget {
-  const _PageList({required this.padding, required this.children});
+  const _PageList({required this.padding, required this.children, this.title});
   final EdgeInsets padding;
   final List<Widget> children;
+
+  /// In place of the glass large title, a page's own, as the Messages'
+  /// folder with its menu.
+  final Widget? title;
 
   @override
   Widget build(BuildContext context) {
@@ -697,7 +701,7 @@ class _PageList extends StatelessWidget {
             padding: EdgeInsets.symmetric(
               horizontal: math.max(0.0, GlassLargeTitle.margin - padding.left),
             ),
-            child: GlassLargeTitle(title),
+            child: this.title ?? GlassLargeTitle(title),
           ),
         ...contents,
       ],
@@ -793,31 +797,33 @@ String _capitalize(String value) => value.isEmpty
 
 /// What a swipe along a row does, shown under it as it slides.
 class _SwipeAction extends StatelessWidget {
-  const _SwipeAction({required this.icon, required this.label});
+  const _SwipeAction({required this.icon, required this.label, this.color});
   final IconData icon;
   final String label;
+
+  /// A solid colour of its own under white, as Mail's blue; else the
+  /// theme's container.
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
+    final foreground = color == null ? colors.onPrimaryContainer : Colors.white;
     return Container(
       alignment: AlignmentDirectional.centerStart,
       padding: const EdgeInsets.symmetric(horizontal: 20),
       decoration: BoxDecoration(
-        color: colors.primaryContainer,
+        color: color ?? colors.primaryContainer,
         borderRadius: BorderRadius.circular(14),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          AppIcon(icon, color: colors.onPrimaryContainer),
+          AppIcon(icon, color: foreground),
           const SizedBox(width: 8),
           Text(
             label,
-            style: TextStyle(
-              color: colors.onPrimaryContainer,
-              fontWeight: FontWeight.w700,
-            ),
+            style: TextStyle(color: foreground, fontWeight: FontWeight.w700),
           ),
         ],
       ),

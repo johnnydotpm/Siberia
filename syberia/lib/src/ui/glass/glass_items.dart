@@ -107,6 +107,11 @@ class GlassSymbol {
   /// Leaves picking, in place of the menu.
   static const close = GlassSymbol('xmark', CupertinoIcons.xmark);
 
+  /// Back to where a page was opened from: iOS 26 shows only the chevron on
+  /// its glass.
+  static const back = GlassSymbol('chevron.backward', CupertinoIcons.back);
+  static const trash = GlassSymbol('trash', CupertinoIcons.delete);
+
   /// Picks everything on the page, or nothing once all is.
   static const selectAll = GlassSymbol('checklist', Icons.checklist_rounded);
 

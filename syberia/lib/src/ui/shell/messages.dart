@@ -13,10 +13,21 @@ enum _MessageFolder { inbox, sent }
 /// The index of the Messages tab.
 const _messagesTab = 5;
 
+/// "Odebrane" or "Wysłane": the folder as the page's title says it.
+String _folderName(BuildContext context, _MessageFolder folder) => context.tr(
+  folder == _MessageFolder.inbox ? 'messagesInbox' : 'messagesSent',
+);
+
 class _MessagesState extends State<_Messages> {
   final _search = TextEditingController();
   bool _unreadOnly = false;
-  _MessageFolder _folder = _MessageFolder.inbox;
+
+  /// The folder open, held by the shell when it has one, so its bar can be
+  /// titled after it; else by the page.
+  ValueNotifier<_MessageFolder>? _folderHeld;
+  _MessageFolder _ownFolder = _MessageFolder.inbox;
+  _MessageFolder get _folder => _folderHeld?.value ?? _ownFolder;
+
   bool _selecting = false;
   bool _working = false;
   final _selected = <String>{};
@@ -43,6 +54,12 @@ class _MessagesState extends State<_Messages> {
     super.initState();
     _scope = _currentScope;
     widget.controller.addListener(_onController);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _folderHeld = _SelectionScope.maybeOf(context)?.folder;
   }
 
   /// Left for another tab: what was read here goes from the filter.
@@ -104,15 +121,58 @@ class _MessagesState extends State<_Messages> {
   void _deletePicked() => _runSelection(delete: true);
 
   void _openFolder(_MessageFolder folder) {
+    if (folder == _folder) return;
     HapticFeedback.selectionClick();
     _shownUnread.clear();
     _selected.clear();
     _selecting = false;
-    setState(() => _folder = folder);
+    setState(() {
+      if (_folderHeld case final held?) {
+        held.value = folder;
+      } else {
+        _ownFolder = folder;
+      }
+    });
     // A sync leaves the Sent folder out, so it is loaded when opened.
     if (folder == _MessageFolder.sent) {
       unawaited(widget.controller.refreshSentMessages());
     }
+  }
+
+  /// The menu of folders under the title, in the design's own kind.
+  Future<void> _pickFolder(Rect anchor) async {
+    final folder = _folder;
+    final picked = GlassStyle.of(context)
+        ? await showGlassMenu<_MessageFolder>(
+            context: context,
+            anchor: anchor,
+            items: [
+              for (final value in _MessageFolder.values)
+                GlassMenuItem(
+                  key: ValueKey('messages-folder-${value.name}'),
+                  value: value,
+                  label: _folderName(context, value),
+                  selected: value == folder,
+                ),
+            ],
+          )
+        : await showMenu<_MessageFolder>(
+            context: context,
+            position: RelativeRect.fromRect(
+              Rect.fromLTWH(anchor.left, anchor.bottom, anchor.width, 0),
+              Offset.zero & MediaQuery.sizeOf(context),
+            ),
+            items: [
+              for (final value in _MessageFolder.values)
+                CheckedPopupMenuItem(
+                  key: ValueKey('messages-folder-${value.name}'),
+                  value: value,
+                  checked: value == folder,
+                  child: Text(_folderName(context, value)),
+                ),
+            ],
+          );
+    if (picked != null && mounted) _openFolder(picked);
   }
 
   @override
@@ -133,7 +193,7 @@ class _MessagesState extends State<_Messages> {
 
   void _toggle(SchoolMessage message) {
     if (_working) return;
-    // Felt as picking starts, from a long press or an avatar.
+    // Felt as picking starts, from a long press or the mark beside a row.
     if (!_selecting) HapticFeedback.selectionClick();
     setState(() {
       _selecting = true;
@@ -190,6 +250,46 @@ class _MessagesState extends State<_Messages> {
         MessageSection.earlier => _monthHeading(context, value, now),
       };
 
+  /// The messages under their days: a label for each day, then its rows.
+  List<Widget> _rows(List<SchoolMessage> messages, DateTime now) {
+    final rows = <Widget>[];
+    for (var index = 0; index < messages.length; index++) {
+      final item = messages[index];
+      final section = _section(item.receivedAt, now);
+      final first =
+          index == 0 ||
+          _section(messages[index - 1].receivedAt, now) != section;
+      final last =
+          index == messages.length - 1 ||
+          _section(messages[index + 1].receivedAt, now) != section;
+      if (first) {
+        rows.add(
+          _MessagesSectionLabel(
+            section,
+            key: ValueKey('messages-section-$section'),
+            top: index == 0 ? _Space.item : _Space.card,
+          ),
+        );
+      }
+      rows.add(
+        _MessageRow(
+          widget.controller,
+          item,
+          key: ValueKey('message-tile-${item.id}'),
+          now: now,
+          first: first,
+          last: last,
+          folder: _folderName(context, _folder),
+          selecting: _selecting,
+          selected: _selected.contains(item.id),
+          busy: _working,
+          onSelect: () => _toggle(item),
+        ),
+      );
+    }
+    return rows;
+  }
+
   @override
   Widget build(BuildContext context) {
     final controller = widget.controller;
@@ -228,42 +328,8 @@ class _MessagesState extends State<_Messages> {
         ? controller.sentMessagesError
         : controller.snapshot.messagesError;
     final loadingSent = sentFolder && controller.loadingSentMessages;
-    final unreadCount = controller.snapshot.unreadMessages;
-    final style = controller.messageListStyle;
     final now = DateTime.now();
-
-    final rows = <Widget>[];
-    String? lastSection;
-    for (final item in messages) {
-      final section = _section(item.receivedAt, now);
-      if (section != lastSection) {
-        rows.add(
-          _GroupLabel(
-            section,
-            key: ValueKey('messages-section-$section'),
-            top: _Space.card,
-          ),
-        );
-        lastSection = section;
-      } else if (style == MessageListStyle.cards) {
-        rows.add(
-          SizedBox(key: ValueKey('gap-${item.id}'), height: _Space.item),
-        );
-      }
-      rows.add(
-        _MessageTile(
-          controller,
-          item,
-          key: ValueKey('message-tile-${item.id}'),
-          style: style,
-          now: now,
-          selecting: _selecting,
-          selected: _selected.contains(item.id),
-          busy: _working,
-          onSelect: () => _toggle(item),
-        ),
-      );
-    }
+    final rows = _rows(messages, now);
     Future<void> refresh() => sentFolder
         ? controller.refreshSentMessages(force: true)
         : controller.sync();
@@ -295,144 +361,22 @@ class _MessagesState extends State<_Messages> {
     final expressive = ExpressiveStyle.of(context);
 
     final tiles = <Widget>[
-      TextField(
-        key: const ValueKey('messages-search'),
+      _MessagesSearchField(
         controller: _search,
-        onChanged: (_) => setState(_selected.clear),
-        textInputAction: TextInputAction.search,
-        decoration: InputDecoration(
-          hintText: context.tr('messagesSearch'),
-          prefixIcon: const AppIcon(Icons.search_rounded),
-          suffixIcon: _search.text.isEmpty
-              ? null
-              : IconButton(
-                  icon: const AppIcon(Icons.clear_rounded),
-                  tooltip: MaterialLocalizations.of(context)
-                      .deleteButtonTooltip,
-                  onPressed: () => setState(() {
-                    _search.clear();
-                    _selected.clear();
-                  }),
-                ),
-          filled: true,
-          isDense: true,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide.none,
-          ),
-        ),
+        onChanged: () => setState(_selected.clear),
       ),
-      const SizedBox(height: 12),
-      SizedBox(
-        width: double.infinity,
-        child: _Segmented<_MessageFolder>(
-          key: const ValueKey('messages-folder'),
-          showSelectedIcon: false,
-          segments: [
-            ButtonSegment(
-              value: _MessageFolder.inbox,
-              icon: const AppIcon(Icons.inbox_rounded),
-              // One line on a narrow phone with large text.
-              label: FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Text(context.tr('messagesInbox')),
-              ),
-            ),
-            ButtonSegment(
-              value: _MessageFolder.sent,
-              icon: const AppIcon(Icons.send_rounded),
-              // One line on a narrow phone with large text.
-              label: FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Text(context.tr('messagesSent')),
-              ),
-            ),
-          ],
-          selected: {_folder},
-          onSelectionChanged: (selection) => _openFolder(selection.first),
-        ),
-      ),
-      const SizedBox(height: _Space.item),
-      Wrap(
-        alignment: WrapAlignment.spaceBetween,
-        crossAxisAlignment: WrapCrossAlignment.center,
-        children: [
-          if (!sentFolder)
-            FilterChip(
-              key: const ValueKey('messages-filter'),
-              label: Text(
-                unreadCount == 0
-                    ? context.tr('messagesUnread')
-                    : '${context.tr('messagesUnread')} ($unreadCount)',
-                style: const TextStyle(fontFeatures: _tabular),
-              ),
-              selected: _unreadOnly,
-              onSelected: (value) => setState(() {
-                _unreadOnly = value;
-                _shownUnread.clear();
-                _selected.clear();
-              }),
-            ),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (sentFolder)
-                IconButton(
-                  key: const ValueKey('messages-sent-refresh'),
-                  tooltip: MaterialLocalizations.of(context)
-                      .refreshIndicatorSemanticLabel,
-                  onPressed: loadingSent
-                      ? null
-                      : () => controller.refreshSentMessages(force: true),
-                  icon: loadingSent
-                      ? const SizedBox(
-                          width: 18,
-                          height: 18,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : const AppIcon(Icons.refresh_rounded),
-                ),
-              if (!_selecting) ...[
-                if (expressive)
-                  FilledButton.tonalIcon(
-                    key: const ValueKey('messages-select'),
-                    onPressed: _working || messages.isEmpty
-                        ? null
-                        : _startSelection,
-                    icon: const AppIcon(Icons.check_circle_outline_rounded),
-                    label: Text(context.tr('messagesSelect')),
-                  )
-                else
-                  TextButton.icon(
-                    key: const ValueKey('messages-select'),
-                    onPressed: _working || messages.isEmpty
-                        ? null
-                        : _startSelection,
-                    icon: const AppIcon(Icons.check_circle_outline_rounded),
-                    label: Text(context.tr('messagesSelect')),
-                  ),
-                IconButton(
-                  key: const ValueKey('messages-style-toggle'),
-                  tooltip: context.tr(
-                    style == MessageListStyle.list
-                        ? 'messagesViewCards'
-                        : 'messagesViewList',
-                  ),
-                  onPressed: () => controller.setMessageListStyle(
-                    style == MessageListStyle.list
-                        ? MessageListStyle.cards
-                        : MessageListStyle.list,
-                  ),
-                  icon: AppIcon(
-                    style == MessageListStyle.list
-                        ? Icons.view_agenda_rounded
-                        : Icons.view_list_rounded,
-                  ),
-                ),
-              ],
-            ],
-          ),
-        ],
+      _MessagesStatusRow(
+        controller: controller,
+        sentFolder: sentFolder,
+        unreadOnly: _unreadOnly,
+        selecting: _selecting,
+        canSelect: !_working && messages.isNotEmpty,
+        onSelect: _startSelection,
+        onUnreadOnly: (value) => setState(() {
+          _unreadOnly = value;
+          _shownUnread.clear();
+          _selected.clear();
+        }),
       ),
       // On a wide screen the shell has no bars to show the picking in.
       if (selection != null && !hosted) _InlineSelection(selection),
@@ -474,7 +418,7 @@ class _MessagesState extends State<_Messages> {
           )
         else
           _Empty(context.tr('emptyMessages'), icon: Icons.mail_rounded),
-      // Another folder, filter or look fades through; within one, messages
+      // Another folder or filter fades through; within one, messages
       // deleted fold away and new ones open, as on Today. A search shows
       // its matches at once.
       // Keyed, so a row coming above it, as the skeleton of the Sent
@@ -482,13 +426,18 @@ class _MessagesState extends State<_Messages> {
       _FadeThroughSwitcher(
         key: const ValueKey('messages-rows'),
         child: KeyedSubtree(
-          key: ValueKey(('messages', _folder, _unreadOnly, style)),
+          key: ValueKey(('messages', _folder, _unreadOnly)),
           child: _AnimatedColumn(key: ValueKey(query), children: rows),
         ),
       ),
     ];
     final scope = GlassPageScope.maybeOf(context);
-    // Under a glass top bar the compose button lives in the bar.
+    final folderTitle = _FolderTitle(
+      _folderName(context, _folder),
+      onPick: _pickFolder,
+    );
+    // Under a glass top bar the compose button lives in the bar, and the
+    // folder is the page's large title.
     if (scope != null && scope.barActions) {
       return _picking(
         _Refresh(
@@ -496,113 +445,112 @@ class _MessagesState extends State<_Messages> {
           onRefresh: refresh,
           child: _PageList(
             padding: const EdgeInsets.all(_Space.page),
+            // While picking, the count is the title.
+            title: selection == null ? folderTitle : null,
             children: tiles,
           ),
         ),
       );
     }
     final insets = _chromeInsets(context);
-    final title = scope?.largeTitle;
-    final expressiveTitle = ExpressivePageScope.maybeOf(context)?.largeTitle;
     final picking = selection != null && hosted;
-    return _picking(
-      Column(
-        children: [
-          SizedBox(height: insets.top),
-          if (title != null)
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: GlassLargeTitle.margin,
-              ),
-              child: Align(
-                alignment: AlignmentDirectional.centerStart,
-                child: GlassLargeTitle(title),
-              ),
-            )
-          else if (expressiveTitle != null)
-            Padding(
-              padding: const EdgeInsetsDirectional.fromSTEB(
-                _Space.page,
-                _Space.page,
-                _Space.page,
-                0,
-              ),
-              // While picking, the count is the title and the bars hold
-              // what there is to do; otherwise writing sits beside it, as
-              // in the mockup.
-              // Both at least as tall as the button, so the list below
-              // does not jump as one fades into the other.
-              child: AnimatedSwitcher(
-                duration: _motion(context, const Duration(milliseconds: 250)),
-                switchInCurve: _FadeThroughSwitcher.inCurve,
-                switchOutCurve: _FadeThroughSwitcher.outCurve,
-                layoutBuilder: (current, previous) => Stack(
-                  alignment: AlignmentDirectional.bottomStart,
-                  children: [...previous, ?current],
-                ),
-                child: ConstrainedBox(
-                  key: ValueKey(picking),
-                  constraints: const BoxConstraints(minHeight: 56),
-                  child: picking
-                      ? Align(
-                          alignment: AlignmentDirectional.bottomStart,
-                          heightFactor: 1,
-                          child: _PickedHeadline(selection.count),
-                        )
-                      : Row(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Expanded(
-                              child: ExpressiveLargeTitle(expressiveTitle),
-                            ),
-                            const SizedBox(width: Space.medium),
-                            _ExpressiveCompose(
+    final page = Column(
+      children: [
+        SizedBox(height: insets.top),
+        Padding(
+          padding: EdgeInsetsDirectional.fromSTEB(
+            scope != null ? GlassLargeTitle.margin : _Space.page,
+            scope != null ? 0 : _Space.page,
+            _Space.page,
+            0,
+          ),
+          // While picking, Expressive's title is the count, and the bars
+          // hold what there is to do. Both at least as tall as the title,
+          // so the list below does not jump as one fades into the other.
+          child: AnimatedSwitcher(
+            duration: _motion(context, const Duration(milliseconds: 250)),
+            switchInCurve: _FadeThroughSwitcher.inCurve,
+            switchOutCurve: _FadeThroughSwitcher.outCurve,
+            layoutBuilder: (current, previous) => Stack(
+              alignment: AlignmentDirectional.bottomStart,
+              children: [...previous, ?current],
+            ),
+            child: ConstrainedBox(
+              key: ValueKey(picking && expressive),
+              constraints: BoxConstraints(minHeight: expressive ? 56 : 0),
+              child: picking && expressive
+                  ? Align(
+                      alignment: AlignmentDirectional.bottomStart,
+                      heightFactor: 1,
+                      child: _PickedHeadline(selection.count),
+                    )
+                  : Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Expanded(child: folderTitle),
+                        // A classic page in the shell has writing in its
+                        // top bar; on a wide screen, with no bar of the
+                        // page's own, it stands beside the title.
+                        if (!expressive && !hosted && scope == null)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 8),
+                            child: FilledButton.icon(
+                              key: const ValueKey('messages-compose'),
                               onPressed: () =>
                                   _showComposeMessage(context, controller),
+                              icon: const AppIcon(Icons.edit_rounded),
+                              label: Text(context.tr('newMessage')),
                             ),
-                          ],
-                        ),
-                ),
-              ),
+                          ),
+                      ],
+                    ),
             ),
-          // A classic page in the shell has writing in its top bar; on a
-          // wide screen, with no bar of the page's own, it keeps a row.
-          if (!picking && expressiveTitle == null && !hosted)
-            Padding(
-              padding: const EdgeInsets.fromLTRB(
-                _Space.page,
-                _Space.page,
+          ),
+        ),
+        Expanded(
+          child: _Refresh(
+            controller: controller,
+            onRefresh: refresh,
+            child: ListView(
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+              padding: EdgeInsets.fromLTRB(
                 _Space.page,
                 0,
+                _Space.page,
+                // Clear of Expressive's writing button and floating toolbar.
+                _Space.page + insets.bottom + (expressive ? 88 : 0),
               ),
-              child: Align(
-                alignment: AlignmentDirectional.centerEnd,
-                child: FilledButton.icon(
-                  key: const ValueKey('messages-compose'),
-                  onPressed: () => _showComposeMessage(context, controller),
-                  icon: const AppIcon(Icons.edit_rounded),
-                  label: Text(context.tr('newMessage')),
-                ),
-              ),
+              children: tiles,
             ),
-          Expanded(
-            child: _Refresh(
-              controller: controller,
-              onRefresh: refresh,
-              child: ListView(
-                keyboardDismissBehavior:
-                    ScrollViewKeyboardDismissBehavior.onDrag,
-                padding: EdgeInsets.fromLTRB(
-                  _Space.page,
-                  _Space.page,
-                  _Space.page,
-                  // Clear of Expressive's floating toolbar.
-                  _Space.page +
-                      insets.bottom +
-                      (picking && expressive ? 88 : 0),
-                ),
-                children: tiles,
+          ),
+        ),
+      ],
+    );
+    if (!expressive) return _picking(page);
+    return _picking(
+      Stack(
+        children: [
+          Positioned.fill(child: page),
+          // Writing floats at the end, as Material's extended button does;
+          // while picking the bars hold what there is to do.
+          PositionedDirectional(
+            end: _Space.page,
+            bottom: _Space.page + insets.bottom,
+            child: AnimatedSwitcher(
+              duration: _motion(context, const Duration(milliseconds: 200)),
+              transitionBuilder: (child, animation) => ScaleTransition(
+                scale: animation,
+                child: FadeTransition(opacity: animation, child: child),
               ),
+              child: picking
+                  ? const SizedBox.shrink()
+                  : FloatingActionButton.extended(
+                      key: const ValueKey('messages-compose'),
+                      heroTag: null,
+                      onPressed: () => _showComposeMessage(context, controller),
+                      icon: const AppIcon(Icons.edit_rounded),
+                      label: Text(context.tr('messagesWrite')),
+                    ),
             ),
           ),
         ],
@@ -620,37 +568,738 @@ class _MessagesState extends State<_Messages> {
   );
 }
 
-/// Writing a message, beside the Expressive page's title: a 56 square of
-/// the primary container with the large corner, as Material's floating
-/// action button is.
-class _ExpressiveCompose extends StatelessWidget {
-  const _ExpressiveCompose({required this.onPressed});
-  final VoidCallback onPressed;
+/// The folder as the page's title, with a chevron: a tap opens the menu of
+/// folders under it. Drawn as the design draws a page's title.
+class _FolderTitle extends StatelessWidget {
+  const _FolderTitle(this.text, {required this.onPick});
+
+  final String text;
+  final ValueChanged<Rect> onPick;
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-    return Tooltip(
-      message: context.tr('newMessage'),
-      child: Material(
-        key: const ValueKey('messages-compose'),
-        color: colors.primaryContainer,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(Corners.large),
-        ),
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          onTap: onPressed,
-          child: SizedBox.square(
-            dimension: 56,
-            child: AppIcon(
-              Icons.edit_rounded,
-              color: colors.onPrimaryContainer,
-              semanticLabel: context.tr('newMessage'),
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    final glass = GlassStyle.of(context);
+    final expressive = ExpressiveStyle.of(context);
+    final TextStyle? style;
+    final EdgeInsets padding;
+    if (glass) {
+      style = TextStyle(
+        color: colors.onSurface,
+        fontSize: 34,
+        fontWeight: FontWeight.w700,
+        letterSpacing: 0.37,
+        height: 41 / 34,
+      );
+      padding = const EdgeInsets.only(top: 3, bottom: 8);
+    } else if (expressive) {
+      final emphasized =
+          theme.extension<ExpressiveType>()?.emphasized ?? theme.textTheme;
+      style = emphasized.displaySmall?.copyWith(color: colors.onSurface);
+      padding = const EdgeInsets.only(bottom: 12);
+    } else {
+      style = theme.textTheme.headlineSmall?.copyWith(
+        fontWeight: FontWeight.w800,
+      );
+      padding = const EdgeInsets.only(bottom: 8);
+    }
+    final size = (style?.fontSize ?? 24) * 0.6;
+    return Padding(
+      padding: padding,
+      child: Align(
+        alignment: AlignmentDirectional.centerStart,
+        child: Builder(
+          builder: (context) => Semantics(
+            header: true,
+            button: true,
+            child: InkWell(
+              key: const ValueKey('messages-folder'),
+              borderRadius: BorderRadius.circular(12),
+              onTap: () {
+                final box = context.findRenderObject()! as RenderBox;
+                onPick(box.localToGlobal(Offset.zero) & box.size);
+              },
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Flexible(
+                    child: Text(
+                      text,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: style,
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  AppIcon(
+                    glass
+                        ? CupertinoIcons.chevron_down
+                        : Icons.keyboard_arrow_down_rounded,
+                    size: glass ? size * 0.8 : size * 1.2,
+                    color: colors.primary,
+                  ),
+                ],
+              ),
             ),
           ),
         ),
       ),
+    );
+  }
+}
+
+/// The search field above the messages: a filled capsule in the glass
+/// design, as in Mail; a filled field in the classic one; Material's search
+/// bar in Expressive.
+class _MessagesSearchField extends StatelessWidget {
+  const _MessagesSearchField({
+    required this.controller,
+    required this.onChanged,
+  });
+
+  final TextEditingController controller;
+  final VoidCallback onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    final glass = GlassStyle.of(context);
+    final expressive = ExpressiveStyle.of(context);
+    final dark = theme.brightness == Brightness.dark;
+    final radius = glass ? 20.0 : (expressive ? 28.0 : 24.0);
+    return TextField(
+      key: const ValueKey('messages-search'),
+      controller: controller,
+      onChanged: (_) => onChanged(),
+      textInputAction: TextInputAction.search,
+      style: glass ? const TextStyle(fontSize: 17, letterSpacing: -0.41) : null,
+      decoration: InputDecoration(
+        hintText: context.tr('messagesSearch'),
+        prefixIcon: AppIcon(
+          glass ? CupertinoIcons.search : Icons.search_rounded,
+          color: colors.onSurfaceVariant,
+        ),
+        suffixIcon: controller.text.isEmpty
+            ? null
+            : IconButton(
+                icon: AppIcon(
+                  glass
+                      ? CupertinoIcons.xmark_circle_fill
+                      : Icons.clear_rounded,
+                  color: colors.onSurfaceVariant,
+                ),
+                tooltip: MaterialLocalizations.of(context).deleteButtonTooltip,
+                onPressed: () {
+                  controller.clear();
+                  onChanged();
+                },
+              ),
+        filled: true,
+        // iOS's search field: the system's grey fill.
+        fillColor: glass
+            ? const Color(0xFF767680).withValues(alpha: dark ? 0.24 : 0.12)
+            : colors.surfaceContainerHigh,
+        isDense: true,
+        contentPadding: EdgeInsets.symmetric(
+          vertical: glass ? 10 : (expressive ? 18 : 14),
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(radius),
+          borderSide: BorderSide.none,
+        ),
+      ),
+    );
+  }
+}
+
+/// What the folder holds and the ways to narrow it, under the search:
+/// "2 nieprzeczytane · zaktualizowano 12:41" with picking and the unread
+/// filter beside it; Expressive's filter is a chip.
+class _MessagesStatusRow extends StatelessWidget {
+  const _MessagesStatusRow({
+    required this.controller,
+    required this.sentFolder,
+    required this.unreadOnly,
+    required this.selecting,
+    required this.canSelect,
+    required this.onSelect,
+    required this.onUnreadOnly,
+  });
+
+  final AppController controller;
+  final bool sentFolder;
+  final bool unreadOnly;
+
+  /// While picking, the bars hold the way out, so the button gives way.
+  final bool selecting;
+  final bool canSelect;
+  final VoidCallback onSelect;
+  final ValueChanged<bool> onUnreadOnly;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    final expressive = ExpressiveStyle.of(context);
+    final glass = GlassStyle.of(context);
+    final unread = controller.snapshot.unreadMessages;
+    final loadingSent = sentFolder && controller.loadingSentMessages;
+    final synced = controller.snapshot.lastSync;
+    // As Mail's bar says it: what the folder holds, and when it was updated
+    // under it.
+    final first = sentFolder
+        ? _plural(
+            context,
+            controller.snapshot.sentMessages.length,
+            'messagesSentCount',
+          )
+        : unreadOnly
+        ? context.tr('messagesFilteredUnread')
+        : unread == 0
+        ? context.tr('messagesAllRead')
+        : _plural(context, unread, 'messagesUnreadCount');
+    final second = sentFolder
+        ? null
+        : context.trArgs('messagesUpdatedAt', {
+            'time': _messageTime(context, synced, DateTime.now()),
+          });
+    final small = theme.textTheme.bodySmall?.copyWith(
+      color: colors.onSurfaceVariant,
+      fontSize: glass ? 12 : null,
+      fontFeatures: _tabular,
+    );
+    final text = Semantics(
+      container: true,
+      child: Column(
+        key: const ValueKey('messages-status'),
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            first,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: small?.copyWith(
+              color: unreadOnly ? colors.primary : colors.onSurface,
+              fontSize: glass ? 13 : null,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          if (second != null)
+            Text(
+              second,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: small,
+            ),
+        ],
+      ),
+    );
+    return ConstrainedBox(
+      // As tall when picking as before, so no row below moves.
+      constraints: const BoxConstraints(minHeight: 48),
+      child: Row(
+        children: [
+          if (expressive && !sentFolder) ...[
+            FilterChip(
+              key: const ValueKey('messages-filter'),
+              label: Text(context.tr('messagesUnread')),
+              selected: unreadOnly,
+              onSelected: onUnreadOnly,
+            ),
+            const SizedBox(width: 12),
+          ],
+          Expanded(
+            child: Padding(
+              padding: EdgeInsetsDirectional.only(start: expressive ? 0 : 4),
+              child: text,
+            ),
+          ),
+          if (!selecting)
+            // Beside Expressive's chip, an icon leaves the status its room.
+            expressive
+                ? IconButton(
+                    key: const ValueKey('messages-select'),
+                    tooltip: context.tr('messagesSelect'),
+                    onPressed: canSelect ? onSelect : null,
+                    icon: const AppIcon(Icons.checklist_rounded),
+                  )
+                : TextButton(
+                    key: const ValueKey('messages-select'),
+                    onPressed: canSelect ? onSelect : null,
+                    child: Text(context.tr('messagesSelect')),
+                  ),
+          if (sentFolder)
+            IconButton(
+              key: const ValueKey('messages-sent-refresh'),
+              tooltip: MaterialLocalizations.of(context)
+                  .refreshIndicatorSemanticLabel,
+              onPressed: loadingSent
+                  ? null
+                  : () => controller.refreshSentMessages(force: true),
+              icon: loadingSent
+                  ? const SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const AppIcon(Icons.refresh_rounded),
+            )
+          else if (!expressive)
+            IconButton(
+              key: const ValueKey('messages-filter'),
+              tooltip: context.tr('messagesUnread'),
+              isSelected: unreadOnly,
+              onPressed: () => onUnreadOnly(!unreadOnly),
+              color: colors.primary,
+              // Mail's filter: a circle with lines, filled while it filters.
+              icon: AppIcon(
+                glass
+                    ? CupertinoIcons.line_horizontal_3_decrease_circle
+                    : Icons.filter_list_rounded,
+                color: colors.primary,
+              ),
+              selectedIcon: AppIcon(
+                glass
+                    ? CupertinoIcons.line_horizontal_3_decrease_circle_fill
+                    : Icons.filter_list_off_rounded,
+                color: colors.primary,
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+/// The label over a day's messages, lined up with the rows' text.
+class _MessagesSectionLabel extends StatelessWidget {
+  const _MessagesSectionLabel(this.text, {required this.top, super.key});
+  final String text;
+  final double top;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    final expressive = ExpressiveStyle.of(context);
+    final glass = GlassStyle.of(context);
+    return Padding(
+      padding: EdgeInsetsDirectional.fromSTEB(
+        expressive ? 8 : _MessageRow.gutter,
+        top,
+        12,
+        expressive ? 8 : 6,
+      ),
+      child: Text(
+        text,
+        style: expressive
+            ? theme.textTheme.titleSmall?.copyWith(color: colors.primary)
+            : glass
+            ? TextStyle(
+                color: colors.onSurfaceVariant,
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
+                letterSpacing: -0.24,
+              )
+            : theme.textTheme.labelLarge?.copyWith(
+                color: colors.onSurfaceVariant,
+                fontWeight: FontWeight.w800,
+              ),
+      ),
+    );
+  }
+}
+
+/// "12:30" today, the weekday this week, the date before that.
+String _messageTime(BuildContext context, DateTime value, DateTime now) {
+  final locale = Localizations.localeOf(context).toLanguageTag();
+  final days = calendarDaysBetween(value, now);
+  // Today and yesterday have their own sections, so the time says more.
+  if (days <= 1) return DateFormat('HH:mm').format(value);
+  if (days < 7) return _shortWeekday(context, value);
+  if (value.year == now.year) return DateFormat('dd.MM', locale).format(value);
+  return DateFormat('dd.MM.yyyy', locale).format(value);
+}
+
+/// A message in the list, as Mail shows it: a dot while unread beside the
+/// sender, the date at the end, then the subject and two lines of the text.
+/// The glass design and the classic one draw it as a row with a line under
+/// it; Expressive as one piece of a group of the day, its outer corners
+/// large and the inner ones small.
+class _MessageRow extends StatelessWidget {
+  const _MessageRow(
+    this.controller,
+    this.item, {
+    super.key,
+    required this.now,
+    this.first = true,
+    this.last = true,
+    this.folder,
+    this.selecting = false,
+    this.selected = false,
+    this.busy = false,
+    this.onSelect,
+    this.onCard = false,
+  });
+  final AppController controller;
+  final SchoolMessage item;
+  final DateTime now;
+
+  /// Where it stands among the day's messages.
+  final bool first, last;
+
+  /// Where it was opened from, for the way back from the message.
+  final String? folder;
+  final bool selecting, selected, busy;
+
+  /// Picks the message, or lets it go: a tap while picking, a long press or
+  /// a tap on the mark beside it at any time.
+  final VoidCallback? onSelect;
+
+  /// Standing on a card of its own, as on Today: no line under it.
+  final bool onCard;
+
+  /// The room before the text, where the unread dot and the check stand.
+  static const double gutter = 28;
+
+  Future<bool> _markRead(BuildContext context) async {
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      await controller.markMessageRead(item);
+    } on Object catch (error) {
+      // A message that failed stays unread, so its row is still here.
+      if (context.mounted) {
+        messenger.showSnackBar(
+          SnackBar(content: Text(context.trError(AppError.from(error)))),
+        );
+      }
+    }
+    // The row stays; it just turns read.
+    return false;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    final unread = !item.sent && item.unread;
+    final expressive = ExpressiveStyle.of(context);
+    final glass = GlassStyle.of(context);
+    final dark = theme.brightness == Brightness.dark;
+    // Mail's blue in the glass design, the theme's colour elsewhere.
+    final accent = glass
+        ? (dark ? const Color(0xFF0A84FF) : const Color(0xFF007AFF))
+        : colors.primary;
+    final tint = expressive
+        ? _pickedTint(theme)
+        : accent.withValues(alpha: dark ? 0.16 : 0.10);
+    final radius = expressive
+        ? BorderRadius.vertical(
+            top: Radius.circular(first ? 20 : 4),
+            bottom: Radius.circular(last ? 20 : 4),
+          )
+        : BorderRadius.circular(glass ? 12 : 14);
+    final senderStyle = glass
+        ? TextStyle(
+            color: colors.onSurface,
+            fontSize: 17,
+            fontWeight: FontWeight.w600,
+            letterSpacing: -0.41,
+          )
+        : theme.textTheme.titleSmall?.copyWith(
+            fontSize: 16,
+            fontWeight: unread ? FontWeight.w700 : FontWeight.w500,
+          );
+    final subjectStyle = glass
+        ? TextStyle(color: colors.onSurface, fontSize: 15, letterSpacing: -0.24)
+        : theme.textTheme.bodyMedium?.copyWith(
+            color: colors.onSurface,
+            fontWeight: unread ? FontWeight.w700 : FontWeight.w400,
+          );
+    final previewStyle = glass
+        ? TextStyle(
+            color: colors.onSurfaceVariant,
+            fontSize: 15,
+            height: 20 / 15,
+            letterSpacing: -0.24,
+          )
+        : theme.textTheme.bodyMedium?.copyWith(color: colors.onSurfaceVariant);
+    final dateStyle = glass
+        ? TextStyle(
+            color: colors.onSurfaceVariant,
+            fontSize: 15,
+            letterSpacing: -0.24,
+            fontFeatures: _tabular,
+          )
+        : theme.textTheme.labelMedium?.copyWith(
+            color: unread ? accent : colors.onSurfaceVariant,
+            fontWeight: unread ? FontWeight.w700 : FontWeight.w400,
+            fontFeatures: _tabular,
+          );
+    void longPress() {
+      HapticFeedback.mediumImpact();
+      onSelect?.call();
+    }
+
+    Widget dot() => Container(
+      key: ValueKey('message-unread-${item.id}'),
+      width: expressive ? 8 : 10,
+      height: expressive ? 8 : 10,
+      decoration: BoxDecoration(color: accent, shape: BoxShape.circle),
+    );
+    final line =
+        MediaQuery.textScalerOf(context).scale(senderStyle?.fontSize ?? 16) *
+        1.3;
+    final mark = Semantics(
+      button: true,
+      selected: selected,
+      label: '${context.tr('messagesSelect')}: ${item.subject}',
+      excludeSemantics: true,
+      child: InkResponse(
+        key: ValueKey('message-select-${item.id}'),
+        onTap: busy ? null : onSelect,
+        radius: 20,
+        child: SizedBox(
+          width: gutter,
+          // Level with the sender's line.
+          height: line,
+          child: Center(
+            child: AnimatedSwitcher(
+              duration: _motion(context, const Duration(milliseconds: 200)),
+              switchInCurve: Curves.easeOutBack,
+              switchOutCurve: Curves.easeIn,
+              // No layer of its own once settled, on every row at rest.
+              transitionBuilder: (child, animation) => ScaleTransition(
+                scale: Tween<double>(begin: 0.6, end: 1).animate(animation),
+                child: _Fade(opacity: animation, child: child),
+              ),
+              child: selecting
+                  ? _PickCircle(
+                      key: ValueKey(selected),
+                      picked: selected,
+                      color: accent,
+                      square: expressive,
+                    )
+                  : unread
+                  ? dot()
+                  : const SizedBox.shrink(key: ValueKey('read')),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    final text = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            // While picking the check takes the dot's place, so the dot
+            // stands before the sender.
+            if (selecting && unread) ...[dot(), const SizedBox(width: 6)],
+            Expanded(
+              child: _MarkedTitle(
+                item.sent
+                    ? _RecipientsLine(item.recipients, style: senderStyle)
+                    : Text(
+                        item.sender.isEmpty ? '—' : item.sender,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: senderStyle,
+                      ),
+                item.source,
+              ),
+            ),
+            if (item.hasAttachments)
+              Padding(
+                padding: const EdgeInsetsDirectional.only(start: 6),
+                child: AppIcon(
+                  glass ? CupertinoIcons.paperclip : Icons.attach_file_rounded,
+                  size: 15,
+                  color: colors.onSurfaceVariant,
+                  semanticLabel: context.tr('messageHasAttachment'),
+                ),
+              ),
+            const SizedBox(width: 6),
+            Text(_messageTime(context, item.receivedAt, now), style: dateStyle),
+            if (glass)
+              Padding(
+                padding: const EdgeInsetsDirectional.only(start: 4),
+                child: AppIcon(
+                  CupertinoIcons.chevron_forward,
+                  size: 14,
+                  color: colors.onSurfaceVariant.withValues(alpha: 0.6),
+                ),
+              ),
+          ],
+        ),
+        const SizedBox(height: 1),
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                item.subject,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: subjectStyle,
+              ),
+            ),
+            if (item.sent && item.recipientRead != null)
+              Padding(
+                padding: const EdgeInsetsDirectional.only(start: 8),
+                child: _ReadMark(
+                  read: item.recipientRead!,
+                  labelled: true,
+                  key: ValueKey('sent-read-${item.id}'),
+                ),
+              ),
+          ],
+        ),
+        if (item.preview.trim().isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.only(top: 1),
+            child: Text(
+              item.preview.trim(),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: previewStyle,
+            ),
+          ),
+      ],
+    );
+
+    final content = Padding(
+      padding: expressive
+          ? const EdgeInsetsDirectional.fromSTEB(4, 12, 16, 12)
+          : const EdgeInsetsDirectional.only(end: 4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.only(top: expressive || onCard ? 0 : 10),
+            child: mark,
+          ),
+          Expanded(
+            child: expressive || onCard
+                ? text
+                : Container(
+                    // The line under a row starts where its text does, as
+                    // in Mail; a picked row and a day's last need none.
+                    padding: const EdgeInsets.only(top: 10, bottom: 11),
+                    decoration: BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(
+                          color: last || selected
+                              ? Colors.transparent
+                              : theme.dividerColor,
+                          width: glass ? 0.5 : 1,
+                        ),
+                      ),
+                    ),
+                    child: text,
+                  ),
+          ),
+        ],
+      ),
+    );
+    final tile = Padding(
+      padding: EdgeInsets.only(bottom: expressive && !last ? 2 : 0),
+      child: Material(
+        color: expressive ? colors.surfaceContainer : Colors.transparent,
+        borderRadius: radius,
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: busy
+              ? null
+              : selecting
+              ? onSelect
+              : () => _showMessageDetail(
+                  context,
+                  controller,
+                  item,
+                  folder: folder,
+                ),
+          onLongPress: busy ? null : longPress,
+          child: AnimatedContainer(
+            duration: _listMotion(context),
+            curve: _motionCurve(context),
+            padding: onCard
+                ? const EdgeInsetsDirectional.fromSTEB(4, 12, 12, 12)
+                : EdgeInsets.zero,
+            color: selected ? tint : tint.withValues(alpha: 0),
+            child: content,
+          ),
+        ),
+      ),
+    );
+    final accessible = Semantics(
+      selected: selecting ? selected : null,
+      child: tile,
+    );
+    if (item.sent) return accessible;
+    // Kept once read, only no longer swiped, so the row changes in place.
+    return Dismissible(
+      key: ValueKey('message-${item.id}'),
+      direction: unread && !selecting && !busy
+          ? DismissDirection.startToEnd
+          : DismissDirection.none,
+      confirmDismiss: (_) {
+        // Felt, as the homework's swipe is.
+        HapticFeedback.lightImpact();
+        return _markRead(context);
+      },
+      background: _SwipeAction(
+        icon: Icons.mark_email_read_rounded,
+        label: context.tr('messageMarkRead'),
+        color: glass ? accent : null,
+      ),
+      child: accessible,
+    );
+  }
+}
+
+/// The check beside a row while picking: a circle, or in Expressive a
+/// rounded square, as its shapes change when chosen.
+class _PickCircle extends StatelessWidget {
+  const _PickCircle({
+    required this.picked,
+    required this.color,
+    required this.square,
+    super.key,
+  });
+
+  final bool picked;
+  final Color color;
+  final bool square;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    final shape = square
+        ? RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(7),
+            side: picked
+                ? BorderSide.none
+                : BorderSide(color: colors.outline, width: 1.5),
+          )
+        : CircleBorder(
+            side: picked
+                ? BorderSide.none
+                : BorderSide(color: colors.outline, width: 1.5),
+          );
+    return Container(
+      width: 22,
+      height: 22,
+      decoration: ShapeDecoration(
+        color: picked ? color : Colors.transparent,
+        shape: shape,
+      ),
+      child: picked
+          ? AppIcon(Icons.check_rounded, size: 16, color: Colors.white)
+          : null,
     );
   }
 }
@@ -807,350 +1456,6 @@ String _messageStamp(
     day = day[0].toLowerCase() + day.substring(1);
   }
   return [?day, _shortDate(context, value), _time(value)].join(', ');
-}
-
-/// "12:30" today, the weekday this week, the date before that.
-String _messageTime(BuildContext context, DateTime value, DateTime now) {
-  final locale = Localizations.localeOf(context).toLanguageTag();
-  final days = calendarDaysBetween(value, now);
-  // Today and yesterday have their own sections, so the time says more.
-  if (days <= 1) return DateFormat('HH:mm').format(value);
-  if (days < 7) return _shortWeekday(context, value);
-  if (value.year == now.year) return DateFormat('dd.MM', locale).format(value);
-  return DateFormat('dd.MM.yyyy', locale).format(value);
-}
-
-class _MessageTile extends StatelessWidget {
-  const _MessageTile(
-    this.controller,
-    this.item, {
-    super.key,
-    required this.style,
-    required this.now,
-    this.selecting = false,
-    this.selected = false,
-    this.busy = false,
-    this.onSelect,
-  });
-  final AppController controller;
-  final SchoolMessage item;
-  final MessageListStyle style;
-  final DateTime now;
-  final bool selecting, selected, busy;
-
-  /// Picks the message, or lets it go: a tap while picking, a long press or
-  /// a tap on the avatar at any time.
-  final VoidCallback? onSelect;
-
-  Future<bool> _markRead(BuildContext context) async {
-    final messenger = ScaffoldMessenger.of(context);
-    try {
-      await controller.markMessageRead(item);
-    } on Object catch (error) {
-      // A message that failed stays unread, so its row is still here.
-      if (context.mounted) {
-        messenger.showSnackBar(
-          SnackBar(content: Text(context.trError(AppError.from(error)))),
-        );
-      }
-    }
-    // The row stays; it just turns read.
-    return false;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colors = theme.colorScheme;
-    final unread = !item.sent && item.unread;
-    final expressive = ExpressiveStyle.of(context);
-    // A picked row stands out softly, rounded as the design rounds rows.
-    final tint = expressive
-        ? _pickedTint(theme)
-        : colors.primary.withValues(
-            alpha: theme.brightness == Brightness.light ? 0.10 : 0.14,
-          );
-    final radius = BorderRadius.circular(
-      expressive
-          ? 20
-          : GlassStyle.of(context)
-          ? 14
-          : 16,
-    );
-    void longPress() {
-      HapticFeedback.mediumImpact();
-      onSelect?.call();
-    }
-
-    final content = Padding(
-      // A card's content starts 16 from its edge, the stripe included.
-      // In the list, the avatar lines up with the label of its group.
-      padding: style == MessageListStyle.list
-          ? const EdgeInsets.symmetric(horizontal: 12, vertical: 10)
-          : const EdgeInsetsDirectional.fromSTEB(
-              _Space.inset - 3,
-              10,
-              _Space.inset,
-              10,
-            ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Semantics(
-            button: true,
-            selected: selected,
-            label: '${context.tr('messagesSelect')}: ${item.subject}',
-            excludeSemantics: true,
-            child: InkResponse(
-              key: ValueKey('message-select-${item.id}'),
-              onTap: busy ? null : onSelect,
-              radius: 24,
-              child: _PickMark(
-                picked: selected,
-                square: expressive,
-                child: item.sent
-                    ? _SentAvatar(item.recipients.firstOrNull ?? '')
-                    : _SenderAvatar(item.sender),
-              ),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: _MarkedTitle(
-                        item.sent
-                            ? _RecipientsLine(item.recipients)
-                            : Text(
-                                item.sender.isEmpty ? '—' : item.sender,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: theme.textTheme.titleSmall?.copyWith(
-                                  fontWeight: unread
-                                      ? FontWeight.w800
-                                      : FontWeight.w600,
-                                ),
-                              ),
-                        item.source,
-                      ),
-                    ),
-                    if (item.hasAttachments)
-                      Padding(
-                        padding: const EdgeInsets.only(left: 4),
-                        child: AppIcon(
-                          Icons.attach_file_rounded,
-                          size: 16,
-                          color: colors.onSurfaceVariant,
-                        ),
-                      ),
-                    const SizedBox(width: 6),
-                    Text(
-                      _messageTime(context, item.receivedAt, now),
-                      style: theme.textTheme.labelMedium?.copyWith(
-                        color: unread
-                            ? colors.primary
-                            : colors.onSurfaceVariant,
-                        fontWeight: unread ? FontWeight.w800 : FontWeight.w500,
-                        fontFeatures: _tabular,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 2),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        item.subject,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: unread
-                              ? colors.onSurface
-                              : colors.onSurfaceVariant,
-                          fontWeight: unread
-                              ? FontWeight.w700
-                              : FontWeight.w400,
-                        ),
-                      ),
-                    ),
-                    // Read, the dot fades away rather than vanish.
-                    if (!item.sent)
-                      AnimatedSwitcher(
-                        duration: _listMotion(context),
-                        transitionBuilder: (child, animation) =>
-                            _Fade(opacity: animation, child: child),
-                        child: unread
-                            ? Container(
-                                key: ValueKey('message-unread-${item.id}'),
-                                width: 9,
-                                height: 9,
-                                margin: const EdgeInsets.only(left: 8, top: 6),
-                                decoration: BoxDecoration(
-                                  color: colors.primary,
-                                  shape: BoxShape.circle,
-                                ),
-                              )
-                            : const SizedBox.shrink(),
-                      ),
-                    if (item.sent && item.recipientRead != null)
-                      Padding(
-                        padding: const EdgeInsets.only(left: 8, top: 1),
-                        child: _ReadMark(
-                          read: item.recipientRead!,
-                          key: ValueKey('sent-read-${item.id}'),
-                        ),
-                      ),
-                  ],
-                ),
-                if (item.preview.trim().isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 2),
-                    child: Text(
-                      item.preview.trim(),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: colors.onSurfaceVariant,
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-    final tile = style == MessageListStyle.cards
-        ? Card(
-            color: selected ? tint : null,
-            clipBehavior: Clip.antiAlias,
-            child: InkWell(
-              onTap: busy
-                  ? null
-                  : selecting
-                  ? onSelect
-                  : () => _showMessageDetail(context, controller, item),
-              onLongPress: busy ? null : longPress,
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  border: Border(
-                    left: BorderSide(
-                      color: unread ? colors.primary : Colors.transparent,
-                      width: 3,
-                    ),
-                  ),
-                ),
-                child: content,
-              ),
-            ),
-          )
-        : Column(
-            children: [
-              InkWell(
-                borderRadius: radius,
-                onTap: busy
-                    ? null
-                    : selecting
-                    ? onSelect
-                    : () => _showMessageDetail(context, controller, item),
-                onLongPress: busy ? null : longPress,
-                child: AnimatedContainer(
-                  duration: _listMotion(context),
-                  curve: _motionCurve(context),
-                  decoration: BoxDecoration(
-                    color: selected ? tint : tint.withValues(alpha: 0),
-                    borderRadius: radius,
-                  ),
-                  child: content,
-                ),
-              ),
-              // Under the text, past the avatar: 12 + 40 + 12. A picked
-              // row needs no line to stand apart.
-              Divider(
-                height: 1,
-                indent: 64,
-                color: selected ? Colors.transparent : null,
-              ),
-            ],
-          );
-    final accessible = Semantics(
-      selected: selecting ? selected : null,
-      child: tile,
-    );
-    if (item.sent) return accessible;
-    // Kept once read, only no longer swiped, so the row changes in place.
-    return Dismissible(
-      key: ValueKey('message-${item.id}'),
-      direction: unread && !selecting && !busy
-          ? DismissDirection.startToEnd
-          : DismissDirection.none,
-      confirmDismiss: (_) {
-        // Felt, as the homework's swipe is.
-        HapticFeedback.lightImpact();
-        return _markRead(context);
-      },
-      background: _SwipeAction(
-        icon: Icons.mark_email_read_rounded,
-        label: context.tr('messageMarkRead'),
-      ),
-      child: accessible,
-    );
-  }
-}
-
-/// A row's avatar, turned into a check while the message is picked: a
-/// circle, or in Expressive a rounded square, as its shapes change when
-/// chosen.
-class _PickMark extends StatelessWidget {
-  const _PickMark({
-    required this.picked,
-    required this.square,
-    required this.child,
-  });
-
-  final bool picked;
-  final bool square;
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-    return AnimatedSwitcher(
-      duration: _motion(context, const Duration(milliseconds: 200)),
-      switchInCurve: Curves.easeOutBack,
-      switchOutCurve: Curves.easeIn,
-      transitionBuilder: (child, animation) => ScaleTransition(
-        scale: Tween<double>(begin: 0.6, end: 1).animate(animation),
-        child: FadeTransition(opacity: animation, child: child),
-      ),
-      child: picked
-          ? Container(
-              key: const ValueKey('picked'),
-              width: 40,
-              height: 40,
-              decoration: ShapeDecoration(
-                color: colors.primary,
-                shape: square
-                    ? RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(13),
-                      )
-                    : const CircleBorder(),
-              ),
-              child: AppIcon(
-                Icons.check_rounded,
-                size: 22,
-                color: colors.onPrimary,
-              ),
-            )
-          : KeyedSubtree(key: const ValueKey('avatar'), child: child),
-    );
-  }
 }
 
 /// Asks before [count] messages are deleted, the way the design asks: in
@@ -1468,45 +1773,13 @@ class _SenderAvatar extends StatelessWidget {
   }
 }
 
-/// The recipient's initials with a small arrow: a message that went out.
-class _SentAvatar extends StatelessWidget {
-  const _SentAvatar(this.recipient);
-  final String recipient;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-    return Stack(
-      clipBehavior: Clip.none,
-      children: [
-        _SenderAvatar(recipient),
-        Positioned(
-          right: -3,
-          bottom: -3,
-          child: Container(
-            width: 19,
-            height: 19,
-            decoration: BoxDecoration(
-              color: colors.primary,
-              shape: BoxShape.circle,
-              border: Border.all(color: colors.surface, width: 2),
-            ),
-            child: AppIcon(
-              Icons.north_east_rounded,
-              size: 11,
-              color: colors.onPrimary,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
 /// "To: Teacher Alpha +2".
 class _RecipientsLine extends StatelessWidget {
-  const _RecipientsLine(this.recipients);
+  const _RecipientsLine(this.recipients, {this.style});
   final List<String> recipients;
+
+  /// The names' style, as the row's sender would have it.
+  final TextStyle? style;
 
   @override
   Widget build(BuildContext context) {
@@ -1531,9 +1804,11 @@ class _RecipientsLine extends StatelessWidget {
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: theme.textTheme.titleSmall?.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
+            style:
+                style ??
+                theme.textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
           ),
         ),
         if (more > 0)
@@ -1559,299 +1834,39 @@ class _RecipientsLine extends StatelessWidget {
 
 /// Two ticks once a sent message was read, one until then.
 class _ReadMark extends StatelessWidget {
-  const _ReadMark({required this.read, super.key});
+  const _ReadMark({required this.read, this.labelled = false, super.key});
   final bool read;
+
+  /// With its word beside it, as a row of the Sent folder says it.
+  final bool labelled;
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-    return Tooltip(
-      message: context.tr(read ? 'messageRead' : 'messageNotRead'),
-      child: AppIcon(
-        read ? Icons.done_all_rounded : Icons.done_rounded,
-        size: 18,
-        color: read ? colors.primary : colors.onSurfaceVariant,
-      ),
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    final color = read ? colors.primary : colors.onSurfaceVariant;
+    final label = context.tr(read ? 'messageRead' : 'messageNotRead');
+    final icon = AppIcon(
+      read ? Icons.done_all_rounded : Icons.done_rounded,
+      size: labelled ? 16 : 18,
+      color: color,
     );
-  }
-}
-
-Future<void> _showMessageDetail(
-  BuildContext context,
-  AppController controller,
-  SchoolMessage message,
-) => showModalBottomSheet<void>(
-  context: context,
-  isScrollControlled: true,
-  useSafeArea: true,
-  builder: (context) =>
-      _MessageDetailSheet(controller: controller, message: message),
-);
-
-class _MessageDetailSheet extends StatefulWidget {
-  const _MessageDetailSheet({required this.controller, required this.message});
-  final AppController controller;
-  final SchoolMessage message;
-
-  @override
-  State<_MessageDetailSheet> createState() => _MessageDetailSheetState();
-}
-
-class _MessageDetailSheetState extends State<_MessageDetailSheet> {
-  late Future<SchoolMessageContent> content;
-  String? openingAttachment;
-
-  /// Whether the last attachment could not be opened. Shown in the sheet:
-  /// a SnackBar would appear behind it.
-  bool attachmentFailed = false;
-
-  /// Whether the last link tapped in the text could not be opened.
-  bool linkFailed = false;
-
-  @override
-  void initState() {
-    super.initState();
-    content = widget.controller.fetchMessageContent(widget.message);
-  }
-
-  void retry() {
-    setState(() {
-      content = widget.controller.fetchMessageContent(widget.message);
-    });
-  }
-
-  Future<void> openAttachment(MessageAttachment attachment) async {
-    setState(() {
-      openingAttachment = attachment.id;
-      attachmentFailed = false;
-    });
-    try {
-      final url = await widget.controller.fetchMessageAttachmentUrl(
-        messageId: widget.message.id,
-        attachmentId: attachment.id,
-      );
-      final opened = await launchUrl(url, mode: LaunchMode.externalApplication);
-      if (!opened) throw StateError('Unable to open attachment URL');
-    } on Object {
-      if (mounted) setState(() => attachmentFailed = true);
-    } finally {
-      if (mounted) setState(() => openingAttachment = null);
-    }
-  }
-
-  /// While the text loads: what the list knows already, the subject and
-  /// who it is from, and grey lines where the text will be.
-  Widget _loadingMessage(BuildContext context) {
-    final message = widget.message;
-    return ListView(
-      key: const ValueKey('message-loading'),
-      primary: false,
-      padding: const EdgeInsets.all(20),
+    if (!labelled) return Tooltip(message: label, child: icon);
+    return Row(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        _SheetProfileMark(widget.controller, message.source),
+        icon,
+        const SizedBox(width: 3),
         Text(
-          message.subject,
-          style: Theme.of(context).textTheme.headlineSmall
-              ?.copyWith(fontWeight: FontWeight.w800),
-        ),
-        const SizedBox(height: 12),
-        if (message.sent)
-          const _Skeleton(
-            child: Row(
-              children: [
-                _Bone.circle(36),
-                SizedBox(width: 12),
-                _Bone(width: 140, height: 13),
-              ],
-            ),
-          )
-        else
-          Row(
-            children: [
-              _SenderAvatar(message.sender),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      message.sender,
-                      style: const TextStyle(fontWeight: FontWeight.w700),
-                    ),
-                    Text(
-                      _messageStamp(context, message.receivedAt),
-                      key: const ValueKey('message-stamp'),
-                      style: Theme.of(context).textTheme.bodySmall,
-                    ),
-                  ],
-                ),
-              ),
-            ],
+          label,
+          style: theme.textTheme.labelMedium?.copyWith(
+            color: color,
+            fontWeight: FontWeight.w600,
           ),
-        const Divider(height: 32),
-        const _TextSkeleton(),
+        ),
       ],
     );
   }
-
-  @override
-  Widget build(BuildContext context) => FractionallySizedBox(
-    heightFactor: 0.92,
-    child: Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(20, 12, 8, 8),
-          child: Row(
-            children: [
-              Expanded(
-                child: Text(
-                  context.tr(widget.message.sent ? 'sentMessage' : 'messages'),
-                  style: Theme.of(context).textTheme.titleLarge
-                      ?.copyWith(fontWeight: FontWeight.w800),
-                ),
-              ),
-              IconButton(
-                onPressed: () => Navigator.pop(context),
-                icon: const AppIcon(Icons.close_rounded),
-                tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
-              ),
-            ],
-          ),
-        ),
-        const Divider(height: 1),
-        Expanded(
-          child: FutureBuilder<SchoolMessageContent>(
-            future: content,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState != ConnectionState.done) {
-                return _loadingMessage(context);
-              }
-              if (snapshot.hasError) {
-                return Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: _RecipientError(
-                    message: context.trError(AppError.from(snapshot.error!)),
-                    onRetry: retry,
-                  ),
-                );
-              }
-              final message = snapshot.data!;
-              return ListView(
-                // Scrolls only when it does not fit; a sheet that fits moves as a whole.
-                primary: false,
-                padding: EdgeInsets.fromLTRB(
-                  20,
-                  20,
-                  20,
-                  20 + _systemButtonsRoom(context),
-                ),
-                children: [
-                  _SheetProfileMark(widget.controller, widget.message.source),
-                  Text(
-                    message.subject,
-                    style: Theme.of(context).textTheme.headlineSmall
-                        ?.copyWith(fontWeight: FontWeight.w800),
-                  ),
-                  const SizedBox(height: 12),
-                  if (widget.message.sent)
-                    _SentRecipients(summary: widget.message, content: message)
-                  else
-                    Row(
-                      children: [
-                        // The same avatar as in the list.
-                        _SenderAvatar(message.sender),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                message.sender,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                              Text(
-                                _messageStamp(context, message.receivedAt),
-                                key: const ValueKey('message-stamp'),
-                                style: Theme.of(context).textTheme.bodySmall,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  const Divider(height: 32),
-                  // Its links open with a tap; the text stays selectable.
-                  LinkedText(
-                    message.body,
-                    key: const ValueKey('message-body'),
-                    style: Theme.of(context).textTheme.bodyLarge
-                        ?.copyWith(height: 1.45),
-                    onOpenFailed: () => setState(() => linkFailed = true),
-                    onOpened: () => setState(() => linkFailed = false),
-                  ),
-                  if (linkFailed)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8),
-                      child: Text(
-                        context.tr('linkOpenFailed'),
-                        key: const ValueKey('link-open-failed'),
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.error,
-                        ),
-                      ),
-                    ),
-                  if (message.attachments.isNotEmpty) ...[
-                    const SizedBox(height: 24),
-                    Text(
-                      context.tr('attachments'),
-                      style: Theme.of(context).textTheme.titleMedium
-                          ?.copyWith(fontWeight: FontWeight.w800),
-                    ),
-                    const SizedBox(height: 8),
-                    ...message.attachments.map(
-                      (attachment) => Card(
-                        margin: const EdgeInsets.only(bottom: _Space.item),
-                        clipBehavior: Clip.antiAlias,
-                        child: ListTile(
-                          leading: const AppIcon(Icons.attach_file_rounded),
-                          title: Text(attachment.name),
-                          trailing: openingAttachment == attachment.id
-                              ? const SizedBox.square(
-                                  dimension: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                  ),
-                                )
-                              : const AppIcon(Icons.open_in_new_rounded),
-                          enabled: openingAttachment == null,
-                          onTap: openingAttachment == null
-                              ? () => openAttachment(attachment)
-                              : null,
-                        ),
-                      ),
-                    ),
-                    if (attachmentFailed)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 4),
-                        child: Text(
-                          context.tr('attachmentOpenFailed'),
-                          key: const ValueKey('attachment-open-failed'),
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.error,
-                          ),
-                        ),
-                      ),
-                  ],
-                ],
-              );
-            },
-          ),
-        ),
-      ],
-    ),
-  );
 }
 
 /// Who a sent message went to, whether each has read it, and when it went.

@@ -82,7 +82,6 @@ class AppController extends ChangeNotifier {
   TimetableView _timetableView = TimetableView.timeline;
   bool _mergeTimetableLessons = false;
   bool _showTimetableBreaks = false;
-  MessageListStyle _messageListStyle = MessageListStyle.list;
   GradesView _gradesView = GradesView.compact;
 
   /// Null until the user arranges Today: then it follows the role.
@@ -454,7 +453,6 @@ class AppController extends ChangeNotifier {
   TimetableView get timetableView => _timetableView;
   bool get mergeTimetableLessons => _mergeTimetableLessons;
   bool get showTimetableBreaks => _showTimetableBreaks;
-  MessageListStyle get messageListStyle => _messageListStyle;
   GradesView get gradesView => _gradesView;
   TodayLayout get todayLayout =>
       _todayLayout ??
@@ -526,7 +524,6 @@ class AppController extends ChangeNotifier {
     _timetableView = await _repository.loadTimetableView();
     _mergeTimetableLessons = await _repository.loadMergeTimetableLessons();
     _showTimetableBreaks = await _repository.loadShowTimetableBreaks();
-    _messageListStyle = await _repository.loadMessageListStyle();
     _gradesView = await _repository.loadGradesView();
     _todayLayout = await _repository.loadTodayLayout();
     _excuseSignature = await _repository.loadExcuseSignature();
@@ -1448,13 +1445,6 @@ class AppController extends ChangeNotifier {
     _showTimetableBreaks = enabled;
     notifyListeners();
     await _repository.saveShowTimetableBreaks(enabled);
-  }
-
-  Future<void> setMessageListStyle(MessageListStyle style) async {
-    if (_messageListStyle == style) return;
-    _messageListStyle = style;
-    notifyListeners();
-    await _repository.saveMessageListStyle(style);
   }
 
   Future<void> setGradesView(GradesView view) async {

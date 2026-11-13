@@ -455,7 +455,9 @@ void main() {
         ..sent = Completer<List<SchoolMessage>>()
         ..content = Completer<SchoolMessageContent>();
       await _pump(tester, repository, tab: 5);
-      await tester.tap(find.text('Sent'));
+      await tester.tap(find.byKey(const ValueKey('messages-folder')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('messages-folder-sent')));
       await tester.pump();
       final loading = find.byKey(const ValueKey('sent-loading'));
       expect(loading, findsOneWidget);
@@ -469,7 +471,9 @@ void main() {
       repository.sent!.complete(const []);
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Inbox'));
+      await tester.tap(find.byKey(const ValueKey('messages-folder')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('messages-folder-inbox')));
       await tester.pumpAndSettle();
       await tester.tap(find.text('Temat m1'));
       await tester.pump();

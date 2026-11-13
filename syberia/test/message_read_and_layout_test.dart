@@ -87,7 +87,7 @@ void main() {
       expect(client.opened, ['a']);
       expect(controller.snapshot.unreadMessages, 2);
       expect((await AppRepository().load()).unreadMessages, 2);
-      await tester.tap(find.byIcon(Icons.close_rounded).last);
+      await tester.tap(find.byKey(const ValueKey('message-page-back')));
       await tester.pumpAndSettle();
       expect(_unreadDots(), findsNWidgets(2));
       await tester.tap(find.byKey(const ValueKey('messages-select')));
@@ -234,13 +234,17 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const ValueKey('message-select-a')));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Sent'));
+      await tester.tap(find.byKey(const ValueKey('messages-folder')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('messages-folder-sent')));
       await tester.pumpAndSettle();
       expect(
         find.byKey(const ValueKey('messages-delete-selected')),
         findsNothing,
       );
-      await tester.tap(find.text('Inbox'));
+      await tester.tap(find.byKey(const ValueKey('messages-folder')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('messages-folder-inbox')));
       await tester.pumpAndSettle();
       expect(
         find.byKey(const ValueKey('messages-delete-selected')),
@@ -271,7 +275,9 @@ void main() {
       controller.selectTab(5);
       await tester.pumpWidget(SyberiaApp(controller: controller));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Sent'));
+      await tester.tap(find.byKey(const ValueKey('messages-folder')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('messages-folder-sent')));
       await tester.pumpAndSettle();
       await tester.longPress(find.text('Sent subject'));
       await tester.pumpAndSettle();

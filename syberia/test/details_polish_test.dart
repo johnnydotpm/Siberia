@@ -74,7 +74,7 @@ void main() {
         tester.widget<Text>(find.byKey(const ValueKey('message-stamp'))).data,
         'Today, ${DateFormat('dd.MM').format(today)}, 00:05',
       );
-      await tester.tap(find.byIcon(Icons.close_rounded).last);
+      await tester.tap(find.byKey(const ValueKey('message-page-back')));
       await tester.pumpAndSettle();
 
       // Older than a week: no day in words, the year only for another year.

@@ -156,7 +156,9 @@ void main() {
 
   testWidgets('the Sent folder offers deleting only', (tester) async {
     await open(tester, AppDesign.classic);
-    await tester.tap(find.text('Sent'));
+    await tester.tap(find.byKey(const ValueKey('messages-folder')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('messages-folder-sent')));
     await tester.pumpAndSettle();
     await tester.longPress(find.text('Pytanie o wycieczkę'));
     await tester.pumpAndSettle();

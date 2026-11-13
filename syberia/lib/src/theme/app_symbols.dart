@@ -33,7 +33,6 @@ abstract final class AppSymbols {
   static const chatBubbleOutline = IconData(0xe0cb, fontFamily: fontFamily);
   static const check = IconData(0xe668, fontFamily: fontFamily);
   static const checkCircle = IconData(0xf0be, fontFamily: fontFamily);
-  static const checkCircleOutline = IconData(0xf0be, fontFamily: fontFamily);
   static const checklist = IconData(0xe6b1, fontFamily: fontFamily);
   static const chevronLeft = IconData(0xe5cb, fontFamily: fontFamily);
   static const chevronRight = IconData(0xe5cc, fontFamily: fontFamily);
@@ -49,6 +48,7 @@ abstract final class AppSymbols {
   static const dashboardCustomize = IconData(0xe99b, fontFamily: fontFamily);
   static const dateRange = IconData(0xe916, fontFamily: fontFamily);
   static const deleteOutline = IconData(0xe92e, fontFamily: fontFamily);
+  static const description = IconData(0xe873, fontFamily: fontFamily);
   static const directionsBus = IconData(0xeff6, fontFamily: fontFamily);
   static const done = IconData(0xe876, fontFamily: fontFamily);
   static const doneAll = IconData(0xe877, fontFamily: fontFamily);
@@ -63,11 +63,14 @@ abstract final class AppSymbols {
   static const expandMore = IconData(0xe5cf, fontFamily: fontFamily);
   static const factCheck = IconData(0xf0c5, fontFamily: fontFamily);
   static const familyRestroom = IconData(0xf1a2, fontFamily: fontFamily);
+  static const filterList = IconData(0xe152, fontFamily: fontFamily);
+  static const filterListOff = IconData(0xeb57, fontFamily: fontFamily);
   static const freeBreakfast = IconData(0xeb44, fontFamily: fontFamily);
   static const groups = IconData(0xf233, fontFamily: fontFamily);
   static const home = IconData(0xe9b2, fontFamily: fontFamily);
   static const inbox = IconData(0xe156, fontFamily: fontFamily);
   static const info = IconData(0xe88e, fontFamily: fontFamily);
+  static const keyboardArrowDown = IconData(0xe313, fontFamily: fontFamily);
   static const language = IconData(0xea07, fontFamily: fontFamily);
   static const layers = IconData(0xe53b, fontFamily: fontFamily);
   static const lockOutline = IconData(0xe899, fontFamily: fontFamily);
@@ -80,7 +83,6 @@ abstract final class AppSymbols {
   static const moreHoriz = IconData(0xe5d3, fontFamily: fontFamily);
   static const newReleases = IconData(0xef76, fontFamily: fontFamily);
   static const nightsStay = IconData(0xf174, fontFamily: fontFamily);
-  static const northEast = IconData(0xf1e1, fontFamily: fontFamily);
   static const notifications = IconData(0xe7f5, fontFamily: fontFamily);
   static const notificationsActive = IconData(0xe7f7, fontFamily: fontFamily);
   static const notificationsOff = IconData(0xe7f6, fontFamily: fontFamily);
@@ -157,7 +159,6 @@ abstract final class AppSymbols {
     Icons.casino_outlined: casino,
     Icons.chat_bubble_outline_rounded: chatBubbleOutline,
     Icons.chat_bubble_rounded: chatBubble,
-    Icons.check_circle_outline_rounded: checkCircleOutline,
     Icons.check_circle_rounded: checkCircle,
     Icons.check_rounded: check,
     Icons.checklist_rounded: checklist,
@@ -175,6 +176,7 @@ abstract final class AppSymbols {
     Icons.dashboard_rounded: dashboard,
     Icons.date_range_rounded: dateRange,
     Icons.delete_outline_rounded: deleteOutline,
+    Icons.description_rounded: description,
     Icons.directions_bus_rounded: directionsBus,
     Icons.done_all_rounded: doneAll,
     Icons.done_rounded: done,
@@ -191,12 +193,15 @@ abstract final class AppSymbols {
     Icons.fact_check_outlined: factCheck,
     Icons.fact_check_rounded: factCheck,
     Icons.family_restroom_rounded: familyRestroom,
+    Icons.filter_list_off_rounded: filterListOff,
+    Icons.filter_list_rounded: filterList,
     Icons.free_breakfast_rounded: freeBreakfast,
     Icons.groups_rounded: groups,
     Icons.home_outlined: home,
     Icons.home_rounded: home,
     Icons.inbox_rounded: inbox,
     Icons.info_outline_rounded: info,
+    Icons.keyboard_arrow_down_rounded: keyboardArrowDown,
     Icons.language_rounded: language,
     Icons.layers_outlined: layers,
     Icons.lock_outline_rounded: lockOutline,
@@ -208,7 +213,6 @@ abstract final class AppSymbols {
     Icons.more_horiz_rounded: moreHoriz,
     Icons.new_releases_rounded: newReleases,
     Icons.nights_stay_rounded: nightsStay,
-    Icons.north_east_rounded: northEast,
     Icons.notifications_active_rounded: notificationsActive,
     Icons.notifications_off_rounded: notificationsOff,
     Icons.notifications_rounded: notifications,

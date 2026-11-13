@@ -3,6 +3,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'glass_items.dart';
 import 'glass_material.dart';
 import 'glass_motion.dart';
 import 'glass_plate.dart';
@@ -19,11 +20,18 @@ class GlassAction {
     required this.label,
     required this.onPressed,
     this.destructive = false,
+    this.symbol,
   });
 
   /// Identifies the action in messages from UIKit, and in tests.
   final String id;
+
+  /// Shown, or with a [symbol] said to screen readers only.
   final String label;
+
+  /// A pictogram in place of the label, as Mail's toolbar has under a
+  /// message.
+  final GlassSymbol? symbol;
 
   /// Null while the action cannot be taken.
   final VoidCallback? onPressed;
@@ -107,6 +115,7 @@ class _NativeGlassToolbarState extends State<_NativeGlassToolbar> {
           {
             'id': action.id,
             'label': action.label,
+            'symbol': action.symbol?.name,
             'enabled': action.onPressed != null,
             'destructive': action.destructive,
           },
@@ -274,22 +283,39 @@ class _ToolbarItemState extends State<_ToolbarItem> {
                 ),
               ),
             ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Center(
-                widthFactor: 1,
-                child: Text(
-                  action.label,
-                  maxLines: 1,
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    color: color,
-                    fontSize: 17,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: -0.41,
+            child: switch (action.symbol) {
+              // A pictogram stands on a round piece of glass.
+              final symbol? => SizedBox.square(
+                dimension: _RenderedGlassToolbar.itemHeight,
+                child: Center(
+                  child: Transform.flip(
+                    flipX: symbol.mirrored,
+                    child: Icon(
+                      symbol.icon,
+                      size: 22 * symbol.scale,
+                      color: color,
+                      shadows: GlassSymbol.heavier(color),
+                    ),
                   ),
                 ),
               ),
-            ),
+              null => Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Center(
+                  widthFactor: 1,
+                  child: Text(
+                    action.label,
+                    maxLines: 1,
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      color: color,
+                      fontSize: 17,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: -0.41,
+                    ),
+                  ),
+                ),
+              ),
+            },
           ),
         ),
       ),

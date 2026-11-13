@@ -3,6 +3,7 @@ import 'dart:io' show Platform;
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 
+import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -63,6 +64,7 @@ part 'shell/grades.dart';
 part 'shell/grade_calculator_sheet.dart';
 part 'shell/events_homework.dart';
 part 'shell/messages.dart';
+part 'shell/message_page.dart';
 part 'shell/message_compose.dart';
 part 'shell/attendance.dart';
 part 'shell/announcements_notices.dart';
@@ -120,8 +122,15 @@ class _AppShellState extends State<AppShell> {
   /// What the Messages page has picked, shown in the bars while it picks.
   final _selection = _SelectionBars();
 
+  /// The folder of messages open; the glass bar is titled after it.
+  final _messagesFolder = ValueNotifier(_MessageFolder.inbox);
+
   /// Everything the shell is drawn from.
-  late final _changes = Listenable.merge([widget.controller, _selection]);
+  late final _changes = Listenable.merge([
+    widget.controller,
+    _selection,
+    _messagesFolder,
+  ]);
 
   AppController get controller => widget.controller;
 
@@ -130,6 +139,7 @@ class _AppShellState extends State<AppShell> {
     _reselected.dispose();
     _titleScroll.dispose();
     _selection.dispose();
+    _messagesFolder.dispose();
     super.dispose();
   }
 
@@ -222,9 +232,12 @@ class _AppShellState extends State<AppShell> {
         final picking = !wide && controller.tabIndex == _messagesTab
             ? _selection.value
             : null;
-        String titleOf(int index) => picking != null && index == _messagesTab
+        String titleOf(int index) => index != _messagesTab
+            ? _title(context, index)
+            : picking != null
             ? _selectionTitle(context, picking.count)
-            : _title(context, index);
+            // In glass the bar is titled after the folder, as in Mail.
+            : _folderName(context, _messagesFolder.value);
         Widget wrap(int index, Widget page) => glass
             ? GlassPageScope(
                 // The timetable keeps its day strip under the bar, so it has
@@ -262,6 +275,7 @@ class _AppShellState extends State<AppShell> {
               child: _SelectionScope(
                 selection: _selection,
                 hosted: !wide,
+                folder: _messagesFolder,
                 child: Stack(
                   fit: StackFit.expand,
                   children: [

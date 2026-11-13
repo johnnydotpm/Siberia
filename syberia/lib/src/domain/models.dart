@@ -379,9 +379,6 @@ enum AppColorMode { system, light, dark, amoled }
 /// How the timetable shows a day: on a time scale or as a list of lessons.
 enum TimetableView { timeline, list }
 
-/// How the message list looks: mail-style rows or compact cards.
-enum MessageListStyle { list, cards }
-
 /// How the grades of a subject are listed: one compact row each, or cards
 /// that open to show every grade.
 enum GradesView { compact, cards }

@@ -6,7 +6,6 @@ import 'package:syberia/src/app.dart';
 import 'package:syberia/src/domain/models.dart';
 import 'package:syberia/src/state/app_controller.dart';
 import 'package:syberia/src/theme/app_theme.dart';
-import 'package:syberia/src/ui/expressive/expressive.dart';
 
 import 'support/profile_fakes.dart';
 
@@ -241,35 +240,45 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
   });
 
-  testWidgets('writing a message sits beside the title, or in the bar', (
-    tester,
-  ) async {
-    final expressive = await _app(design: 'expressive');
-    expressive.selectTab(5);
-    await _pump(tester, expressive);
-    final compose = tester.getRect(
-      find.byKey(const ValueKey('messages-compose')),
-    );
-    final title = tester.getRect(find.byType(ExpressiveLargeTitle));
-    expect(compose.bottom, closeTo(title.bottom, 12));
-    expect(compose.size, const Size(56, 56));
-    await tester.pumpWidget(const SizedBox.shrink());
+  testWidgets(
+    'writing a message floats at the end in Expressive, or sits in the bar',
+    (tester) async {
+      final expressive = await _app(design: 'expressive');
+      expressive.selectTab(5);
+      await _pump(tester, expressive);
+      // Material's extended button, floating at the end below the list.
+      final button = find.byKey(const ValueKey('messages-compose'));
+      expect(tester.widget(button), isA<FloatingActionButton>());
+      final compose = tester.getRect(button);
+      final title = tester.getRect(
+        find.byKey(const ValueKey('messages-folder')),
+      );
+      expect(compose.top, greaterThan(title.bottom));
+      expect(
+        compose.right,
+        closeTo(
+          tester.view.physicalSize.width / tester.view.devicePixelRatio - 16,
+          1,
+        ),
+      );
+      await tester.pumpWidget(const SizedBox.shrink());
 
-    final classic = await _app();
-    classic.selectTab(5);
-    await _pump(tester, classic);
-    expect(
-      find.descendant(
-        of: find.byType(AppBar),
-        matching: find.byKey(const ValueKey('messages-compose')),
-      ),
-      findsOneWidget,
-    );
-    await tester.tap(find.byKey(const ValueKey('messages-compose')));
-    await tester.pumpAndSettle();
-    expect(find.byKey(const ValueKey('compose-subject')), findsOneWidget);
-    await tester.pumpWidget(const SizedBox.shrink());
-  });
+      final classic = await _app();
+      classic.selectTab(5);
+      await _pump(tester, classic);
+      expect(
+        find.descendant(
+          of: find.byType(AppBar),
+          matching: find.byKey(const ValueKey('messages-compose')),
+        ),
+        findsOneWidget,
+      );
+      await tester.tap(find.byKey(const ValueKey('messages-compose')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('compose-subject')), findsOneWidget);
+      await tester.pumpWidget(const SizedBox.shrink());
+    },
+  );
 
   test('Expressive fields are Material 3\'s filled ones', () {
     final theme = AppTheme.expressive(Brightness.light);

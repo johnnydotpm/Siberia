@@ -142,3 +142,128 @@ class _Grabber extends StatelessWidget {
     ),
   );
 }
+
+/// One choice of [showGlassMenu].
+@immutable
+class GlassMenuItem<T> {
+  const GlassMenuItem({
+    required this.value,
+    required this.label,
+    this.selected = false,
+    this.key,
+  });
+
+  final T value;
+  final String label;
+
+  /// Marked with a check, as the choice in force.
+  final bool selected;
+  final Key? key;
+}
+
+/// A pull-down menu on glass that grows out of [anchor], as the menu of a
+/// title in iOS 26: UIKit's glass on iOS, Flutter's elsewhere, as all the
+/// app's glass. Gives the value picked, or null.
+Future<T?> showGlassMenu<T>({
+  required BuildContext context,
+  required Rect anchor,
+  required List<GlassMenuItem<T>> items,
+}) => showGeneralDialog<T>(
+  context: context,
+  barrierDismissible: true,
+  barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
+  barrierColor: Colors.black.withValues(alpha: 0.06),
+  transitionDuration: const Duration(milliseconds: 280),
+  pageBuilder: (context, animation, _) =>
+      _GlassMenu(anchor: anchor, items: items, animation: animation),
+);
+
+class _GlassMenu<T> extends StatelessWidget {
+  const _GlassMenu({
+    required this.anchor,
+    required this.items,
+    required this.animation,
+  });
+
+  final Rect anchor;
+  final List<GlassMenuItem<T>> items;
+  final Animation<double> animation;
+
+  static const double _width = 250;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final screen = MediaQuery.sizeOf(context);
+    final left = anchor.left.clamp(8.0, screen.width - _width - 8);
+    final grow = CurvedAnimation(
+      parent: animation,
+      curve: Curves.easeOutBack,
+      reverseCurve: Curves.easeInCubic,
+    );
+    final divider = theme.colorScheme.onSurface.withValues(alpha: 0.12);
+    return Stack(
+      children: [
+        Positioned(
+          left: left,
+          top: anchor.bottom + 6,
+          width: _width,
+          child: FadeTransition(
+            opacity: animation,
+            child: ScaleTransition(
+              alignment: Alignment.topLeft,
+              scale: Tween<double>(begin: 0.6, end: 1).animate(grow),
+              child: GlassPanel(
+                radius: 24,
+                reveal: animation,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    for (final (index, item) in items.indexed) ...[
+                      if (index > 0)
+                        Divider(height: 0.5, thickness: 0.5, color: divider),
+                      InkWell(
+                        key: item.key,
+                        onTap: () => Navigator.of(context).pop(item.value),
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(minHeight: 48),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: Row(
+                              children: [
+                                SizedBox(
+                                  width: 26,
+                                  child: item.selected
+                                      ? Icon(
+                                          Icons.check_rounded,
+                                          size: 20,
+                                          color: theme.colorScheme.onSurface,
+                                        )
+                                      : null,
+                                ),
+                                Expanded(
+                                  child: Text(
+                                    item.label,
+                                    style: TextStyle(
+                                      color: theme.colorScheme.onSurface,
+                                      fontSize: 17,
+                                      letterSpacing: -0.41,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}

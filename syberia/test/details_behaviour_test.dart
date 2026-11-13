@@ -181,7 +181,7 @@ void main() {
     // Opened, and swiped read: both stay where they were.
     await tester.tap(find.text('Wycieczka'));
     await tester.pumpAndSettle();
-    await tester.tap(find.byIcon(Icons.close_rounded).last);
+    await tester.tap(find.byKey(const ValueKey('message-page-back')));
     await tester.pumpAndSettle();
     await tester.drag(
       find.byKey(const ValueKey('message-m2')),
@@ -218,7 +218,7 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('Wycieczka'));
     await tester.pumpAndSettle();
-    await tester.tap(find.byIcon(Icons.close_rounded).last);
+    await tester.tap(find.byKey(const ValueKey('message-page-back')));
     await tester.pumpAndSettle();
     expect(find.text('Wycieczka'), findsOneWidget);
 
