@@ -1,0 +1,214 @@
+{
+  "prepared_on": "2026-11-13",
+  "scope": "Supplied archives and recovered static client code; documentation only",
+  "inputs": [
+    {
+      "provider": "mobidziennik",
+      "filename": "mobiDziennik_12.13_APKPure.xapk",
+      "bytes": 30594980,
+      "sha256": "9664525525b5835f38af086a6c86da46e3f9404a6fde3f49c6ad266668d9bc79",
+      "archive_inventory_evidence_id": "ev_91a04614b41bbddf32ba1de78176d3521f84d1f3d758ce15f4194f05e12af767",
+      "manifest": {
+        "name": "mobiDziennik",
+        "package_name": "pl.mobidziennik.web",
+        "version_name": "12.13",
+        "version_code": "121300",
+        "min_sdk_version": "24",
+        "target_sdk_version": "35",
+        "split_apks": [
+          {
+            "file": "pl.mobidziennik.web.apk",
+            "id": "base"
+          },
+          {
+            "file": "config.mdpi.apk",
+            "id": "config.mdpi"
+          },
+          {
+            "file": "config.fr.apk",
+            "id": "config.fr"
+          },
+          {
+            "file": "config.en.apk",
+            "id": "config.en"
+          },
+          {
+            "file": "config.arm64_v8a.apk",
+            "id": "config.arm64_v8a"
+          }
+        ]
+      },
+      "regular_members": [
+        {
+          "name": "pl.mobidziennik.web.apk",
+          "bytes": 27731757,
+          "sha256": "677fa286257c12304b4ced3c3810639424d90b79b5e637b35968dd55d26b2896"
+        },
+        {
+          "name": "icon.png",
+          "bytes": 35208,
+          "sha256": "dbc26e495e925e21e2b4a561210b99e9711c1e5ce356c2785c8159274fb0eee3"
+        },
+        {
+          "name": "config.mdpi.apk",
+          "bytes": 63380,
+          "sha256": "d74a1b09ca5aa267675a5894aa0bc7cb5a0aa1dd9e459a2130b79d93a339632a"
+        },
+        {
+          "name": "config.fr.apk",
+          "bytes": 29081,
+          "sha256": "27433a7bc26d2605d32d36b68b4fd85186f4c89036eff45bbf1d6841e8a500b3"
+        },
+        {
+          "name": "config.en.apk",
+          "bytes": 45465,
+          "sha256": "e9e91d989904ded4c8353d82b2d30543b89cc054759381d8fdcff01b7c1e2de0"
+        },
+        {
+          "name": "config.arm64_v8a.apk",
+          "bytes": 2687837,
+          "sha256": "bbc9e21bc5c05e50f744ffe6f9f87d8b47140551afe278d5f50ae6069d5c5d04"
+        },
+        {
+          "name": "manifest.json",
+          "bytes": 1299,
+          "sha256": "903f060188dbcece12ba7f8c8e5b686088ba600838c865f0d2a7270780a04bc8"
+        }
+      ],
+      "signature_verification": "not performed; SHA256 is identity, not publisher authenticity"
+    },
+    {
+      "provider": "prymus",
+      "filename": "Prymus+Wyniki+ucznia_1.2.68_APKPure.xapk",
+      "bytes": 48269790,
+      "sha256": "0debf6ae8aed4a8f7bf7f097f181caf0e1b41060cac458eabd90b68b4d9b346b",
+      "archive_inventory_evidence_id": "ev_7070a217e74a240866181923297fd8e631a3d57618b008611ad1322201cc1fed",
+      "manifest": {
+        "name": "Prymus",
+        "package_name": "pl.bialystok.zeto.prymus",
+        "version_name": "1.2.68",
+        "version_code": "1026800",
+        "min_sdk_version": "24",
+        "target_sdk_version": "36",
+        "split_apks": [
+          {
+            "file": "pl.bialystok.zeto.prymus.apk",
+            "id": "base"
+          },
+          {
+            "file": "config.hdpi.apk",
+            "id": "config.hdpi"
+          }
+        ]
+      },
+      "regular_members": [
+        {
+          "name": "pl.bialystok.zeto.prymus.apk",
+          "bytes": 45073168,
+          "sha256": "5eb7dadbff8381d9d6b8e26737a1ce126f9ca900de29bdb964cbed91402710fd"
+        },
+        {
+          "name": "icon.png",
+          "bytes": 12235,
+          "sha256": "c5d66196a65be43e75668fde5a012000ba526e8af3248350ea3078be73eb4db8"
+        },
+        {
+          "name": "config.hdpi.apk",
+          "bytes": 3181237,
+          "sha256": "52f49c7582a96542c55709482bd41270bee930bd8dfdc5b888c49938405f6314"
+        },
+        {
+          "name": "manifest.json",
+          "bytes": 2588,
+          "sha256": "117c7234eee38e99697775fd512a983668c07e70bf032a79a7abdb75e38cfd51"
+        }
+      ],
+      "signature_verification": "not performed; SHA256 is identity, not publisher authenticity"
+    }
+  ],
+  "mobi_bootstrap_analysis": {
+    "evidence_id": "ev_7748542d400593b9bbc8c60a8c30debded762ea689b472eb050935c8464fae49",
+    "summary_evidence_id": "ev_b4da4e1469f3676da65e7f609dd1b5b0ee33d941e664b3399b6ccd21ec8b2a35",
+    "derived_subset_sha256": "6b869ea1a9b81886e4684f6a26864d747cc1d13dee8bfdf9e994f070051baf0f",
+    "parsed_javascript_files": 8,
+    "visited_ast_nodes": 12179,
+    "parse_failures": 0,
+    "semantic_unknowns": 2897,
+    "scope_limit": "Only eight copied first-party bootstrap scripts; excludes vendored dependencies, native plugins and absent server-delivered controllers. Static parser did not recover direct jQuery requests; those were manually traced.",
+    "source_lineage": [
+      {
+        "original_member": "assets/www/js/app.js",
+        "analysis_path": "js/app.js",
+        "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+        "bytes": 43213
+      },
+      {
+        "original_member": "assets/www/js/core.js",
+        "analysis_path": "js/core.js",
+        "sha256": "3007477eaf750ff65c9abc1d455598c7302da13f6cd1611ca0213cfbdfd2eb72",
+        "bytes": 9490
+      },
+      {
+        "original_member": "assets/www/js/storage.js",
+        "analysis_path": "js/storage.js",
+        "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+        "bytes": 24365
+      },
+      {
+        "original_member": "assets/www/js/files.js",
+        "analysis_path": "js/files.js",
+        "sha256": "f2be97eb86f37c25960bc464c8467be1819a3568ee6b098c6bb87487d4292cb1",
+        "bytes": 5662
+      },
+      {
+        "original_member": "assets/www/js/pages.js",
+        "analysis_path": "js/pages.js",
+        "sha256": "2575fcc4dae0609340950e356f33dbe2b8cc16254805cc533561c0fb6998616b",
+        "bytes": 12593
+      },
+      {
+        "original_member": "assets/www/js/push.js",
+        "analysis_path": "js/push.js",
+        "sha256": "5ad362f08c2591cafdd9ade5f265d0bd22e19553542547cab47468520a5c483a",
+        "bytes": 6499
+      },
+      {
+        "original_member": "assets/www/js/templateApp.js",
+        "analysis_path": "js/templateApp.js",
+        "sha256": "a23caef386c7a1812b462242267afb9807eb3e3348e4fb873805992921baf195",
+        "bytes": 6075
+      },
+      {
+        "original_member": "assets/www/js/form.js",
+        "analysis_path": "js/form.js",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      }
+    ],
+    "execution": "none; sources parsed as inert text"
+  },
+  "host_source": {
+    "repository": "johnnydotpm/Siberia",
+    "commit": "eb7a4d566f449ebcb2e8c3bce62721c50beb7c7c",
+    "retrieval": "git fetch plus read-only git archive export, no application patch",
+    "root_instruction": "Commit attribution requires both Codex and johnnydotpm trailers; no published-history rewrite requested."
+  },
+  "toolchain": {
+    "REA": "6.3.0 cached CLI/MCP tools",
+    "JADX": "1.5.6 with selected headless REA method queries",
+    "qualification": "Per-provider reports retain targeted evidence and bulk decompiler limitations."
+  },
+  "not_included": [
+    "original archives/binaries",
+    "full recovered source/decompilation",
+    "raw REA semantic graph",
+    "user credentials",
+    "school account captures"
+  ],
+  "not_performed": [
+    "original app launch",
+    "school authentication or mutation requests",
+    "plugin implementation",
+    "Flutter application tests"
+  ]
+}

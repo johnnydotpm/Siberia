@@ -1,0 +1,2909 @@
+{
+  "scope": "Entire8first-party packagedJavaScript files; inertBabelAST parsing. No bodies reproduced.",
+  "file_count": 8,
+  "function_boundary_count": 243,
+  "parse_failures": [],
+  "files": [
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "bytes": 43213
+    },
+    {
+      "apk_member": "assets/www/js/core.js",
+      "sha256": "3007477eaf750ff65c9abc1d455598c7302da13f6cd1611ca0213cfbdfd2eb72",
+      "bytes": 9490
+    },
+    {
+      "apk_member": "assets/www/js/pages.js",
+      "sha256": "2575fcc4dae0609340950e356f33dbe2b8cc16254805cc533561c0fb6998616b",
+      "bytes": 12593
+    },
+    {
+      "apk_member": "assets/www/js/storage.js",
+      "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+      "bytes": 24365
+    },
+    {
+      "apk_member": "assets/www/js/files.js",
+      "sha256": "f2be97eb86f37c25960bc464c8467be1819a3568ee6b098c6bb87487d4292cb1",
+      "bytes": 5662
+    },
+    {
+      "apk_member": "assets/www/js/push.js",
+      "sha256": "5ad362f08c2591cafdd9ade5f265d0bd22e19553542547cab47468520a5c483a",
+      "bytes": 6499
+    },
+    {
+      "apk_member": "assets/www/js/templateApp.js",
+      "sha256": "a23caef386c7a1812b462242267afb9807eb3e3348e4fb873805992921baf195",
+      "bytes": 6075
+    },
+    {
+      "apk_member": "assets/www/js/form.js",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    }
+  ],
+  "functions": [
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "deviceReady",
+      "kind": "FunctionExpression",
+      "line": 22,
+      "end_line": 80,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 44,
+      "end_line": 48,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 48,
+      "end_line": 52,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 52,
+      "end_line": 56,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 56,
+      "end_line": 60,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 60,
+      "end_line": 64,
+      "parameters": [
+        "user"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 64,
+      "end_line": 68,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 68,
+      "end_line": 74,
+      "parameters": [
+        "errors"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "events",
+      "kind": "FunctionExpression",
+      "line": 82,
+      "end_line": 90,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 88,
+      "end_line": 88,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "checkFingerprint",
+      "kind": "FunctionExpression",
+      "line": 92,
+      "end_line": 131,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 95,
+      "end_line": 122,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 104,
+      "end_line": 109,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 110,
+      "end_line": 120,
+      "parameters": [
+        "error"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 111,
+      "end_line": 119,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 113,
+      "end_line": 115,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 123,
+      "end_line": 127,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "onResume",
+      "kind": "FunctionExpression",
+      "line": 133,
+      "end_line": 135,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "onResumeTmt",
+      "kind": "FunctionExpression",
+      "line": 137,
+      "end_line": 178,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 145,
+      "end_line": 148,
+      "parameters": [
+        "e"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 172,
+      "end_line": 174,
+      "parameters": [
+        "errors"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "onPause",
+      "kind": "FunctionExpression",
+      "line": 180,
+      "end_line": 185,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "hideSplashScreen",
+      "kind": "FunctionExpression",
+      "line": 187,
+      "end_line": 195,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 191,
+      "end_line": 193,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "onMenuKeyDown",
+      "kind": "FunctionExpression",
+      "line": 197,
+      "end_line": 205,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "onOnline",
+      "kind": "FunctionExpression",
+      "line": 207,
+      "end_line": 215,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "checkIsDebug",
+      "kind": "FunctionExpression",
+      "line": 217,
+      "end_line": 240,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 222,
+      "end_line": 228,
+      "parameters": [
+        "isDebug"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "isOnline",
+      "kind": "FunctionExpression",
+      "line": 242,
+      "end_line": 254,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "init",
+      "kind": "FunctionExpression",
+      "line": 257,
+      "end_line": 264,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 258,
+      "end_line": 263,
+      "parameters": [
+        "e"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "onPress",
+      "kind": "FunctionExpression",
+      "line": 266,
+      "end_line": 297,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "addSoftwareBackButton",
+      "kind": "FunctionExpression",
+      "line": 299,
+      "end_line": 306,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "getLoggedUser",
+      "kind": "FunctionExpression",
+      "line": 309,
+      "end_line": 342,
+      "parameters": [
+        "user"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 321,
+      "end_line": 326,
+      "parameters": [
+        "error"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "sendErrors",
+      "kind": "FunctionExpression",
+      "line": 344,
+      "end_line": 362,
+      "parameters": [
+        "errors"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 352,
+      "end_line": 357,
+      "parameters": [
+        "kError",
+        "error"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "login",
+      "kind": "FunctionExpression",
+      "line": 365,
+      "end_line": 448,
+      "parameters": [
+        "form"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 384,
+      "end_line": 393,
+      "parameters": [
+        "user"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 393,
+      "end_line": 406,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 406,
+      "end_line": 439,
+      "parameters": [
+        "data"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 431,
+      "end_line": 435,
+      "parameters": [
+        "error"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 439,
+      "end_line": 445,
+      "parameters": [
+        "err"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "resetPassword",
+      "kind": "FunctionExpression",
+      "line": 450,
+      "end_line": 489,
+      "parameters": [
+        "form"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 471,
+      "end_line": 480,
+      "parameters": [
+        "json"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 480,
+      "end_line": 484,
+      "parameters": [
+        "r"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 484,
+      "end_line": 488,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "loadPageForUser",
+      "kind": "FunctionExpression",
+      "line": 492,
+      "end_line": 547,
+      "parameters": [
+        "global_id",
+        "email",
+        "login",
+        "sync_url",
+        "hash",
+        "page"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "turnOffNotifications",
+      "kind": "FunctionExpression",
+      "line": 549,
+      "end_line": 571,
+      "parameters": [
+        "id_global",
+        "push_klucz",
+        "hash",
+        "isLogout"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 557,
+      "end_line": 565,
+      "parameters": [
+        "data"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 565,
+      "end_line": 570,
+      "parameters": [
+        "xhr",
+        "ex"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "syncManual",
+      "kind": "FunctionExpression",
+      "line": 574,
+      "end_line": 591,
+      "parameters": [
+        "refresh"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 586,
+      "end_line": 590,
+      "parameters": [
+        "error"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "sync",
+      "kind": "FunctionExpression",
+      "line": 593,
+      "end_line": 806,
+      "parameters": [
+        "refresh"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 618,
+      "end_line": 694,
+      "parameters": [
+        "auth_key"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 658,
+      "end_line": 682,
+      "parameters": [
+        "data"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 673,
+      "end_line": 675,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 682,
+      "end_line": 686,
+      "parameters": [
+        "error"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 694,
+      "end_line": 705,
+      "parameters": [
+        "error"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 705,
+      "end_line": 772,
+      "parameters": [
+        "data"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 722,
+      "end_line": 729,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 751,
+      "end_line": 753,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 772,
+      "end_line": 776,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 776,
+      "end_line": 804,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "updateJsCssNav",
+      "kind": "FunctionExpression",
+      "line": 808,
+      "end_line": 851,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 816,
+      "end_line": 848,
+      "parameters": [
+        "templates"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 824,
+      "end_line": 846,
+      "parameters": [
+        "name",
+        "html"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "getDefaultPage",
+      "kind": "FunctionExpression",
+      "line": 853,
+      "end_line": 859,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "changePageToDefault",
+      "kind": "FunctionExpression",
+      "line": 861,
+      "end_line": 864,
+      "parameters": [
+        "withoutPopState"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "logout",
+      "kind": "FunctionExpression",
+      "line": 866,
+      "end_line": 896,
+      "parameters": [
+        "resetPassword"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 886,
+      "end_line": 889,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "push",
+      "kind": "FunctionExpression",
+      "line": 899,
+      "end_line": 968,
+      "parameters": [
+        "name",
+        "kontroler",
+        "get",
+        "post",
+        "retry",
+        "func",
+        "xhr",
+        "url"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 937,
+      "end_line": 943,
+      "parameters": [
+        "data"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 943,
+      "end_line": 965,
+      "parameters": [
+        "error"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 953,
+      "end_line": 957,
+      "parameters": [
+        "kForm",
+        "form"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "changeUser",
+      "kind": "FunctionExpression",
+      "line": 970,
+      "end_line": 1068,
+      "parameters": [
+        "login",
+        "sync_url",
+        "withoutNotify",
+        "refresh"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 984,
+      "end_line": 1067,
+      "parameters": [
+        "user"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 993,
+      "end_line": 995,
+      "parameters": [
+        "rs"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 1003,
+      "end_line": 1015,
+      "parameters": [
+        "data"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 1015,
+      "end_line": 1024,
+      "parameters": [
+        "err"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 1044,
+      "end_line": 1054,
+      "parameters": [
+        "data"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 1054,
+      "end_line": 1063,
+      "parameters": [
+        "err"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "onError",
+      "kind": "FunctionExpression",
+      "line": 1070,
+      "end_line": 1085,
+      "parameters": [
+        "msg",
+        "url",
+        "lineNo",
+        "columnNo",
+        "error"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "error",
+      "kind": "FunctionExpression",
+      "line": 1087,
+      "end_line": 1092,
+      "parameters": [
+        "e"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "reportError",
+      "kind": "FunctionExpression",
+      "line": 1094,
+      "end_line": 1160,
+      "parameters": [
+        "data",
+        "silent",
+        "error"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 1102,
+      "end_line": 1104,
+      "parameters": [
+        "trace"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "themeChange",
+      "kind": "FunctionExpression",
+      "line": 1162,
+      "end_line": 1199,
+      "parameters": [
+        "theme",
+        "saveInStorage",
+        "systemDetected"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 1164,
+      "end_line": 1166,
+      "parameters": [
+        "e"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 1166,
+      "end_line": 1168,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "show",
+      "kind": "FunctionExpression",
+      "line": 1202,
+      "end_line": 1208,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 1205,
+      "end_line": 1207,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "submit",
+      "kind": "FunctionExpression",
+      "line": 1210,
+      "end_line": 1254,
+      "parameters": [
+        "password"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 1230,
+      "end_line": 1247,
+      "parameters": [
+        "data"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 1241,
+      "end_line": 1243,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 1247,
+      "end_line": 1253,
+      "parameters": [
+        "err"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "cancel",
+      "kind": "FunctionExpression",
+      "line": 1256,
+      "end_line": 1262,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 1258,
+      "end_line": 1260,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/app.js",
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 1271,
+      "end_line": 1273,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/core.js",
+      "sha256": "3007477eaf750ff65c9abc1d455598c7302da13f6cd1611ca0213cfbdfd2eb72",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 1,
+      "end_line": 280,
+      "parameters": [
+        "core",
+        "$",
+        "undefined"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/core.js",
+      "sha256": "3007477eaf750ff65c9abc1d455598c7302da13f6cd1611ca0213cfbdfd2eb72",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 12,
+      "end_line": 28,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/core.js",
+      "sha256": "3007477eaf750ff65c9abc1d455598c7302da13f6cd1611ca0213cfbdfd2eb72",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 16,
+      "end_line": 25,
+      "parameters": [
+        "idx",
+        "line"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/core.js",
+      "sha256": "3007477eaf750ff65c9abc1d455598c7302da13f6cd1611ca0213cfbdfd2eb72",
+      "name": "core.join",
+      "kind": "FunctionExpression",
+      "line": 31,
+      "end_line": 37,
+      "parameters": [
+        "str",
+        "array"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/core.js",
+      "sha256": "3007477eaf750ff65c9abc1d455598c7302da13f6cd1611ca0213cfbdfd2eb72",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 33,
+      "end_line": 35,
+      "parameters": [
+        "idx",
+        "value"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/core.js",
+      "sha256": "3007477eaf750ff65c9abc1d455598c7302da13f6cd1611ca0213cfbdfd2eb72",
+      "name": "core.some",
+      "kind": "FunctionExpression",
+      "line": 39,
+      "end_line": 41,
+      "parameters": [
+        "array",
+        "f"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/core.js",
+      "sha256": "3007477eaf750ff65c9abc1d455598c7302da13f6cd1611ca0213cfbdfd2eb72",
+      "name": "core.map",
+      "kind": "FunctionExpression",
+      "line": 43,
+      "end_line": 45,
+      "parameters": [
+        "array",
+        "f"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/core.js",
+      "sha256": "3007477eaf750ff65c9abc1d455598c7302da13f6cd1611ca0213cfbdfd2eb72",
+      "name": "core.error",
+      "kind": "FunctionExpression",
+      "line": 47,
+      "end_line": 54,
+      "parameters": [
+        "type",
+        "message"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/core.js",
+      "sha256": "3007477eaf750ff65c9abc1d455598c7302da13f6cd1611ca0213cfbdfd2eb72",
+      "name": "core.debug",
+      "kind": "FunctionExpression",
+      "line": 56,
+      "end_line": 113,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/core.js",
+      "sha256": "3007477eaf750ff65c9abc1d455598c7302da13f6cd1611ca0213cfbdfd2eb72",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 63,
+      "end_line": 72,
+      "parameters": [
+        "idx",
+        "line"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/core.js",
+      "sha256": "3007477eaf750ff65c9abc1d455598c7302da13f6cd1611ca0213cfbdfd2eb72",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 67,
+      "end_line": 67,
+      "parameters": [
+        "name"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/core.js",
+      "sha256": "3007477eaf750ff65c9abc1d455598c7302da13f6cd1611ca0213cfbdfd2eb72",
+      "name": "core.connectionError",
+      "kind": "FunctionExpression",
+      "line": 115,
+      "end_line": 146,
+      "parameters": [
+        "xhr",
+        "ex"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/core.js",
+      "sha256": "3007477eaf750ff65c9abc1d455598c7302da13f6cd1611ca0213cfbdfd2eb72",
+      "name": "core.exec",
+      "kind": "FunctionExpression",
+      "line": 155,
+      "end_line": 265,
+      "parameters": [
+        "functionName",
+        "params",
+        "nodebug",
+        "url",
+        "xhr"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/core.js",
+      "sha256": "3007477eaf750ff65c9abc1d455598c7302da13f6cd1611ca0213cfbdfd2eb72",
+      "name": "xhr.onload",
+      "kind": "FunctionExpression",
+      "line": 214,
+      "end_line": 222,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/core.js",
+      "sha256": "3007477eaf750ff65c9abc1d455598c7302da13f6cd1611ca0213cfbdfd2eb72",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 226,
+      "end_line": 228,
+      "parameters": [
+        "key",
+        "value"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/core.js",
+      "sha256": "3007477eaf750ff65c9abc1d455598c7302da13f6cd1611ca0213cfbdfd2eb72",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 242,
+      "end_line": 254,
+      "parameters": [
+        "data"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/core.js",
+      "sha256": "3007477eaf750ff65c9abc1d455598c7302da13f6cd1611ca0213cfbdfd2eb72",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 254,
+      "end_line": 260,
+      "parameters": [
+        "xhr",
+        "ex"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/core.js",
+      "sha256": "3007477eaf750ff65c9abc1d455598c7302da13f6cd1611ca0213cfbdfd2eb72",
+      "name": "core.json",
+      "kind": "FunctionExpression",
+      "line": 272,
+      "end_line": 274,
+      "parameters": [
+        "obj"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/core.js",
+      "sha256": "3007477eaf750ff65c9abc1d455598c7302da13f6cd1611ca0213cfbdfd2eb72",
+      "name": "core.parseJSON",
+      "kind": "FunctionExpression",
+      "line": 276,
+      "end_line": 278,
+      "parameters": [
+        "s"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/pages.js",
+      "sha256": "2575fcc4dae0609340950e356f33dbe2b8cc16254805cc533561c0fb6998616b",
+      "name": "add",
+      "kind": "FunctionExpression",
+      "line": 13,
+      "end_line": 15,
+      "parameters": [
+        "number",
+        "url"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/pages.js",
+      "sha256": "2575fcc4dae0609340950e356f33dbe2b8cc16254805cc533561c0fb6998616b",
+      "name": "deleteLast",
+      "kind": "FunctionExpression",
+      "line": 17,
+      "end_line": 19,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/pages.js",
+      "sha256": "2575fcc4dae0609340950e356f33dbe2b8cc16254805cc533561c0fb6998616b",
+      "name": "clear",
+      "kind": "FunctionExpression",
+      "line": 21,
+      "end_line": 25,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/pages.js",
+      "sha256": "2575fcc4dae0609340950e356f33dbe2b8cc16254805cc533561c0fb6998616b",
+      "name": "init",
+      "kind": "FunctionExpression",
+      "line": 28,
+      "end_line": 35,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/pages.js",
+      "sha256": "2575fcc4dae0609340950e356f33dbe2b8cc16254805cc533561c0fb6998616b",
+      "name": "linkClick",
+      "kind": "FunctionExpression",
+      "line": 37,
+      "end_line": 46,
+      "parameters": [
+        "e"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/pages.js",
+      "sha256": "2575fcc4dae0609340950e356f33dbe2b8cc16254805cc533561c0fb6998616b",
+      "name": "popState",
+      "kind": "FunctionExpression",
+      "line": 48,
+      "end_line": 75,
+      "parameters": [
+        "e"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/pages.js",
+      "sha256": "2575fcc4dae0609340950e356f33dbe2b8cc16254805cc533561c0fb6998616b",
+      "name": "change",
+      "kind": "FunctionExpression",
+      "line": 77,
+      "end_line": 130,
+      "parameters": [
+        "url",
+        "popstate",
+        "defaultIfNoExists"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/pages.js",
+      "sha256": "2575fcc4dae0609340950e356f33dbe2b8cc16254805cc533561c0fb6998616b",
+      "name": "loadFromDB",
+      "kind": "FunctionExpression",
+      "line": 132,
+      "end_line": 192,
+      "parameters": [
+        "url",
+        "parsedUrl",
+        "defaultIfNoExists"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/pages.js",
+      "sha256": "2575fcc4dae0609340950e356f33dbe2b8cc16254805cc533561c0fb6998616b",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 149,
+      "end_line": 191,
+      "parameters": [
+        "templates"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/pages.js",
+      "sha256": "2575fcc4dae0609340950e356f33dbe2b8cc16254805cc533561c0fb6998616b",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 161,
+      "end_line": 167,
+      "parameters": [
+        "rs"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/pages.js",
+      "sha256": "2575fcc4dae0609340950e356f33dbe2b8cc16254805cc533561c0fb6998616b",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 169,
+      "end_line": 174,
+      "parameters": [
+        "error"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/pages.js",
+      "sha256": "2575fcc4dae0609340950e356f33dbe2b8cc16254805cc533561c0fb6998616b",
+      "name": "loadStatic",
+      "kind": "FunctionExpression",
+      "line": 194,
+      "end_line": 200,
+      "parameters": [
+        "url",
+        "parsedUrl"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/pages.js",
+      "sha256": "2575fcc4dae0609340950e356f33dbe2b8cc16254805cc533561c0fb6998616b",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 197,
+      "end_line": 199,
+      "parameters": [
+        "data"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/pages.js",
+      "sha256": "2575fcc4dae0609340950e356f33dbe2b8cc16254805cc533561c0fb6998616b",
+      "name": "run",
+      "kind": "FunctionExpression",
+      "line": 202,
+      "end_line": 229,
+      "parameters": [
+        "url",
+        "html"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/pages.js",
+      "sha256": "2575fcc4dae0609340950e356f33dbe2b8cc16254805cc533561c0fb6998616b",
+      "name": "setTitleFromDefaultPage",
+      "kind": "FunctionExpression",
+      "line": 231,
+      "end_line": 236,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/pages.js",
+      "sha256": "2575fcc4dae0609340950e356f33dbe2b8cc16254805cc533561c0fb6998616b",
+      "name": "hide",
+      "kind": "FunctionExpression",
+      "line": 238,
+      "end_line": 253,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/pages.js",
+      "sha256": "2575fcc4dae0609340950e356f33dbe2b8cc16254805cc533561c0fb6998616b",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 250,
+      "end_line": 252,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/pages.js",
+      "sha256": "2575fcc4dae0609340950e356f33dbe2b8cc16254805cc533561c0fb6998616b",
+      "name": "show",
+      "kind": "FunctionExpression",
+      "line": 255,
+      "end_line": 284,
+      "parameters": [
+        "url"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/pages.js",
+      "sha256": "2575fcc4dae0609340950e356f33dbe2b8cc16254805cc533561c0fb6998616b",
+      "name": "after",
+      "kind": "FunctionExpression",
+      "line": 268,
+      "end_line": 278,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/pages.js",
+      "sha256": "2575fcc4dae0609340950e356f33dbe2b8cc16254805cc533561c0fb6998616b",
+      "name": "parseUrl",
+      "kind": "FunctionExpression",
+      "line": 286,
+      "end_line": 329,
+      "parameters": [
+        "url"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/pages.js",
+      "sha256": "2575fcc4dae0609340950e356f33dbe2b8cc16254805cc533561c0fb6998616b",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 297,
+      "end_line": 304,
+      "parameters": [
+        "k",
+        "param"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/pages.js",
+      "sha256": "2575fcc4dae0609340950e356f33dbe2b8cc16254805cc533561c0fb6998616b",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 310,
+      "end_line": 317,
+      "parameters": [
+        "k",
+        "param"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/pages.js",
+      "sha256": "2575fcc4dae0609340950e356f33dbe2b8cc16254805cc533561c0fb6998616b",
+      "name": "uploadForm",
+      "kind": "FunctionExpression",
+      "line": 331,
+      "end_line": 369,
+      "parameters": [
+        "form"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/pages.js",
+      "sha256": "2575fcc4dae0609340950e356f33dbe2b8cc16254805cc533561c0fb6998616b",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 363,
+      "end_line": 368,
+      "parameters": [
+        "error"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/pages.js",
+      "sha256": "2575fcc4dae0609340950e356f33dbe2b8cc16254805cc533561c0fb6998616b",
+      "name": "check",
+      "kind": "FunctionExpression",
+      "line": 371,
+      "end_line": 384,
+      "parameters": [
+        "arr"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/storage.js",
+      "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 1,
+      "end_line": 704,
+      "parameters": [
+        "storage",
+        "$",
+        "undefined"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/storage.js",
+      "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+      "name": "storage.init",
+      "kind": "FunctionExpression",
+      "line": 56,
+      "end_line": 138,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/storage.js",
+      "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 101,
+      "end_line": 124,
+      "parameters": [
+        "rs"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/storage.js",
+      "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 124,
+      "end_line": 128,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/storage.js",
+      "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 128,
+      "end_line": 132,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/storage.js",
+      "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+      "name": "storage.saveSettings",
+      "kind": "FunctionExpression",
+      "line": 140,
+      "end_line": 157,
+      "parameters": [
+        "settings"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/storage.js",
+      "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 144,
+      "end_line": 154,
+      "parameters": [
+        "name",
+        "value"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/storage.js",
+      "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+      "name": "storage.getSetting",
+      "kind": "FunctionExpression",
+      "line": 159,
+      "end_line": 181,
+      "parameters": [
+        "name"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/storage.js",
+      "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 171,
+      "end_line": 179,
+      "parameters": [
+        "rs"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/storage.js",
+      "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+      "name": "storage.savePushToken",
+      "kind": "FunctionExpression",
+      "line": 183,
+      "end_line": 203,
+      "parameters": [
+        "apnsToken",
+        "pushToken"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/storage.js",
+      "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+      "name": "storage.migrate",
+      "kind": "FunctionExpression",
+      "line": 205,
+      "end_line": 244,
+      "parameters": [
+        "dbVersion"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/storage.js",
+      "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 212,
+      "end_line": 218,
+      "parameters": [
+        "kMigration",
+        "migration"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/storage.js",
+      "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 214,
+      "end_line": 216,
+      "parameters": [
+        "kMigrationQ",
+        "migrationQ"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/storage.js",
+      "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 224,
+      "end_line": 236,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/storage.js",
+      "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 237,
+      "end_line": 239,
+      "parameters": [
+        "err"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/storage.js",
+      "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+      "name": "storage.deleteOldUsers",
+      "kind": "FunctionExpression",
+      "line": 246,
+      "end_line": 300,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/storage.js",
+      "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 257,
+      "end_line": 297,
+      "parameters": [
+        "rs"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/storage.js",
+      "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 291,
+      "end_line": 293,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/storage.js",
+      "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+      "name": "storage.update",
+      "kind": "FunctionExpression",
+      "line": 302,
+      "end_line": 374,
+      "parameters": [
+        "data"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/storage.js",
+      "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 359,
+      "end_line": 369,
+      "parameters": [
+        "name",
+        "html"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/storage.js",
+      "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 362,
+      "end_line": 367,
+      "parameters": [
+        "i",
+        "htmlPart"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/storage.js",
+      "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+      "name": "storage.updateAuthKey",
+      "kind": "FunctionExpression",
+      "line": 376,
+      "end_line": 384,
+      "parameters": [
+        "email",
+        "auth_key"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/storage.js",
+      "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+      "name": "storage.getUser",
+      "kind": "FunctionExpression",
+      "line": 386,
+      "end_line": 413,
+      "parameters": [
+        "loginEmail",
+        "byLogin"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/storage.js",
+      "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 399,
+      "end_line": 411,
+      "parameters": [
+        "rs"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/storage.js",
+      "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+      "name": "storage.setAsLoggedIn",
+      "kind": "FunctionExpression",
+      "line": 415,
+      "end_line": 428,
+      "parameters": [
+        "login"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/storage.js",
+      "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+      "name": "storage.updateUserGlobal",
+      "kind": "FunctionExpression",
+      "line": 430,
+      "end_line": 442,
+      "parameters": [
+        "id_global",
+        "data"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/storage.js",
+      "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 433,
+      "end_line": 440,
+      "parameters": [
+        "name",
+        "value"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/storage.js",
+      "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+      "name": "storage.getAuthKey",
+      "kind": "FunctionExpression",
+      "line": 444,
+      "end_line": 471,
+      "parameters": [
+        "email"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/storage.js",
+      "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 455,
+      "end_line": 466,
+      "parameters": [
+        "rs"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/storage.js",
+      "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 466,
+      "end_line": 468,
+      "parameters": [
+        "er"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/storage.js",
+      "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+      "name": "storage.getLoggedUser",
+      "kind": "FunctionExpression",
+      "line": 473,
+      "end_line": 509,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/storage.js",
+      "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 483,
+      "end_line": 504,
+      "parameters": [
+        "rs"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/storage.js",
+      "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 504,
+      "end_line": 506,
+      "parameters": [
+        "er"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/storage.js",
+      "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+      "name": "storage.logout",
+      "kind": "FunctionExpression",
+      "line": 511,
+      "end_line": 523,
+      "parameters": [
+        "email",
+        "resetPassword"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/storage.js",
+      "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+      "name": "storage.updateUserDataAndForms",
+      "kind": "FunctionExpression",
+      "line": 525,
+      "end_line": 531,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/storage.js",
+      "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+      "name": "storage.getTemplates",
+      "kind": "FunctionExpression",
+      "line": 533,
+      "end_line": 562,
+      "parameters": [
+        "login",
+        "names"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/storage.js",
+      "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 540,
+      "end_line": 542,
+      "parameters": [
+        "_",
+        "name"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/storage.js",
+      "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 549,
+      "end_line": 560,
+      "parameters": [
+        "rs"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/storage.js",
+      "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+      "name": "storage.addError",
+      "kind": "FunctionExpression",
+      "line": 568,
+      "end_line": 576,
+      "parameters": [
+        "error"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/storage.js",
+      "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+      "name": "storage.deleteError",
+      "kind": "FunctionExpression",
+      "line": 578,
+      "end_line": 583,
+      "parameters": [
+        "rowid"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/storage.js",
+      "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+      "name": "storage.getErrors",
+      "kind": "FunctionExpression",
+      "line": 585,
+      "end_line": 598,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/storage.js",
+      "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 590,
+      "end_line": 596,
+      "parameters": [
+        "rs"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/storage.js",
+      "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+      "name": "storage.sqlError",
+      "kind": "FunctionExpression",
+      "line": 601,
+      "end_line": 614,
+      "parameters": [
+        "err"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/storage.js",
+      "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+      "name": "storage.execute",
+      "kind": "FunctionExpression",
+      "line": 621,
+      "end_line": 684,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/storage.js",
+      "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 627,
+      "end_line": 671,
+      "parameters": [
+        "tx"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/storage.js",
+      "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 641,
+      "end_line": 668,
+      "parameters": [
+        "sql",
+        "params"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/storage.js",
+      "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 647,
+      "end_line": 650,
+      "parameters": [
+        "tx",
+        "rs"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/storage.js",
+      "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 652,
+      "end_line": 664,
+      "parameters": [
+        "tx",
+        "err"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/storage.js",
+      "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 673,
+      "end_line": 676,
+      "parameters": [
+        "err"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/storage.js",
+      "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 678,
+      "end_line": 680,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/storage.js",
+      "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+      "name": "storage.placeholders",
+      "kind": "FunctionExpression",
+      "line": 686,
+      "end_line": 692,
+      "parameters": [
+        "count"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/storage.js",
+      "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+      "name": "storage.splitBySize",
+      "kind": "FunctionExpression",
+      "line": 694,
+      "end_line": 703,
+      "parameters": [
+        "str",
+        "partSize"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/files.js",
+      "sha256": "f2be97eb86f37c25960bc464c8467be1819a3568ee6b098c6bb87487d4292cb1",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 1,
+      "end_line": 136,
+      "parameters": [
+        "files",
+        "$",
+        "undefined"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/files.js",
+      "sha256": "f2be97eb86f37c25960bc464c8467be1819a3568ee6b098c6bb87487d4292cb1",
+      "name": "storage.saveFile",
+      "kind": "FunctionExpression",
+      "line": 8,
+      "end_line": 47,
+      "parameters": [
+        "file",
+        "blob",
+        "isAppend"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/files.js",
+      "sha256": "f2be97eb86f37c25960bc464c8467be1819a3568ee6b098c6bb87487d4292cb1",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 20,
+      "end_line": 30,
+      "parameters": [
+        "filesystem",
+        "error"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/files.js",
+      "sha256": "f2be97eb86f37c25960bc464c8467be1819a3568ee6b098c6bb87487d4292cb1",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 21,
+      "end_line": 29,
+      "parameters": [
+        "filesystem",
+        "error"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/files.js",
+      "sha256": "f2be97eb86f37c25960bc464c8467be1819a3568ee6b098c6bb87487d4292cb1",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 22,
+      "end_line": 28,
+      "parameters": [
+        "filesystem",
+        "error"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/files.js",
+      "sha256": "f2be97eb86f37c25960bc464c8467be1819a3568ee6b098c6bb87487d4292cb1",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 23,
+      "end_line": 27,
+      "parameters": [
+        "filesystem",
+        "error"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/files.js",
+      "sha256": "f2be97eb86f37c25960bc464c8467be1819a3568ee6b098c6bb87487d4292cb1",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 35,
+      "end_line": 39,
+      "parameters": [
+        "dirEntry"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/files.js",
+      "sha256": "f2be97eb86f37c25960bc464c8467be1819a3568ee6b098c6bb87487d4292cb1",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 39,
+      "end_line": 42,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/files.js",
+      "sha256": "f2be97eb86f37c25960bc464c8467be1819a3568ee6b098c6bb87487d4292cb1",
+      "name": "storage.resolveDirAndroid",
+      "kind": "FunctionExpression",
+      "line": 49,
+      "end_line": 69,
+      "parameters": [
+        "path",
+        "deferred",
+        "fileName",
+        "fileExtension",
+        "blob",
+        "isAppend",
+        "onError",
+        "dontAddDir"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/files.js",
+      "sha256": "f2be97eb86f37c25960bc464c8467be1819a3568ee6b098c6bb87487d4292cb1",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 51,
+      "end_line": 66,
+      "parameters": [
+        "dirEntry"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/files.js",
+      "sha256": "f2be97eb86f37c25960bc464c8467be1819a3568ee6b098c6bb87487d4292cb1",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 57,
+      "end_line": 61,
+      "parameters": [
+        "dirEntry"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/files.js",
+      "sha256": "f2be97eb86f37c25960bc464c8467be1819a3568ee6b098c6bb87487d4292cb1",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 61,
+      "end_line": 63,
+      "parameters": [
+        "error"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/files.js",
+      "sha256": "f2be97eb86f37c25960bc464c8467be1819a3568ee6b098c6bb87487d4292cb1",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 66,
+      "end_line": 68,
+      "parameters": [
+        "error"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/files.js",
+      "sha256": "f2be97eb86f37c25960bc464c8467be1819a3568ee6b098c6bb87487d4292cb1",
+      "name": "storage.createFile",
+      "kind": "FunctionExpression",
+      "line": 71,
+      "end_line": 80,
+      "parameters": [
+        "dirEntry",
+        "fileName",
+        "fileExtension",
+        "blob",
+        "isAppend"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/files.js",
+      "sha256": "f2be97eb86f37c25960bc464c8467be1819a3568ee6b098c6bb87487d4292cb1",
+      "name": "storage.FindFreeFileName",
+      "kind": "FunctionExpression",
+      "line": 82,
+      "end_line": 96,
+      "parameters": [
+        "deferred",
+        "dirEntry",
+        "fileName",
+        "fileExtension",
+        "blob",
+        "isAppend",
+        "i"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/files.js",
+      "sha256": "f2be97eb86f37c25960bc464c8467be1819a3568ee6b098c6bb87487d4292cb1",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 88,
+      "end_line": 93,
+      "parameters": [
+        "fileEntry"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/files.js",
+      "sha256": "f2be97eb86f37c25960bc464c8467be1819a3568ee6b098c6bb87487d4292cb1",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 93,
+      "end_line": 95,
+      "parameters": [
+        "e"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/files.js",
+      "sha256": "f2be97eb86f37c25960bc464c8467be1819a3568ee6b098c6bb87487d4292cb1",
+      "name": "storage.writeFile",
+      "kind": "FunctionExpression",
+      "line": 98,
+      "end_line": 134,
+      "parameters": [
+        "fileEntry",
+        "blob",
+        "isAppend"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/files.js",
+      "sha256": "f2be97eb86f37c25960bc464c8467be1819a3568ee6b098c6bb87487d4292cb1",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 104,
+      "end_line": 131,
+      "parameters": [
+        "fileWriter"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/files.js",
+      "sha256": "f2be97eb86f37c25960bc464c8467be1819a3568ee6b098c6bb87487d4292cb1",
+      "name": "fileWriter.onwriteend",
+      "kind": "FunctionExpression",
+      "line": 106,
+      "end_line": 112,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/files.js",
+      "sha256": "f2be97eb86f37c25960bc464c8467be1819a3568ee6b098c6bb87487d4292cb1",
+      "name": "fileWriter.onerror",
+      "kind": "FunctionExpression",
+      "line": 114,
+      "end_line": 117,
+      "parameters": [
+        "e"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/push.js",
+      "sha256": "5ad362f08c2591cafdd9ade5f265d0bd22e19553542547cab47468520a5c483a",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 1,
+      "end_line": 191,
+      "parameters": [
+        "push",
+        "$",
+        "undefined"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/push.js",
+      "sha256": "5ad362f08c2591cafdd9ade5f265d0bd22e19553542547cab47468520a5c483a",
+      "name": "push.init",
+      "kind": "FunctionExpression",
+      "line": 5,
+      "end_line": 16,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/push.js",
+      "sha256": "5ad362f08c2591cafdd9ade5f265d0bd22e19553542547cab47468520a5c483a",
+      "name": "push.initGetToken",
+      "kind": "FunctionExpression",
+      "line": 18,
+      "end_line": 42,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/push.js",
+      "sha256": "5ad362f08c2591cafdd9ade5f265d0bd22e19553542547cab47468520a5c483a",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 21,
+      "end_line": 29,
+      "parameters": [
+        "hasPermission"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/push.js",
+      "sha256": "5ad362f08c2591cafdd9ade5f265d0bd22e19553542547cab47468520a5c483a",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 23,
+      "end_line": 27,
+      "parameters": [
+        "hasPermission"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/push.js",
+      "sha256": "5ad362f08c2591cafdd9ade5f265d0bd22e19553542547cab47468520a5c483a",
+      "name": "push.registration",
+      "kind": "FunctionExpression",
+      "line": 44,
+      "end_line": 55,
+      "parameters": [
+        "token"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/push.js",
+      "sha256": "5ad362f08c2591cafdd9ade5f265d0bd22e19553542547cab47468520a5c483a",
+      "name": "push.registrationError",
+      "kind": "FunctionExpression",
+      "line": 57,
+      "end_line": 59,
+      "parameters": [
+        "error"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/push.js",
+      "sha256": "5ad362f08c2591cafdd9ade5f265d0bd22e19553542547cab47468520a5c483a",
+      "name": "push.onClickNotification",
+      "kind": "FunctionExpression",
+      "line": 78,
+      "end_line": 131,
+      "parameters": [
+        "payload"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/push.js",
+      "sha256": "5ad362f08c2591cafdd9ade5f265d0bd22e19553542547cab47468520a5c483a",
+      "name": "push.notificationError",
+      "kind": "FunctionExpression",
+      "line": 185,
+      "end_line": 188,
+      "parameters": [
+        "error"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/templateApp.js",
+      "sha256": "a23caef386c7a1812b462242267afb9807eb3e3348e4fb873805992921baf195",
+      "name": "init",
+      "kind": "FunctionExpression",
+      "line": 2,
+      "end_line": 7,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/templateApp.js",
+      "sha256": "a23caef386c7a1812b462242267afb9807eb3e3348e4fb873805992921baf195",
+      "name": "toastrInit",
+      "kind": "FunctionExpression",
+      "line": 9,
+      "end_line": 24,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/templateApp.js",
+      "sha256": "a23caef386c7a1812b462242267afb9807eb3e3348e4fb873805992921baf195",
+      "name": "jsReplace",
+      "kind": "FunctionExpression",
+      "line": 26,
+      "end_line": 33,
+      "parameters": [
+        "html"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/templateApp.js",
+      "sha256": "a23caef386c7a1812b462242267afb9807eb3e3348e4fb873805992921baf195",
+      "name": "cssReplace",
+      "kind": "FunctionExpression",
+      "line": 35,
+      "end_line": 37,
+      "parameters": [
+        "html"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/templateApp.js",
+      "sha256": "a23caef386c7a1812b462242267afb9807eb3e3348e4fb873805992921baf195",
+      "name": "navReplace",
+      "kind": "FunctionExpression",
+      "line": 39,
+      "end_line": 54,
+      "parameters": [
+        "html"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/templateApp.js",
+      "sha256": "a23caef386c7a1812b462242267afb9807eb3e3348e4fb873805992921baf195",
+      "name": "show",
+      "kind": "FunctionExpression",
+      "line": 57,
+      "end_line": 59,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/templateApp.js",
+      "sha256": "a23caef386c7a1812b462242267afb9807eb3e3348e4fb873805992921baf195",
+      "name": "hide",
+      "kind": "FunctionExpression",
+      "line": 61,
+      "end_line": 63,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/templateApp.js",
+      "sha256": "a23caef386c7a1812b462242267afb9807eb3e3348e4fb873805992921baf195",
+      "name": "start",
+      "kind": "FunctionExpression",
+      "line": 67,
+      "end_line": 75,
+      "parameters": [
+        "text"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/templateApp.js",
+      "sha256": "a23caef386c7a1812b462242267afb9807eb3e3348e4fb873805992921baf195",
+      "name": "end",
+      "kind": "FunctionExpression",
+      "line": 77,
+      "end_line": 81,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/templateApp.js",
+      "sha256": "a23caef386c7a1812b462242267afb9807eb3e3348e4fb873805992921baf195",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 78,
+      "end_line": 80,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/templateApp.js",
+      "sha256": "a23caef386c7a1812b462242267afb9807eb3e3348e4fb873805992921baf195",
+      "name": "init",
+      "kind": "FunctionExpression",
+      "line": 88,
+      "end_line": 93,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/templateApp.js",
+      "sha256": "a23caef386c7a1812b462242267afb9807eb3e3348e4fb873805992921baf195",
+      "name": "touchStart",
+      "kind": "FunctionExpression",
+      "line": 95,
+      "end_line": 105,
+      "parameters": [
+        "e"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/templateApp.js",
+      "sha256": "a23caef386c7a1812b462242267afb9807eb3e3348e4fb873805992921baf195",
+      "name": "touchEnd",
+      "kind": "FunctionExpression",
+      "line": 107,
+      "end_line": 119,
+      "parameters": [
+        "e"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/templateApp.js",
+      "sha256": "a23caef386c7a1812b462242267afb9807eb3e3348e4fb873805992921baf195",
+      "name": "init",
+      "kind": "FunctionExpression",
+      "line": 127,
+      "end_line": 146,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/templateApp.js",
+      "sha256": "a23caef386c7a1812b462242267afb9807eb3e3348e4fb873805992921baf195",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 129,
+      "end_line": 144,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/templateApp.js",
+      "sha256": "a23caef386c7a1812b462242267afb9807eb3e3348e4fb873805992921baf195",
+      "name": "show",
+      "kind": "FunctionExpression",
+      "line": 148,
+      "end_line": 163,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/templateApp.js",
+      "sha256": "a23caef386c7a1812b462242267afb9807eb3e3348e4fb873805992921baf195",
+      "name": "init",
+      "kind": "FunctionExpression",
+      "line": 167,
+      "end_line": 177,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/templateApp.js",
+      "sha256": "a23caef386c7a1812b462242267afb9807eb3e3348e4fb873805992921baf195",
+      "name": "<anonymous>",
+      "kind": "FunctionExpression",
+      "line": 172,
+      "end_line": 174,
+      "parameters": [],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    },
+    {
+      "apk_member": "assets/www/js/templateApp.js",
+      "sha256": "a23caef386c7a1812b462242267afb9807eb3e3348e4fb873805992921baf195",
+      "name": "onChange",
+      "kind": "FunctionExpression",
+      "line": 179,
+      "end_line": 192,
+      "parameters": [
+        "zoom"
+      ],
+      "scope": "Static declaration/callback only; not runtime execution or complete server-delivered application"
+    }
+  ]
+}

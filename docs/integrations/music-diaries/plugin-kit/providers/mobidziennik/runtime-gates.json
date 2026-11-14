@@ -1,0 +1,101 @@
+{
+  "scope": "Exact remaininggates; do not blockindependentknownshellreadwork but do not enable guessedacademicwrites",
+  "gates": [
+    {
+      "id": "MD-G01",
+      "area": "Liveauth/origin",
+      "acceptance": "Verify legitimateSiberiadeviceidentity,centraluserresponse,returned sync_url,approval andraw/opaquecredential branches",
+      "related_reference": "MD-AUTH-LOGIN",
+      "status": "open",
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-G02",
+      "area": "Returnedtemplate acquisition",
+      "acceptance": "Readbootstrap+captureoriginaljs/nav/css/HTML withhashes and owner/year/moduleprovenance",
+      "related_reference": "MD-SYNC",
+      "status": "open",
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-G03",
+      "area": "Statistics",
+      "acceptance": "Recover schooltemplate/calculator orserverstatisticsrequest anddenominator/policy; noformula proved",
+      "related_reference": "MD-UI-029",
+      "status": "open",
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-G04",
+      "area": "e-Usprawiedliwienia",
+      "acceptance": "Recoverexactattendancepanelhandler/controller/body,role/dates/lessons/status/notification",
+      "related_reference": "MD-UI-031",
+      "status": "open",
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-G05",
+      "area": "Messaging",
+      "acceptance": "Recoverrecipientlists/folders/pagination/compose/reply/read/delete/attachments independentactions",
+      "related_reference": "MD-UI-032",
+      "status": "open",
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-G06",
+      "area": "Homework",
+      "acceptance": "Recoverstudent/parentread vswrite,text/fileanswer,archive/resubmit policy",
+      "related_reference": "MD-UI-034",
+      "status": "open",
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-G07",
+      "area": "Files",
+      "acceptance": "Recoverbinarymultipart parts orsigneddownload auth/MIME/size limits; blobwrapper alone insufficient",
+      "related_reference": "MD-FORM-BLOB",
+      "status": "open",
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-G08",
+      "area": "Businessack/outbox",
+      "acceptance": "Requireconcretecontrollerbusinessreceipt,uncertainreconciliation anddurablequeue checkpoint",
+      "related_reference": "MD-SYNC-OUTBOX",
+      "status": "open",
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-G09",
+      "area": "Pushdeployment",
+      "acceptance": "OwnprojectFCM/APNs backendregistration compatibility anddisablecredentialownership",
+      "related_reference": "MD-PUSH-REGISTER",
+      "status": "open",
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-G10",
+      "area": "Year/role/schoolvariants",
+      "acceptance": "OneAPKbuilddoesnotproveotherservertemplates/roles; keep versionedmodulecapabilities",
+      "related_reference": "MD-SYNC",
+      "status": "open",
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-G11",
+      "area": "Passwordchange",
+      "acceptance": "Recoverzmianahasla formcontroller andresponse before enabling remotechange",
+      "related_reference": "MD-UI-006",
+      "status": "open",
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-G12",
+      "area": "Templateparser",
+      "acceptance": "Independentlyparsecaptureddata without executingremoteJS inhost; unknowntemplate versions failgracefully",
+      "related_reference": "MD-G02",
+      "status": "open",
+      "runtime_verified": false
+    }
+  ]
+}

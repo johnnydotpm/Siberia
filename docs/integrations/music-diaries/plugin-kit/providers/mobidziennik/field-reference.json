@@ -1,0 +1,545 @@
+{
+  "schema_version": 1,
+  "notice": "Local schema/consumer fields only, not invented academic DTOs. SQL fields have no strictdeclaredJSONtypes.",
+  "field_count": 36,
+  "fields": [
+    {
+      "object": "stored/user",
+      "field": "login",
+      "meaning": "selected school/account identifier; opaque",
+      "observed_default_or_transform": "direct",
+      "wire_type": "not a complete strict server schema; original SQL untyped and JS consumer-specific",
+      "integration_rule": "Owner+tenant-qualified identity; not globally unique",
+      "evidence": [
+        "MD-F21",
+        "MD-F28",
+        "MD-F42",
+        "MD-F45",
+        "MD-F47",
+        "MD-F50"
+      ]
+    },
+    {
+      "object": "stored/user",
+      "field": "id_global",
+      "meaning": "global account owner identifier",
+      "observed_default_or_transform": "direct",
+      "wire_type": "not a complete strict server schema; original SQL untyped and JS consumer-specific",
+      "integration_rule": "Do not confuse pupil/schoollogin/globalowner",
+      "evidence": [
+        "MD-F21",
+        "MD-F28",
+        "MD-F42",
+        "MD-F45",
+        "MD-F47",
+        "MD-F50"
+      ]
+    },
+    {
+      "object": "stored/user",
+      "field": "auth_key",
+      "meaning": "authorization credential",
+      "observed_default_or_transform": "conditional update; existing key may be preserved",
+      "wire_type": "not a complete strict server schema; original SQL untyped and JS consumer-specific",
+      "integration_rule": "Send as ciasteczko_autoryzacji formfield, not assumed HTTPcookie",
+      "evidence": [
+        "MD-F21",
+        "MD-F28",
+        "MD-F42",
+        "MD-F45",
+        "MD-F47",
+        "MD-F50"
+      ]
+    },
+    {
+      "object": "stored/user",
+      "field": "email",
+      "meaning": "global email/login",
+      "observed_default_or_transform": "direct",
+      "wire_type": "not a complete strict server schema; original SQL untyped and JS consumer-specific",
+      "integration_rule": "Original shares auth key by email; namespace morestrongly",
+      "evidence": [
+        "MD-F21",
+        "MD-F28",
+        "MD-F42",
+        "MD-F45",
+        "MD-F47",
+        "MD-F50"
+      ]
+    },
+    {
+      "object": "stored/user",
+      "field": "school_year",
+      "meaning": "school year/context",
+      "observed_default_or_transform": "direct",
+      "wire_type": "not a complete strict server schema; original SQL untyped and JS consumer-specific",
+      "integration_rule": "Scope snapshots; sorting original row selection uses school_year DESC",
+      "evidence": [
+        "MD-F21",
+        "MD-F28",
+        "MD-F42",
+        "MD-F45",
+        "MD-F47",
+        "MD-F50"
+      ]
+    },
+    {
+      "object": "stored/user",
+      "field": "password",
+      "meaning": "retained rawpassword",
+      "observed_default_or_transform": "entered text orserverobjectcopied",
+      "wire_type": "not a complete strict server schema; original SQL untyped and JS consumer-specific",
+      "integration_rule": "Secret-store only; do not persist in ordinary snapshot",
+      "evidence": [
+        "MD-F21",
+        "MD-F28",
+        "MD-F42",
+        "MD-F45",
+        "MD-F47",
+        "MD-F50"
+      ]
+    },
+    {
+      "object": "stored/user",
+      "field": "password_hash",
+      "meaning": "opaque backendcredential",
+      "observed_default_or_transform": "emptyinitial login; serverrotationlater",
+      "wire_type": "not a complete strict server schema; original SQL untyped and JS consumer-specific",
+      "integration_rule": "No algorithm inferred; not MD5 proof",
+      "evidence": [
+        "MD-F21",
+        "MD-F28",
+        "MD-F42",
+        "MD-F45",
+        "MD-F47",
+        "MD-F50"
+      ]
+    },
+    {
+      "object": "stored/user",
+      "field": "sync_url",
+      "meaning": "school/backend endpoint URL",
+      "observed_default_or_transform": "direct",
+      "wire_type": "not a complete strict server schema; original SQL untyped and JS consumer-specific",
+      "integration_rule": "Bind legitimate origin to owner; no arbitrary token-forwarding",
+      "evidence": [
+        "MD-F21",
+        "MD-F28",
+        "MD-F42",
+        "MD-F45",
+        "MD-F47",
+        "MD-F50"
+      ]
+    },
+    {
+      "object": "stored/user",
+      "field": "type",
+      "meaning": "role code",
+      "observed_default_or_transform": "director1,teacher2,parent3,student4,outside5",
+      "wire_type": "not a complete strict server schema; original SQL untyped and JS consumer-specific",
+      "integration_rule": "Rawcode+capabilities; unknown retains value",
+      "evidence": [
+        "MD-F21",
+        "MD-F28",
+        "MD-F42",
+        "MD-F45",
+        "MD-F47",
+        "MD-F50"
+      ]
+    },
+    {
+      "object": "stored/user",
+      "field": "main",
+      "meaning": "main account marker",
+      "observed_default_or_transform": "direct",
+      "wire_type": "not a complete strict server schema; original SQL untyped and JS consumer-specific",
+      "integration_rule": "Original sort main DESC",
+      "evidence": [
+        "MD-F21",
+        "MD-F28",
+        "MD-F42",
+        "MD-F45",
+        "MD-F47",
+        "MD-F50"
+      ]
+    },
+    {
+      "object": "stored/user",
+      "field": "change_password",
+      "meaning": "forcedpassword-change marker",
+      "observed_default_or_transform": "falsy=>0; routechecksparseInt",
+      "wire_type": "not a complete strict server schema; original SQL untyped and JS consumer-specific",
+      "integration_rule": "Own credentialflow remainsunrecovered remote template",
+      "evidence": [
+        "MD-F21",
+        "MD-F28",
+        "MD-F42",
+        "MD-F45",
+        "MD-F47",
+        "MD-F50"
+      ]
+    },
+    {
+      "object": "stored/user",
+      "field": "sync_time",
+      "meaning": "local lastsync timestamp",
+      "observed_default_or_transform": "moment YYYY-MM-DD HH:mm:ss",
+      "wire_type": "not a complete strict server schema; original SQL untyped and JS consumer-specific",
+      "integration_rule": "Not a recovered server cursor",
+      "evidence": [
+        "MD-F21",
+        "MD-F28",
+        "MD-F42",
+        "MD-F45",
+        "MD-F47",
+        "MD-F50"
+      ]
+    },
+    {
+      "object": "stored/user",
+      "field": "logged_in",
+      "meaning": "local active flag",
+      "observed_default_or_transform": "strings t/f",
+      "wire_type": "not a complete strict server schema; original SQL untyped and JS consumer-specific",
+      "integration_rule": "Localonly; not backendpermission",
+      "evidence": [
+        "MD-F21",
+        "MD-F28",
+        "MD-F42",
+        "MD-F45",
+        "MD-F47",
+        "MD-F50"
+      ]
+    },
+    {
+      "object": "stored/user",
+      "field": "data",
+      "meaning": "pendinglessonqueue map",
+      "observed_default_or_transform": "JSONparse onrestore; frequently reset{}",
+      "wire_type": "not a complete strict server schema; original SQL untyped and JS consumer-specific",
+      "integration_rule": "Use durable versionedoutbox instead",
+      "evidence": [
+        "MD-F21",
+        "MD-F28",
+        "MD-F42",
+        "MD-F45",
+        "MD-F47",
+        "MD-F50"
+      ]
+    },
+    {
+      "object": "stored/user",
+      "field": "forms",
+      "meaning": "pendinggenericforms map",
+      "observed_default_or_transform": "JSONparse onrestore; frequently reset{}",
+      "wire_type": "not a complete strict server schema; original SQL untyped and JS consumer-specific",
+      "integration_rule": "Preserve peroperationidentity uncertainstate",
+      "evidence": [
+        "MD-F21",
+        "MD-F28",
+        "MD-F42",
+        "MD-F45",
+        "MD-F47",
+        "MD-F50"
+      ]
+    },
+    {
+      "object": "stored/user",
+      "field": "push_token_hash",
+      "meaning": "backendnotification disable hash",
+      "observed_default_or_transform": "falsy=>null",
+      "wire_type": "not a complete strict server schema; original SQL untyped and JS consumer-specific",
+      "integration_rule": "Reusable secret; not caller-generateddigest",
+      "evidence": [
+        "MD-F21",
+        "MD-F28",
+        "MD-F42",
+        "MD-F45",
+        "MD-F47",
+        "MD-F50"
+      ]
+    },
+    {
+      "object": "stored/user",
+      "field": "auth_check",
+      "meaning": "local lock requirement flag",
+      "observed_default_or_transform": "undefined=>0; biometriccompare==1",
+      "wire_type": "not a complete strict server schema; original SQL untyped and JS consumer-specific",
+      "integration_rule": "Notproofofdevicebackendapproval",
+      "evidence": [
+        "MD-F21",
+        "MD-F28",
+        "MD-F42",
+        "MD-F45",
+        "MD-F47",
+        "MD-F50"
+      ]
+    },
+    {
+      "object": "sync",
+      "field": "user",
+      "meaning": "replaces current session object",
+      "wire_type": "consumer observation only; must validate per real fixture",
+      "evidence": [
+        "MD-F04",
+        "MD-F12",
+        "MD-F25",
+        "MD-F26",
+        "MD-F28",
+        "MD-F36"
+      ]
+    },
+    {
+      "object": "sync",
+      "field": "templates",
+      "meaning": "map name→HTML/CSS/JS string; replace all cachedtemplates for selectedlogin",
+      "wire_type": "consumer observation only; must validate per real fixture",
+      "evidence": [
+        "MD-F04",
+        "MD-F12",
+        "MD-F25",
+        "MD-F26",
+        "MD-F28",
+        "MD-F36"
+      ]
+    },
+    {
+      "object": "sync",
+      "field": "error",
+      "meaning": "optional businesserrorobject",
+      "wire_type": "consumer observation only; must validate per real fixture",
+      "evidence": [
+        "MD-F04",
+        "MD-F12",
+        "MD-F25",
+        "MD-F26",
+        "MD-F28",
+        "MD-F36"
+      ]
+    },
+    {
+      "object": "error",
+      "field": "type",
+      "meaning": "provider errorclassification",
+      "wire_type": "consumer observation only; must validate per real fixture",
+      "evidence": [
+        "MD-F04",
+        "MD-F12",
+        "MD-F25",
+        "MD-F26",
+        "MD-F28",
+        "MD-F36"
+      ]
+    },
+    {
+      "object": "error",
+      "field": "message",
+      "meaning": "provider message; original sometimes checks.length",
+      "wire_type": "consumer observation only; must validate per real fixture",
+      "evidence": [
+        "MD-F04",
+        "MD-F12",
+        "MD-F25",
+        "MD-F26",
+        "MD-F28",
+        "MD-F36"
+      ]
+    },
+    {
+      "object": "error",
+      "field": "logout",
+      "meaning": "truthyflag clearlocalpassword session",
+      "wire_type": "consumer observation only; must validate per real fixture",
+      "evidence": [
+        "MD-F04",
+        "MD-F12",
+        "MD-F25",
+        "MD-F26",
+        "MD-F28",
+        "MD-F36"
+      ]
+    },
+    {
+      "object": "error",
+      "field": "unauthorized",
+      "meaning": "truthyflag deviceauthorization transition",
+      "wire_type": "consumer observation only; must validate per real fixture",
+      "evidence": [
+        "MD-F04",
+        "MD-F12",
+        "MD-F25",
+        "MD-F26",
+        "MD-F28",
+        "MD-F36"
+      ]
+    },
+    {
+      "object": "user",
+      "field": "password_hash_refresh",
+      "meaning": "truthyflag allowscredentialrotation afterqueuedpush",
+      "wire_type": "consumer observation only; must validate per real fixture",
+      "evidence": [
+        "MD-F04",
+        "MD-F12",
+        "MD-F25",
+        "MD-F26",
+        "MD-F28",
+        "MD-F36"
+      ]
+    },
+    {
+      "object": "user",
+      "field": "notification",
+      "meaning": "optionaltoast message",
+      "wire_type": "consumer observation only; must validate per real fixture",
+      "evidence": [
+        "MD-F04",
+        "MD-F12",
+        "MD-F25",
+        "MD-F26",
+        "MD-F28",
+        "MD-F36"
+      ]
+    },
+    {
+      "object": "reset",
+      "field": "status",
+      "meaning": "truthysuccess",
+      "wire_type": "consumer observation only; must validate per real fixture",
+      "evidence": [
+        "MD-F04",
+        "MD-F12",
+        "MD-F25",
+        "MD-F26",
+        "MD-F28",
+        "MD-F36"
+      ]
+    },
+    {
+      "object": "reset",
+      "field": "komunikat",
+      "meaning": "providerusermessage",
+      "wire_type": "consumer observation only; must validate per real fixture",
+      "evidence": [
+        "MD-F04",
+        "MD-F12",
+        "MD-F25",
+        "MD-F26",
+        "MD-F28",
+        "MD-F36"
+      ]
+    },
+    {
+      "object": "form-entry",
+      "field": "name",
+      "meaning": "queuegroup/formidentity",
+      "wire_type": "consumer observation only; must validate per real fixture",
+      "evidence": [
+        "MD-F04",
+        "MD-F12",
+        "MD-F25",
+        "MD-F26",
+        "MD-F28",
+        "MD-F36"
+      ]
+    },
+    {
+      "object": "form-entry",
+      "field": "kontroler",
+      "meaning": "opaque remotecontroller identity; falseallowed sentinel",
+      "wire_type": "consumer observation only; must validate per real fixture",
+      "evidence": [
+        "MD-F04",
+        "MD-F12",
+        "MD-F25",
+        "MD-F26",
+        "MD-F28",
+        "MD-F36"
+      ]
+    },
+    {
+      "object": "form-entry",
+      "field": "get",
+      "meaning": "opaque controllerGETargumentmap—not HTTPmethod guarantee",
+      "wire_type": "consumer observation only; must validate per real fixture",
+      "evidence": [
+        "MD-F04",
+        "MD-F12",
+        "MD-F25",
+        "MD-F26",
+        "MD-F28",
+        "MD-F36"
+      ]
+    },
+    {
+      "object": "form-entry",
+      "field": "post",
+      "meaning": "opaque controllerPOSTpayload—maystring/map; no complete schema",
+      "wire_type": "consumer observation only; must validate per real fixture",
+      "evidence": [
+        "MD-F04",
+        "MD-F12",
+        "MD-F25",
+        "MD-F26",
+        "MD-F28",
+        "MD-F36"
+      ]
+    },
+    {
+      "object": "device",
+      "field": "pushRegistrationId",
+      "meaning": "FCM token whendefaultdeviceassembly",
+      "wire_type": "consumer observation only; must validate per real fixture",
+      "evidence": [
+        "MD-F04",
+        "MD-F12",
+        "MD-F25",
+        "MD-F26",
+        "MD-F28",
+        "MD-F36"
+      ]
+    },
+    {
+      "object": "device",
+      "field": "apnsToken",
+      "meaning": "APNsfallback whennoFCM token",
+      "wire_type": "consumer observation only; must validate per real fixture",
+      "evidence": [
+        "MD-F04",
+        "MD-F12",
+        "MD-F25",
+        "MD-F26",
+        "MD-F28",
+        "MD-F36"
+      ]
+    },
+    {
+      "object": "device",
+      "field": "appVersion",
+      "meaning": "BuildInfo.version ifCordova",
+      "wire_type": "consumer observation only; must validate per real fixture",
+      "evidence": [
+        "MD-F04",
+        "MD-F12",
+        "MD-F25",
+        "MD-F26",
+        "MD-F28",
+        "MD-F36"
+      ]
+    },
+    {
+      "object": "device",
+      "field": "platform",
+      "meaning": "Cordova platform or literalApp browser fallback",
+      "wire_type": "consumer observation only; must validate per real fixture",
+      "evidence": [
+        "MD-F04",
+        "MD-F12",
+        "MD-F25",
+        "MD-F26",
+        "MD-F28",
+        "MD-F36"
+      ]
+    }
+  ]
+}

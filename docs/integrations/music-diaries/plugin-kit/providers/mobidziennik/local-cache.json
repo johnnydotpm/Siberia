@@ -1,0 +1,53 @@
+{
+  "schema_version": 4,
+  "database": "mobiDziennikWebview.db",
+  "tables": {
+    "settings": [
+      "name",
+      "value"
+    ],
+    "users": [
+      "login",
+      "id_global",
+      "auth_key",
+      "email",
+      "school_year",
+      "password",
+      "sync_url",
+      "type",
+      "main",
+      "change_password",
+      "sync_time",
+      "logged_in",
+      "data",
+      "forms",
+      "password_hash",
+      "push_token_hash",
+      "auth_check"
+    ],
+    "templates": [
+      "login",
+      "name",
+      "html"
+    ],
+    "errors": [
+      "login",
+      "error",
+      "logs"
+    ]
+  },
+  "storage_types": "Original SQL columns have no explicit types; do not invent strict wire nullability from schema.",
+  "migrations": {
+    "1": "create settings/users/errors/templates + indexes",
+    "2": "drop templates_unique_idx",
+    "3": "add password_hash",
+    "4": "add push_token_hash andauth_check"
+  },
+  "warnings": [
+    "Indexname users_unique_idx reused for errors with IFNOTEXISTS, not proof errors unique constraint exists",
+    "Templates chunk size1,000,000JSUTF16units; reassembly query hasnoORDERBY",
+    "Localusers.login-only scope shouldbequalifiedbyprovider/server/owner/year inhost",
+    "Rawpassword/auth_key/hash aresecretmaterial notnormalizedsnapshot fields",
+    "Logoutretainsauthkey/templates; inactivecleanup deletesusers only"
+  ]
+}

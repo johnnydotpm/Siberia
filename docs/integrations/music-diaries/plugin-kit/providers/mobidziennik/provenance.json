@@ -1,0 +1,112 @@
+{
+  "original": {
+    "filename": "mobiDziennik_12.13_APKPure.xapk",
+    "bytes": 30594980,
+    "sha256": "9664525525b5835f38af086a6c86da46e3f9404a6fde3f49c6ad266668d9bc79"
+  },
+  "base_apk": {
+    "member": "pl.mobidziennik.web.apk",
+    "bytes": 27731757,
+    "sha256": "677fa286257c12304b4ced3c3810639424d90b79b5e637b35968dd55d26b2896"
+  },
+  "identity": {
+    "package_name": "pl.mobidziennik.web",
+    "version_name": "12.13",
+    "version_code": "121300",
+    "min_sdk": "24",
+    "target_sdk": "35",
+    "class_count": 13490,
+    "resource_count": 653
+  },
+  "REA_package_evidence_id": "ev_013a8a7a2d003b9995af861fe7bcd5224d34c02567e877bc32725910c73bcb06",
+  "REA_entrypoint_class_evidence_id": "ev_37673c51c18e0f23ba977247c9dc82a6e027cc81acc07b826038cad1a554a3b7",
+  "REA_entrypoint_method_evidence_id": "ev_546a57086d709641ee5d9007fd1ebb0c9d6b034330e7254b82d69cd149eb042a",
+  "first_party_source_members": [
+    {
+      "member": "assets/www/js/app.js",
+      "bytes": 43213,
+      "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff"
+    },
+    {
+      "member": "assets/www/js/core.js",
+      "bytes": 9490,
+      "sha256": "3007477eaf750ff65c9abc1d455598c7302da13f6cd1611ca0213cfbdfd2eb72"
+    },
+    {
+      "member": "assets/www/js/storage.js",
+      "bytes": 24365,
+      "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9"
+    },
+    {
+      "member": "assets/www/js/pages.js",
+      "bytes": 12593,
+      "sha256": "2575fcc4dae0609340950e356f33dbe2b8cc16254805cc533561c0fb6998616b"
+    },
+    {
+      "member": "assets/www/js/files.js",
+      "bytes": 5662,
+      "sha256": "f2be97eb86f37c25960bc464c8467be1819a3568ee6b098c6bb87487d4292cb1"
+    },
+    {
+      "member": "assets/www/js/push.js",
+      "bytes": 6499,
+      "sha256": "5ad362f08c2591cafdd9ade5f265d0bd22e19553542547cab47468520a5c483a"
+    },
+    {
+      "member": "assets/www/js/templateApp.js",
+      "bytes": 6075,
+      "sha256": "a23caef386c7a1812b462242267afb9807eb3e3348e4fb873805992921baf195"
+    },
+    {
+      "member": "assets/www/js/form.js",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "member": "assets/www/login.html",
+      "bytes": 3202,
+      "sha256": "948bc0e752ed15b678d391b29da4123ab8f2a0d738552f4059536ddd1814ce57"
+    },
+    {
+      "member": "assets/www/reset-password.html",
+      "bytes": 1105,
+      "sha256": "2b4db2009f0beacf8213e38d0164ac77771cc0bd6da1b96bc058ff07ac416a46"
+    },
+    {
+      "member": "assets/www/device-auth.html",
+      "bytes": 2403,
+      "sha256": "b66d8facb36d843e91a82478bb01371d7f38301ee4d1593b6368035ade935ffd"
+    },
+    {
+      "member": "assets/www/index.html",
+      "bytes": 4504,
+      "sha256": "b0dd15c850522658b3cb8f9d16f387a621db7b4dd53a5c0150d71f82a906a6c4"
+    },
+    {
+      "member": "assets/www/form.html",
+      "bytes": 6987,
+      "sha256": "9a7e9af809c8b3eea913ad114fd42c6f8e0156e0dd1f07eff6eff5fa768e9692"
+    },
+    {
+      "member": "assets/www/temp.html",
+      "bytes": 8739,
+      "sha256": "9cf95be249bc16d9b70dabf60ecf8a66ece966fcc5678d2c8068de1989ea134a"
+    }
+  ],
+  "coverage_boundary": {
+    "all_apk_members_inspected_for_hidden_templates": 653,
+    "no_school_sqlite_or_grade_attendance_template_files_found": true,
+    "form_js_bytes": 0,
+    "note": "form.html/temp.html contain demo labels/testmarkup, not enough to recover concrete academic controller contracts."
+  },
+  "runtime": "Cordova; readable JavaScript bootstrap plus server-supplied template code",
+  "tools": "REA6.3.0 CLI/JADXheadless0.7.1; Python ZIP/UTF8/JSON inspection; no application entrypoint executed",
+  "excluded_from_git": [
+    "original XAPK/APK",
+    "full recovered scripts",
+    "SDKdecompilation",
+    "real accounts",
+    "credentials",
+    "runtime templates not supplied"
+  ]
+}

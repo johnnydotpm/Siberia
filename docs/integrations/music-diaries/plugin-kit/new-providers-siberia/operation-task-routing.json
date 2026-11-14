@@ -1,0 +1,1131 @@
+{
+  "schema_version": 1,
+  "purpose": "Documentation task assignment for provider operations/features; not an executable plugin definition",
+  "source_baseline": "eb7a4d566f449ebcb2e8c3bce62721c50beb7c7c",
+  "operation_records": 28,
+  "feature_records": 50,
+  "feature_inventory_status": {
+    "mobidziennik": {
+      "feature_rows": 50,
+      "source_file": "features.json"
+    },
+    "prymus": "Provider feature file not yet present at routing generation; operation routing complete."
+  },
+  "operations": [
+    {
+      "provider": "mobidziennik",
+      "operation_id": "MD-AUTH-LOGIN",
+      "operation_source": "../providers/mobidziennik/operations.json",
+      "tasks": [
+        "N-02",
+        "N-03"
+      ],
+      "disposition": "implement_only_recovered_contract_and_keep_role_runtime_gates",
+      "implementation_included": false,
+      "runtime_verified": false
+    },
+    {
+      "provider": "mobidziennik",
+      "operation_id": "MD-AUTH-UNLOCK",
+      "operation_source": "../providers/mobidziennik/operations.json",
+      "tasks": [
+        "N-02"
+      ],
+      "disposition": "implement_only_recovered_contract_and_keep_role_runtime_gates",
+      "implementation_included": false,
+      "runtime_verified": false
+    },
+    {
+      "provider": "mobidziennik",
+      "operation_id": "MD-AUTH-DEVICE",
+      "operation_source": "../providers/mobidziennik/operations.json",
+      "tasks": [
+        "N-02",
+        "N-09"
+      ],
+      "disposition": "implement_only_recovered_contract_and_keep_role_runtime_gates",
+      "implementation_included": false,
+      "runtime_verified": false
+    },
+    {
+      "provider": "mobidziennik",
+      "operation_id": "MD-RESET",
+      "operation_source": "../providers/mobidziennik/operations.json",
+      "tasks": [
+        "N-02"
+      ],
+      "disposition": "implement_only_recovered_contract_and_keep_role_runtime_gates",
+      "implementation_included": false,
+      "runtime_verified": false
+    },
+    {
+      "provider": "mobidziennik",
+      "operation_id": "MD-SYNC",
+      "operation_source": "../providers/mobidziennik/operations.json",
+      "tasks": [
+        "N-01",
+        "N-03",
+        "N-04",
+        "N-05"
+      ],
+      "disposition": "bootstrap_or_generic_tunnel_does_not_prove_concrete_academic_payload",
+      "implementation_included": false,
+      "runtime_verified": false
+    },
+    {
+      "provider": "mobidziennik",
+      "operation_id": "MD-SYNC-OUTBOX",
+      "operation_source": "../providers/mobidziennik/operations.json",
+      "tasks": [
+        "N-01",
+        "N-04",
+        "N-08"
+      ],
+      "disposition": "bootstrap_or_generic_tunnel_does_not_prove_concrete_academic_payload",
+      "implementation_included": false,
+      "runtime_verified": false
+    },
+    {
+      "provider": "mobidziennik",
+      "operation_id": "MD-FORM",
+      "operation_source": "../providers/mobidziennik/operations.json",
+      "tasks": [
+        "N-01",
+        "N-04",
+        "N-06",
+        "N-08"
+      ],
+      "disposition": "bootstrap_or_generic_tunnel_does_not_prove_concrete_academic_payload",
+      "implementation_included": false,
+      "runtime_verified": false
+    },
+    {
+      "provider": "mobidziennik",
+      "operation_id": "MD-FORM-BLOB",
+      "operation_source": "../providers/mobidziennik/operations.json",
+      "tasks": [
+        "N-01",
+        "N-03",
+        "N-09"
+      ],
+      "disposition": "bootstrap_or_generic_tunnel_does_not_prove_concrete_academic_payload",
+      "implementation_included": false,
+      "runtime_verified": false
+    },
+    {
+      "provider": "mobidziennik",
+      "operation_id": "MD-PUSH-REGISTER",
+      "operation_source": "../providers/mobidziennik/operations.json",
+      "tasks": [
+        "N-02",
+        "N-10"
+      ],
+      "disposition": "implement_only_recovered_contract_and_keep_role_runtime_gates",
+      "implementation_included": false,
+      "runtime_verified": false
+    },
+    {
+      "provider": "mobidziennik",
+      "operation_id": "MD-PUSH-DISABLE",
+      "operation_source": "../providers/mobidziennik/operations.json",
+      "tasks": [
+        "N-02",
+        "N-10"
+      ],
+      "disposition": "implement_only_recovered_contract_and_keep_role_runtime_gates",
+      "implementation_included": false,
+      "runtime_verified": false
+    },
+    {
+      "provider": "mobidziennik",
+      "operation_id": "MD-LOCAL-PAGE",
+      "operation_source": "../providers/mobidziennik/operations.json",
+      "tasks": [
+        "N-10"
+      ],
+      "disposition": "local_packaged_content_not_school_network_endpoint",
+      "implementation_included": false,
+      "runtime_verified": false
+    },
+    {
+      "provider": "prymus",
+      "operation_id": "PRY-activeParentMode",
+      "operation_source": "../providers/prymus/operations.json",
+      "tasks": [
+        "N-02",
+        "N-08"
+      ],
+      "disposition": "implement_only_recovered_contract_and_keep_role_runtime_gates",
+      "implementation_included": false,
+      "runtime_verified": false
+    },
+    {
+      "provider": "prymus",
+      "operation_id": "PRY-changeLicenseForTokens",
+      "operation_source": "../providers/prymus/operations.json",
+      "tasks": [
+        "N-01"
+      ],
+      "disposition": "record_explicit_effect_no_automatic_background_action",
+      "implementation_included": false,
+      "runtime_verified": false
+    },
+    {
+      "provider": "prymus",
+      "operation_id": "PRY-createTopicWithTeacher",
+      "operation_source": "../providers/prymus/operations.json",
+      "tasks": [
+        "N-02",
+        "N-06"
+      ],
+      "disposition": "implement_only_recovered_contract_and_keep_role_runtime_gates",
+      "implementation_included": false,
+      "runtime_verified": false
+    },
+    {
+      "provider": "prymus",
+      "operation_id": "PRY-getApiResponse",
+      "operation_source": "../providers/prymus/operations.json",
+      "tasks": [
+        "N-02",
+        "N-03",
+        "N-04",
+        "N-05",
+        "N-07"
+      ],
+      "disposition": "implement_only_recovered_contract_and_keep_role_runtime_gates",
+      "implementation_included": false,
+      "runtime_verified": false
+    },
+    {
+      "provider": "prymus",
+      "operation_id": "PRY-getWeather",
+      "operation_source": "../providers/prymus/operations.json",
+      "tasks": [
+        "N-01",
+        "N-04"
+      ],
+      "disposition": "implement_only_recovered_contract_and_keep_role_runtime_gates",
+      "implementation_included": false,
+      "runtime_verified": false
+    },
+    {
+      "provider": "prymus",
+      "operation_id": "PRY-notifyTopicReaded",
+      "operation_source": "../providers/prymus/operations.json",
+      "tasks": [
+        "N-06"
+      ],
+      "disposition": "implement_only_recovered_contract_and_keep_role_runtime_gates",
+      "implementation_included": false,
+      "runtime_verified": false
+    },
+    {
+      "provider": "prymus",
+      "operation_id": "PRY-postReadStatus",
+      "operation_source": "../providers/prymus/operations.json",
+      "tasks": [
+        "N-04",
+        "N-06"
+      ],
+      "disposition": "implement_only_recovered_contract_and_keep_role_runtime_gates",
+      "implementation_included": false,
+      "runtime_verified": false
+    },
+    {
+      "provider": "prymus",
+      "operation_id": "PRY-postReadStatusMultiple",
+      "operation_source": "../providers/prymus/operations.json",
+      "tasks": [
+        "N-04",
+        "N-06"
+      ],
+      "disposition": "implement_only_recovered_contract_and_keep_role_runtime_gates",
+      "implementation_included": false,
+      "runtime_verified": false
+    },
+    {
+      "provider": "prymus",
+      "operation_id": "PRY-reportBug",
+      "operation_source": "../providers/prymus/operations.json",
+      "tasks": [
+        "N-01",
+        "N-10"
+      ],
+      "disposition": "record_explicit_effect_no_automatic_background_action",
+      "implementation_included": false,
+      "runtime_verified": false
+    },
+    {
+      "provider": "prymus",
+      "operation_id": "PRY-resetDevices2",
+      "operation_source": "../providers/prymus/operations.json",
+      "tasks": [
+        "N-01",
+        "N-02"
+      ],
+      "disposition": "record_explicit_effect_no_automatic_background_action",
+      "implementation_included": false,
+      "runtime_verified": false
+    },
+    {
+      "provider": "prymus",
+      "operation_id": "PRY-sendChatMessage",
+      "operation_source": "../providers/prymus/operations.json",
+      "tasks": [
+        "N-02",
+        "N-06",
+        "N-09"
+      ],
+      "disposition": "implement_only_recovered_contract_and_keep_role_runtime_gates",
+      "implementation_included": false,
+      "runtime_verified": false
+    },
+    {
+      "provider": "prymus",
+      "operation_id": "PRY-sendData",
+      "operation_source": "../providers/prymus/operations.json",
+      "tasks": [
+        "N-02",
+        "N-04",
+        "N-06",
+        "N-08",
+        "N-09"
+      ],
+      "disposition": "implement_only_recovered_contract_and_keep_role_runtime_gates",
+      "implementation_included": false,
+      "runtime_verified": false
+    },
+    {
+      "provider": "prymus",
+      "operation_id": "PRY-sendLogs",
+      "operation_source": "../providers/prymus/operations.json",
+      "tasks": [
+        "N-01",
+        "N-10"
+      ],
+      "disposition": "record_explicit_effect_no_automatic_background_action",
+      "implementation_included": false,
+      "runtime_verified": false
+    },
+    {
+      "provider": "prymus",
+      "operation_id": "PRY-setFcmToken",
+      "operation_source": "../providers/prymus/operations.json",
+      "tasks": [
+        "N-02",
+        "N-10"
+      ],
+      "disposition": "implement_only_recovered_contract_and_keep_role_runtime_gates",
+      "implementation_included": false,
+      "runtime_verified": false
+    },
+    {
+      "provider": "prymus",
+      "operation_id": "PRY-updateTokens",
+      "operation_source": "../providers/prymus/operations.json",
+      "tasks": [
+        "N-02",
+        "N-10"
+      ],
+      "disposition": "implement_only_recovered_contract_and_keep_role_runtime_gates",
+      "implementation_included": false,
+      "runtime_verified": false
+    },
+    {
+      "provider": "prymus",
+      "operation_id": "PRY-upgradeLicensePremiumForTokens",
+      "operation_source": "../providers/prymus/operations.json",
+      "tasks": [
+        "N-01"
+      ],
+      "disposition": "record_explicit_effect_no_automatic_background_action",
+      "implementation_included": false,
+      "runtime_verified": false
+    },
+    {
+      "provider": "prymus",
+      "operation_id": "PRY-uploadReplyToTeacher",
+      "operation_source": "../providers/prymus/operations.json",
+      "tasks": [
+        "N-03",
+        "N-04",
+        "N-09"
+      ],
+      "disposition": "implement_only_recovered_contract_and_keep_role_runtime_gates",
+      "implementation_included": false,
+      "runtime_verified": false
+    }
+  ],
+  "features": [
+    {
+      "provider": "mobidziennik",
+      "feature_id": "MD-UI-001",
+      "module": "auth",
+      "feature": "Email/password sign-in",
+      "tasks": [
+        "N-01",
+        "N-02",
+        "N-03",
+        "N-06"
+      ],
+      "assignment_basis": "Semantic module/label work routing; not a verified call graph or enabled capability.",
+      "source_operation_id": "MD-AUTH-LOGIN",
+      "source_status": "static contract",
+      "implementation_included": false
+    },
+    {
+      "provider": "mobidziennik",
+      "feature_id": "MD-UI-002",
+      "module": "auth",
+      "feature": "Password reset request",
+      "tasks": [
+        "N-01",
+        "N-02",
+        "N-03"
+      ],
+      "assignment_basis": "Semantic module/label work routing; not a verified call graph or enabled capability.",
+      "source_operation_id": "MD-RESET",
+      "source_status": "static contract",
+      "implementation_included": false
+    },
+    {
+      "provider": "mobidziennik",
+      "feature_id": "MD-UI-003",
+      "module": "auth",
+      "feature": "Device authorization waiting/retry",
+      "tasks": [
+        "N-01",
+        "N-02",
+        "N-03"
+      ],
+      "assignment_basis": "Semantic module/label work routing; not a verified call graph or enabled capability.",
+      "source_operation_id": "MD-AUTH-DEVICE",
+      "source_status": "static contract",
+      "implementation_included": false
+    },
+    {
+      "provider": "mobidziennik",
+      "feature_id": "MD-UI-004",
+      "module": "auth",
+      "feature": "Biometric re-entry gate",
+      "tasks": [
+        "N-01",
+        "N-02",
+        "N-03"
+      ],
+      "assignment_basis": "Semantic module/label work routing; not a verified call graph or enabled capability.",
+      "source_operation_id": null,
+      "source_status": "localcapability",
+      "implementation_included": false
+    },
+    {
+      "provider": "mobidziennik",
+      "feature_id": "MD-UI-005",
+      "module": "auth",
+      "feature": "Password unlock fallback",
+      "tasks": [
+        "N-01",
+        "N-02",
+        "N-03"
+      ],
+      "assignment_basis": "Semantic module/label work routing; not a verified call graph or enabled capability.",
+      "source_operation_id": "MD-AUTH-UNLOCK",
+      "source_status": "static contract",
+      "implementation_included": false
+    },
+    {
+      "provider": "mobidziennik",
+      "feature_id": "MD-UI-006",
+      "module": "auth",
+      "feature": "Mandatory password-change route",
+      "tasks": [
+        "N-01",
+        "N-02",
+        "N-03"
+      ],
+      "assignment_basis": "Semantic module/label work routing; not a verified call graph or enabled capability.",
+      "source_operation_id": null,
+      "source_status": "remotecontractmissing",
+      "implementation_included": false
+    },
+    {
+      "provider": "mobidziennik",
+      "feature_id": "MD-UI-007",
+      "module": "account",
+      "feature": "Linked school account switching",
+      "tasks": [
+        "N-01",
+        "N-02",
+        "N-03"
+      ],
+      "assignment_basis": "Semantic module/label work routing; not a verified call graph or enabled capability.",
+      "source_operation_id": "MD-SYNC",
+      "source_status": "static shell",
+      "implementation_included": false
+    },
+    {
+      "provider": "mobidziennik",
+      "feature_id": "MD-UI-008",
+      "module": "account",
+      "feature": "School year and main-account context",
+      "tasks": [
+        "N-01",
+        "N-02",
+        "N-03"
+      ],
+      "assignment_basis": "Semantic module/label work routing; not a verified call graph or enabled capability.",
+      "source_operation_id": "MD-SYNC",
+      "source_status": "static shell",
+      "implementation_included": false
+    },
+    {
+      "provider": "mobidziennik",
+      "feature_id": "MD-UI-009",
+      "module": "account",
+      "feature": "Parent/student/teacher/director/outside roles",
+      "tasks": [
+        "N-01",
+        "N-02",
+        "N-03"
+      ],
+      "assignment_basis": "Semantic module/label work routing; not a verified call graph or enabled capability.",
+      "source_operation_id": null,
+      "source_status": "static rolecodes",
+      "implementation_included": false
+    },
+    {
+      "provider": "mobidziennik",
+      "feature_id": "MD-UI-010",
+      "module": "account",
+      "feature": "Local logout and retained cache",
+      "tasks": [
+        "N-01",
+        "N-02",
+        "N-03",
+        "N-10"
+      ],
+      "assignment_basis": "Semantic module/label work routing; not a verified call graph or enabled capability.",
+      "source_operation_id": "MD-PUSH-DISABLE",
+      "source_status": "localcapability",
+      "implementation_included": false
+    },
+    {
+      "provider": "mobidziennik",
+      "feature_id": "MD-UI-011",
+      "module": "sync",
+      "feature": "Initial school bootstrap",
+      "tasks": [
+        "N-01",
+        "N-04",
+        "N-05"
+      ],
+      "assignment_basis": "Semantic module/label work routing; not a verified call graph or enabled capability.",
+      "source_operation_id": "MD-SYNC",
+      "source_status": "static contract",
+      "implementation_included": false
+    },
+    {
+      "provider": "mobidziennik",
+      "feature_id": "MD-UI-012",
+      "module": "sync",
+      "feature": "Manual refresh with10s throttle",
+      "tasks": [
+        "N-01",
+        "N-04",
+        "N-05"
+      ],
+      "assignment_basis": "Semantic module/label work routing; not a verified call graph or enabled capability.",
+      "source_operation_id": "MD-SYNC",
+      "source_status": "static contract",
+      "implementation_included": false
+    },
+    {
+      "provider": "mobidziennik",
+      "feature_id": "MD-UI-013",
+      "module": "sync",
+      "feature": "Resume refresh after60minutes",
+      "tasks": [
+        "N-01",
+        "N-04",
+        "N-05"
+      ],
+      "assignment_basis": "Semantic module/label work routing; not a verified call graph or enabled capability.",
+      "source_operation_id": "MD-SYNC",
+      "source_status": "static shell",
+      "implementation_included": false
+    },
+    {
+      "provider": "mobidziennik",
+      "feature_id": "MD-UI-014",
+      "module": "sync",
+      "feature": "Draft-preserving resume exclusions",
+      "tasks": [
+        "N-01",
+        "N-04",
+        "N-05"
+      ],
+      "assignment_basis": "Semantic module/label work routing; not a verified call graph or enabled capability.",
+      "source_operation_id": null,
+      "source_status": "static shell",
+      "implementation_included": false
+    },
+    {
+      "provider": "mobidziennik",
+      "feature_id": "MD-UI-015",
+      "module": "sync",
+      "feature": "Pending lesson/form synchronization",
+      "tasks": [
+        "N-01",
+        "N-04",
+        "N-05"
+      ],
+      "assignment_basis": "Semantic module/label work routing; not a verified call graph or enabled capability.",
+      "source_operation_id": "MD-SYNC-OUTBOX",
+      "source_status": "static contract",
+      "implementation_included": false
+    },
+    {
+      "provider": "mobidziennik",
+      "feature_id": "MD-UI-016",
+      "module": "sync",
+      "feature": "Single-flight completion semantics",
+      "tasks": [
+        "N-01",
+        "N-04",
+        "N-05"
+      ],
+      "assignment_basis": "Semantic module/label work routing; not a verified call graph or enabled capability.",
+      "source_operation_id": "MD-SYNC",
+      "source_status": "observed sourcequirk",
+      "implementation_included": false
+    },
+    {
+      "provider": "mobidziennik",
+      "feature_id": "MD-UI-017",
+      "module": "sync",
+      "feature": "Credential rotation",
+      "tasks": [
+        "N-01",
+        "N-04",
+        "N-05"
+      ],
+      "assignment_basis": "Semantic module/label work routing; not a verified call graph or enabled capability.",
+      "source_operation_id": "MD-SYNC",
+      "source_status": "static contract",
+      "implementation_included": false
+    },
+    {
+      "provider": "mobidziennik",
+      "feature_id": "MD-UI-018",
+      "module": "sync",
+      "feature": "Businesserror/session/device flags",
+      "tasks": [
+        "N-01",
+        "N-02",
+        "N-03"
+      ],
+      "assignment_basis": "Semantic module/label work routing; not a verified call graph or enabled capability.",
+      "source_operation_id": "MD-SYNC",
+      "source_status": "static contract",
+      "implementation_included": false
+    },
+    {
+      "provider": "mobidziennik",
+      "feature_id": "MD-UI-019",
+      "module": "sync",
+      "feature": "Reconnect behavior",
+      "tasks": [
+        "N-01",
+        "N-04",
+        "N-05"
+      ],
+      "assignment_basis": "Semantic module/label work routing; not a verified call graph or enabled capability.",
+      "source_operation_id": null,
+      "source_status": "bounded local",
+      "implementation_included": false
+    },
+    {
+      "provider": "mobidziennik",
+      "feature_id": "MD-UI-020",
+      "module": "storage",
+      "feature": "Cached school templates/pages",
+      "tasks": [
+        "N-01",
+        "N-04",
+        "N-05",
+        "N-10"
+      ],
+      "assignment_basis": "Semantic module/label work routing; not a verified call graph or enabled capability.",
+      "source_operation_id": null,
+      "source_status": "static storage",
+      "implementation_included": false
+    },
+    {
+      "provider": "mobidziennik",
+      "feature_id": "MD-UI-021",
+      "module": "storage",
+      "feature": "Chunked template persistence",
+      "tasks": [
+        "N-01",
+        "N-04",
+        "N-05"
+      ],
+      "assignment_basis": "Semantic module/label work routing; not a verified call graph or enabled capability.",
+      "source_operation_id": null,
+      "source_status": "static storage",
+      "implementation_included": false
+    },
+    {
+      "provider": "mobidziennik",
+      "feature_id": "MD-UI-022",
+      "module": "storage",
+      "feature": "SQLite schema migrations",
+      "tasks": [
+        "N-01",
+        "N-04",
+        "N-05"
+      ],
+      "assignment_basis": "Semantic module/label work routing; not a verified call graph or enabled capability.",
+      "source_operation_id": null,
+      "source_status": "static storage",
+      "implementation_included": false
+    },
+    {
+      "provider": "mobidziennik",
+      "feature_id": "MD-UI-023",
+      "module": "storage",
+      "feature": "Inactive account cleanup",
+      "tasks": [
+        "N-01",
+        "N-02",
+        "N-03"
+      ],
+      "assignment_basis": "Semantic module/label work routing; not a verified call graph or enabled capability.",
+      "source_operation_id": null,
+      "source_status": "static storage",
+      "implementation_included": false
+    },
+    {
+      "provider": "mobidziennik",
+      "feature_id": "MD-UI-024",
+      "module": "navigation",
+      "feature": "Local shell/static pages",
+      "tasks": [
+        "N-01",
+        "N-04",
+        "N-05",
+        "N-07",
+        "N-10"
+      ],
+      "assignment_basis": "Semantic module/label work routing; not a verified call graph or enabled capability.",
+      "source_operation_id": "MD-LOCAL-PAGE",
+      "source_status": "localcapability",
+      "implementation_included": false
+    },
+    {
+      "provider": "mobidziennik",
+      "feature_id": "MD-UI-025",
+      "module": "navigation",
+      "feature": "Remote route query/detail grammar",
+      "tasks": [
+        "N-01",
+        "N-04",
+        "N-05"
+      ],
+      "assignment_basis": "Semantic module/label work routing; not a verified call graph or enabled capability.",
+      "source_operation_id": null,
+      "source_status": "static shell",
+      "implementation_included": false
+    },
+    {
+      "provider": "mobidziennik",
+      "feature_id": "MD-UI-026",
+      "module": "navigation",
+      "feature": "Missing-template recovery/default route",
+      "tasks": [
+        "N-01",
+        "N-04",
+        "N-05"
+      ],
+      "assignment_basis": "Semantic module/label work routing; not a verified call graph or enabled capability.",
+      "source_operation_id": "MD-SYNC",
+      "source_status": "static shell",
+      "implementation_included": false
+    },
+    {
+      "provider": "mobidziennik",
+      "feature_id": "MD-UI-027",
+      "module": "grades",
+      "feature": "Grade list/detail and semester",
+      "tasks": [
+        "N-01",
+        "N-04",
+        "N-05"
+      ],
+      "assignment_basis": "Semantic module/label work routing; not a verified call graph or enabled capability.",
+      "source_operation_id": null,
+      "source_status": "route only",
+      "implementation_included": false
+    },
+    {
+      "provider": "mobidziennik",
+      "feature_id": "MD-UI-028",
+      "module": "grades",
+      "feature": "Final grade view",
+      "tasks": [
+        "N-01",
+        "N-04",
+        "N-05"
+      ],
+      "assignment_basis": "Semantic module/label work routing; not a verified call graph or enabled capability.",
+      "source_operation_id": null,
+      "source_status": "route only",
+      "implementation_included": false
+    },
+    {
+      "provider": "mobidziennik",
+      "feature_id": "MD-UI-029",
+      "module": "stats",
+      "feature": "Requested grade and attendance statistics",
+      "tasks": [
+        "N-01",
+        "N-04",
+        "N-05",
+        "N-07"
+      ],
+      "assignment_basis": "Semantic module/label work routing; not a verified call graph or enabled capability.",
+      "source_operation_id": null,
+      "source_status": "requestedcapabilitynotestablished",
+      "implementation_included": false
+    },
+    {
+      "provider": "mobidziennik",
+      "feature_id": "MD-UI-030",
+      "module": "attendance",
+      "feature": "Attendance page",
+      "tasks": [
+        "N-01",
+        "N-04",
+        "N-05"
+      ],
+      "assignment_basis": "Semantic module/label work routing; not a verified call graph or enabled capability.",
+      "source_operation_id": null,
+      "source_status": "route/panel only",
+      "implementation_included": false
+    },
+    {
+      "provider": "mobidziennik",
+      "feature_id": "MD-UI-031",
+      "module": "justification",
+      "feature": "Electronic absence justification",
+      "tasks": [
+        "N-01",
+        "N-04",
+        "N-05",
+        "N-08"
+      ],
+      "assignment_basis": "Semantic module/label work routing; not a verified call graph or enabled capability.",
+      "source_operation_id": null,
+      "source_status": "panel only",
+      "implementation_included": false
+    },
+    {
+      "provider": "mobidziennik",
+      "feature_id": "MD-UI-032",
+      "module": "messages",
+      "feature": "Inbox/detail via notification",
+      "tasks": [
+        "N-01",
+        "N-04",
+        "N-05",
+        "N-06",
+        "N-10"
+      ],
+      "assignment_basis": "Semantic module/label work routing; not a verified call graph or enabled capability.",
+      "source_operation_id": null,
+      "source_status": "route only",
+      "implementation_included": false
+    },
+    {
+      "provider": "mobidziennik",
+      "feature_id": "MD-UI-033",
+      "module": "messages",
+      "feature": "Compose draft",
+      "tasks": [
+        "N-01",
+        "N-04",
+        "N-05",
+        "N-06"
+      ],
+      "assignment_basis": "Semantic module/label work routing; not a verified call graph or enabled capability.",
+      "source_operation_id": null,
+      "source_status": "route only",
+      "implementation_included": false
+    },
+    {
+      "provider": "mobidziennik",
+      "feature_id": "MD-UI-034",
+      "module": "homework",
+      "feature": "Current homework and answer",
+      "tasks": [
+        "N-01",
+        "N-04",
+        "N-05"
+      ],
+      "assignment_basis": "Semantic module/label work routing; not a verified call graph or enabled capability.",
+      "source_operation_id": null,
+      "source_status": "route only",
+      "implementation_included": false
+    },
+    {
+      "provider": "mobidziennik",
+      "feature_id": "MD-UI-035",
+      "module": "homework",
+      "feature": "Archived homework",
+      "tasks": [
+        "N-01",
+        "N-04",
+        "N-05"
+      ],
+      "assignment_basis": "Semantic module/label work routing; not a verified call graph or enabled capability.",
+      "source_operation_id": null,
+      "source_status": "route only",
+      "implementation_included": false
+    },
+    {
+      "provider": "mobidziennik",
+      "feature_id": "MD-UI-036",
+      "module": "tests",
+      "feature": "Upcoming test/exam page",
+      "tasks": [
+        "N-01",
+        "N-04",
+        "N-05"
+      ],
+      "assignment_basis": "Semantic module/label work routing; not a verified call graph or enabled capability.",
+      "source_operation_id": null,
+      "source_status": "route only",
+      "implementation_included": false
+    },
+    {
+      "provider": "mobidziennik",
+      "feature_id": "MD-UI-037",
+      "module": "behavior",
+      "feature": "Behavior grade and notes",
+      "tasks": [
+        "N-01",
+        "N-04",
+        "N-05"
+      ],
+      "assignment_basis": "Semantic module/label work routing; not a verified call graph or enabled capability.",
+      "source_operation_id": null,
+      "source_status": "route only",
+      "implementation_included": false
+    },
+    {
+      "provider": "mobidziennik",
+      "feature_id": "MD-UI-038",
+      "module": "teacher",
+      "feature": "Lesson editing/unsent lesson guard",
+      "tasks": [
+        "N-01",
+        "N-04",
+        "N-05"
+      ],
+      "assignment_basis": "Semantic module/label work routing; not a verified call graph or enabled capability.",
+      "source_operation_id": null,
+      "source_status": "teacher shellonly",
+      "implementation_included": false
+    },
+    {
+      "provider": "mobidziennik",
+      "feature_id": "MD-UI-039",
+      "module": "forms",
+      "feature": "Generic controller dispatch",
+      "tasks": [
+        "N-01",
+        "N-04",
+        "N-05"
+      ],
+      "assignment_basis": "Semantic module/label work routing; not a verified call graph or enabled capability.",
+      "source_operation_id": "MD-FORM",
+      "source_status": "static wrapper",
+      "implementation_included": false
+    },
+    {
+      "provider": "mobidziennik",
+      "feature_id": "MD-UI-040",
+      "module": "files",
+      "feature": "Generic blob response transport",
+      "tasks": [
+        "N-01",
+        "N-04",
+        "N-05",
+        "N-09"
+      ],
+      "assignment_basis": "Semantic module/label work routing; not a verified call graph or enabled capability.",
+      "source_operation_id": "MD-FORM-BLOB",
+      "source_status": "static wrapper",
+      "implementation_included": false
+    },
+    {
+      "provider": "mobidziennik",
+      "feature_id": "MD-UI-041",
+      "module": "files",
+      "feature": "Native file save/open support",
+      "tasks": [
+        "N-01",
+        "N-04",
+        "N-05",
+        "N-09"
+      ],
+      "assignment_basis": "Semantic module/label work routing; not a verified call graph or enabled capability.",
+      "source_operation_id": null,
+      "source_status": "localplugin capability",
+      "implementation_included": false
+    },
+    {
+      "provider": "mobidziennik",
+      "feature_id": "MD-UI-042",
+      "module": "files",
+      "feature": "Camera/photo integration",
+      "tasks": [
+        "N-01",
+        "N-04",
+        "N-05",
+        "N-09"
+      ],
+      "assignment_basis": "Semantic module/label work routing; not a verified call graph or enabled capability.",
+      "source_operation_id": null,
+      "source_status": "declared pluginonly",
+      "implementation_included": false
+    },
+    {
+      "provider": "mobidziennik",
+      "feature_id": "MD-UI-043",
+      "module": "push",
+      "feature": "Permission/token registration",
+      "tasks": [
+        "N-01",
+        "N-02",
+        "N-03",
+        "N-10"
+      ],
+      "assignment_basis": "Semantic module/label work routing; not a verified call graph or enabled capability.",
+      "source_operation_id": "MD-PUSH-REGISTER",
+      "source_status": "static wrapper",
+      "implementation_included": false
+    },
+    {
+      "provider": "mobidziennik",
+      "feature_id": "MD-UI-044",
+      "module": "push",
+      "feature": "Global owner notification disable",
+      "tasks": [
+        "N-01",
+        "N-04",
+        "N-05",
+        "N-10"
+      ],
+      "assignment_basis": "Semantic module/label work routing; not a verified call graph or enabled capability.",
+      "source_operation_id": "MD-PUSH-DISABLE",
+      "source_status": "static contract",
+      "implementation_included": false
+    },
+    {
+      "provider": "mobidziennik",
+      "feature_id": "MD-UI-045",
+      "module": "push",
+      "feature": "Tapped notification routing",
+      "tasks": [
+        "N-01",
+        "N-04",
+        "N-05",
+        "N-10"
+      ],
+      "assignment_basis": "Semantic module/label work routing; not a verified call graph or enabled capability.",
+      "source_operation_id": null,
+      "source_status": "static shell",
+      "implementation_included": false
+    },
+    {
+      "provider": "mobidziennik",
+      "feature_id": "MD-UI-046",
+      "module": "push",
+      "feature": "Account-specific device page",
+      "tasks": [
+        "N-01",
+        "N-02",
+        "N-03",
+        "N-10"
+      ],
+      "assignment_basis": "Semantic module/label work routing; not a verified call graph or enabled capability.",
+      "source_operation_id": null,
+      "source_status": "route only",
+      "implementation_included": false
+    },
+    {
+      "provider": "mobidziennik",
+      "feature_id": "MD-UI-047",
+      "module": "preferences",
+      "feature": "Dark/light/system theme",
+      "tasks": [
+        "N-01",
+        "N-04",
+        "N-05",
+        "N-10"
+      ],
+      "assignment_basis": "Semantic module/label work routing; not a verified call graph or enabled capability.",
+      "source_operation_id": null,
+      "source_status": "localcapability",
+      "implementation_included": false
+    },
+    {
+      "provider": "mobidziennik",
+      "feature_id": "MD-UI-048",
+      "module": "preferences",
+      "feature": "System text scaling",
+      "tasks": [
+        "N-01",
+        "N-04",
+        "N-05"
+      ],
+      "assignment_basis": "Semantic module/label work routing; not a verified call graph or enabled capability.",
+      "source_operation_id": null,
+      "source_status": "localcapability",
+      "implementation_included": false
+    },
+    {
+      "provider": "mobidziennik",
+      "feature_id": "MD-UI-049",
+      "module": "diagnostics",
+      "feature": "Local logs and errorqueue",
+      "tasks": [
+        "N-01",
+        "N-04",
+        "N-05",
+        "N-10"
+      ],
+      "assignment_basis": "Semantic module/label work routing; not a verified call graph or enabled capability.",
+      "source_operation_id": null,
+      "source_status": "localcapability",
+      "implementation_included": false
+    },
+    {
+      "provider": "mobidziennik",
+      "feature_id": "MD-UI-050",
+      "module": "navigation",
+      "feature": "Back/menu/history",
+      "tasks": [
+        "N-01",
+        "N-04",
+        "N-05"
+      ],
+      "assignment_basis": "Semantic module/label work routing; not a verified call graph or enabled capability.",
+      "source_operation_id": null,
+      "source_status": "localcapability",
+      "implementation_included": false
+    }
+  ]
+}

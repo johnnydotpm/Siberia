@@ -1,0 +1,24 @@
+{
+  "status": "passed",
+  "scope": "Offline JSON/link/identity/line-reference checks only. No app launch, implementation, or school-account calls.",
+  "checked": {
+    "mobidziennik": {
+      "facts": 58,
+      "original_asset_line_anchors": 64,
+      "request_variants": 11,
+      "feature_rows": 50,
+      "field_consumer_rows": 36
+    },
+    "prymus": {
+      "request_methods": 17,
+      "model_declarations": 75,
+      "field_line_anchors": 615
+    },
+    "siberia": {
+      "source_commit": "eb7a4d566f449ebcb2e8c3bce62721c50beb7c7c",
+      "source_files": 24,
+      "literal_anchors": 113
+    }
+  },
+  "issues": []
+}

@@ -1,0 +1,231 @@
+{
+  "notice": "Futureacceptance documentation, not executed tests orcaptureddata",
+  "runtime_verified": false,
+  "case_count": 32,
+  "cases": [
+    {
+      "id": "MD-T001",
+      "area": "AUTH-RAW",
+      "synthetic_input": "haslo contains leading/trailing spaces,plus,ampersand,Unicode",
+      "required_outcome": "Decoded form equals exact input; no MD5/SHA/trim or accidentalfield split",
+      "source_fact": "MD-F09"
+    },
+    {
+      "id": "MD-T002",
+      "area": "AUTH-FLAG",
+      "synthetic_input": "hash=true alongside raw haslo",
+      "required_outcome": "Hash remains independent formflag, notpassword transformation",
+      "source_fact": "MD-F10"
+    },
+    {
+      "id": "MD-T003",
+      "area": "AUTH-ERROR",
+      "synthetic_input": "HTTP200 {error:{type,message}}",
+      "required_outcome": "No successful session persisted; preserve provider error",
+      "source_fact": "MD-F12"
+    },
+    {
+      "id": "MD-T004",
+      "area": "AUTH-SHAPE",
+      "synthetic_input": "Directcentral userobject vs school{user,templates}",
+      "required_outcome": "Use distinctdecoders; no universaldataunwrap",
+      "source_fact": "MD-F28"
+    },
+    {
+      "id": "MD-T005",
+      "area": "DEVICE-JSON",
+      "synthetic_input": "No device supplied, FCMtokenpresent",
+      "required_outcome": "One device JSONstring includes pushRegistrationId and appVersion",
+      "source_fact": "MD-F04"
+    },
+    {
+      "id": "MD-T006",
+      "area": "DEVICE-WAIT",
+      "synthetic_input": "Approvalfalse,then true,then pagealreadyclosed",
+      "required_outcome": "3soriginalpoll behavior; no latewrongownerpublication",
+      "source_fact": "MD-F15"
+    },
+    {
+      "id": "MD-T007",
+      "area": "DEVICE-ERROR-OBJECT",
+      "synthetic_input": "Poll returns truthy {error:{...}}",
+      "required_outcome": "Futuredecoder must not treat objecttruthiness asverifiedapproval",
+      "source_fact": "MD-F14"
+    },
+    {
+      "id": "MD-T008",
+      "area": "UNLOCK",
+      "synthetic_input": "Localbiometricfails,then passwordchecksuccess",
+      "required_outcome": "Overlayunlock distinctfrombackendsessionenrollment",
+      "source_fact": "MD-F16"
+    },
+    {
+      "id": "MD-T009",
+      "area": "TENANT",
+      "synthetic_input": "Two schools share same login string",
+      "required_outcome": "Separate server/owner/year cache and credentials",
+      "source_fact": "MD-F47"
+    },
+    {
+      "id": "MD-T010",
+      "area": "SWITCH",
+      "synthetic_input": "ProfileA sync completes after switchB",
+      "required_outcome": "Store onlyunderA; visibleB andcredentialsunchanged",
+      "source_fact": "MD-F34"
+    },
+    {
+      "id": "MD-T011",
+      "area": "TEMPLATE-KEY",
+      "synthetic_input": "oceny?semestr=1!id=5",
+      "required_outcome": "Keyoceny?semestr=1,detailid5 remainsrouterdata",
+      "source_fact": "MD-F32"
+    },
+    {
+      "id": "MD-T012",
+      "area": "JS-KEY",
+      "synthetic_input": "wiadomosci?typ=odebrane&id=5&js",
+      "required_outcome": "Templatekey wiadomosci; queryretained",
+      "source_fact": "MD-F32"
+    },
+    {
+      "id": "MD-T013",
+      "area": "DEFAULT",
+      "synthetic_input": "Empty page fordirector vsparent",
+      "required_outcome": "Defaultwiadomosci vs glowna",
+      "source_fact": "MD-F35"
+    },
+    {
+      "id": "MD-T014",
+      "area": "BODY-NESTING",
+      "synthetic_input": "lekcje/formularze empty maps",
+      "required_outcome": "Eachformvalue literalJSONstring{},notwholebodyJSON",
+      "source_fact": "MD-F22"
+    },
+    {
+      "id": "MD-T015",
+      "area": "NO-ACTION",
+      "synthetic_input": "Localcore.exec functionName=sync",
+      "required_outcome": "No inventedakcja/action requestfield",
+      "source_fact": "MD-F01"
+    },
+    {
+      "id": "MD-T016",
+      "area": "ROTATION",
+      "synthetic_input": "data.user.password_hash_refresh truthy withnewhash",
+      "required_outcome": "Persistopaquecredentialforcorrectowner/version only",
+      "source_fact": "MD-F25"
+    },
+    {
+      "id": "MD-T017",
+      "area": "BUSINESS-ERROR-PUSH",
+      "synthetic_input": "PushHTTPsuccess contains data.error",
+      "required_outcome": "Futureoutbox doesnotclearbeforeconcretebusinessack",
+      "source_fact": "MD-F24"
+    },
+    {
+      "id": "MD-T018",
+      "area": "TIMEOUT-PUSH",
+      "synthetic_input": "Servermayprocessform,connectioncloses",
+      "required_outcome": "Uncertainstate; no unbounded duplicate replay",
+      "source_fact": "MD-F37"
+    },
+    {
+      "id": "MD-T019",
+      "area": "RECEIPT-PULL-FAIL",
+      "synthetic_input": "Pushconfirmed then pullfails",
+      "required_outcome": "Retain confirmedreceipt andstaledata; retryread only",
+      "source_fact": "MD-F23"
+    },
+    {
+      "id": "MD-T020",
+      "area": "SINGLEFLIGHT",
+      "synthetic_input": "Two callerssyncsameowner",
+      "required_outcome": "Joinactivefuture ratherthanreturnfalsesuccess",
+      "source_fact": "MD-F20"
+    },
+    {
+      "id": "MD-T021",
+      "area": "CHUNK",
+      "synthetic_input": "1,000,001UTF16units includingemoji",
+      "required_outcome": "Documentorderedchunks; unitsarenotUTF8bytes",
+      "source_fact": "MD-F43"
+    },
+    {
+      "id": "MD-T022",
+      "area": "CHUNK-ORDER",
+      "synthetic_input": "Twochunks returned reversed",
+      "required_outcome": "Do notacceptcorruptedHTML; explicitsequence/extractionmetadata",
+      "source_fact": "MD-F44"
+    },
+    {
+      "id": "MD-T023",
+      "area": "CACHE-FAIL",
+      "synthetic_input": "SQLite replacement fails",
+      "required_outcome": "No advancedcheckpoint/clearedoutbox; stale prior data retained",
+      "source_fact": "MD-F46"
+    },
+    {
+      "id": "MD-T024",
+      "area": "LOGOUT",
+      "synthetic_input": "resetPassword argfalsepassed",
+      "required_outcome": "Originalstillclearspassword/hash; futurepolicyexplicit; siblingownersprotected",
+      "source_fact": "MD-F48"
+    },
+    {
+      "id": "MD-T025",
+      "area": "CLEANUP",
+      "synthetic_input": "Loggedout syncage14days and orphanedtemplates",
+      "required_outcome": "Retentionpolicy coversbothrows/templates; do notdeleteothercontexts",
+      "source_fact": "MD-F49"
+    },
+    {
+      "id": "MD-T026",
+      "area": "PUSH-DISABLE",
+      "synthetic_input": "Tapnotification belongs differentglobalowner",
+      "required_outcome": "No cross-accountdisplay; disableonlymatchingauthorizedregistration",
+      "source_fact": "MD-F41"
+    },
+    {
+      "id": "MD-T027",
+      "area": "NO-UPLOAD-GUESS",
+      "synthetic_input": "Genericblobhelper and Camera pluginpresent",
+      "required_outcome": "No inventedfilefield oracademicuploadendpoint",
+      "source_fact": "MD-F06"
+    },
+    {
+      "id": "MD-T028",
+      "area": "EUSP-GATE",
+      "synthetic_input": "frekwencja panelroutevisible",
+      "required_outcome": "Keepwriteunsupporteduntilrealcontroller/date/lesson/statuscontractrecovered",
+      "source_fact": "MD-F52"
+    },
+    {
+      "id": "MD-T029",
+      "area": "STATS-GATE",
+      "synthetic_input": "Onlypushoceny andattendanceCSSavailable",
+      "required_outcome": "No guessedformulaorattendancepercentage denominator",
+      "source_fact": "MD-F28"
+    },
+    {
+      "id": "MD-T030",
+      "area": "REDAC",
+      "synthetic_input": "Failurecontains haslo_hash/authkey/token/privateHTML",
+      "required_outcome": "Redactallreusablecredentials andprivatebody,notonlyhaslo",
+      "source_fact": "MD-F08"
+    },
+    {
+      "id": "MD-T031",
+      "area": "RECONNECT",
+      "synthetic_input": "Onlineeventfireswhileunsavedformactive",
+      "required_outcome": "SourceonOnlinebodycommented; explicitfuturepolicy preservesdraft",
+      "source_fact": "MD-F56"
+    },
+    {
+      "id": "MD-T032",
+      "area": "TIMEOUT-BLOB",
+      "synthetic_input": "XHRloadneverfires dueconnectionerror",
+      "required_outcome": "Newtransportmustcompleterecoverablefailure; do nothangpromise",
+      "source_fact": "MD-F06"
+    }
+  ]
+}

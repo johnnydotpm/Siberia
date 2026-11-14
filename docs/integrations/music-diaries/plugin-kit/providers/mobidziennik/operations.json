@@ -1,0 +1,243 @@
+{
+  "schema_version": 1,
+  "record_count": 11,
+  "warning": "Variants and wrappers, not unique endpoint count. Concrete academic form controllers absent from supplied bundle.",
+  "operations": [
+    {
+      "id": "MD-AUTH-LOGIN",
+      "name": "Email login",
+      "url": "https://mobidziennik.pl/logowanieapp",
+      "encoding": "jQuery form-urlencoded",
+      "body": {
+        "api2": true,
+        "email": "entered email, untrimmed",
+        "haslo": "entered raw password, untrimmed",
+        "hash": true
+      },
+      "effect": "authentication",
+      "response": "Direct returned user-like object; error.type/error.message on business failure",
+      "evidence": [
+        "MD-F01",
+        "MD-F04",
+        "MD-F09",
+        "MD-F10",
+        "MD-F11",
+        "MD-F12"
+      ],
+      "method": "POST",
+      "runtime_verified": false,
+      "common_note": "core.exec normally injects device and sometimes login; functionName is not serialized action. Direct push-disable bypasses core."
+    },
+    {
+      "id": "MD-AUTH-UNLOCK",
+      "name": "Local lock password verification",
+      "url": "https://mobidziennik.pl/logowanieapp",
+      "encoding": "jQuery form-urlencoded",
+      "body": {
+        "api2": true,
+        "email": "current user.email",
+        "haslo": "entered raw password",
+        "auth": true,
+        "hash": true
+      },
+      "effect": "authentication",
+      "response": "data.error throws; otherwise hide local overlay; does not replace session here",
+      "evidence": [
+        "MD-F16",
+        "MD-F17"
+      ],
+      "method": "POST",
+      "runtime_verified": false,
+      "common_note": "core.exec normally injects device and sometimes login; functionName is not serialized action. Direct push-disable bypasses core."
+    },
+    {
+      "id": "MD-AUTH-DEVICE",
+      "name": "Poll device authorization",
+      "url": "userDAuth.sync_url",
+      "encoding": "jQuery form-urlencoded",
+      "body": {
+        "login": "userDAuth.login",
+        "email": "userDAuth.email",
+        "haslo": "userDAuth.password",
+        "ciasteczko_autoryzacji": "userDAuth.auth_key",
+        "sprawdz_autoryzacje": true
+      },
+      "effect": "authentication/status polling",
+      "response": "Truthy response resumes selected sync; false/error schedules3s retry while pageactive",
+      "evidence": [
+        "MD-F14",
+        "MD-F15",
+        "MD-F26"
+      ],
+      "method": "POST",
+      "runtime_verified": false,
+      "common_note": "core.exec normally injects device and sometimes login; functionName is not serialized action. Direct push-disable bypasses core."
+    },
+    {
+      "id": "MD-RESET",
+      "name": "Request password reset",
+      "url": "https://logowanie.mobidziennik.pl/logowaniesso/niepamietamhasla?app",
+      "encoding": "jQuery form-urlencoded",
+      "body": {
+        "przypomnij_haslo_email": "entered email",
+        "json": true
+      },
+      "effect": "account notification/reset request",
+      "response": "status truthiness; komunikat usermessage",
+      "evidence": [
+        "MD-F13"
+      ],
+      "method": "POST",
+      "runtime_verified": false,
+      "common_note": "core.exec normally injects device and sometimes login; functionName is not serialized action. Direct push-disable bypasses core."
+    },
+    {
+      "id": "MD-SYNC",
+      "name": "Pull/bootstrap school templates and account data",
+      "url": "app.user.sync_url from login/linked account",
+      "encoding": "jQuery form-urlencoded with nested JSON strings",
+      "body": {
+        "login": "selected school login",
+        "email": "global email",
+        "haslo_hash": "server-issued password_hash",
+        "ciasteczko_autoryzacji": "auth_key",
+        "lekcje": "JSON string of queued app.user.data, usually {}",
+        "formularze": "JSON string of queued app.user.forms, usually {}",
+        "page": "exact current template key, see route grammar",
+        "haslo": "included only when retained password.length>0"
+      },
+      "effect": "read plus possible credential/device updates; queued content can mutate",
+      "response": "{user,templates,error?}; user replacement + template map storage",
+      "evidence": [
+        "MD-F18",
+        "MD-F19",
+        "MD-F20",
+        "MD-F21",
+        "MD-F22",
+        "MD-F26",
+        "MD-F28",
+        "MD-F29"
+      ],
+      "method": "POST",
+      "runtime_verified": false,
+      "common_note": "core.exec normally injects device and sometimes login; functionName is not serialized action. Direct push-disable bypasses core."
+    },
+    {
+      "id": "MD-SYNC-OUTBOX",
+      "name": "Push pending queues then pull",
+      "url": "app.user.sync_url",
+      "encoding": "same form-urlencoded sync body",
+      "body_delta": {
+        "push": true,
+        "lekcje": "pending JSON string",
+        "formularze": "pending JSON string"
+      },
+      "effect": "mutation batch with unknown per-form business semantics",
+      "response": "Firstresponse can rotate password_hash then second pull; observed unsafe clearing and error ordering",
+      "evidence": [
+        "MD-F23",
+        "MD-F24",
+        "MD-F25",
+        "MD-F45",
+        "MD-F46"
+      ],
+      "method": "POST",
+      "runtime_verified": false,
+      "common_note": "core.exec normally injects device and sometimes login; functionName is not serialized action. Direct push-disable bypasses core."
+    },
+    {
+      "id": "MD-FORM",
+      "name": "Generic controller/form tunnel",
+      "url": "explicit app.push override or selected sync_url",
+      "encoding": "jQuery form-urlencoded; formularze JSON string",
+      "body": {
+        "login": "current school login",
+        "email": "current email",
+        "haslo_hash": "current password_hash",
+        "ciasteczko_autoryzacji": "current auth_key",
+        "formularze": "JSON.stringify({name:[{name,kontroler,get,post}]})",
+        "push": true,
+        "haslo": "optional rawpassword"
+      },
+      "effect": "unknown until concrete controller/action recovered; treat effectful",
+      "response": "Rawdata resolved; original helper does not inspect data.error here",
+      "evidence": [
+        "MD-F36",
+        "MD-F37"
+      ],
+      "method": "POST",
+      "runtime_verified": false,
+      "common_note": "core.exec normally injects device and sometimes login; functionName is not serialized action. Direct push-disable bypasses core."
+    },
+    {
+      "id": "MD-FORM-BLOB",
+      "name": "Generic blob variant of form tunnel",
+      "url": "app.push override or selected sync_url",
+      "encoding": "XMLHttpRequest POST FormData of same outerparams",
+      "effect": "unknown/actiondependent; cannot infer attachment upload",
+      "response": "XHR responseType blob; status200..206resolve, otherwise reject; missing transporterror handlers",
+      "evidence": [
+        "MD-F06",
+        "MD-F36"
+      ],
+      "method": "POST",
+      "runtime_verified": false,
+      "common_note": "core.exec normally injects device and sometimes login; functionName is not serialized action. Direct push-disable bypasses core."
+    },
+    {
+      "id": "MD-PUSH-REGISTER",
+      "name": "Changed device token synchronization",
+      "url": "selected sync_url",
+      "encoding": "generic form tunnel plus JSONdevice",
+      "body_delta": {
+        "formularze": "{\"-\":[{\"name\":\"-\",\"kontroler\":false,\"get\":{},\"post\":\"\"}]}",
+        "push": true,
+        "device": "core adds pushRegistrationId token"
+      },
+      "effect": "device registration/update",
+      "response": "genericform rawresponse",
+      "evidence": [
+        "MD-F04",
+        "MD-F39"
+      ],
+      "method": "POST",
+      "runtime_verified": false,
+      "common_note": "core.exec normally injects device and sometimes login; functionName is not serialized action. Direct push-disable bypasses core."
+    },
+    {
+      "id": "MD-PUSH-DISABLE",
+      "name": "Disable notifications for global owner/token",
+      "url": "https://mobidziennik.pl/logowanieapp",
+      "encoding": "directjQueryform-urlencoded",
+      "body": {
+        "powiadomienia_wylacz": "id_global",
+        "push_klucz": "FCM token",
+        "hash": "server-provided push_token_hash or notification hash"
+      },
+      "effect": "notification registration mutation",
+      "response": "No strict success business check; UItoast on AJAXdone",
+      "evidence": [
+        "MD-F38",
+        "MD-F41"
+      ],
+      "method": "POST",
+      "runtime_verified": false,
+      "common_note": "core.exec normally injects device and sometimes login; functionName is not serialized action. Direct push-disable bypasses core."
+    },
+    {
+      "id": "MD-LOCAL-PAGE",
+      "name": "Load packaged static page",
+      "url": "parsedUrl.pathname + .html relative to app assets",
+      "method": "GET",
+      "encoding": "localresource",
+      "effect": "local UI navigation",
+      "response": "HTML appended and page.init run; not a school API",
+      "evidence": [
+        "MD-F31",
+        "MD-F32"
+      ],
+      "runtime_verified": false,
+      "common_note": "core.exec normally injects device and sometimes login; functionName is not serialized action. Direct push-disable bypasses core."
+    }
+  ]
+}

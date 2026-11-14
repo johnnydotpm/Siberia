@@ -1,0 +1,14 @@
+{
+  "status": "passed",
+  "scope": "Offline source/JSON/reference/link checks; no client implementation or live account requests",
+  "source_facts": 58,
+  "original_literal_line_checks": 64,
+  "request_variants": 11,
+  "field_reference_rows": 36,
+  "semantic_feature_rows": 50,
+  "first_party_JS_files": 8,
+  "AST_function_boundaries": 243,
+  "synthetic_acceptance_cases": 32,
+  "remaining_runtime_gates": 12,
+  "issues": []
+}

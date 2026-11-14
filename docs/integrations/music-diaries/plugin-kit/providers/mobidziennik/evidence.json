@@ -1,0 +1,824 @@
+{
+  "schema_version": 1,
+  "scope": "Supplied mobiDziennik12.13 Cordova bootstrap source; no runtime or backend requests",
+  "facts": [
+    {
+      "id": "MD-F01",
+      "statement": "Shared request executor uses default central login origin or caller override; it does not add functionName as an action field.",
+      "evidence_type": "static source observation",
+      "source": {
+        "apk_member": "assets/www/js/core.js",
+        "sha256": "3007477eaf750ff65c9abc1d455598c7302da13f6cd1611ca0213cfbdfd2eb72",
+        "anchor": "core.exec = function",
+        "lines": [
+          155
+        ]
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-F02",
+      "statement": "Packaged central URL is https://mobidziennik.pl/logowanieapp.",
+      "evidence_type": "static source observation",
+      "source": {
+        "apk_member": "assets/www/js/core.js",
+        "sha256": "3007477eaf750ff65c9abc1d455598c7302da13f6cd1611ca0213cfbdfd2eb72",
+        "anchor": "url = 'https://mobidziennik.pl/logowanieapp'",
+        "lines": [
+          158
+        ]
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-F03",
+      "statement": "Absent login is copied from app.user except for functionName logowanie.",
+      "evidence_type": "static source observation",
+      "source": {
+        "apk_member": "assets/www/js/core.js",
+        "sha256": "3007477eaf750ff65c9abc1d455598c7302da13f6cd1611ca0213cfbdfd2eb72",
+        "anchor": "if (!params.login && functionName != 'logowanie'",
+        "lines": [
+          174
+        ]
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-F04",
+      "statement": "When device not supplied, build device object from Cordova/device or App browser fallback, add push/APNs/appVersion, serialize device JSON string.",
+      "evidence_type": "static source observation",
+      "source": {
+        "apk_member": "assets/www/js/core.js",
+        "sha256": "3007477eaf750ff65c9abc1d455598c7302da13f6cd1611ca0213cfbdfd2eb72",
+        "anchor": "params.device = core.json(params.device);",
+        "lines": [
+          202
+        ]
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-F05",
+      "statement": "JSON response branch uses jQuery AJAX POST data=params; no explicit HTTP Authorization or Cookie header set here.",
+      "evidence_type": "static source observation",
+      "source": {
+        "apk_member": "assets/www/js/core.js",
+        "sha256": "3007477eaf750ff65c9abc1d455598c7302da13f6cd1611ca0213cfbdfd2eb72",
+        "anchor": "type: 'POST'",
+        "lines": [
+          236
+        ]
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-F06",
+      "statement": "Optional XHR branch POSTs multipart outer fields and expects blob; response success status range200..206, but no onerror/timeout hook recovered.",
+      "evidence_type": "static source observation",
+      "source": {
+        "apk_member": "assets/www/js/core.js",
+        "sha256": "3007477eaf750ff65c9abc1d455598c7302da13f6cd1611ca0213cfbdfd2eb72",
+        "anchor": "xhr.responseType = 'blob'",
+        "lines": [
+          212
+        ]
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-F07",
+      "statement": "APNs fallback may persist an exchanged user.pushToken, distinct from device-supplied APNs token.",
+      "evidence_type": "static source observation",
+      "source": {
+        "apk_member": "assets/www/js/core.js",
+        "sha256": "3007477eaf750ff65c9abc1d455598c7302da13f6cd1611ca0213cfbdfd2eb72",
+        "anchor": "if(apnsToken && data.user && data.user.pushToken)",
+        "lines": [
+          248
+        ]
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-F08",
+      "statement": "Debug redacts only haslo in a copied map; hash/auth-key/device fields are not equally redacted.",
+      "evidence_type": "static source observation",
+      "source": {
+        "apk_member": "assets/www/js/core.js",
+        "sha256": "3007477eaf750ff65c9abc1d455598c7302da13f6cd1611ca0213cfbdfd2eb72",
+        "anchor": "if(params2.haslo)",
+        "lines": [
+          163
+        ]
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-F09",
+      "statement": "Login reads email and raw password values, requires nonempty lengths; no client trimming or MD5/SHA transformation in this chain.",
+      "evidence_type": "static source observation",
+      "source": {
+        "apk_member": "assets/www/js/app.js",
+        "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+        "anchor": "login: function (form)",
+        "lines": [
+          365
+        ]
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-F10",
+      "statement": "Login POST fields api2,email,haslo,hash; auth unlock adds auth:true. Boolean hash is an instruction flag, not password bytes.",
+      "evidence_type": "static source observation",
+      "source": {
+        "apk_member": "assets/www/js/app.js",
+        "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+        "anchor": "api2: true,",
+        "lines": [
+          398,
+          1223
+        ]
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-F11",
+      "statement": "Login sets empty password_hash and locally retains entered password before initial sync. Later password_hash is supplied by server.",
+      "evidence_type": "static source observation",
+      "source": {
+        "apk_member": "assets/www/js/app.js",
+        "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+        "anchor": "data.password_hash = '';",
+        "lines": [
+          420
+        ]
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-F12",
+      "statement": "Login response error branch consumes error.type/message; successful login consumes returned user-like object directly.",
+      "evidence_type": "static source observation",
+      "source": {
+        "apk_member": "assets/www/js/app.js",
+        "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+        "anchor": "if (data.error)",
+        "lines": [
+          408,
+          707,
+          1234
+        ]
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-F13",
+      "statement": "Password reset body uses przypomnij_haslo_email and json:true at the dedicated SSO recovery URL; it sends an external account action.",
+      "evidence_type": "static source observation",
+      "source": {
+        "apk_member": "assets/www/js/app.js",
+        "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+        "anchor": "przypomnij_haslo_email: email",
+        "lines": [
+          467
+        ]
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-F14",
+      "statement": "Device authorization polling sends login,email,raw password,ciasteczko_autoryzacji,sprawdz_autoryzacje:true to selected sync_url.",
+      "evidence_type": "static source observation",
+      "source": {
+        "apk_member": "assets/www/device-auth.html",
+        "sha256": "b66d8facb36d843e91a82478bb01371d7f38301ee4d1593b6368035ade935ffd",
+        "anchor": "sprawdz_autoryzacje: true",
+        "lines": [
+          43
+        ]
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-F15",
+      "statement": "Device authorization polls every3seconds while device-auth page remains active; truthy response resumes sync; failures schedule another poll.",
+      "evidence_type": "static source observation",
+      "source": {
+        "apk_member": "assets/www/device-auth.html",
+        "sha256": "b66d8facb36d843e91a82478bb01371d7f38301ee4d1593b6368035ade935ffd",
+        "anchor": "ntv: 3000",
+        "lines": [
+          24
+        ]
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-F16",
+      "statement": "Password unlock calls central login with api2/email/haslo/auth/hash; success hides overlay rather than replacing tokens in this branch.",
+      "evidence_type": "static source observation",
+      "source": {
+        "apk_member": "assets/www/js/app.js",
+        "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+        "anchor": "auth: true,",
+        "lines": [
+          1226
+        ]
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-F17",
+      "statement": "Biometric lock checks auth_check==1 after at least5minutes inactive; falls back to password overlay; this is not a backend login proof.",
+      "evidence_type": "static source observation",
+      "source": {
+        "apk_member": "assets/www/js/app.js",
+        "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+        "anchor": "app.user.auth_check == 1",
+        "lines": [
+          93
+        ]
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-F18",
+      "statement": "App auto-sync threshold60minutes; afterMinsCheckUpdate15 exists as a field but no active periodic template-check call established.",
+      "evidence_type": "static source observation",
+      "source": {
+        "apk_member": "assets/www/js/app.js",
+        "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+        "anchor": "afterMinsSync: 60",
+        "lines": [
+          9
+        ]
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-F19",
+      "statement": "Manual synchronization throttles requests within10seconds.",
+      "evidence_type": "static source observation",
+      "source": {
+        "apk_member": "assets/www/js/app.js",
+        "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+        "anchor": "if(time - app.lastUserSyncManual < 10000)",
+        "lines": [
+          578
+        ]
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-F20",
+      "statement": "Concurrent sync returns an already-resolved promise rather than waiting for the active sync; callers can observe false completion.",
+      "evidence_type": "static source observation",
+      "source": {
+        "apk_member": "assets/www/js/app.js",
+        "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+        "anchor": "if(app.isSyncing)",
+        "lines": [
+          594
+        ]
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-F21",
+      "statement": "Sync uses server-issued password_hash as haslo_hash and auth_key as ciasteczko_autoryzacji; optional raw haslo when locally retained.",
+      "evidence_type": "static source observation",
+      "source": {
+        "apk_member": "assets/www/js/app.js",
+        "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+        "anchor": "haslo_hash: app.user.password_hash",
+        "lines": [
+          637,
+          921
+        ]
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-F22",
+      "statement": "Sync includes lekcje JSON string, formularze JSON string and current template/page name.",
+      "evidence_type": "static source observation",
+      "source": {
+        "apk_member": "assets/www/js/app.js",
+        "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+        "anchor": "lekcje: core.json(app.user.data)",
+        "lines": [
+          639
+        ]
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-F23",
+      "statement": "Pending lesson/form queues cause first sync push:true, then second pull after resetting request queue fields.",
+      "evidence_type": "static source observation",
+      "source": {
+        "apk_member": "assets/www/js/app.js",
+        "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+        "anchor": "reqData.push = true;",
+        "lines": [
+          652
+        ]
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-F24",
+      "statement": "Original push-success callback clears queue memory before common business-error validation and before awaited durable outbox acknowledgement.",
+      "evidence_type": "static source observation",
+      "source": {
+        "apk_member": "assets/www/js/app.js",
+        "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+        "anchor": "app.user.forms = {};",
+        "lines": [
+          665
+        ]
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-F25",
+      "statement": "Push response can rotate password_hash; no MD5/algorithm is established by that name.",
+      "evidence_type": "static source observation",
+      "source": {
+        "apk_member": "assets/www/js/app.js",
+        "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+        "anchor": "if(data.user.password_hash_refresh)",
+        "lines": [
+          667
+        ]
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-F26",
+      "statement": "Unauthorized sync stores key when present, logs out matching email, moves current user to userDAuth, opens device-auth.",
+      "evidence_type": "static source observation",
+      "source": {
+        "apk_member": "assets/www/js/app.js",
+        "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+        "anchor": "if(data.error.unauthorized)",
+        "lines": [
+          719
+        ]
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-F27",
+      "statement": "Business logout flag triggers local logout; message-only error can return false rather than rejecting.",
+      "evidence_type": "static source observation",
+      "source": {
+        "apk_member": "assets/www/js/app.js",
+        "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+        "anchor": "if (data.error.logout)",
+        "lines": [
+          732
+        ]
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-F28",
+      "statement": "Successful full sync replaces app.user and persists user+templates; raw server template map is central to academic behavior.",
+      "evidence_type": "static source observation",
+      "source": {
+        "apk_member": "assets/www/js/app.js",
+        "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+        "anchor": "app.user = data.user;",
+        "lines": [
+          763
+        ]
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-F29",
+      "statement": "Three required bootstrap templates js,nav,css are read from cached response; missing any causes error/logout.",
+      "evidence_type": "static source observation",
+      "source": {
+        "apk_member": "assets/www/js/app.js",
+        "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+        "anchor": "storage.getTemplates(app.user.login, ['js', 'nav', 'css'])",
+        "lines": [
+          814
+        ]
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-F30",
+      "statement": "Original app inserts downloaded JavaScript as a script and calls template.init; do not execute server template code in Siberia merely to parse data.",
+      "evidence_type": "static source observation",
+      "source": {
+        "apk_member": "assets/www/js/templateApp.js",
+        "sha256": "a23caef386c7a1812b462242267afb9807eb3e3348e4fb873805992921baf195",
+        "anchor": "$('body').append('<script id=",
+        "lines": [
+          29
+        ]
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-F31",
+      "statement": "Page grammar supports ?query and !detail parameters; split parser does not percent-decode and splits values at = without preserving all suffixes.",
+      "evidence_type": "static source observation",
+      "source": {
+        "apk_member": "assets/www/js/pages.js",
+        "sha256": "2575fcc4dae0609340950e356f33dbe2b8cc16254805cc533561c0fb6998616b",
+        "anchor": "parseUrl: function(url)",
+        "lines": [
+          286
+        ]
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-F32",
+      "statement": "Without js flag template key includes query and excludes !suffix; with js flag template key is pathname only.",
+      "evidence_type": "static source observation",
+      "source": {
+        "apk_member": "assets/www/js/pages.js",
+        "sha256": "2575fcc4dae0609340950e356f33dbe2b8cc16254805cc533561c0fb6998616b",
+        "anchor": "typeof parsedUrl.params['js'] == 'undefined'",
+        "lines": [
+          141,
+          261
+        ]
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-F33",
+      "statement": "change_password forces route zmianahasla before loading another remote template; actual change-password form is not packaged.",
+      "evidence_type": "static source observation",
+      "source": {
+        "apk_member": "assets/www/js/pages.js",
+        "sha256": "2575fcc4dae0609340950e356f33dbe2b8cc16254805cc533561c0fb6998616b",
+        "anchor": "parseInt(app.user.change_password)",
+        "lines": [
+          135
+        ]
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-F34",
+      "statement": "Cached page completion compares URL to currentURL; future host must also compare account generation.",
+      "evidence_type": "static source observation",
+      "source": {
+        "apk_member": "assets/www/js/pages.js",
+        "sha256": "2575fcc4dae0609340950e356f33dbe2b8cc16254805cc533561c0fb6998616b",
+        "anchor": "if(url == pages.current)",
+        "lines": [
+          153
+        ]
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-F35",
+      "statement": "Director type1 default route wiadomosci; all other types glowna.",
+      "evidence_type": "static source observation",
+      "source": {
+        "apk_member": "assets/www/js/app.js",
+        "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+        "anchor": "getDefaultPage: function()",
+        "lines": [
+          853
+        ]
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-F36",
+      "statement": "Generic form entry has name,kontroler,get,post; outer formularze JSON map keyed by name; push:true.",
+      "evidence_type": "static source observation",
+      "source": {
+        "apk_member": "assets/www/js/app.js",
+        "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+        "anchor": "form[ name ].push({",
+        "lines": [
+          909
+        ]
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-F37",
+      "statement": "Failed generic form request optionally appends the exact form to app.user.forms[name] and persists queue; no idempotency guarantee recovered.",
+      "evidence_type": "static source observation",
+      "source": {
+        "apk_member": "assets/www/js/app.js",
+        "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+        "anchor": "if (retry)",
+        "lines": [
+          947
+        ]
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-F38",
+      "statement": "Push disable bypasses core.exec: central POST powiadomienia_wylacz,push_klucz,hash, without automatic device/login injection.",
+      "evidence_type": "static source observation",
+      "source": {
+        "apk_member": "assets/www/js/app.js",
+        "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+        "anchor": "turnOffNotifications: function",
+        "lines": [
+          549
+        ]
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-F39",
+      "statement": "FCM token change invokes sentinel form tunnel to synchronize token through normal device payload, not a separate proven registration URL.",
+      "evidence_type": "static source observation",
+      "source": {
+        "apk_member": "assets/www/js/push.js",
+        "sha256": "5ad362f08c2591cafdd9ade5f265d0bd22e19553542547cab47468520a5c483a",
+        "anchor": "app.push('-', false, {}, '', false);",
+        "lines": [
+          53
+        ]
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-F40",
+      "statement": "Push handler ignores non-tap payload in this handler; tap translates known types to routes and checks owner through loadPageForUser.",
+      "evidence_type": "static source observation",
+      "source": {
+        "apk_member": "assets/www/js/push.js",
+        "sha256": "5ad362f08c2591cafdd9ade5f265d0bd22e19553542547cab47468520a5c483a",
+        "anchor": "if(!payload.tap)",
+        "lines": [
+          79
+        ]
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-F41",
+      "statement": "Notification routing matches global account before changing linked schoollogin, with optional disable request for unrelated recipient.",
+      "evidence_type": "static source observation",
+      "source": {
+        "apk_member": "assets/www/js/app.js",
+        "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+        "anchor": "app.user.id_global == global_id",
+        "lines": [
+          524
+        ]
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-F42",
+      "statement": "Known client roles:director1,teacher2,parent3,student4,outside_user5. Numeric presence does not establish complete role permission matrix.",
+      "evidence_type": "static source observation",
+      "source": {
+        "apk_member": "assets/www/js/storage.js",
+        "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+        "anchor": "storage.usersTypes = {",
+        "lines": [
+          48
+        ]
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-F43",
+      "statement": "Template storage splits JS strings at1000000UTF16codeunits, not bytes.",
+      "evidence_type": "static source observation",
+      "source": {
+        "apk_member": "assets/www/js/storage.js",
+        "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+        "anchor": "storage.maxTemplateHtmlLength = 1000000",
+        "lines": [
+          8
+        ]
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-F44",
+      "statement": "Migration2 removes unique(login,name)index so template chunks can coexist; retrieval concatenates returned rows without explicit ordering.",
+      "evidence_type": "static source observation",
+      "source": {
+        "apk_member": "assets/www/js/storage.js",
+        "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+        "anchor": "DROP INDEX templates_unique_idx",
+        "lines": [
+          33
+        ]
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-F45",
+      "statement": "User replacement initializes pending data/forms to empty objects; metadata persistence is not safe durable mutation acknowledgement.",
+      "evidence_type": "static source observation",
+      "source": {
+        "apk_member": "assets/www/js/storage.js",
+        "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+        "anchor": "INSERT OR REPLACE INTO users(",
+        "lines": [
+          318
+        ]
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-F46",
+      "statement": "storage.execute wraps suppliedSQL statements in one SQLite transaction; network push, in-memory clear and later pull are not one atomic transaction.",
+      "evidence_type": "static source observation",
+      "source": {
+        "apk_member": "assets/www/js/storage.js",
+        "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+        "anchor": "storage.conn.transaction(",
+        "lines": [
+          626
+        ]
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-F47",
+      "statement": "Credentials/auth state are propagated across rows sharing id_global; caches still indexed only by schoollogin in original source.",
+      "evidence_type": "static source observation",
+      "source": {
+        "apk_member": "assets/www/js/storage.js",
+        "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+        "anchor": "WHERE id_global=?",
+        "lines": [
+          336,
+          345
+        ]
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-F48",
+      "statement": "storage.logout always clears local password and password_hash, regardless of passed resetPassword argument; it does not delete cached templates/auth_key.",
+      "evidence_type": "static source observation",
+      "source": {
+        "apk_member": "assets/www/js/storage.js",
+        "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+        "anchor": "resetPassword = true;",
+        "lines": [
+          512
+        ]
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-F49",
+      "statement": "Startup removes logged-out user rows with sync_time at least14daysold; no corresponding template cleanup in that loop.",
+      "evidence_type": "static source observation",
+      "source": {
+        "apk_member": "assets/www/js/storage.js",
+        "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+        "anchor": "storage.howOldUserToDeleteInDays = 14",
+        "lines": [
+          7
+        ]
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-F50",
+      "statement": "Authorization key lookup uses email, not schoollogin; secure storage recommendation must improve tenant/owner qualification.",
+      "evidence_type": "static source observation",
+      "source": {
+        "apk_member": "assets/www/js/storage.js",
+        "sha256": "d057781ae20a0422c4490d89834570edc987fb3b5bdb9f06b4cebd48734b3fa9",
+        "anchor": "storage.getAuthKey = function(email)",
+        "lines": [
+          444
+        ]
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-F51",
+      "statement": "Local file save tries suffixes0..1000 then rejects but lacks an immediate return afterlimit; not a server upload/download contract.",
+      "evidence_type": "static source observation",
+      "source": {
+        "apk_member": "assets/www/js/files.js",
+        "sha256": "f2be97eb86f37c25960bc464c8467be1819a3568ee6b098c6bb87487d4292cb1",
+        "anchor": "storage.FindFreeFileName = function",
+        "lines": [
+          82
+        ]
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-F52",
+      "statement": "Resume suppresses autosync while attendance justification panel is active; confirms feature surface only, not request payload.",
+      "evidence_type": "static source observation",
+      "source": {
+        "apk_member": "assets/www/js/app.js",
+        "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+        "anchor": "pages.current == 'frekwencja'",
+        "lines": [
+          154
+        ]
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-F53",
+      "statement": "Resume suppresses sync while preparing homework answer; actual submission controller belongs to remote templates.",
+      "evidence_type": "static source observation",
+      "source": {
+        "apk_member": "assets/www/js/app.js",
+        "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+        "anchor": "pages.current == 'zadaniadomowe'",
+        "lines": [
+          155
+        ]
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-F54",
+      "statement": "Resume protects message composition; no packaged actual message send fields recovered.",
+      "evidence_type": "static source observation",
+      "source": {
+        "apk_member": "assets/www/js/app.js",
+        "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+        "anchor": "pages.current.indexOf('wiadomosci?typ=nowa')",
+        "lines": [
+          153
+        ]
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-F55",
+      "statement": "Preferred system text zoom is applied; UI rounds to60/80/100/120/140/160/180/200 percentages.",
+      "evidence_type": "static source observation",
+      "source": {
+        "apk_member": "assets/www/js/templateApp.js",
+        "sha256": "a23caef386c7a1812b462242267afb9807eb3e3348e4fb873805992921baf195",
+        "anchor": "window.MobileAccessibility.usePreferredTextZoom(true)",
+        "lines": [
+          169
+        ]
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-F56",
+      "statement": "onOnline callback exists but its proposed sync body is commented out; do not claim immediate reconnect auto-sync.",
+      "evidence_type": "static source observation",
+      "source": {
+        "apk_member": "assets/www/js/app.js",
+        "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+        "anchor": "onOnline: function()",
+        "lines": [
+          207
+        ]
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-F57",
+      "statement": "Local preference supports light/dark/system; system choice invokes ThemeDetection and updates status/navigation colors.",
+      "evidence_type": "static source observation",
+      "source": {
+        "apk_member": "assets/www/js/app.js",
+        "sha256": "fe2e0e0d991ea100218ede5042808db1d722ac72a1eca3a9a59f75cefbfaa3ff",
+        "anchor": "themeChange: function",
+        "lines": [
+          1162
+        ]
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "MD-F58",
+      "statement": "Camera plugin is packaged; its school-specific camera/upload workflow is not recovered from the bootstrap.",
+      "evidence_type": "static source observation",
+      "source": {
+        "apk_member": "assets/www/cordova_plugins.js",
+        "sha256": "41f4f908d97f62d1fd6a2ae6165037730eeeac82d1ea9338eba6bbbe824d8004",
+        "anchor": "\"cordova-plugin-camera\":",
+        "lines": [
+          348
+        ]
+      },
+      "runtime_verified": false
+    }
+  ]
+}

@@ -1,6 +1,8 @@
 # Music diary integration documentation
 
-This is a documentation package for adding **Fryderyk and MobiReg support to SiberiaGB**. It contains specifications, evidence ledgers, illustrative snippets and future-agent tasks. It does not implement or register a plugin. The directory name `plugin-kit` describes its intended audience, not an executable package.
+This is a documentation package for integrating electronic school diaries with **SiberiaGB**. It contains specifications, evidence ledgers, illustrative snippets and future-agent tasks. The research itself does not implement or register a plugin. The directory name `plugin-kit` describes its intended audience, not an executable package.
+
+**Latest additions (2026-11-13):** [mobiDziennik12.13 and Prymus1.2.68](november-2026/README.md), with provider-specific contracts, examples and a [current SDK integration plan](new-providers-siberia/README.md) against main `eb7a4d5`. Siberia now has an actual plugin SDK and downloaded-plugin runtime. Use that current-source plan for new adapters; earlier framework proposals and source anchors below remain explicitly historical.
 
 **Librus supplement (2026-10-31):** the subsequently supplied Librus8.4.1 Android/iOS packages are documented in [the Librus handoff](providers/librus/README.md). It includes shared-source parity, service/auth contracts,195 feature rows,328 request-building functions, model/consumer tables and an updated integration plan against main `fdd022d`. Current Siberia already supports Librus and multi-profile storage; use that updated source plan for Librus rather than assuming the older source anchors below still apply.
 

@@ -1,0 +1,51 @@
+id,module,feature,evidence_status,source_fact,operation_id,required_acceptance
+MD-UI-001,auth,Email/password sign-in,static contract,MD-F09,MD-AUTH-LOGIN,"Validate untrimmedrawpassword,empties,businesserror,ownerpersist"
+MD-UI-002,auth,Password reset request,static contract,MD-F13,MD-RESET,Confirm recoveryURL/form/status/message; no accidentalautomaticsend
+MD-UI-003,auth,Device authorization waiting/retry,static contract,MD-F14,MD-AUTH-DEVICE,"False,true,error/pageexit/staleowner,3sbackoffpolicy"
+MD-UI-004,auth,Biometric re-entry gate,localcapability,MD-F17,,Authflag/inactivity5min/fallback/cancel/failedavailability
+MD-UI-005,auth,Password unlock fallback,static contract,MD-F16,MD-AUTH-UNLOCK,Secretrefreshraces andoverlayonlysuccess
+MD-UI-006,auth,Mandatory password-change route,remotecontractmissing,MD-F33,,Acquireauthenticatedzmianahaslatemplate; do notguesssubmitfields
+MD-UI-007,account,Linked school account switching,static shell,MD-F41,MD-SYNC,Sharedglobalcredentials+per-schoolcache;failedswitchrollback
+MD-UI-008,account,School year and main-account context,static shell,MD-F47,MD-SYNC,Same schoolloginacrossyears/servernamespace test
+MD-UI-009,account,Parent/student/teacher/director/outside roles,static rolecodes,MD-F42,,Capabilitiesderivedfromremoteconfig;noautomaticteacherwrites
+MD-UI-010,account,Local logout and retained cache,localcapability,MD-F48,MD-PUSH-DISABLE,Passwordsremoved byemail;key/templatesretentionexplicit
+MD-UI-011,sync,Initial school bootstrap,static contract,MD-F28,MD-SYNC,"User+templates mapping,malformed/absent requiredpieces"
+MD-UI-012,sync,Manual refresh with10s throttle,static contract,MD-F19,MD-SYNC,"Throttle UI,bounded retry,do notchangeowner"
+MD-UI-013,sync,Resume refresh after60minutes,static shell,MD-F18,MD-SYNC,Timeexactboundary andofflineunknownstate
+MD-UI-014,sync,Draft-preserving resume exclusions,static shell,MD-F52,,"Composer,homeworkanswer,justificationandteacherlessonhold refresh"
+MD-UI-015,sync,Pending lesson/form synchronization,static contract,MD-F23,MD-SYNC-OUTBOX,Durableoutbox before network;avoidoriginalclear-beforebusinessack
+MD-UI-016,sync,Single-flight completion semantics,observed sourcequirk,MD-F20,MD-SYNC,Awaitmatchingactivefutureinsteadfalse resolvedpromise
+MD-UI-017,sync,Credential rotation,static contract,MD-F25,MD-SYNC,"Atomic password_hash generation,owner/contextguards"
+MD-UI-018,sync,Businesserror/session/device flags,static contract,MD-F26,MD-SYNC,typedunauthorized/logout/message/protocol outcomes
+MD-UI-019,sync,Reconnect behavior,bounded local,MD-F56,,onOnlinebodycommented;newpolicyexplicit
+MD-UI-020,storage,Cached school templates/pages,static storage,MD-F29,,Renderfromdata safely;do notexecute serverJS inSiberia
+MD-UI-021,storage,Chunked template persistence,static storage,MD-F43,,"UTF16size,orderedchunks,fullreplacement/emptycontent"
+MD-UI-022,storage,SQLite schema migrations,static storage,MD-F46,,"Version1..4,transactionfailure,interruptedupgrade"
+MD-UI-023,storage,Inactive account cleanup,static storage,MD-F49,,14daythreshold andorphanedtemplates;hostretentionpolicy
+MD-UI-024,navigation,Local shell/static pages,localcapability,MD-F31,MD-LOCAL-PAGE,login/reset/device/loadingerror paths
+MD-UI-025,navigation,Remote route query/detail grammar,static shell,MD-F32,,"?semestr,!id,jsflag,duplicatekeys,encoding"
+MD-UI-026,navigation,Missing-template recovery/default route,static shell,MD-F35,MD-SYNC,"Director mailbox vsothershome,rangefallback,noquietlogout"
+MD-UI-027,grades,Grade list/detail and semester,route only,MD-F40,,Pushrouteoceny?semestr=N!id=X; acquiretemplate/DTO
+MD-UI-028,grades,Final grade view,route only,MD-F40,,oceny?semestr=N&koncowe!id=X;finalDTOunknown
+MD-UI-029,stats,Requested grade and attendance statistics,requestedcapabilitynotestablished,MD-F28,,No packagedstatscalculator/schema;capturetemplatesbeforealgorithmclaim
+MD-UI-030,attendance,Attendance page,route/panel only,MD-F52,,frekwencja route; preservetypecodesaftercaptureddecoder
+MD-UI-031,justification,Electronic absence justification,panel only,MD-F52,,page-freq-justif activepanel provesUI;payload/statusrulesunknown
+MD-UI-032,messages,Inbox/detail via notification,route only,MD-F40,,wiadomosci?typ=odebrane&id=X&js;readdoesnotprovemarkreadAPI
+MD-UI-033,messages,Compose draft,route only,MD-F54,,wiadomosci?typ=nowa;needcontrollers/recipient/send/attachmentmaps
+MD-UI-034,homework,Current homework and answer,route only,MD-F53,,zadaniadomowe?id_zadania=X&id_odpowiedzi=Y&js;unknownwrite
+MD-UI-035,homework,Archived homework,route only,MD-F40,,Pastpayloaddata selects zadaniadomowearchiwalne
+MD-UI-036,tests,Upcoming test/exam page,route only,MD-F40,,sprawdziany;serverdata/confirmationsunknown
+MD-UI-037,behavior,Behavior grade and notes,route only,MD-F40,,zachowanie!id=X or ?typ=przeglad-uwag&id=X&js
+MD-UI-038,teacher,Lesson editing/unsent lesson guard,teacher shellonly,MD-F22,,lekcje dataopaque;do notexpose teacherwritefromsharedqueue
+MD-UI-039,forms,Generic controller dispatch,static wrapper,MD-F36,MD-FORM,Exactoutermap;concreteactionunknownuntiltemplate evidence
+MD-UI-040,files,Generic blob response transport,static wrapper,MD-F06,MD-FORM-BLOB,No inferredmultipartfilepart;status0/timeoutsneedhandlers
+MD-UI-041,files,Native file save/open support,localplugin capability,MD-F51,,"Cache/Downloadfallback,filenamecollisions,storagepermissions"
+MD-UI-042,files,Camera/photo integration,declared pluginonly,MD-F58,,Camerapluginpresent;actualschoolworkflowunknown
+MD-UI-043,push,Permission/token registration,static wrapper,MD-F39,MD-PUSH-REGISTER,Grantdenied/tokenchange/matchingowner;ownpushprojectservergate
+MD-UI-044,push,Global owner notification disable,static contract,MD-F38,MD-PUSH-DISABLE,Do notdisableotherglobalowner;hashcredentialredaction
+MD-UI-045,push,Tapped notification routing,static shell,MD-F40,,"Knownroutes+accountproof,nontapignored,pendingstartup/sync"
+MD-UI-046,push,Account-specific device page,route only,MD-F41,,mojeurzadzenia?id=X&js;deviceapprovalmutationmissing
+MD-UI-047,preferences,Dark/light/system theme,localcapability,MD-F57,,UseSiberiaexistingtheme;donotmistakeservercssforAPI
+MD-UI-048,preferences,System text scaling,localcapability,MD-F55,,"Zoom60..200 buckets,accessibility noinformationloss"
+MD-UI-049,diagnostics,Local logs and errorqueue,localcapability,MD-F08,,Redactpasswordhash/authkey/pushtoken;serveruploadcommented
+MD-UI-050,navigation,Back/menu/history,localcapability,MD-F31,,"Nav/panelclosebeforehistory,accountswitchhistoryclear"

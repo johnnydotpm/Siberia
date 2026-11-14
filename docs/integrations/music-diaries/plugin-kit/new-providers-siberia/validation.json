@@ -1,0 +1,19 @@
+{
+  "status": "passed",
+  "scope": "Offline documentation/source hash/anchor/coverage checks only; no plugin implementation, compilation or school endpoint calls.",
+  "source_commit": "eb7a4d566f449ebcb2e8c3bce62721c50beb7c7c",
+  "source_files": 24,
+  "source_anchors": 113,
+  "local_markdown_links": 11,
+  "implementation_tasks": 11,
+  "routed_operations": 28,
+  "routed_features": 50,
+  "feature_inventory_status": {
+    "mobidziennik": {
+      "feature_rows": 50,
+      "source_file": "features.json"
+    },
+    "prymus": "Provider feature file not yet present at routing generation; operation routing complete."
+  },
+  "issues": []
+}

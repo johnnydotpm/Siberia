@@ -1,0 +1,982 @@
+{
+  "schema_version": 1,
+  "repository": "johnnydotpm/Siberia",
+  "source_commit": "eb7a4d566f449ebcb2e8c3bce62721c50beb7c7c",
+  "inspected_date": "2026-11-13",
+  "scope": "Read-only current-main source export; exact edit locators, not applied implementation",
+  "files": [
+    {
+      "repository_path": "plugins/README.md",
+      "sha256": "9d18f41f3abf0d1b96646762d8bf57358dd7351033c46ef340d0535395b5dc48",
+      "line_count": 197,
+      "anchors": [
+        {
+          "literal": "## Manifest v1",
+          "lines": [
+            60
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "## Execution ABI v1",
+          "lines": [
+            85
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "## Authoring and checking",
+          "lines": [
+            180
+          ],
+          "match_count": 1
+        }
+      ]
+    },
+    {
+      "repository_path": "plugins/sdk/lib/src/manifest.dart",
+      "sha256": "38468afad291c27a3ef76ea455223c363a0496768a3ac2d43419c90516dfa9c0",
+      "line_count": 194,
+      "anchors": [
+        {
+          "literal": "const pluginApiVersion = 1;",
+          "lines": [
+            2
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "const pluginRuntimeVersion = 'dart_eval-0.8.5';",
+          "lines": [
+            3
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "const pluginMaxBytes = 4 * 1024 * 1024;",
+          "lines": [
+            4
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "class PluginManifest {",
+          "lines": [
+            16
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "if (artifact != '$id/$version/plugin.evc')",
+          "lines": [
+            76
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "bool isPluginHttpsUri(Uri uri)",
+          "lines": [
+            170
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "List<PluginManifest> parsePluginCatalog",
+          "lines": [
+            181
+          ],
+          "match_count": 1
+        }
+      ]
+    },
+    {
+      "repository_path": "plugins/sdk/lib/src/plugin_runtime.dart",
+      "sha256": "7e187c55e03551c421954678eda16de64412bc6190e5c081730033b279530227",
+      "line_count": 303,
+      "anchors": [
+        {
+          "literal": "class PluginResult {",
+          "lines": [
+            15
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "class PluginRuntime {",
+          "lines": [
+            25
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "static const maxJsonBytes = 1024 * 1024;",
+          "lines": [
+            31
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<PluginResult> invoke(",
+          "lines": [
+            33
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Duration timeout = const Duration(seconds: 45)",
+          "lines": [
+            39
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "if (++requests > 64",
+          "lines": [
+            77
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<String> _http(",
+          "lines": [
+            156
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "!const {'GET', 'POST', 'PUT', 'PATCH', 'DELETE'}.contains(method)",
+          "lines": [
+            175
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "followRedirects: false,",
+          "lines": [
+            202
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "body is! String",
+          "lines": [
+            191
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "void _execute(",
+          "lines": [
+            229
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "bool _reportProviderError(",
+          "lines": [
+            276
+          ],
+          "match_count": 1
+        }
+      ]
+    },
+    {
+      "repository_path": "plugins/sdk/lib/src/plugin_store.dart",
+      "sha256": "01993cd80dff633c88a0e73770307519306b01b0ffb86f590b9dbae418d000f1",
+      "line_count": 140,
+      "anchors": [
+        {
+          "literal": "class InstalledPlugin {",
+          "lines": [
+            12
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "class PluginStore {",
+          "lines": [
+            21
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<List<PluginManifest>> catalog()",
+          "lines": [
+            85
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<InstalledPlugin> install(",
+          "lines": [
+            98
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "bool _matches(",
+          "lines": [
+            111
+          ],
+          "match_count": 1
+        }
+      ]
+    },
+    {
+      "repository_path": "plugins/sdk/tool/package_plugin.dart",
+      "sha256": "eacc3037c39986bf41bae66ed892ba0b80959078764e73dc968e5bfa5a3ab658",
+      "line_count": 73,
+      "anchors": [
+        {
+          "literal": "void main(List<String> args)",
+          "lines": [
+            11
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "if (!files.containsKey('main.dart'))",
+          "lines": [
+            33
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "'diary_sdk': {",
+          "lines": [
+            39
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "throw const PluginException('release_already_exists')",
+          "lines": [
+            55
+          ],
+          "match_count": 1
+        }
+      ]
+    },
+    {
+      "repository_path": "plugins/sdk/tool/validate_catalog.dart",
+      "sha256": "87d21e80841dc06423510ad6ec2d8a51dbe94743639d8581e9e964026078b240",
+      "line_count": 26,
+      "anchors": [
+        {
+          "literal": "void main(List<String> args)",
+          "lines": [
+            8
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "throw const PluginException('release_mismatch')",
+          "lines": [
+            22
+          ],
+          "match_count": 1
+        }
+      ]
+    },
+    {
+      "repository_path": "plugins/shared/protocol.dart",
+      "sha256": "56626d6d9bf68c82af7bc1527d4a93d0b5bd2f400a5b7673a5f6f067533fa4fa",
+      "line_count": 166,
+      "anchors": [
+        {
+          "literal": "Future<Map> transport(",
+          "lines": [
+            56
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Map result(dynamic data, Map state)",
+          "lines": [
+            97
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Map failure(dynamic error)",
+          "lines": [
+            98
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Map module(List<dynamic> items, dynamic raw)",
+          "lines": [
+            102
+          ],
+          "match_count": 1
+        }
+      ]
+    },
+    {
+      "repository_path": "plugins/sdk/test/providers_test.dart",
+      "sha256": "0d4d04fc0096b90e9482b3d80cd0c8f13788aaf5cd6450b43c970f9580518131",
+      "line_count": 947,
+      "anchors": [
+        {
+          "literal": "for (final provider in ['fryderyk', 'mobireg'])",
+          "lines": [
+            24
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<InstalledPlugin> plugin(String name)",
+          "lines": [
+            49
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<PluginResult> invoke(",
+          "lines": [
+            71
+          ],
+          "match_count": 1
+        }
+      ]
+    },
+    {
+      "repository_path": "syberia/lib/src/data/diary_plugin.dart",
+      "sha256": "2d251d88de69e47ae72e5ca67c904407da78b632b9efd1fa845181dacf910d9e",
+      "line_count": 87,
+      "anchors": [
+        {
+          "literal": "enum DiaryDistribution",
+          "lines": [
+            10
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "class DiaryDefinition {",
+          "lines": [
+            12
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "abstract interface class DiaryPlugin {",
+          "lines": [
+            49
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "abstract interface class DiarySession {",
+          "lines": [
+            64
+          ],
+          "match_count": 1
+        }
+      ]
+    },
+    {
+      "repository_path": "syberia/lib/src/data/diary_plugin_registry.dart",
+      "sha256": "30139ac1b76ab64635b683914e678d28303f9523ff15195fa49445e40b8b3e72",
+      "line_count": 155,
+      "anchors": [
+        {
+          "literal": "class DiaryPluginRegistry {",
+          "lines": [
+            12
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "DiaryPlugin forProfile(",
+          "lines": [
+            30
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "class _DownloadedPlugin implements DiaryPlugin",
+          "lines": [
+            53
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "class _DownloadedSession implements DiarySession",
+          "lines": [
+            97
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<Uri> attachment(",
+          "lines": [
+            148
+          ],
+          "match_count": 1
+        }
+      ]
+    },
+    {
+      "repository_path": "syberia/lib/src/data/diary_plugins.dart",
+      "sha256": "cc6a34428e89f30c06d6358ed866e2fe578da61132cefcd21eef01e473e19d40",
+      "line_count": 618,
+      "anchors": [
+        {
+          "literal": "class DiaryPlugins {",
+          "lines": [
+            35
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "static String _key(String owner) => 'diary_plugin_account_v1_$owner';",
+          "lines": [
+            67
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<T> _locked<T>(",
+          "lines": [
+            93
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<PluginSignIn> connect(",
+          "lines": [
+            167
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<PluginResult> invoke(",
+          "lines": [
+            227
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "if (operation == 'deleteMessage'",
+          "lines": [
+            240
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "const safeReads = {",
+          "lines": [
+            294
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "static String _id(",
+          "lines": [
+            330
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "static String _rawId(",
+          "lines": [
+            332
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<Map<String, Object?>> _mailbox(",
+          "lines": [
+            363
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<AppSnapshot> sync(",
+          "lines": [
+            385
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<void> deleteMessage(",
+          "lines": [
+            507
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<String> send(",
+          "lines": [
+            518
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<SchoolMessageContent> message(",
+          "lines": [
+            550
+          ],
+          "match_count": 1
+        }
+      ]
+    },
+    {
+      "repository_path": "syberia/lib/src/data/app_repository.dart",
+      "sha256": "42b1ae9574eff8e82b8d02b7ea4f7e748f7ce23814c8a88d35768cd7aa0abc0d",
+      "line_count": 1525,
+      "anchors": [
+        {
+          "literal": "DiaryPluginRegistry get _diaries",
+          "lines": [
+            186
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<PluginSignIn> signInPlugin(",
+          "lines": [
+            570
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<List<SchoolProfile>> addPluginProfiles(",
+          "lines": [
+            585
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<List<AbsenceRequest>> absenceRequests(",
+          "lines": [
+            643
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<void> recordAbsenceRequest(",
+          "lines": [
+            659
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<AppSnapshot> syncProfile(",
+          "lines": [
+            820
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<List<(SchoolProfile, AppSnapshot)>> fetchBackgroundSnapshots(",
+          "lines": [
+            971
+          ],
+          "match_count": 1
+        }
+      ]
+    },
+    {
+      "repository_path": "syberia/lib/src/domain/profiles.dart",
+      "sha256": "33938420fb1478e934da0c02caf625ae4f0066a29a396830ffb531be472b0233",
+      "line_count": 312,
+      "anchors": [
+        {
+          "literal": "class SchoolProfile {",
+          "lines": [
+            11
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "bool get usesDownloadedPlugin => providerId != 'librus';",
+          "lines": [
+            38
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "static String idFor(",
+          "lines": [
+            98
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "static const maxProfiles = 99;",
+          "lines": [
+            103
+          ],
+          "match_count": 1
+        }
+      ]
+    },
+    {
+      "repository_path": "syberia/lib/src/domain/models.dart",
+      "sha256": "376e3743439c0785d4caf517c62badc803ce6c46207488c4598e7e9181226c9f",
+      "line_count": 965,
+      "anchors": [
+        {
+          "literal": "class StudentProfile {",
+          "lines": [
+            44
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "class Lesson {",
+          "lines": [
+            74
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "class Grade {",
+          "lines": [
+            133
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "final bool countsToAverage;",
+          "lines": [
+            156
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "final String assessment;",
+          "lines": [
+            157
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "class SchoolMessageContent {",
+          "lines": [
+            308
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "class MessageRecipient {",
+          "lines": [
+            345
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "class GradeAverageSettings {",
+          "lines": [
+            476
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "extension AttendanceKindDetails on AttendanceKind",
+          "lines": [
+            562
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "class AttendanceRecord {",
+          "lines": [
+            577
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "class AppSnapshot {",
+          "lines": [
+            843
+          ],
+          "match_count": 1
+        }
+      ]
+    },
+    {
+      "repository_path": "syberia/lib/src/domain/diary_part.dart",
+      "sha256": "5a238c9ab887862d4a3e06ad3d87519989a97240f31262ee0f8e385cd435ff1a",
+      "line_count": 12,
+      "anchors": [
+        {
+          "literal": "enum DiaryPart {",
+          "lines": [
+            2
+          ],
+          "match_count": 1
+        }
+      ]
+    },
+    {
+      "repository_path": "syberia/lib/src/domain/parent.dart",
+      "sha256": "95245276a20e75cf11f2bcb3d59f58718038ee5f8e0c608888ba3bf3b1bcefde",
+      "line_count": 146,
+      "anchors": [
+        {
+          "literal": "enum AbsenceRequestState",
+          "lines": [
+            81
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "class AbsenceRequest {",
+          "lines": [
+            84
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "List<AttendanceRecord> unexcusedAbsences(",
+          "lines": [
+            141
+          ],
+          "match_count": 1
+        }
+      ]
+    },
+    {
+      "repository_path": "syberia/lib/src/domain/together.dart",
+      "sha256": "872e708d75a66c4aa08305f4e5ca9a968b205d3e6693b1db704d1e3392ba1bea",
+      "line_count": 195,
+      "anchors": [
+        {
+          "literal": "String sourcedId(",
+          "lines": [
+            10
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "String localId(",
+          "lines": [
+            13
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "withSource(",
+          "lines": [
+            117,
+            123,
+            129,
+            135,
+            143,
+            149,
+            155,
+            161,
+            167,
+            172
+          ],
+          "match_count": 10
+        }
+      ]
+    },
+    {
+      "repository_path": "syberia/lib/src/data/snapshot_cache.dart",
+      "sha256": "8515cc2b311eb627df0033425cfd196fb2df69204c31f3bc3dc2da80c7f07ac6",
+      "line_count": 296,
+      "anchors": [
+        {
+          "literal": "abstract final class SnapshotCache",
+          "lines": [
+            7
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "'providerData': value.providerData,",
+          "lines": [
+            10
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "'moduleErrors': value.moduleErrors,",
+          "lines": [
+            11
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "'attendanceComplete': value.attendanceComplete,",
+          "lines": [
+            12
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "static Grade _readGrade(",
+          "lines": [
+            149
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "static AttendanceRecord _readAttendance(",
+          "lines": [
+            223
+          ],
+          "match_count": 1
+        }
+      ]
+    },
+    {
+      "repository_path": "syberia/lib/src/state/app_controller.dart",
+      "sha256": "fb6a870db727731343e2d31b4424de5fb803bdda9c3b067e7fd0c383ee2c95b6",
+      "line_count": 2024,
+      "anchors": [
+        {
+          "literal": "class AppController",
+          "lines": [
+            39
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<bool> loginPlugin(",
+          "lines": [
+            1682
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "Future<List<PluginManifest>> availableDiaryPlugins()",
+          "lines": [
+            1679
+          ],
+          "match_count": 1
+        }
+      ]
+    },
+    {
+      "repository_path": "syberia/lib/src/ui/shell/account.dart",
+      "sha256": "9986bad927dd19bfe447b388f5081355989b08c2d8b164def8a1db3c35a2aaf4",
+      "line_count": 1228,
+      "anchors": [
+        {
+          "literal": "List<Widget> _pluginFields(",
+          "lines": [
+            1069
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "labelText: context.tr(field['label'] as String)",
+          "lines": [
+            1088
+          ],
+          "match_count": 1
+        }
+      ]
+    },
+    {
+      "repository_path": "syberia/test/diary_plugins_test.dart",
+      "sha256": "ccc9ef9757a1372b2e3b28f42493de0b824fb049fa58796fbda97e294a100f84",
+      "line_count": 240,
+      "anchors": [
+        {
+          "literal": "class SchoolPlugins extends DiaryPlugins",
+          "lines": [
+            41
+          ],
+          "match_count": 1
+        }
+      ]
+    },
+    {
+      "repository_path": ".github/workflows/plugins.yml",
+      "sha256": "3d6a1a88ce6fc4b45772dee2ba73e4b4a03ceb13f99129aa45fc278b2ce978f6",
+      "line_count": 31,
+      "anchors": [
+        {
+          "literal": "working-directory: plugins/sdk",
+          "lines": [
+            21
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "sdk: '3.13.3'",
+          "lines": [
+            26
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "dart run tool/validate_catalog.dart",
+          "lines": [
+            31
+          ],
+          "match_count": 1
+        }
+      ]
+    },
+    {
+      "repository_path": ".github/workflows/build.yml",
+      "sha256": "17a6444e673c05a0c6d7c1c42e9766103640cbb96011870c251bc72b44bd4e53",
+      "line_count": 186,
+      "anchors": [
+        {
+          "literal": "working-directory: syberia",
+          "lines": [
+            47,
+            66,
+            82,
+            163
+          ],
+          "match_count": 4
+        },
+        {
+          "literal": "flutter-version: \"3.47.4\"",
+          "lines": [
+            52,
+            91,
+            168
+          ],
+          "match_count": 3
+        },
+        {
+          "literal": "flutter analyze --fatal-infos",
+          "lines": [
+            57
+          ],
+          "match_count": 1
+        }
+      ]
+    },
+    {
+      "repository_path": "syberia/pubspec.yaml",
+      "sha256": "a3540c2f5dc4d707ad8a0b8bc64892082aebbbc24ade8e88e8b3b82ddf155337",
+      "line_count": 137,
+      "anchors": [
+        {
+          "literal": "version: 1.5.1+17",
+          "lines": [
+            19
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "siberia_plugins:",
+          "lines": [
+            36
+          ],
+          "match_count": 1
+        },
+        {
+          "literal": "path: ../plugins/sdk",
+          "lines": [
+            37
+          ],
+          "match_count": 1
+        }
+      ]
+    }
+  ]
+}

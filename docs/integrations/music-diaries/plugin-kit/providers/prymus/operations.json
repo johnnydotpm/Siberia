@@ -1,0 +1,799 @@
+{
+  "scope": "Android1.2.68, native Retrofit annotations; route calls are not backend acceptance tests",
+  "base": "https://cpdklaser.zeto.bialystok.pl/api/",
+  "api_version": 16,
+  "operation_count": 17,
+  "operations": [
+    {
+      "id": "PRY-activeParentMode",
+      "method": "POST",
+      "relative_path": "trybRodzica",
+      "encoding": "application/x-www-form-urlencoded",
+      "parameters": [
+        {
+          "location": "form",
+          "wire_name": "token",
+          "java_type": "String",
+          "parameter": "token"
+        },
+        {
+          "location": "form",
+          "wire_name": "securityToken",
+          "java_type": "String",
+          "parameter": "securityToken"
+        },
+        {
+          "location": "form",
+          "wire_name": "mobileId",
+          "java_type": "String",
+          "parameter": "mobileId"
+        },
+        {
+          "location": "form",
+          "wire_name": "activationCode",
+          "java_type": "String",
+          "parameter": "activationCode"
+        },
+        {
+          "location": "form",
+          "wire_name": "type",
+          "java_type": "int",
+          "parameter": "type"
+        },
+        {
+          "location": "form",
+          "wire_name": "apiVersion",
+          "java_type": "int",
+          "parameter": "apiVersion"
+        }
+      ],
+      "return_consumer_type": "ResponseBody",
+      "evidence": {
+        "source_path": "pl/bialystok/zeto/prymus/network/SchoolService.java",
+        "source_sha256": "ccb4bd82b54f6d46e7ef26bb9d82520d9ecce7595b47b468f6facdedbb08a81b",
+        "anchor": "Call<ResponseBody> activeParentMode(",
+        "lines": [
+          17
+        ]
+      },
+      "effect": "mutation",
+      "runtime_verified": false
+    },
+    {
+      "id": "PRY-changeLicenseForTokens",
+      "method": "POST",
+      "relative_path": "zmienLicencjeDlaTokenow",
+      "encoding": "application/x-www-form-urlencoded",
+      "parameters": [
+        {
+          "location": "form",
+          "wire_name": "token",
+          "java_type": "String",
+          "parameter": "token"
+        },
+        {
+          "location": "form",
+          "wire_name": "securityToken",
+          "java_type": "String",
+          "parameter": "securityToken"
+        },
+        {
+          "location": "form",
+          "wire_name": "tokensToUpgrade",
+          "java_type": "String",
+          "parameter": "tokens"
+        },
+        {
+          "location": "form",
+          "wire_name": "paymentDate",
+          "java_type": "String",
+          "parameter": "date"
+        },
+        {
+          "location": "form",
+          "wire_name": "license",
+          "java_type": "int",
+          "parameter": "license"
+        }
+      ],
+      "return_consumer_type": "ResponseBody",
+      "evidence": {
+        "source_path": "pl/bialystok/zeto/prymus/network/SchoolService.java",
+        "source_sha256": "ccb4bd82b54f6d46e7ef26bb9d82520d9ecce7595b47b468f6facdedbb08a81b",
+        "anchor": "Call<ResponseBody> changeLicenseForTokens(",
+        "lines": [
+          21
+        ]
+      },
+      "effect": "mutation",
+      "runtime_verified": false
+    },
+    {
+      "id": "PRY-createTopicWithTeacher",
+      "method": "POST",
+      "relative_path": "stworzGrupeChatUczenNaucz",
+      "encoding": "application/x-www-form-urlencoded",
+      "parameters": [
+        {
+          "location": "form",
+          "wire_name": "token",
+          "java_type": "String",
+          "parameter": "token"
+        },
+        {
+          "location": "form",
+          "wire_name": "securityToken",
+          "java_type": "String",
+          "parameter": "securityToken"
+        },
+        {
+          "location": "form",
+          "wire_name": "uczenId",
+          "java_type": "String",
+          "parameter": "userId"
+        },
+        {
+          "location": "form",
+          "wire_name": "nauczId",
+          "java_type": "String",
+          "parameter": "teacherId"
+        }
+      ],
+      "return_consumer_type": "ResponseBody",
+      "evidence": {
+        "source_path": "pl/bialystok/zeto/prymus/network/SchoolService.java",
+        "source_sha256": "ccb4bd82b54f6d46e7ef26bb9d82520d9ecce7595b47b468f6facdedbb08a81b",
+        "anchor": "Call<ResponseBody> createTopicWithTeacher(",
+        "lines": [
+          25
+        ]
+      },
+      "effect": "mutation",
+      "runtime_verified": false
+    },
+    {
+      "id": "PRY-getApiResponse",
+      "method": "GET",
+      "relative_path": "pobierzDaneUcznia",
+      "encoding": "query",
+      "parameters": [
+        {
+          "location": "query",
+          "wire_name": "token",
+          "java_type": "String",
+          "parameter": "token"
+        },
+        {
+          "location": "query",
+          "wire_name": "securityToken",
+          "java_type": "String",
+          "parameter": "key"
+        },
+        {
+          "location": "query",
+          "wire_name": "mobileId",
+          "java_type": "String",
+          "parameter": "mobileId"
+        },
+        {
+          "location": "query",
+          "wire_name": "ver",
+          "java_type": "String",
+          "parameter": "ver"
+        },
+        {
+          "location": "query",
+          "wire_name": "fcm_token",
+          "java_type": "String",
+          "parameter": "fcmToken"
+        },
+        {
+          "location": "query",
+          "wire_name": "apiVersion",
+          "java_type": "int",
+          "parameter": "apiVersion"
+        }
+      ],
+      "return_consumer_type": "ApiResponse",
+      "evidence": {
+        "source_path": "pl/bialystok/zeto/prymus/network/SchoolService.java",
+        "source_sha256": "ccb4bd82b54f6d46e7ef26bb9d82520d9ecce7595b47b468f6facdedbb08a81b",
+        "anchor": "Call<ApiResponse> getApiResponse(",
+        "lines": [
+          28
+        ]
+      },
+      "effect": "authentication/device registration and snapshot",
+      "runtime_verified": false
+    },
+    {
+      "id": "PRY-getWeather",
+      "method": "GET",
+      "relative_path": "pobierzPogode",
+      "encoding": "query",
+      "parameters": [
+        {
+          "location": "query",
+          "wire_name": "token",
+          "java_type": "String",
+          "parameter": "token"
+        },
+        {
+          "location": "query",
+          "wire_name": "securityToken",
+          "java_type": "String",
+          "parameter": "securityToken"
+        }
+      ],
+      "return_consumer_type": "ResponseBody",
+      "evidence": {
+        "source_path": "pl/bialystok/zeto/prymus/network/SchoolService.java",
+        "source_sha256": "ccb4bd82b54f6d46e7ef26bb9d82520d9ecce7595b47b468f6facdedbb08a81b",
+        "anchor": "Call<ResponseBody> getWeather(",
+        "lines": [
+          31
+        ]
+      },
+      "effect": "read",
+      "runtime_verified": false
+    },
+    {
+      "id": "PRY-notifyTopicReaded",
+      "method": "POST",
+      "relative_path": "przeczytajChatUczen",
+      "encoding": "application/x-www-form-urlencoded",
+      "parameters": [
+        {
+          "location": "form",
+          "wire_name": "token",
+          "java_type": "String",
+          "parameter": "token"
+        },
+        {
+          "location": "form",
+          "wire_name": "securityToken",
+          "java_type": "String",
+          "parameter": "securityToken"
+        },
+        {
+          "location": "form",
+          "wire_name": "userId",
+          "java_type": "String",
+          "parameter": "userId"
+        },
+        {
+          "location": "form",
+          "wire_name": "topic",
+          "java_type": "String",
+          "parameter": "topic"
+        }
+      ],
+      "return_consumer_type": "ResponseBody",
+      "evidence": {
+        "source_path": "pl/bialystok/zeto/prymus/network/SchoolService.java",
+        "source_sha256": "ccb4bd82b54f6d46e7ef26bb9d82520d9ecce7595b47b468f6facdedbb08a81b",
+        "anchor": "Call<ResponseBody> notifyTopicReaded(",
+        "lines": [
+          35
+        ]
+      },
+      "effect": "mutation",
+      "runtime_verified": false
+    },
+    {
+      "id": "PRY-postReadStatus",
+      "method": "POST",
+      "relative_path": "wyslijStatusOdczytane",
+      "encoding": "application/x-www-form-urlencoded",
+      "parameters": [
+        {
+          "location": "form",
+          "wire_name": "object_id",
+          "java_type": "String",
+          "parameter": "objectId"
+        },
+        {
+          "location": "form",
+          "wire_name": "type",
+          "java_type": "String",
+          "parameter": "type"
+        },
+        {
+          "location": "form",
+          "wire_name": "token",
+          "java_type": "String",
+          "parameter": "token"
+        },
+        {
+          "location": "form",
+          "wire_name": "securityToken",
+          "java_type": "String",
+          "parameter": "securityToken"
+        },
+        {
+          "location": "form",
+          "wire_name": "readDate",
+          "java_type": "String",
+          "parameter": "readDate"
+        }
+      ],
+      "return_consumer_type": "ResponseBody",
+      "evidence": {
+        "source_path": "pl/bialystok/zeto/prymus/network/SchoolService.java",
+        "source_sha256": "ccb4bd82b54f6d46e7ef26bb9d82520d9ecce7595b47b468f6facdedbb08a81b",
+        "anchor": "Call<ResponseBody> postReadStatus(",
+        "lines": [
+          39
+        ]
+      },
+      "effect": "mutation",
+      "runtime_verified": false
+    },
+    {
+      "id": "PRY-postReadStatusMultiple",
+      "method": "POST",
+      "relative_path": "wyslijStatusOdczytaneWiele",
+      "encoding": "application/x-www-form-urlencoded",
+      "parameters": [
+        {
+          "location": "form",
+          "wire_name": "token",
+          "java_type": "String",
+          "parameter": "token"
+        },
+        {
+          "location": "form",
+          "wire_name": "securityToken",
+          "java_type": "String",
+          "parameter": "securityToken"
+        },
+        {
+          "location": "form",
+          "wire_name": "read",
+          "java_type": "String",
+          "parameter": "read"
+        },
+        {
+          "location": "form",
+          "wire_name": "apiVersion",
+          "java_type": "int",
+          "parameter": "apiVersion"
+        }
+      ],
+      "return_consumer_type": "ResponseBody",
+      "evidence": {
+        "source_path": "pl/bialystok/zeto/prymus/network/SchoolService.java",
+        "source_sha256": "ccb4bd82b54f6d46e7ef26bb9d82520d9ecce7595b47b468f6facdedbb08a81b",
+        "anchor": "Call<ResponseBody> postReadStatusMultiple(",
+        "lines": [
+          43
+        ]
+      },
+      "effect": "mutation",
+      "runtime_verified": false
+    },
+    {
+      "id": "PRY-reportBug",
+      "method": "POST",
+      "relative_path": "zglosProblem",
+      "encoding": "application/x-www-form-urlencoded",
+      "parameters": [
+        {
+          "location": "form",
+          "wire_name": "token",
+          "java_type": "String",
+          "parameter": "token"
+        },
+        {
+          "location": "form",
+          "wire_name": "securityToken",
+          "java_type": "String",
+          "parameter": "securityToken"
+        },
+        {
+          "location": "form",
+          "wire_name": "userReport",
+          "java_type": "String",
+          "parameter": "userReport"
+        }
+      ],
+      "return_consumer_type": "ResponseBody",
+      "evidence": {
+        "source_path": "pl/bialystok/zeto/prymus/network/SchoolService.java",
+        "source_sha256": "ccb4bd82b54f6d46e7ef26bb9d82520d9ecce7595b47b468f6facdedbb08a81b",
+        "anchor": "Call<ResponseBody> reportBug(",
+        "lines": [
+          47
+        ]
+      },
+      "effect": "mutation",
+      "runtime_verified": false
+    },
+    {
+      "id": "PRY-resetDevices2",
+      "method": "POST",
+      "relative_path": "wyczyscUrzadzenia2",
+      "encoding": "application/x-www-form-urlencoded",
+      "parameters": [
+        {
+          "location": "form",
+          "wire_name": "token",
+          "java_type": "String",
+          "parameter": "token"
+        },
+        {
+          "location": "form",
+          "wire_name": "securityToken",
+          "java_type": "String",
+          "parameter": "key"
+        },
+        {
+          "location": "form",
+          "wire_name": "mobileId",
+          "java_type": "String",
+          "parameter": "mobileId"
+        }
+      ],
+      "return_consumer_type": "ResponseBody",
+      "evidence": {
+        "source_path": "pl/bialystok/zeto/prymus/network/SchoolService.java",
+        "source_sha256": "ccb4bd82b54f6d46e7ef26bb9d82520d9ecce7595b47b468f6facdedbb08a81b",
+        "anchor": "Call<ResponseBody> resetDevices2(",
+        "lines": [
+          51
+        ]
+      },
+      "effect": "mutation",
+      "runtime_verified": false
+    },
+    {
+      "id": "PRY-sendChatMessage",
+      "method": "POST",
+      "relative_path": "wyslijWiadomoscChatUczen",
+      "encoding": "application/x-www-form-urlencoded",
+      "parameters": [
+        {
+          "location": "form",
+          "wire_name": "token",
+          "java_type": "String",
+          "parameter": "token"
+        },
+        {
+          "location": "form",
+          "wire_name": "securityToken",
+          "java_type": "String",
+          "parameter": "securityToken"
+        },
+        {
+          "location": "form",
+          "wire_name": "userId",
+          "java_type": "String",
+          "parameter": "userId"
+        },
+        {
+          "location": "form",
+          "wire_name": "message",
+          "java_type": "String",
+          "parameter": "message"
+        },
+        {
+          "location": "form",
+          "wire_name": "topic",
+          "java_type": "String",
+          "parameter": "topic"
+        },
+        {
+          "location": "form",
+          "wire_name": "attachment",
+          "java_type": "String",
+          "parameter": "attachment"
+        },
+        {
+          "location": "form",
+          "wire_name": "fromParent",
+          "java_type": "int",
+          "parameter": "fromParent"
+        }
+      ],
+      "return_consumer_type": "ResponseBody",
+      "evidence": {
+        "source_path": "pl/bialystok/zeto/prymus/network/SchoolService.java",
+        "source_sha256": "ccb4bd82b54f6d46e7ef26bb9d82520d9ecce7595b47b468f6facdedbb08a81b",
+        "anchor": "Call<ResponseBody> sendChatMessage(",
+        "lines": [
+          55
+        ]
+      },
+      "effect": "mutation",
+      "runtime_verified": false
+    },
+    {
+      "id": "PRY-sendData",
+      "method": "POST",
+      "relative_path": "wyslijDane",
+      "encoding": "application/x-www-form-urlencoded",
+      "parameters": [
+        {
+          "location": "form",
+          "wire_name": "token",
+          "java_type": "String",
+          "parameter": "token"
+        },
+        {
+          "location": "form",
+          "wire_name": "securityToken",
+          "java_type": "String",
+          "parameter": "securityToken"
+        },
+        {
+          "location": "form",
+          "wire_name": "json",
+          "java_type": "String",
+          "parameter": "json"
+        },
+        {
+          "location": "form",
+          "wire_name": "type",
+          "java_type": "int",
+          "parameter": "type"
+        }
+      ],
+      "return_consumer_type": "ResponseBody",
+      "evidence": {
+        "source_path": "pl/bialystok/zeto/prymus/network/SchoolService.java",
+        "source_sha256": "ccb4bd82b54f6d46e7ef26bb9d82520d9ecce7595b47b468f6facdedbb08a81b",
+        "anchor": "Call<ResponseBody> sendData(",
+        "lines": [
+          59
+        ]
+      },
+      "effect": "mutation",
+      "runtime_verified": false
+    },
+    {
+      "id": "PRY-sendLogs",
+      "method": "POST",
+      "relative_path": "wyslijLogiAplikacjiMobilnej",
+      "encoding": "application/x-www-form-urlencoded",
+      "parameters": [
+        {
+          "location": "form",
+          "wire_name": "token",
+          "java_type": "String",
+          "parameter": "token"
+        },
+        {
+          "location": "form",
+          "wire_name": "securityToken",
+          "java_type": "String",
+          "parameter": "securityToken"
+        },
+        {
+          "location": "form",
+          "wire_name": "mobileId",
+          "java_type": "String",
+          "parameter": "mobileId"
+        },
+        {
+          "location": "form",
+          "wire_name": "tokens",
+          "java_type": "String",
+          "parameter": "tokens"
+        },
+        {
+          "location": "form",
+          "wire_name": "logs",
+          "java_type": "String",
+          "parameter": "logs"
+        }
+      ],
+      "return_consumer_type": "ResponseBody",
+      "evidence": {
+        "source_path": "pl/bialystok/zeto/prymus/network/SchoolService.java",
+        "source_sha256": "ccb4bd82b54f6d46e7ef26bb9d82520d9ecce7595b47b468f6facdedbb08a81b",
+        "anchor": "Call<ResponseBody> sendLogs(",
+        "lines": [
+          63
+        ]
+      },
+      "effect": "mutation",
+      "runtime_verified": false
+    },
+    {
+      "id": "PRY-setFcmToken",
+      "method": "POST",
+      "relative_path": "ustawFcmToken",
+      "encoding": "application/x-www-form-urlencoded",
+      "parameters": [
+        {
+          "location": "form",
+          "wire_name": "mobileId",
+          "java_type": "String",
+          "parameter": "mobileId"
+        },
+        {
+          "location": "form",
+          "wire_name": "fcm_token",
+          "java_type": "String",
+          "parameter": "fcmToken"
+        },
+        {
+          "location": "form",
+          "wire_name": "apiVersion",
+          "java_type": "int",
+          "parameter": "apiVersion"
+        }
+      ],
+      "return_consumer_type": "ResponseBody",
+      "evidence": {
+        "source_path": "pl/bialystok/zeto/prymus/network/SchoolService.java",
+        "source_sha256": "ccb4bd82b54f6d46e7ef26bb9d82520d9ecce7595b47b468f6facdedbb08a81b",
+        "anchor": "Call<ResponseBody> setFcmToken(",
+        "lines": [
+          67
+        ]
+      },
+      "effect": "mutation",
+      "runtime_verified": false
+    },
+    {
+      "id": "PRY-updateTokens",
+      "method": "POST",
+      "relative_path": "aktualizujTokenyUrzadzenia",
+      "encoding": "application/x-www-form-urlencoded",
+      "parameters": [
+        {
+          "location": "form",
+          "wire_name": "tokens",
+          "java_type": "String",
+          "parameter": "tokens"
+        },
+        {
+          "location": "form",
+          "wire_name": "securityToken",
+          "java_type": "String",
+          "parameter": "securityToken"
+        },
+        {
+          "location": "form",
+          "wire_name": "mobileId",
+          "java_type": "String",
+          "parameter": "mobileId"
+        },
+        {
+          "location": "form",
+          "wire_name": "rodzic",
+          "java_type": "String",
+          "parameter": "parentId"
+        },
+        {
+          "location": "form",
+          "wire_name": "premium",
+          "java_type": "int",
+          "parameter": "premium"
+        }
+      ],
+      "return_consumer_type": "ResponseBody",
+      "evidence": {
+        "source_path": "pl/bialystok/zeto/prymus/network/SchoolService.java",
+        "source_sha256": "ccb4bd82b54f6d46e7ef26bb9d82520d9ecce7595b47b468f6facdedbb08a81b",
+        "anchor": "Call<ResponseBody> updateTokens(",
+        "lines": [
+          71
+        ]
+      },
+      "effect": "mutation",
+      "runtime_verified": false
+    },
+    {
+      "id": "PRY-upgradeLicensePremiumForTokens",
+      "method": "POST",
+      "relative_path": "zaktualizujLicencjePremiumDlaTokenowPowiazanych",
+      "encoding": "application/x-www-form-urlencoded",
+      "parameters": [
+        {
+          "location": "form",
+          "wire_name": "token",
+          "java_type": "String",
+          "parameter": "token"
+        },
+        {
+          "location": "form",
+          "wire_name": "securityToken",
+          "java_type": "String",
+          "parameter": "securityToken"
+        },
+        {
+          "location": "form",
+          "wire_name": "tokensToUpgrade",
+          "java_type": "String",
+          "parameter": "tokens"
+        },
+        {
+          "location": "form",
+          "wire_name": "mobileId",
+          "java_type": "String",
+          "parameter": "mobileId"
+        }
+      ],
+      "return_consumer_type": "ResponseBody",
+      "evidence": {
+        "source_path": "pl/bialystok/zeto/prymus/network/SchoolService.java",
+        "source_sha256": "ccb4bd82b54f6d46e7ef26bb9d82520d9ecce7595b47b468f6facdedbb08a81b",
+        "anchor": "Call<ResponseBody> upgradeLicensePremiumForTokens(",
+        "lines": [
+          75
+        ]
+      },
+      "effect": "mutation",
+      "runtime_verified": false
+    },
+    {
+      "id": "PRY-uploadReplyToTeacher",
+      "method": "POST",
+      "relative_path": "wyslijOdpowiedz",
+      "encoding": "application/x-www-form-urlencoded",
+      "parameters": [
+        {
+          "location": "form",
+          "wire_name": "task_id",
+          "java_type": "String",
+          "parameter": "taskId"
+        },
+        {
+          "location": "form",
+          "wire_name": "message",
+          "java_type": "String",
+          "parameter": "message"
+        },
+        {
+          "location": "form",
+          "wire_name": "token",
+          "java_type": "String",
+          "parameter": "token"
+        },
+        {
+          "location": "form",
+          "wire_name": "securityToken",
+          "java_type": "String",
+          "parameter": "securityToken"
+        },
+        {
+          "location": "form",
+          "wire_name": "apiVersion",
+          "java_type": "int",
+          "parameter": "apiVersion"
+        },
+        {
+          "location": "form",
+          "wire_name": "attachments[]",
+          "java_type": "List<String>",
+          "parameter": "attachments"
+        },
+        {
+          "location": "form",
+          "wire_name": "fileNames[]",
+          "java_type": "List<String>",
+          "parameter": "fileNames"
+        },
+        {
+          "location": "form",
+          "wire_name": "extensions[]",
+          "java_type": "List<String>",
+          "parameter": "extensions"
+        }
+      ],
+      "return_consumer_type": "ResponseBody",
+      "evidence": {
+        "source_path": "pl/bialystok/zeto/prymus/network/SchoolService.java",
+        "source_sha256": "ccb4bd82b54f6d46e7ef26bb9d82520d9ecce7595b47b468f6facdedbb08a81b",
+        "anchor": "Call<ResponseBody> uploadReplyToTeacher(",
+        "lines": [
+          79
+        ]
+      },
+      "effect": "mutation",
+      "runtime_verified": false
+    }
+  ]
+}
