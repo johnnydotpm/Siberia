@@ -139,6 +139,17 @@ class _MessagesState extends State<_Messages> {
     }
   }
 
+  /// The folders, as a glass menu lists them.
+  List<GlassMenuItem<_MessageFolder>> _folderItems() => [
+    for (final value in _MessageFolder.values)
+      GlassMenuItem(
+        key: ValueKey('messages-folder-${value.name}'),
+        value: value,
+        label: _folderName(context, value),
+        selected: value == _folder,
+      ),
+  ];
+
   /// The menu of folders under the title, in the design's own kind.
   Future<void> _pickFolder(Rect anchor) async {
     final folder = _folder;
@@ -146,15 +157,7 @@ class _MessagesState extends State<_Messages> {
         ? await showGlassMenu<_MessageFolder>(
             context: context,
             anchor: anchor,
-            items: [
-              for (final value in _MessageFolder.values)
-                GlassMenuItem(
-                  key: ValueKey('messages-folder-${value.name}'),
-                  value: value,
-                  label: _folderName(context, value),
-                  selected: value == folder,
-                ),
-            ],
+            items: _folderItems(),
           )
         : await showMenu<_MessageFolder>(
             context: context,
@@ -435,6 +438,8 @@ class _MessagesState extends State<_Messages> {
     final folderTitle = _FolderTitle(
       _folderName(context, _folder),
       onPick: _pickFolder,
+      folders: _folderItems(),
+      onFolder: _openFolder,
     );
     // Under a glass top bar the compose button lives in the bar, and the
     // folder is the page's large title.
@@ -571,10 +576,22 @@ class _MessagesState extends State<_Messages> {
 /// The folder as the page's title, with a chevron: a tap opens the menu of
 /// folders under it. Drawn as the design draws a page's title.
 class _FolderTitle extends StatelessWidget {
-  const _FolderTitle(this.text, {required this.onPick});
+  const _FolderTitle(
+    this.text, {
+    required this.onPick,
+    required this.folders,
+    required this.onFolder,
+  });
 
   final String text;
+
+  /// Opens Flutter's menu under the title, which stands at the rect given.
   final ValueChanged<Rect> onPick;
+
+  /// For UIKit's own menu on iOS 26: the folders, and what to do with the
+  /// one picked.
+  final List<GlassMenuItem<_MessageFolder>> folders;
+  final ValueChanged<_MessageFolder> onFolder;
 
   @override
   Widget build(BuildContext context) {
@@ -605,7 +622,7 @@ class _FolderTitle extends StatelessWidget {
       overflow: glass ? null : TextOverflow.ellipsis,
       style: style,
     );
-    return Padding(
+    final title = Padding(
       padding: padding,
       child: Align(
         alignment: AlignmentDirectional.centerStart,
@@ -644,6 +661,25 @@ class _FolderTitle extends StatelessWidget {
           ),
         ),
       ),
+    );
+    if (!glass || GlassPlatform.backend != GlassBackend.uikit) return title;
+    // On iOS 26 a tap on the title reaches UIKit's own button over it, whose
+    // menu the system brings out of the title on Liquid Glass.
+    return Stack(
+      children: [
+        ExcludeSemantics(child: title),
+        Positioned.fill(
+          child: Padding(
+            padding: padding,
+            child: NativeGlassMenuButton<_MessageFolder>(
+              key: const ValueKey('messages-folder-native'),
+              label: text,
+              items: folders,
+              onPicked: onFolder,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

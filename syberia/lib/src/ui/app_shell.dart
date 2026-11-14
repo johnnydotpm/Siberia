@@ -47,6 +47,7 @@ import 'brand_logo.dart';
 import 'expressive/expressive.dart';
 import 'glass/glass_items.dart';
 import 'glass/glass_modals.dart';
+import 'glass/native_glass_menu_button.dart';
 import 'glass/glass_platform.dart';
 import 'glass/glass_shell.dart';
 import 'glass/glass_toolbar.dart';

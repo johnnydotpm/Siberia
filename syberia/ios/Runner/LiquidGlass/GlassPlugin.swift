@@ -28,6 +28,8 @@ enum LiquidGlass {
       GlassBarButtonsFactory(messenger: messenger), withId: "siberia/glass_bar_buttons")
     registrar.register(GlassSurfaceFactory(messenger: messenger), withId: "siberia/glass_surface")
     registrar.register(GlassToolbarFactory(messenger: messenger), withId: "siberia/glass_toolbar")
+    registrar.register(
+      GlassMenuButtonFactory(messenger: messenger), withId: "siberia/glass_menu_button")
   }
 
   /// Asks before something that cannot be undone, the way iOS asks: an

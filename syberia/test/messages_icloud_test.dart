@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -431,6 +433,90 @@ void main() {
       same(GlassMaterial.menu(Brightness.light)),
     );
     await tester.tap(_key('messages-folder-sent'));
+    await tester.pumpAndSettle();
+    expect(find.text('Sent subject'), findsOneWidget);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
+  testWidgets('where Flutter draws the glass, the menu pours out of the '
+      'title on springs and folds back into it', (tester) async {
+    GlassPlatform.debugSetBackend(GlassBackend.rendered);
+    await _open(tester, design: 'glass');
+    final title = tester.getRect(_key('messages-folder'));
+    await tester.tap(_key('messages-folder'));
+    final plate = find.ancestor(
+      of: _key('messages-folder-sent'),
+      matching: find.byType(GlassPlate),
+    );
+    final heights = <double>[];
+    final tops = <double>[];
+    for (var frame = 0; frame < 40; frame++) {
+      await tester.pump(const Duration(milliseconds: 16));
+      if (plate.evaluate().isEmpty) continue;
+      final rect = tester.getRect(plate);
+      heights.add(rect.height);
+      tops.add(rect.top);
+    }
+    await tester.pumpAndSettle();
+    final open = tester.getRect(plate);
+    // It comes from the title, above where it ends.
+    expect(tops.first, lessThan(open.top - 10));
+    expect(tops.first, lessThan(title.bottom));
+    expect(open.top, closeTo(title.bottom + 6, 0.5));
+    // A spring: it stretches past its size and settles back.
+    expect(heights.reduce(math.max), greaterThan(open.height + 1));
+    // Closing, it heads back up into the title, smaller.
+    await tester.tapAt(const Offset(390, 590));
+    await tester.pump(const Duration(milliseconds: 16));
+    await tester.pump(const Duration(milliseconds: 130));
+    final closing = tester.getRect(plate);
+    expect(closing.top, lessThan(open.top));
+    expect(closing.height, lessThan(open.height));
+    await tester.pumpAndSettle();
+    expect(plate, findsNothing);
+    expect(find.text('Subject m0'), findsOneWidget);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
+  testWidgets('on iOS 26 the title opens UIKit\'s own menu, whose choice '
+      'opens the folder', (tester) async {
+    final messenger =
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
+    final views = <String, int>{};
+    GlassPlatform.debugSetBackend(GlassBackend.uikit);
+    messenger.setMockMethodCallHandler(SystemChannels.platform_views, (
+      call,
+    ) async {
+      if (call.method == 'create') {
+        final arguments = call.arguments as Map;
+        views[arguments['viewType'] as String] = arguments['id'] as int;
+      }
+      return null;
+    });
+    addTearDown(
+      () => messenger.setMockMethodCallHandler(
+        SystemChannels.platform_views,
+        null,
+      ),
+    );
+    await _open(tester, design: 'glass');
+    final id = views['siberia/glass_menu_button'];
+    expect(id, isNotNull);
+    // The button lies over the title.
+    expect(
+      tester
+          .getRect(_key('messages-folder-native'))
+          .overlaps(tester.getRect(_key('messages-folder'))),
+      isTrue,
+    );
+    // UIKit says the second folder was picked.
+    await messenger.handlePlatformMessage(
+      'siberia/glass_menu_button/$id',
+      const StandardMethodCodec().encodeMethodCall(
+        const MethodCall('pick', '1'),
+      ),
+      (_) {},
+    );
     await tester.pumpAndSettle();
     expect(find.text('Sent subject'), findsOneWidget);
     await tester.pumpWidget(const SizedBox.shrink());
