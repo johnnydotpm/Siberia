@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -7,6 +8,7 @@ import 'package:syberia/src/data/app_repository.dart';
 import 'package:syberia/src/domain/models.dart';
 import 'package:syberia/src/state/app_controller.dart';
 import 'package:syberia/src/ui/glass/glass_platform.dart';
+import 'package:syberia/src/ui/glass/glass_shell.dart';
 
 /// Messages as Mail shows them: the folder as the title with its menu, a
 /// status line with the filter, a dot while unread, and a message on a page
@@ -274,21 +276,63 @@ void main() {
       'symbols and its back button returns', (tester) async {
     GlassPlatform.debugSetBackend(GlassBackend.rendered);
     await _open(tester, design: 'glass');
-    // As in Mail on iOS 26, each row has its sender's picture, between the
-    // unread dot and the text.
+    // As in Gmail: the sender's picture at the page's margin, the dot after
+    // the date, and two lines for the subject.
     final avatar = find.descendant(
       of: _key('message-tile-m0'),
       matching: find.text('TM'),
     );
     expect(avatar, findsOneWidget);
-    expect(
-      tester.getCenter(_key('message-unread-m0')).dx,
-      lessThan(tester.getRect(avatar).left),
+    final sender = tester.getRect(find.text('Teacher m0'));
+    final picture = tester.getRect(
+      find.descendant(
+        of: _key('message-select-m0'),
+        matching: find.byType(CircleAvatar),
+      ),
     );
-    expect(
-      tester.getRect(avatar).right,
-      lessThan(tester.getRect(find.text('Teacher m0')).left),
+    expect(picture.left, closeTo(16, 0.5));
+    expect(picture.width, 44);
+    expect(picture.right, lessThan(sender.left));
+    final dot = tester.getRect(_key('message-unread-m0'));
+    final date = tester.getRect(
+      find.descendant(
+        of: _key('message-tile-m0'),
+        matching: find.textContaining(':'),
+      ),
     );
+    expect(dot.left, greaterThan(date.right));
+    expect(dot.center.dy, closeTo(date.center.dy, 1.5));
+    expect(_key('message-unread-m2'), findsNothing);
+    // A short subject still has its two lines, so every row is as tall.
+    final first = tester.getSize(_key('message-tile-m0')).height;
+    expect(first, greaterThanOrEqualTo(88));
+    expect(tester.getSize(_key('message-tile-m1')).height, first);
+    // Picking turns the picture into the check, in its place.
+    await tester.tap(_key('message-select-m0'));
+    await tester.pumpAndSettle();
+    expect(avatar, findsNothing);
+    expect(
+      tester
+          .getRect(
+            find.descendant(
+              of: _key('message-select-m0'),
+              matching: find.byIcon(Icons.check_rounded),
+            ),
+          )
+          .center,
+      offsetMoreOrLessEquals(picture.center, epsilon: 0.5),
+    );
+    // The page's title asks to pick and fits its line whole.
+    await tester.tap(_key('message-select-m0'));
+    await tester.pumpAndSettle();
+    final ask = find.text('Select messages');
+    expect(ask, findsWidgets);
+    expect(
+      tester.renderObject<RenderParagraph>(ask.first).didExceedMaxLines,
+      isFalse,
+    );
+    await tester.tap(_key('glass-bar-button-selection-close'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Subject m0'));
     await tester.pumpAndSettle();
     expect(
@@ -304,5 +348,37 @@ void main() {
     expect(find.byKey(const ValueKey('message-body')), findsNothing);
     expect(find.text('Subject m0'), findsOneWidget);
     await tester.pumpWidget(const SizedBox.shrink());
+  });
+
+  testWidgets('a long large title gets smaller to fit its line, as tall as '
+      'before', (tester) async {
+    Future<RenderParagraph> title(String text) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Align(
+            alignment: Alignment.topLeft,
+            child: SizedBox(width: 320, child: GlassLargeTitle(text)),
+          ),
+        ),
+      );
+      return tester.renderObject<RenderParagraph>(find.text(text));
+    }
+
+    final short = await title('Inbox');
+    final shortHeight = short.size.height;
+    expect(short.text.style?.fontSize, 34);
+    // Too long at full size: smaller, and whole. (The test font's letters
+    // are as wide as they are tall, so a short word is already too long.)
+    final long = await title('Wybierz coś');
+    expect(long.text.style!.fontSize!, lessThan(34));
+    expect(
+      long.text.style!.fontSize!,
+      greaterThanOrEqualTo(34 * GlassLargeTitle.smallest),
+    );
+    expect(long.didExceedMaxLines, isFalse);
+    expect(long.size.height, shortHeight);
+    // Past the smallest size it is cut short rather than shrinking on.
+    final longer = await title('Wybierz wiadomości do usunięcia teraz');
+    expect(longer.text.style!.fontSize, 34 * GlassLargeTitle.smallest);
   });
 }

@@ -974,3 +974,53 @@ String _plainPolish(String value) {
   }
   return out.toString();
 }
+
+/// [child] wider than the room it is given by [amount] on each side, as a
+/// row whose tint reaches nearer the screen's edges than the page's margin.
+class _Bleed extends SingleChildRenderObjectWidget {
+  const _Bleed(this.amount, {required super.child});
+
+  final double amount;
+
+  @override
+  RenderObject createRenderObject(BuildContext context) => _RenderBleed(amount);
+
+  @override
+  void updateRenderObject(BuildContext context, _RenderBleed renderObject) =>
+      renderObject.amount = amount;
+}
+
+class _RenderBleed extends RenderShiftedBox {
+  _RenderBleed(this._amount) : super(null);
+
+  double _amount;
+  set amount(double value) {
+    if (value == _amount) return;
+    _amount = value;
+    markNeedsLayout();
+  }
+
+  @override
+  void performLayout() {
+    final child = this.child;
+    if (child == null) {
+      size = constraints.smallest;
+      return;
+    }
+    final width = constraints.maxWidth + 2 * _amount;
+    child.layout(
+      constraints.copyWith(minWidth: width, maxWidth: width),
+      parentUsesSize: true,
+    );
+    size = constraints.constrain(Size(constraints.maxWidth, child.size.height));
+    (child.parentData! as BoxParentData).offset = Offset(-_amount, 0);
+  }
+
+  @override
+  double computeMinIntrinsicHeight(double width) =>
+      child?.getMinIntrinsicHeight(width + 2 * _amount) ?? 0;
+
+  @override
+  double computeMaxIntrinsicHeight(double width) =>
+      child?.getMaxIntrinsicHeight(width + 2 * _amount) ?? 0;
+}

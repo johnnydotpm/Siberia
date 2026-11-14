@@ -54,21 +54,57 @@ class GlassLargeTitle extends StatelessWidget {
   /// How far a page scrolls before the title is fully under the top bar.
   static const double extent = 52;
 
+  /// How small a long title may get to fit on its line before it is cut.
+  static const double smallest = 0.72;
+
+  /// The title's style at full size.
+  static TextStyle styleOf(BuildContext context) => TextStyle(
+    color: Theme.of(context).colorScheme.onSurface,
+    fontSize: 34,
+    fontWeight: FontWeight.w700,
+    letterSpacing: 0.37,
+    height: 41 / 34,
+  );
+
+  /// [style] made smaller for [text] to fit in [width], as a long title, as
+  /// "Wybierz wiadomości" or a German one, does; its line stays as tall, so
+  /// nothing under it moves. Past [smallest] it is cut short instead.
+  static TextStyle fit(
+    BuildContext context,
+    String text,
+    TextStyle style,
+    double width,
+  ) {
+    final painter = TextPainter(
+      text: TextSpan(text: text, style: style),
+      textDirection: Directionality.of(context),
+      textScaler: MediaQuery.textScalerOf(context),
+      maxLines: 1,
+    )..layout();
+    final natural = painter.width;
+    painter.dispose();
+    if (natural <= width) return style;
+    // A hair under, so rounding cannot cut it after all.
+    final scale = math.max((width - 1) / natural, smallest);
+    final size = style.fontSize! * scale;
+    return style.copyWith(
+      fontSize: size,
+      letterSpacing: (style.letterSpacing ?? 0) * scale,
+      height: style.fontSize! * style.height! / size,
+    );
+  }
+
   @override
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.only(top: 3, bottom: 8),
     child: Semantics(
       header: true,
-      child: Text(
-        text,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-        style: TextStyle(
-          color: Theme.of(context).colorScheme.onSurface,
-          fontSize: 34,
-          fontWeight: FontWeight.w700,
-          letterSpacing: 0.37,
-          height: 41 / 34,
+      child: LayoutBuilder(
+        builder: (context, constraints) => Text(
+          text,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: fit(context, text, styleOf(context), constraints.maxWidth),
         ),
       ),
     ),

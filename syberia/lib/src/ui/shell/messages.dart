@@ -585,13 +585,7 @@ class _FolderTitle extends StatelessWidget {
     final TextStyle? style;
     final EdgeInsets padding;
     if (glass) {
-      style = TextStyle(
-        color: colors.onSurface,
-        fontSize: 34,
-        fontWeight: FontWeight.w700,
-        letterSpacing: 0.37,
-        height: 41 / 34,
-      );
+      style = GlassLargeTitle.styleOf(context);
       padding = const EdgeInsets.only(top: 3, bottom: 8);
     } else if (expressive) {
       final emphasized =
@@ -605,41 +599,54 @@ class _FolderTitle extends StatelessWidget {
       padding = const EdgeInsets.only(bottom: 8);
     }
     final size = (style?.fontSize ?? 24) * 0.6;
+    const gap = 6.0;
+    final chevron = glass ? size * 0.8 : size * 1.2;
     return Padding(
       padding: padding,
-      child: Align(
-        alignment: AlignmentDirectional.centerStart,
-        child: Builder(
-          builder: (context) => Semantics(
-            header: true,
-            button: true,
-            child: InkWell(
-              key: const ValueKey('messages-folder'),
-              borderRadius: BorderRadius.circular(12),
-              onTap: () {
-                final box = context.findRenderObject()! as RenderBox;
-                onPick(box.localToGlobal(Offset.zero) & box.size);
-              },
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Flexible(
-                    child: Text(
-                      text,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: style,
+      child: LayoutBuilder(
+        builder: (context, constraints) => Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: Builder(
+            builder: (context) => Semantics(
+              header: true,
+              button: true,
+              child: InkWell(
+                key: const ValueKey('messages-folder'),
+                borderRadius: BorderRadius.circular(12),
+                onTap: () {
+                  final box = context.findRenderObject()! as RenderBox;
+                  onPick(box.localToGlobal(Offset.zero) & box.size);
+                },
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Flexible(
+                      child: Text(
+                        text,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        // In glass a long folder's name gets smaller to fit,
+                        // as the large title does.
+                        style: glass
+                            ? GlassLargeTitle.fit(
+                                context,
+                                text,
+                                style!,
+                                constraints.maxWidth - gap - chevron,
+                              )
+                            : style,
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 6),
-                  AppIcon(
-                    glass
-                        ? CupertinoIcons.chevron_down
-                        : Icons.keyboard_arrow_down_rounded,
-                    size: glass ? size * 0.8 : size * 1.2,
-                    color: colors.primary,
-                  ),
-                ],
+                    const SizedBox(width: gap),
+                    AppIcon(
+                      glass
+                          ? CupertinoIcons.chevron_down
+                          : Icons.keyboard_arrow_down_rounded,
+                      size: chevron,
+                      color: colors.primary,
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -892,9 +899,7 @@ class _MessagesSectionLabel extends StatelessWidget {
             ? 8
             : glass
             // Over the text, past the senders' pictures.
-            ? _MessageRow.gutter +
-                  _MessageRow.avatarSize +
-                  _MessageRow.avatarGap
+            ? _MessageRow.avatarSize + _MessageRow.avatarGap
             : _MessageRow.gutter,
         top,
         12,
@@ -933,9 +938,11 @@ String _messageTime(BuildContext context, DateTime value, DateTime now) {
 
 /// A message in the list, as Mail shows it: a dot while unread beside the
 /// sender, the date at the end, then the subject and two lines of the text.
-/// The glass design and the classic one draw it as a row with a line under
-/// it; Expressive as one piece of a group of the day, its outer corners
-/// large and the inner ones small.
+/// The classic design draws it as a row with a line under it; Expressive as
+/// one piece of a group of the day, its outer corners large and the inner
+/// ones small. The glass design draws it as Gmail does: the sender's picture
+/// at the edge, which turns into the check when picked, the dot after the
+/// date and two lines for what the message is about.
 class _MessageRow extends StatelessWidget {
   const _MessageRow(
     this.controller,
@@ -973,8 +980,11 @@ class _MessageRow extends StatelessWidget {
   static const double gutter = 28;
 
   /// The sender's picture in the glass design, and the room after it.
-  static const double avatarSize = 42;
+  static const double avatarSize = 44;
   static const double avatarGap = 12;
+
+  /// How far a glass row reaches past the page's margin on each side.
+  static const double bleed = 8;
 
   Future<bool> _markRead(BuildContext context) async {
     final messenger = ScaffoldMessenger.of(context);
@@ -1012,44 +1022,23 @@ class _MessageRow extends StatelessWidget {
             top: Radius.circular(first ? 20 : 4),
             bottom: Radius.circular(last ? 20 : 4),
           )
-        : BorderRadius.circular(glass ? 12 : 14);
-    final senderStyle = glass
-        ? TextStyle(
-            color: colors.onSurface,
-            fontSize: 17,
-            fontWeight: FontWeight.w600,
-            letterSpacing: -0.41,
-          )
-        : theme.textTheme.titleSmall?.copyWith(
-            fontSize: 16,
-            fontWeight: unread ? FontWeight.w700 : FontWeight.w500,
-          );
-    final subjectStyle = glass
-        ? TextStyle(color: colors.onSurface, fontSize: 15, letterSpacing: -0.24)
-        : theme.textTheme.bodyMedium?.copyWith(
-            color: colors.onSurface,
-            fontWeight: unread ? FontWeight.w700 : FontWeight.w400,
-          );
-    final previewStyle = glass
-        ? TextStyle(
-            color: colors.onSurfaceVariant,
-            fontSize: 15,
-            height: 20 / 15,
-            letterSpacing: -0.24,
-          )
-        : theme.textTheme.bodyMedium?.copyWith(color: colors.onSurfaceVariant);
-    final dateStyle = glass
-        ? TextStyle(
-            color: colors.onSurfaceVariant,
-            fontSize: 15,
-            letterSpacing: -0.24,
-            fontFeatures: _tabular,
-          )
-        : theme.textTheme.labelMedium?.copyWith(
-            color: unread ? accent : colors.onSurfaceVariant,
-            fontWeight: unread ? FontWeight.w700 : FontWeight.w400,
-            fontFeatures: _tabular,
-          );
+        : BorderRadius.circular(glass ? 16 : 14);
+    final senderStyle = theme.textTheme.titleSmall?.copyWith(
+      fontSize: 16,
+      fontWeight: unread ? FontWeight.w700 : FontWeight.w500,
+    );
+    final subjectStyle = theme.textTheme.bodyMedium?.copyWith(
+      color: colors.onSurface,
+      fontWeight: unread ? FontWeight.w700 : FontWeight.w400,
+    );
+    final previewStyle = theme.textTheme.bodyMedium?.copyWith(
+      color: colors.onSurfaceVariant,
+    );
+    final dateStyle = theme.textTheme.labelMedium?.copyWith(
+      color: unread ? accent : colors.onSurfaceVariant,
+      fontWeight: unread ? FontWeight.w700 : FontWeight.w400,
+      fontFeatures: _tabular,
+    );
     void longPress() {
       HapticFeedback.mediumImpact();
       onSelect?.call();
@@ -1057,8 +1046,8 @@ class _MessageRow extends StatelessWidget {
 
     Widget dot() => Container(
       key: ValueKey('message-unread-${item.id}'),
-      width: expressive ? 8 : 10,
-      height: expressive ? 8 : 10,
+      width: expressive ? 8 : (glass ? 9 : 10),
+      height: expressive ? 8 : (glass ? 9 : 10),
       decoration: BoxDecoration(color: accent, shape: BoxShape.circle),
     );
     final line =
@@ -1128,7 +1117,7 @@ class _MessageRow extends StatelessWidget {
               Padding(
                 padding: const EdgeInsetsDirectional.only(start: 6),
                 child: AppIcon(
-                  glass ? CupertinoIcons.paperclip : Icons.attach_file_rounded,
+                  Icons.attach_file_rounded,
                   size: 15,
                   color: colors.onSurfaceVariant,
                   semanticLabel: context.tr('messageHasAttachment'),
@@ -1136,15 +1125,6 @@ class _MessageRow extends StatelessWidget {
               ),
             const SizedBox(width: 6),
             Text(_messageTime(context, item.receivedAt, now), style: dateStyle),
-            if (glass)
-              Padding(
-                padding: const EdgeInsetsDirectional.only(start: 4),
-                child: AppIcon(
-                  CupertinoIcons.chevron_forward,
-                  size: 14,
-                  color: colors.onSurfaceVariant.withValues(alpha: 0.6),
-                ),
-              ),
           ],
         ),
         const SizedBox(height: 1),
@@ -1182,55 +1162,42 @@ class _MessageRow extends StatelessWidget {
       ],
     );
 
-    final content = Padding(
-      padding: expressive
-          ? const EdgeInsetsDirectional.fromSTEB(4, 12, 16, 12)
-          : const EdgeInsetsDirectional.only(end: 4),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: EdgeInsets.only(top: expressive || onCard ? 0 : 10),
-            child: mark,
-          ),
-          // Glass, as Mail on iOS 26: who it is from, or to, on a picture
-          // before the text.
-          if (glass)
-            Padding(
-              padding: EdgeInsetsDirectional.only(
-                top: onCard ? 0 : 12,
-                end: _MessageRow.avatarGap,
-              ),
-              child: ExcludeSemantics(
-                child: _SenderAvatar(
-                  item.sent ? item.recipients.firstOrNull ?? '' : item.sender,
-                  radius: _MessageRow.avatarSize / 2,
+    final content = glass
+        ? _glassContent(context, dot: dot(), accent: accent)
+        : Padding(
+            padding: expressive
+                ? const EdgeInsetsDirectional.fromSTEB(4, 12, 16, 12)
+                : const EdgeInsetsDirectional.only(end: 4),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(top: expressive || onCard ? 0 : 10),
+                  child: mark,
                 ),
-              ),
-            ),
-          Expanded(
-            child: expressive || onCard
-                ? text
-                : Container(
-                    // The line under a row starts where its text does, as
-                    // in Mail; a picked row and a day's last need none.
-                    padding: const EdgeInsets.only(top: 10, bottom: 11),
-                    decoration: BoxDecoration(
-                      border: Border(
-                        bottom: BorderSide(
-                          color: last || selected
-                              ? Colors.transparent
-                              : theme.dividerColor,
-                          width: glass ? 0.5 : 1,
+                Expanded(
+                  child: expressive || onCard
+                      ? text
+                      : Container(
+                          // The line under a row starts where its text does, as
+                          // in Mail; a picked row and a day's last need none.
+                          padding: const EdgeInsets.only(top: 10, bottom: 11),
+                          decoration: BoxDecoration(
+                            border: Border(
+                              bottom: BorderSide(
+                                color: last || selected
+                                    ? Colors.transparent
+                                    : theme.dividerColor,
+                                width: 1,
+                              ),
+                            ),
+                          ),
+                          child: text,
                         ),
-                      ),
-                    ),
-                    child: text,
-                  ),
-          ),
-        ],
-      ),
-    );
+                ),
+              ],
+            ),
+          );
     final tile = Padding(
       padding: EdgeInsets.only(bottom: expressive && !last ? 2 : 0),
       child: Material(
@@ -1253,7 +1220,7 @@ class _MessageRow extends StatelessWidget {
             duration: _listMotion(context),
             curve: _motionCurve(context),
             padding: onCard
-                ? const EdgeInsetsDirectional.fromSTEB(4, 12, 12, 12)
+                ? EdgeInsetsDirectional.fromSTEB(glass ? 12 : 4, 12, 12, 12)
                 : EdgeInsets.zero,
             color: selected ? tint : tint.withValues(alpha: 0),
             child: content,
@@ -1265,24 +1232,229 @@ class _MessageRow extends StatelessWidget {
       selected: selecting ? selected : null,
       child: tile,
     );
-    if (item.sent) return accessible;
+    // In glass a picked row's tint reaches nearer the screen's edges than
+    // the page's margin, and the picture stands at the margin.
+    Widget wide(Widget row) =>
+        glass && !onCard ? _Bleed(_MessageRow.bleed, child: row) : row;
+    if (item.sent) return wide(accessible);
     // Kept once read, only no longer swiped, so the row changes in place.
-    return Dismissible(
-      key: ValueKey('message-${item.id}'),
-      direction: unread && !selecting && !busy
-          ? DismissDirection.startToEnd
-          : DismissDirection.none,
-      confirmDismiss: (_) {
-        // Felt, as the homework's swipe is.
-        HapticFeedback.lightImpact();
-        return _markRead(context);
-      },
-      background: _SwipeAction(
-        icon: Icons.mark_email_read_rounded,
-        label: context.tr('messageMarkRead'),
-        color: glass ? accent : null,
+    return wide(
+      Dismissible(
+        key: ValueKey('message-${item.id}'),
+        direction: unread && !selecting && !busy
+            ? DismissDirection.startToEnd
+            : DismissDirection.none,
+        confirmDismiss: (_) {
+          // Felt, as the homework's swipe is.
+          HapticFeedback.lightImpact();
+          return _markRead(context);
+        },
+        background: _SwipeAction(
+          icon: Icons.mark_email_read_rounded,
+          label: context.tr('messageMarkRead'),
+          color: glass ? accent : null,
+        ),
+        child: accessible,
       ),
-      child: accessible,
+    );
+  }
+
+  /// The glass row: the picture, or the check once picked; the sender with
+  /// the date and, while unread, the dot after it; then two lines for the
+  /// subject, or the subject and the start of the text.
+  Widget _glassContent(
+    BuildContext context, {
+    required Widget dot,
+    required Color accent,
+  }) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    final unread = !item.sent && item.unread;
+    final preview = item.preview.trim();
+    // Read rows step back, as in Gmail: lighter, and the subject greyer.
+    final senderStyle = TextStyle(
+      color: unread
+          ? colors.onSurface
+          : colors.onSurface.withValues(alpha: 0.85),
+      fontSize: 17,
+      fontWeight: unread ? FontWeight.w700 : FontWeight.w500,
+      letterSpacing: -0.41,
+    );
+    final dateStyle = TextStyle(
+      color: unread ? colors.onSurface : colors.onSurfaceVariant,
+      fontSize: 14,
+      fontWeight: unread ? FontWeight.w700 : FontWeight.w400,
+      letterSpacing: -0.08,
+      fontFeatures: _tabular,
+    );
+    const lineHeight = 20 / 15;
+    final subjectStyle = TextStyle(
+      color: unread
+          ? colors.onSurface
+          : Color.lerp(colors.onSurface, colors.onSurfaceVariant, 0.5),
+      fontSize: 15,
+      height: lineHeight,
+      fontWeight: unread ? FontWeight.w600 : FontWeight.w400,
+      letterSpacing: -0.24,
+    );
+    final previewStyle = TextStyle(
+      color: colors.onSurfaceVariant,
+      fontSize: 15,
+      height: lineHeight,
+      letterSpacing: -0.24,
+    );
+    final picture = Semantics(
+      button: true,
+      selected: selected,
+      label: '${context.tr('messagesSelect')}: ${item.subject}',
+      excludeSemantics: true,
+      child: InkResponse(
+        key: ValueKey('message-select-${item.id}'),
+        onTap: busy ? null : onSelect,
+        radius: avatarSize / 2 + 4,
+        child: AnimatedSwitcher(
+          duration: _motion(context, const Duration(milliseconds: 220)),
+          switchInCurve: Curves.easeOutBack,
+          switchOutCurve: Curves.easeIn,
+          transitionBuilder: (child, animation) => ScaleTransition(
+            scale: Tween<double>(begin: 0.6, end: 1).animate(animation),
+            child: _Fade(opacity: animation, child: child),
+          ),
+          child: selecting && selected
+              ? Container(
+                  key: const ValueKey('picked'),
+                  width: avatarSize,
+                  height: avatarSize,
+                  decoration: BoxDecoration(
+                    color: accent,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const AppIcon(
+                    Icons.check_rounded,
+                    size: 24,
+                    color: Colors.white,
+                  ),
+                )
+              : ExcludeSemantics(
+                  key: const ValueKey('picture'),
+                  child: _SenderAvatar(
+                    item.sent ? item.recipients.firstOrNull ?? '' : item.sender,
+                    radius: avatarSize / 2,
+                  ),
+                ),
+        ),
+      ),
+    );
+    final text = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: _MarkedTitle(
+                item.sent
+                    ? _RecipientsLine(item.recipients, style: senderStyle)
+                    : Text(
+                        item.sender.isEmpty ? '—' : item.sender,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: senderStyle,
+                      ),
+                item.source,
+              ),
+            ),
+            if (item.hasAttachments)
+              Padding(
+                padding: const EdgeInsetsDirectional.only(start: 6),
+                child: AppIcon(
+                  CupertinoIcons.paperclip,
+                  size: 15,
+                  color: colors.onSurfaceVariant,
+                  semanticLabel: context.tr('messageHasAttachment'),
+                ),
+              ),
+            const SizedBox(width: 8),
+            Text(_messageTime(context, item.receivedAt, now), style: dateStyle),
+            if (unread) ...[const SizedBox(width: 8), dot],
+          ],
+        ),
+        const SizedBox(height: 2),
+        // Two lines, however short the subject, so every row is as tall.
+        ConstrainedBox(
+          constraints: BoxConstraints(
+            minHeight:
+                MediaQuery.textScalerOf(context).scale(15) * lineHeight * 2,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Text(
+                      item.subject,
+                      maxLines: preview.isEmpty ? 2 : 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: subjectStyle,
+                    ),
+                  ),
+                  if (item.sent && item.recipientRead != null)
+                    Padding(
+                      padding: const EdgeInsetsDirectional.only(start: 8),
+                      child: _ReadMark(
+                        read: item.recipientRead!,
+                        labelled: true,
+                        key: ValueKey('sent-read-${item.id}'),
+                      ),
+                    ),
+                ],
+              ),
+              if (preview.isNotEmpty)
+                Text(
+                  preview,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: previewStyle,
+                ),
+            ],
+          ),
+        ),
+      ],
+    );
+    return Padding(
+      padding: onCard
+          ? EdgeInsets.zero
+          : const EdgeInsets.symmetric(horizontal: bleed),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            // Beside the sender and the subject's first line.
+            padding: EdgeInsets.only(top: onCard ? 2 : 14),
+            child: picture,
+          ),
+          const SizedBox(width: avatarGap),
+          Expanded(
+            child: onCard
+                ? text
+                : Container(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    decoration: BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(
+                          color: last || selected
+                              ? Colors.transparent
+                              : theme.dividerColor,
+                          width: 0.5,
+                        ),
+                      ),
+                    ),
+                    child: text,
+                  ),
+          ),
+        ],
+      ),
     );
   }
 }
