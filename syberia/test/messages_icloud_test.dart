@@ -276,8 +276,9 @@ void main() {
       'symbols and its back button returns', (tester) async {
     GlassPlatform.debugSetBackend(GlassBackend.rendered);
     await _open(tester, design: 'glass');
-    // As in Gmail: the sender's picture at the page's margin, the dot after
-    // the date, and two lines for the subject.
+    // As in Gmail: the sender's picture at the page's margin and the dot
+    // after the date; then, as in Mail, the way in at the end and the
+    // subject on one line.
     final avatar = find.descendant(
       of: _key('message-tile-m0'),
       matching: find.text('TM'),
@@ -300,13 +301,22 @@ void main() {
         matching: find.textContaining(':'),
       ),
     );
+    final chevron = tester.getRect(_key('message-open-m0'));
     expect(dot.left, greaterThan(date.right));
+    expect(chevron.left, greaterThan(dot.right));
     expect(dot.center.dy, closeTo(date.center.dy, 1.5));
     expect(_key('message-unread-m2'), findsNothing);
-    // A short subject still has its two lines, so every row is as tall.
-    final first = tester.getSize(_key('message-tile-m0')).height;
-    expect(first, greaterThanOrEqualTo(88));
-    expect(tester.getSize(_key('message-tile-m1')).height, first);
+    expect(_key('message-open-m2'), findsOneWidget);
+    final subject = find.text('Subject m0');
+    expect(
+      tester.widget<Text>(subject),
+      isA<Text>().having((text) => text.maxLines, 'maxLines', 1),
+    );
+    // The picture stands in the middle of the row, and every row is as tall.
+    final row = tester.getRect(_key('message-tile-m0'));
+    expect(picture.center.dy, closeTo(row.center.dy, 1));
+    expect(row.height, greaterThanOrEqualTo(72));
+    expect(tester.getSize(_key('message-tile-m1')).height, row.height);
     // Picking turns the picture into the check, in its place.
     await tester.tap(_key('message-select-m0'));
     await tester.pumpAndSettle();
@@ -350,35 +360,43 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
   });
 
-  testWidgets('a long large title gets smaller to fit its line, as tall as '
-      'before', (tester) async {
-    Future<RenderParagraph> title(String text) async {
+  testWidgets('a long large title gets smaller to fit its line, whole and '
+      'as tall as before', (tester) async {
+    Future<(Rect, double)> title(String text) async {
       await tester.pumpWidget(
         MaterialApp(
-          home: Align(
-            alignment: Alignment.topLeft,
-            child: SizedBox(width: 320, child: GlassLargeTitle(text)),
+          // A page's own text style, as the app's font, counts as well.
+          home: DefaultTextStyle(
+            style: const TextStyle(wordSpacing: 40),
+            child: Align(
+              alignment: Alignment.topLeft,
+              child: SizedBox(width: 320, child: GlassLargeTitle(text)),
+            ),
           ),
         ),
       );
-      return tester.renderObject<RenderParagraph>(find.text(text));
+      return (
+        tester.getRect(find.text(text)),
+        tester.getSize(find.byType(GlassLargeTitle)).height,
+      );
     }
 
-    final short = await title('Inbox');
-    final shortHeight = short.size.height;
-    expect(short.text.style?.fontSize, 34);
-    // Too long at full size: smaller, and whole. (The test font's letters
-    // are as wide as they are tall, so a short word is already too long.)
-    final long = await title('Wybierz coś');
-    expect(long.text.style!.fontSize!, lessThan(34));
-    expect(
-      long.text.style!.fontSize!,
-      greaterThanOrEqualTo(34 * GlassLargeTitle.smallest),
-    );
-    expect(long.didExceedMaxLines, isFalse);
-    expect(long.size.height, shortHeight);
-    // Past the smallest size it is cut short rather than shrinking on.
-    final longer = await title('Wybierz wiadomości do usunięcia teraz');
-    expect(longer.text.style!.fontSize, 34 * GlassLargeTitle.smallest);
+    final (short, height) = await title('Inbox');
+    expect(short.height, closeTo(41, 0.5));
+    // Too long at full size, even far too long: smaller, and all of it.
+    for (final text in [
+      'Wybierz coś',
+      'Wybierz wiadomości do usunięcia teraz',
+    ]) {
+      final (long, longHeight) = await title(text);
+      expect(long.height, lessThan(41));
+      expect(long.left, greaterThanOrEqualTo(0));
+      expect(long.right, lessThanOrEqualTo(320.5));
+      expect(
+        tester.renderObject<RenderParagraph>(find.text(text)).didExceedMaxLines,
+        isFalse,
+      );
+      expect(longHeight, height);
+    }
   });
 }

@@ -599,54 +599,46 @@ class _FolderTitle extends StatelessWidget {
       padding = const EdgeInsets.only(bottom: 8);
     }
     final size = (style?.fontSize ?? 24) * 0.6;
-    const gap = 6.0;
-    final chevron = glass ? size * 0.8 : size * 1.2;
+    final name = Text(
+      text,
+      maxLines: 1,
+      overflow: glass ? null : TextOverflow.ellipsis,
+      style: style,
+    );
     return Padding(
       padding: padding,
-      child: LayoutBuilder(
-        builder: (context, constraints) => Align(
-          alignment: AlignmentDirectional.centerStart,
-          child: Builder(
-            builder: (context) => Semantics(
-              header: true,
-              button: true,
-              child: InkWell(
-                key: const ValueKey('messages-folder'),
-                borderRadius: BorderRadius.circular(12),
-                onTap: () {
-                  final box = context.findRenderObject()! as RenderBox;
-                  onPick(box.localToGlobal(Offset.zero) & box.size);
-                },
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Flexible(
-                      child: Text(
-                        text,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        // In glass a long folder's name gets smaller to fit,
-                        // as the large title does.
-                        style: glass
-                            ? GlassLargeTitle.fit(
-                                context,
-                                text,
-                                style!,
-                                constraints.maxWidth - gap - chevron,
-                              )
-                            : style,
-                      ),
-                    ),
-                    const SizedBox(width: gap),
-                    AppIcon(
-                      glass
-                          ? CupertinoIcons.chevron_down
-                          : Icons.keyboard_arrow_down_rounded,
-                      size: chevron,
-                      color: colors.primary,
-                    ),
-                  ],
-                ),
+      child: Align(
+        alignment: AlignmentDirectional.centerStart,
+        child: Builder(
+          builder: (context) => Semantics(
+            header: true,
+            button: true,
+            child: InkWell(
+              key: const ValueKey('messages-folder'),
+              borderRadius: BorderRadius.circular(12),
+              onTap: () {
+                final box = context.findRenderObject()! as RenderBox;
+                onPick(box.localToGlobal(Offset.zero) & box.size);
+              },
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Flexible(
+                    // In glass a long folder's name gets smaller to fit, as
+                    // the large title does.
+                    child: glass
+                        ? GlassLargeTitle.scaledDown(context, name)
+                        : name,
+                  ),
+                  const SizedBox(width: 6),
+                  AppIcon(
+                    glass
+                        ? CupertinoIcons.chevron_down
+                        : Icons.keyboard_arrow_down_rounded,
+                    size: glass ? size * 0.8 : size * 1.2,
+                    color: colors.primary,
+                  ),
+                ],
               ),
             ),
           ),
@@ -941,8 +933,8 @@ String _messageTime(BuildContext context, DateTime value, DateTime now) {
 /// The classic design draws it as a row with a line under it; Expressive as
 /// one piece of a group of the day, its outer corners large and the inner
 /// ones small. The glass design draws it as Gmail does: the sender's picture
-/// at the edge, which turns into the check when picked, the dot after the
-/// date and two lines for what the message is about.
+/// at the edge, which turns into the check when picked, and the dot after
+/// the date.
 class _MessageRow extends StatelessWidget {
   const _MessageRow(
     this.controller,
@@ -1260,8 +1252,8 @@ class _MessageRow extends StatelessWidget {
   }
 
   /// The glass row: the picture, or the check once picked; the sender with
-  /// the date and, while unread, the dot after it; then two lines for the
-  /// subject, or the subject and the start of the text.
+  /// the date, the dot after it while unread, and the way in; then the
+  /// subject on one line, and the start of the text if there is any.
   Widget _glassContent(
     BuildContext context, {
     required Widget dot,
@@ -1375,51 +1367,47 @@ class _MessageRow extends StatelessWidget {
               ),
             const SizedBox(width: 8),
             Text(_messageTime(context, item.receivedAt, now), style: dateStyle),
-            if (unread) ...[const SizedBox(width: 8), dot],
+            if (unread) ...[const SizedBox(width: 6), dot],
+            Padding(
+              padding: const EdgeInsetsDirectional.only(start: 6),
+              child: AppIcon(
+                CupertinoIcons.chevron_forward,
+                key: ValueKey('message-open-${item.id}'),
+                size: 14,
+                color: colors.onSurfaceVariant.withValues(alpha: 0.6),
+              ),
+            ),
           ],
         ),
         const SizedBox(height: 2),
-        // Two lines, however short the subject, so every row is as tall.
-        ConstrainedBox(
-          constraints: BoxConstraints(
-            minHeight:
-                MediaQuery.textScalerOf(context).scale(15) * lineHeight * 2,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: Text(
-                      item.subject,
-                      maxLines: preview.isEmpty ? 2 : 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: subjectStyle,
-                    ),
-                  ),
-                  if (item.sent && item.recipientRead != null)
-                    Padding(
-                      padding: const EdgeInsetsDirectional.only(start: 8),
-                      child: _ReadMark(
-                        read: item.recipientRead!,
-                        labelled: true,
-                        key: ValueKey('sent-read-${item.id}'),
-                      ),
-                    ),
-                ],
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                item.subject,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: subjectStyle,
               ),
-              if (preview.isNotEmpty)
-                Text(
-                  preview,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: previewStyle,
+            ),
+            if (item.sent && item.recipientRead != null)
+              Padding(
+                padding: const EdgeInsetsDirectional.only(start: 8),
+                child: _ReadMark(
+                  read: item.recipientRead!,
+                  labelled: true,
+                  key: ValueKey('sent-read-${item.id}'),
                 ),
-            ],
-          ),
+              ),
+          ],
         ),
+        if (preview.isNotEmpty)
+          Text(
+            preview,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: previewStyle,
+          ),
       ],
     );
     return Padding(
@@ -1427,19 +1415,14 @@ class _MessageRow extends StatelessWidget {
           ? EdgeInsets.zero
           : const EdgeInsets.symmetric(horizontal: bleed),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            // Beside the sender and the subject's first line.
-            padding: EdgeInsets.only(top: onCard ? 2 : 14),
-            child: picture,
-          ),
+          picture,
           const SizedBox(width: avatarGap),
           Expanded(
             child: onCard
                 ? text
                 : Container(
-                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    padding: const EdgeInsets.symmetric(vertical: 16),
                     decoration: BoxDecoration(
                       border: Border(
                         bottom: BorderSide(

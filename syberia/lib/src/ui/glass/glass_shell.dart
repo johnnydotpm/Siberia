@@ -54,10 +54,7 @@ class GlassLargeTitle extends StatelessWidget {
   /// How far a page scrolls before the title is fully under the top bar.
   static const double extent = 52;
 
-  /// How small a long title may get to fit on its line before it is cut.
-  static const double smallest = 0.72;
-
-  /// The title's style at full size.
+  /// The title's style.
   static TextStyle styleOf(BuildContext context) => TextStyle(
     color: Theme.of(context).colorScheme.onSurface,
     fontSize: 34,
@@ -66,31 +63,20 @@ class GlassLargeTitle extends StatelessWidget {
     height: 41 / 34,
   );
 
-  /// [style] made smaller for [text] to fit in [width], as a long title, as
-  /// "Wybierz wiadomości" or a German one, does; its line stays as tall, so
-  /// nothing under it moves. Past [smallest] it is cut short instead.
-  static TextStyle fit(
-    BuildContext context,
-    String text,
-    TextStyle style,
-    double width,
-  ) {
-    final painter = TextPainter(
-      text: TextSpan(text: text, style: style),
-      textDirection: Directionality.of(context),
-      textScaler: MediaQuery.textScalerOf(context),
-      maxLines: 1,
-    )..layout();
-    final natural = painter.width;
-    painter.dispose();
-    if (natural <= width) return style;
-    // A hair under, so rounding cannot cut it after all.
-    final scale = math.max((width - 1) / natural, smallest);
-    final size = style.fontSize! * scale;
-    return style.copyWith(
-      fontSize: size,
-      letterSpacing: (style.letterSpacing ?? 0) * scale,
-      height: style.fontSize! * style.height! / size,
+  /// [title] made smaller to fit the width it has, as a long title, as
+  /// "Wybierz wiadomości" or a German one, is rather than cut; its line
+  /// stays as tall, so nothing under it moves.
+  static Widget scaledDown(BuildContext context, Widget title) {
+    final style = styleOf(context);
+    final line =
+        MediaQuery.textScalerOf(context).scale(style.fontSize!) * style.height!;
+    return SizedBox(
+      height: line.ceilToDouble(),
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        alignment: AlignmentDirectional.centerStart,
+        child: title,
+      ),
     );
   }
 
@@ -99,12 +85,11 @@ class GlassLargeTitle extends StatelessWidget {
     padding: const EdgeInsets.only(top: 3, bottom: 8),
     child: Semantics(
       header: true,
-      child: LayoutBuilder(
-        builder: (context, constraints) => Text(
-          text,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: fit(context, text, styleOf(context), constraints.maxWidth),
+      child: Align(
+        alignment: AlignmentDirectional.centerStart,
+        child: scaledDown(
+          context,
+          Text(text, maxLines: 1, style: styleOf(context)),
         ),
       ),
     ),
