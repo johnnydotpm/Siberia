@@ -332,6 +332,32 @@ abstract final class GlassMaterial {
     bend: 24,
   );
 
+  /// The glass of a pull-down menu: the bars' own glass, blurred further so
+  /// its labels stay readable, with the bars' glint and lens at its edge. It
+  /// lets the page show through, as iOS 26's menus do, where a panel's
+  /// glass holds it back.
+  static GlassLook menu(Brightness brightness) =>
+      brightness == Brightness.dark ? _menuDark : _menuLight;
+
+  static final _menuLight = GlassLook.regular(
+    blur: 7,
+    saturation: 2.85,
+    gain: 0.246,
+    lift: 189.4,
+    rim: _crispGlint,
+    bend: 18,
+    shadows: _shadows,
+  );
+
+  static final _menuDark = GlassLook.regular(
+    blur: 7,
+    saturation: 1.94,
+    gain: 0.352,
+    lift: 17.2,
+    rim: _glint,
+    bend: 18,
+  );
+
   /// The selection of the tab bar while it is held: a clearer, brighter
   /// piece of glass floating over the bar. Its rim stretches the tabs it
   /// passes over. It does not mirror them as the bar's rim does the page:

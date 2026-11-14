@@ -173,9 +173,17 @@ Future<T?> showGlassMenu<T>({
   barrierDismissible: true,
   barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
   barrierColor: Colors.black.withValues(alpha: 0.06),
-  transitionDuration: const Duration(milliseconds: 280),
+  transitionDuration: const Duration(milliseconds: 320),
   pageBuilder: (context, animation, _) =>
       _GlassMenu(anchor: anchor, items: items, animation: animation),
+  // Where Flutter draws the glass, no fade of the route: inside a faded
+  // layer the glass has no page to read, and would come up flat and then
+  // jump to glass at the end; the panel brings itself up instead. UIKit's
+  // glass follows the route's fade.
+  transitionBuilder: (context, animation, _, child) =>
+      GlassPlatform.backend == GlassBackend.rendered
+      ? child
+      : FadeTransition(opacity: animation, child: child),
 );
 
 class _GlassMenu<T> extends StatelessWidget {
@@ -208,57 +216,55 @@ class _GlassMenu<T> extends StatelessWidget {
           left: left,
           top: anchor.bottom + 6,
           width: _width,
-          child: FadeTransition(
-            opacity: animation,
-            child: ScaleTransition(
-              alignment: Alignment.topLeft,
-              scale: Tween<double>(begin: 0.6, end: 1).animate(grow),
-              child: GlassPanel(
-                radius: 24,
-                reveal: animation,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    for (final (index, item) in items.indexed) ...[
-                      if (index > 0)
-                        Divider(height: 0.5, thickness: 0.5, color: divider),
-                      InkWell(
-                        key: item.key,
-                        onTap: () => Navigator.of(context).pop(item.value),
-                        child: ConstrainedBox(
-                          constraints: const BoxConstraints(minHeight: 48),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: Row(
-                              children: [
-                                SizedBox(
-                                  width: 26,
-                                  child: item.selected
-                                      ? Icon(
-                                          Icons.check_rounded,
-                                          size: 20,
-                                          color: theme.colorScheme.onSurface,
-                                        )
-                                      : null,
-                                ),
-                                Expanded(
-                                  child: Text(
-                                    item.label,
-                                    style: TextStyle(
-                                      color: theme.colorScheme.onSurface,
-                                      fontSize: 17,
-                                      letterSpacing: -0.41,
-                                    ),
+          child: ScaleTransition(
+            alignment: Alignment.topLeft,
+            scale: Tween<double>(begin: 0.6, end: 1).animate(grow),
+            child: GlassPanel(
+              radius: 24,
+              reveal: animation,
+              clear: true,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  for (final (index, item) in items.indexed) ...[
+                    if (index > 0)
+                      Divider(height: 0.5, thickness: 0.5, color: divider),
+                    InkWell(
+                      key: item.key,
+                      onTap: () => Navigator.of(context).pop(item.value),
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(minHeight: 48),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                width: 26,
+                                child: item.selected
+                                    ? Icon(
+                                        Icons.check_rounded,
+                                        size: 20,
+                                        color: theme.colorScheme.onSurface,
+                                      )
+                                    : null,
+                              ),
+                              Expanded(
+                                child: Text(
+                                  item.label,
+                                  style: TextStyle(
+                                    color: theme.colorScheme.onSurface,
+                                    fontSize: 17,
+                                    letterSpacing: -0.41,
                                   ),
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                    ],
+                    ),
                   ],
-                ),
+                ],
               ),
             ),
           ),

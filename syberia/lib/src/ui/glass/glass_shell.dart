@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 
 import 'glass_fade.dart';
 import 'glass_items.dart';
+import 'glass_material.dart';
 import 'glass_platform.dart';
 import 'native_bar_buttons.dart';
 import 'native_glass_surface.dart';
@@ -103,11 +104,15 @@ class GlassPanel extends StatelessWidget {
     required this.radius,
     required this.child,
     this.reveal,
+    this.clear = false,
     super.key,
   });
 
   final double radius;
   final Widget child;
+
+  /// Clearer glass, a menu's, that lets more of the page show through.
+  final bool clear;
 
   /// Runs from 0 to 1 while the panel appears, where Flutter draws the glass
   /// and has to bring it up itself. UIKit's glass follows the route's own
@@ -121,6 +126,7 @@ class GlassPanel extends StatelessWidget {
       return RenderedGlassSurface(
         radius: radius,
         reveal: reveal,
+        look: clear ? GlassMaterial.menu : null,
         child: content,
       );
     }
@@ -128,7 +134,8 @@ class GlassPanel extends StatelessWidget {
       radius: radius,
       // A veil of the surface colour keeps the glass light under dark text
       // and dark under light text, whatever happens to be behind it.
-      tint: Theme.of(context).colorScheme.surface.withValues(alpha: 0.55),
+      tint: Theme.of(context).colorScheme.surface
+          .withValues(alpha: clear ? 0.3 : 0.55),
       child: content,
     );
   }

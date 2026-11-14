@@ -12,11 +12,15 @@ class RenderedGlassSurface extends StatelessWidget {
     required this.radius,
     required this.child,
     this.reveal,
+    this.look,
     super.key,
   });
 
   final double radius;
   final Widget child;
+
+  /// The glass, a panel's unless said otherwise.
+  final GlassLook Function(Brightness brightness)? look;
 
   /// Runs from 0 to 1 while the surface appears. The glass itself comes up
   /// out of the page then, its content fading in on it. A fade of the whole
@@ -26,7 +30,9 @@ class RenderedGlassSurface extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final look = GlassMaterial.panel(Theme.of(context).brightness);
+    final look = (this.look ?? GlassMaterial.panel)(
+      Theme.of(context).brightness,
+    );
     // The continuous corners iOS gives its sheets and alerts.
     final shape = RoundedSuperellipseBorder(
       borderRadius: BorderRadius.circular(radius),

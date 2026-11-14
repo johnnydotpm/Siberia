@@ -7,6 +7,8 @@ import 'package:syberia/src/app.dart';
 import 'package:syberia/src/data/app_repository.dart';
 import 'package:syberia/src/domain/models.dart';
 import 'package:syberia/src/state/app_controller.dart';
+import 'package:syberia/src/ui/glass/glass_material.dart';
+import 'package:syberia/src/ui/glass/glass_plate.dart';
 import 'package:syberia/src/ui/glass/glass_platform.dart';
 import 'package:syberia/src/ui/glass/glass_shell.dart';
 
@@ -398,5 +400,39 @@ void main() {
       );
       expect(longHeight, height);
     }
+  });
+
+  testWidgets('where Flutter draws the glass, the folder menu grows out on '
+      'clear glass that reads the page all the way', (tester) async {
+    GlassPlatform.debugSetBackend(GlassBackend.rendered);
+    await _open(tester, design: 'glass');
+    await tester.tap(_key('messages-folder'));
+    // Halfway open: nothing over the glass is faded, or the glass would have
+    // no page to read and come up flat.
+    await tester.pump(const Duration(milliseconds: 120));
+    final plate = find.ancestor(
+      of: _key('messages-folder-sent'),
+      matching: find.byType(GlassPlate),
+    );
+    expect(plate, findsOneWidget);
+    for (final fade in tester.widgetList<FadeTransition>(
+      find.ancestor(of: plate, matching: find.byType(FadeTransition)),
+    )) {
+      expect(fade.opacity.value, 1);
+    }
+    expect(
+      find.ancestor(of: plate, matching: find.byType(Opacity)),
+      findsNothing,
+    );
+    await tester.pumpAndSettle();
+    // The bars' clearer glass, not a panel's.
+    expect(
+      tester.widget<GlassPlate>(plate).look,
+      same(GlassMaterial.menu(Brightness.light)),
+    );
+    await tester.tap(_key('messages-folder-sent'));
+    await tester.pumpAndSettle();
+    expect(find.text('Sent subject'), findsOneWidget);
+    await tester.pumpWidget(const SizedBox.shrink());
   });
 }
