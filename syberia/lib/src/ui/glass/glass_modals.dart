@@ -169,11 +169,12 @@ class GlassMenuItem<T> {
 /// A pull-down menu on glass that comes out of [anchor], as the menu of a
 /// title does in iOS 26. Gives the value picked, or null.
 ///
-/// Where Flutter draws the glass, the glass pours out of the title like a
-/// drop: it starts as a capsule over the title, flows down into the menu on
-/// springs, a little stiffer across than down, so it stretches and settles
-/// with a wobble, and its labels come up once it is nearly there. Closing,
-/// it folds back into the title. On iOS 26 the title opens UIKit's own menu
+/// Where Flutter draws the glass, it pours out from under the title: it
+/// starts as a small drop there and flows into the menu on springs, a little
+/// stiffer across than down, so it stretches and settles with a wobble, and
+/// its labels come up once it is nearly there. Closing, it draws back into
+/// that drop under the title. It never wraps the title itself, whose rim
+/// would read as an outline. On iOS 26 the title opens UIKit's own menu
 /// instead (see `NativeGlassMenuButton`).
 Future<T?> showGlassMenu<T>({
   required BuildContext context,
@@ -389,12 +390,13 @@ class _GlassMenu<T> extends StatelessWidget {
         ],
       );
     }
-    // The glass starts as a capsule over the title it comes out of.
+    // The glass starts as a small drop just under the title, never around
+    // it: a glass rim round the title would read as an outline.
     final source = Rect.fromLTWH(
       left,
-      anchor.top,
-      math.min(anchor.width, _width),
-      anchor.height,
+      anchor.bottom + 2,
+      math.min(anchor.width, _width) * 0.5,
+      10,
     );
     final still = MediaQuery.maybeDisableAnimationsOf(context) ?? false;
     final look = GlassMaterial.menu(theme.brightness);

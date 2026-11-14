@@ -443,6 +443,11 @@ void main() {
     GlassPlatform.debugSetBackend(GlassBackend.rendered);
     await _open(tester, design: 'glass');
     final title = tester.getRect(_key('messages-folder'));
+    // No Material ink round the title: the menu answers the tap.
+    expect(
+      tester.widget<InkWell>(_key('messages-folder')).splashFactory,
+      NoSplash.splashFactory,
+    );
     await tester.tap(_key('messages-folder'));
     final plate = find.ancestor(
       of: _key('messages-folder-sent'),
@@ -459,9 +464,10 @@ void main() {
     }
     await tester.pumpAndSettle();
     final open = tester.getRect(plate);
-    // It comes from the title, above where it ends.
-    expect(tops.first, lessThan(open.top - 10));
-    expect(tops.first, lessThan(title.bottom));
+    // It comes from just under the title, small, and never wraps the title:
+    // a glass rim round it would read as an outline.
+    expect(heights.first, lessThan(open.height / 2));
+    expect(tops.reduce(math.min), greaterThanOrEqualTo(title.bottom));
     expect(open.top, closeTo(title.bottom + 6, 0.5));
     // A spring: it stretches past its size and settles back.
     expect(heights.reduce(math.max), greaterThan(open.height + 1));
@@ -470,8 +476,13 @@ void main() {
     await tester.pump(const Duration(milliseconds: 16));
     await tester.pump(const Duration(milliseconds: 130));
     final closing = tester.getRect(plate);
-    expect(closing.top, lessThan(open.top));
+    expect(closing.top, lessThanOrEqualTo(open.top));
+    expect(closing.top, greaterThanOrEqualTo(title.bottom));
     expect(closing.height, lessThan(open.height));
+    for (var frame = 0; frame < 10 && plate.evaluate().isNotEmpty; frame++) {
+      expect(tester.getRect(plate).top, greaterThanOrEqualTo(title.bottom));
+      await tester.pump(const Duration(milliseconds: 16));
+    }
     await tester.pumpAndSettle();
     expect(plate, findsNothing);
     expect(find.text('Subject m0'), findsOneWidget);

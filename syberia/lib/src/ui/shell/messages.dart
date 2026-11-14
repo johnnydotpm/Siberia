@@ -633,6 +633,12 @@ class _FolderTitle extends StatelessWidget {
             child: InkWell(
               key: const ValueKey('messages-folder'),
               borderRadius: BorderRadius.circular(12),
+              // In glass the menu itself answers the tap, as in iOS: no
+              // Material ink round the title.
+              splashFactory: glass ? NoSplash.splashFactory : null,
+              overlayColor: glass
+                  ? const WidgetStatePropertyAll(Colors.transparent)
+                  : null,
               onTap: () {
                 final box = context.findRenderObject()! as RenderBox;
                 onPick(box.localToGlobal(Offset.zero) & box.size);
