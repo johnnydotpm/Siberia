@@ -7,6 +7,8 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:syberia/src/ui/glass/glass_fade.dart';
 import 'package:syberia/src/ui/glass/glass_items.dart';
+import 'package:syberia/src/ui/glass/glass_material.dart';
+import 'package:syberia/src/ui/glass/glass_plate.dart';
 import 'package:syberia/src/ui/glass/glass_platform.dart';
 import 'package:syberia/src/ui/glass/glass_shell.dart';
 
@@ -210,6 +212,25 @@ void main() {
       expect(slope(first), lessThan(steepest * 0.15));
       expect(slope(fading.last), lessThan(steepest * 0.15));
     }
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
+  testWidgets('the side menu is on liquid glass that lets the page show '
+      'through, as iOS 26 sidebars are', (tester) async {
+    final scroll = ScrollController();
+    addTearDown(scroll.dispose);
+    await _shell(tester, scroll);
+    tester.state<ScaffoldState>(find.byType(Scaffold).first).openDrawer();
+    await tester.pumpAndSettle();
+    final plate = find.descendant(
+      of: find.byType(Drawer),
+      matching: find.byType(GlassPlate),
+    );
+    expect(plate, findsOneWidget);
+    expect(
+      tester.widget<GlassPlate>(plate).look,
+      same(GlassMaterial.menu(Brightness.light)),
+    );
     await tester.pumpWidget(const SizedBox.shrink());
   });
 }

@@ -111,7 +111,8 @@ class GlassPanel extends StatelessWidget {
   final double radius;
   final Widget child;
 
-  /// Clearer glass, a menu's, that lets more of the page show through.
+  /// Clearer glass, a menu's or the side menu's, that lets more of the page
+  /// show through.
   final bool clear;
 
   /// Runs from 0 to 1 while the panel appears, where Flutter draws the glass
@@ -905,7 +906,9 @@ class _GlassDrawer extends StatelessWidget {
     clipBehavior: Clip.none,
     child: SafeArea(
       minimum: const EdgeInsets.fromLTRB(8, 8, 0, 8),
-      child: GlassPanel(radius: 32, child: child),
+      // Liquid glass, as iOS 26's sidebars are: the page shows through it,
+      // not a panel's glass that holds it back.
+      child: GlassPanel(radius: 32, clear: true, child: child),
     ),
   );
 }

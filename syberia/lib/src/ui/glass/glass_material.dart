@@ -332,10 +332,10 @@ abstract final class GlassMaterial {
     bend: 24,
   );
 
-  /// The glass of a pull-down menu: the bars' own glass, blurred further so
-  /// its labels stay readable, with the bars' glint and lens at its edge. It
-  /// lets the page show through, as iOS 26's menus do, where a panel's
-  /// glass holds it back.
+  /// The glass of a pull-down menu and of the side menu: the bars' own
+  /// glass, blurred further so its labels stay readable, with the bars'
+  /// glint and lens at its edge. It lets the page show through, as iOS 26's
+  /// menus and sidebars do, where a panel's glass holds it back.
   static GlassLook menu(Brightness brightness) =>
       brightness == Brightness.dark ? _menuDark : _menuLight;
 
