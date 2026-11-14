@@ -14,6 +14,7 @@ class NativeGlassMenuButton<T> extends StatefulWidget {
     required this.label,
     required this.items,
     required this.onPicked,
+    this.onMenu,
     super.key,
   });
 
@@ -21,6 +22,9 @@ class NativeGlassMenuButton<T> extends StatefulWidget {
   final String label;
   final List<GlassMenuItem<T>> items;
   final ValueChanged<T> onPicked;
+
+  /// Told true as UIKit's menu opens and false as it closes.
+  final ValueChanged<bool>? onMenu;
 
   @override
   State<NativeGlassMenuButton<T>> createState() =>
@@ -61,6 +65,11 @@ class _NativeGlassMenuButtonState<T> extends State<NativeGlassMenuButton<T>> {
   };
 
   Future<void> _onCall(MethodCall call) async {
+    if (call.method == 'menu') {
+      final open = call.arguments;
+      if (open is bool) widget.onMenu?.call(open);
+      return;
+    }
     if (call.method != 'pick') return;
     final index = int.tryParse('${call.arguments}');
     if (index == null || index < 0 || index >= widget.items.length) return;

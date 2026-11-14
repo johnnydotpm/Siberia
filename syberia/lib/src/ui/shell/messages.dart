@@ -151,12 +151,14 @@ class _MessagesState extends State<_Messages> {
   ];
 
   /// The menu of folders under the title, in the design's own kind.
-  Future<void> _pickFolder(Rect anchor) async {
+  Future<void> _pickFolder(Rect anchor, Offset chevron) async {
     final folder = _folder;
+    _folderMenu(true);
     final picked = GlassStyle.of(context)
         ? await showGlassMenu<_MessageFolder>(
             context: context,
             anchor: anchor,
+            origin: chevron,
             items: _folderItems(),
           )
         : await showMenu<_MessageFolder>(
@@ -175,7 +177,16 @@ class _MessagesState extends State<_Messages> {
                 ),
             ],
           );
+    _folderMenu(false);
     if (picked != null && mounted) _openFolder(picked);
+  }
+
+  /// Whether the menu of folders is open, which turns the title's chevron.
+  bool _folderMenuOpen = false;
+
+  void _folderMenu(bool open) {
+    if (!mounted || open == _folderMenuOpen) return;
+    setState(() => _folderMenuOpen = open);
   }
 
   @override
@@ -438,8 +449,10 @@ class _MessagesState extends State<_Messages> {
     final folderTitle = _FolderTitle(
       _folderName(context, _folder),
       onPick: _pickFolder,
+      open: _folderMenuOpen,
       folders: _folderItems(),
       onFolder: _openFolder,
+      onMenu: _folderMenu,
     );
     // Under a glass top bar the compose button lives in the bar, and the
     // folder is the page's large title.
@@ -579,19 +592,26 @@ class _FolderTitle extends StatelessWidget {
   const _FolderTitle(
     this.text, {
     required this.onPick,
+    required this.open,
     required this.folders,
     required this.onFolder,
+    required this.onMenu,
   });
 
   final String text;
 
-  /// Opens Flutter's menu under the title, which stands at the rect given.
-  final ValueChanged<Rect> onPick;
+  /// Opens Flutter's menu under the title, which stands at the rect given,
+  /// out of its chevron, whose middle is at the point given.
+  final void Function(Rect title, Offset chevron) onPick;
 
-  /// For UIKit's own menu on iOS 26: the folders, and what to do with the
-  /// one picked.
+  /// Whether the menu is open: the chevron then points up.
+  final bool open;
+
+  /// For UIKit's own menu on iOS 26: the folders, what to do with the one
+  /// picked, and word of the menu opening and closing.
   final List<GlassMenuItem<_MessageFolder>> folders;
   final ValueChanged<_MessageFolder> onFolder;
+  final ValueChanged<bool> onMenu;
 
   @override
   Widget build(BuildContext context) {
@@ -616,6 +636,7 @@ class _FolderTitle extends StatelessWidget {
       padding = const EdgeInsets.only(bottom: 8);
     }
     final size = (style?.fontSize ?? 24) * 0.6;
+    final chevron = glass ? size * 0.8 : size * 1.2;
     final name = Text(
       text,
       maxLines: 1,
@@ -641,7 +662,14 @@ class _FolderTitle extends StatelessWidget {
                   : null,
               onTap: () {
                 final box = context.findRenderObject()! as RenderBox;
-                onPick(box.localToGlobal(Offset.zero) & box.size);
+                // The chevron ends the row, on the right or, right to left,
+                // on the left.
+                final rtl = Directionality.of(context) == ui.TextDirection.rtl;
+                final x = rtl ? chevron / 2 : box.size.width - chevron / 2;
+                onPick(
+                  box.localToGlobal(Offset.zero) & box.size,
+                  box.localToGlobal(Offset(x, box.size.height / 2)),
+                );
               },
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -654,12 +682,22 @@ class _FolderTitle extends StatelessWidget {
                         : name,
                   ),
                   const SizedBox(width: 6),
-                  AppIcon(
-                    glass
-                        ? CupertinoIcons.chevron_down
-                        : Icons.keyboard_arrow_down_rounded,
-                    size: glass ? size * 0.8 : size * 1.2,
-                    color: colors.primary,
+                  // Points up while the menu is open.
+                  AnimatedRotation(
+                    key: const ValueKey('messages-folder-chevron'),
+                    turns: open ? 0.5 : 0,
+                    duration: _motion(
+                      context,
+                      const Duration(milliseconds: 300),
+                    ),
+                    curve: Curves.easeOutCubic,
+                    child: AppIcon(
+                      glass
+                          ? CupertinoIcons.chevron_down
+                          : Icons.keyboard_arrow_down_rounded,
+                      size: chevron,
+                      color: colors.primary,
+                    ),
                   ),
                 ],
               ),
@@ -682,6 +720,7 @@ class _FolderTitle extends StatelessWidget {
               label: text,
               items: folders,
               onPicked: onFolder,
+              onMenu: onMenu,
             ),
           ),
         ),

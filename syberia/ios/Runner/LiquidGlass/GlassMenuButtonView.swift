@@ -26,7 +26,7 @@ final class GlassMenuButtonFactory: NSObject, FlutterPlatformViewFactory {
 /// into the title when it closes; the choice goes back to Flutter.
 final class GlassMenuButtonView: NSObject, FlutterPlatformView {
   private let host: UIView
-  private let button = UIButton(type: .custom)
+  private let button = MenuButton(type: .custom)
   private let channel: FlutterMethodChannel
 
   init(frame: CGRect, viewId: Int64, arguments: Any?, messenger: FlutterBinaryMessenger) {
@@ -42,6 +42,10 @@ final class GlassMenuButtonView: NSObject, FlutterPlatformView {
     button.backgroundColor = .clear
     button.showsMenuAsPrimaryAction = true
     button.accessibilityTraits.insert(.header)
+    // Flutter turns the title's chevron up while the menu is open.
+    button.onMenu = { [weak self] open in
+      self?.channel.invokeMethod("menu", arguments: open)
+    }
     host.addSubview(button)
 
     apply(arguments)
@@ -79,5 +83,29 @@ final class GlassMenuButtonView: NSObject, FlutterPlatformView {
     // One choice in force at a time, marked with a check, as a title's menu
     // of folders is in system apps.
     button.menu = UIMenu(title: "", options: .singleSelection, children: actions)
+  }
+}
+
+/// A button that says when its menu opens and closes.
+private final class MenuButton: UIButton {
+  var onMenu: ((Bool) -> Void)?
+
+  override func contextMenuInteraction(
+    _ interaction: UIContextMenuInteraction,
+    willDisplayMenuFor configuration: UIContextMenuConfiguration,
+    animator: (any UIContextMenuInteractionAnimating)?
+  ) {
+    super.contextMenuInteraction(
+      interaction, willDisplayMenuFor: configuration, animator: animator)
+    onMenu?(true)
+  }
+
+  override func contextMenuInteraction(
+    _ interaction: UIContextMenuInteraction,
+    willEndFor configuration: UIContextMenuConfiguration,
+    animator: (any UIContextMenuInteractionAnimating)?
+  ) {
+    super.contextMenuInteraction(interaction, willEndFor: configuration, animator: animator)
+    onMenu?(false)
   }
 }

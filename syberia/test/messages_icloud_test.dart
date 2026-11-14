@@ -453,17 +453,25 @@ void main() {
       of: _key('messages-folder-sent'),
       matching: find.byType(GlassPlate),
     );
+    final chevron = tester.getCenter(_key('messages-folder-chevron'));
+    double turns() =>
+        tester.widget<AnimatedRotation>(_key('messages-folder-chevron')).turns;
     final heights = <double>[];
     final tops = <double>[];
+    final middles = <double>[];
     for (var frame = 0; frame < 40; frame++) {
       await tester.pump(const Duration(milliseconds: 16));
       if (plate.evaluate().isEmpty) continue;
       final rect = tester.getRect(plate);
       heights.add(rect.height);
       tops.add(rect.top);
+      middles.add(rect.center.dx);
     }
     await tester.pumpAndSettle();
     final open = tester.getRect(plate);
+    // Out of the chevron, which points up while the menu is open.
+    expect(middles.first, closeTo(chevron.dx, 14));
+    expect(turns(), 0.5);
     // It comes from just under the title, small, and never wraps the title:
     // a glass rim round it would read as an outline.
     expect(heights.first, lessThan(open.height / 2));
@@ -479,10 +487,15 @@ void main() {
     expect(closing.top, lessThanOrEqualTo(open.top));
     expect(closing.top, greaterThanOrEqualTo(title.bottom));
     expect(closing.height, lessThan(open.height));
+    var last = closing;
     for (var frame = 0; frame < 10 && plate.evaluate().isNotEmpty; frame++) {
-      expect(tester.getRect(plate).top, greaterThanOrEqualTo(title.bottom));
+      last = tester.getRect(plate);
+      expect(last.top, greaterThanOrEqualTo(title.bottom));
       await tester.pump(const Duration(milliseconds: 16));
     }
+    // Back into the chevron, which turns down again.
+    expect(last.center.dx, closeTo(chevron.dx, 30));
+    expect(turns(), 0);
     await tester.pumpAndSettle();
     expect(plate, findsNothing);
     expect(find.text('Subject m0'), findsOneWidget);
@@ -520,6 +533,23 @@ void main() {
           .overlaps(tester.getRect(_key('messages-folder'))),
       isTrue,
     );
+    // UIKit says its menu opened: the chevron points up, until it closes.
+    Future<void> say(String method, Object? arguments) =>
+        messenger.handlePlatformMessage(
+          'siberia/glass_menu_button/$id',
+          const StandardMethodCodec().encodeMethodCall(
+            MethodCall(method, arguments),
+          ),
+          (_) {},
+        );
+    double turns() =>
+        tester.widget<AnimatedRotation>(_key('messages-folder-chevron')).turns;
+    await say('menu', true);
+    await tester.pumpAndSettle();
+    expect(turns(), 0.5);
+    await say('menu', false);
+    await tester.pumpAndSettle();
+    expect(turns(), 0);
     // UIKit says the second folder was picked.
     await messenger.handlePlatformMessage(
       'siberia/glass_menu_button/$id',

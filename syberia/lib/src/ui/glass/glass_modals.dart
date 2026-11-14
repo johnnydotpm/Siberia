@@ -166,23 +166,26 @@ class GlassMenuItem<T> {
   final Key? key;
 }
 
-/// A pull-down menu on glass that comes out of [anchor], as the menu of a
-/// title does in iOS 26. Gives the value picked, or null.
+/// A pull-down menu on glass under [anchor], that comes out of [origin], as
+/// the menu of a title comes out of its chevron in iOS 26. Gives the value
+/// picked, or null.
 ///
-/// Where Flutter draws the glass, it pours out from under the title: it
+/// Where Flutter draws the glass, it pours out from under the chevron: it
 /// starts as a small drop there and flows into the menu on springs, a little
 /// stiffer across than down, so it stretches and settles with a wobble, and
 /// its labels come up once it is nearly there. Closing, it draws back into
-/// that drop under the title. It never wraps the title itself, whose rim
+/// that drop under the chevron. It never wraps the title itself, whose rim
 /// would read as an outline. On iOS 26 the title opens UIKit's own menu
 /// instead (see `NativeGlassMenuButton`).
 Future<T?> showGlassMenu<T>({
   required BuildContext context,
   required Rect anchor,
   required List<GlassMenuItem<T>> items,
+  Offset? origin,
 }) => Navigator.of(context).push<T>(
   _GlassMenuRoute<T>(
     anchor: anchor,
+    origin: origin ?? anchor.bottomCenter,
     items: items,
     barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
     liquid: GlassPlatform.backend == GlassBackend.rendered,
@@ -192,12 +195,14 @@ Future<T?> showGlassMenu<T>({
 class _GlassMenuRoute<T> extends PopupRoute<T> {
   _GlassMenuRoute({
     required this.anchor,
+    required this.origin,
     required this.items,
     required this.barrierLabel,
     required this.liquid,
   });
 
   final Rect anchor;
+  final Offset origin;
   final List<GlassMenuItem<T>> items;
 
   /// Whether the glass pours out of the title, where Flutter draws it.
@@ -226,6 +231,7 @@ class _GlassMenuRoute<T> extends PopupRoute<T> {
     Animation<double> secondaryAnimation,
   ) => _GlassMenu<T>(
     anchor: anchor,
+    origin: origin,
     items: items,
     animation: animation,
     liquid: liquid,
@@ -271,12 +277,16 @@ class _SpringCurve extends Curve {
 class _GlassMenu<T> extends StatelessWidget {
   const _GlassMenu({
     required this.anchor,
+    required this.origin,
     required this.items,
     required this.animation,
     required this.liquid,
   });
 
   final Rect anchor;
+
+  /// The point it comes out of and goes back into: the chevron.
+  final Offset origin;
   final List<GlassMenuItem<T>> items;
   final Animation<double> animation;
   final bool liquid;
@@ -314,6 +324,9 @@ class _GlassMenu<T> extends StatelessWidget {
     final left = anchor.left.clamp(8.0, screen.width - _width - 8);
     final target = Rect.fromLTWH(left, anchor.bottom + 6, _width, height);
     final divider = theme.colorScheme.onSurface.withValues(alpha: 0.12);
+    // Under the chevron, across the menu, it grows from and shrinks to.
+    final from = origin.dx.clamp(target.left + 12, target.right - 12);
+    final pivot = Alignment(-1 + 2 * (from - target.left) / _width, -1);
     final content = SizedBox(
       width: _width,
       height: height,
@@ -377,7 +390,7 @@ class _GlassMenu<T> extends StatelessWidget {
             left: target.left,
             top: target.top,
             child: ScaleTransition(
-              alignment: Alignment.topLeft,
+              alignment: pivot,
               scale: Tween<double>(begin: 0.6, end: 1).animate(grow),
               child: GlassPanel(
                 radius: _radius,
@@ -390,14 +403,9 @@ class _GlassMenu<T> extends StatelessWidget {
         ],
       );
     }
-    // The glass starts as a small drop just under the title, never around
-    // it: a glass rim round the title would read as an outline.
-    final source = Rect.fromLTWH(
-      left,
-      anchor.bottom + 2,
-      math.min(anchor.width, _width) * 0.5,
-      10,
-    );
+    // The glass starts as a small drop just under the chevron, never round
+    // the title: a glass rim round it would read as an outline.
+    final source = Rect.fromLTWH(from - 12, anchor.bottom + 2, 24, 10);
     final still = MediaQuery.maybeDisableAnimationsOf(context) ?? false;
     final look = GlassMaterial.menu(theme.brightness);
     return AnimatedBuilder(
@@ -464,7 +472,7 @@ class _GlassMenu<T> extends StatelessWidget {
                     child: Opacity(
                       opacity: labels,
                       child: Transform.scale(
-                        alignment: Alignment.topLeft,
+                        alignment: pivot,
                         scale: lerp(0.94, 1, labels),
                         child: content,
                       ),
