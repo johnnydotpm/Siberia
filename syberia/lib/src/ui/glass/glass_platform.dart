@@ -149,7 +149,12 @@ abstract final class GlassPlatform {
         'capabilities',
       );
       if (info == null) return;
-      if (info['liquidGlass'] == true) _backend = GlassBackend.uikit;
+      if (info['liquidGlass'] == true) {
+        _backend = GlassBackend.uikit;
+        // The edge under the bars is Flutter's on iOS too: without the
+        // shader it would be cut into bands of blur.
+        if (ImageFilter.isShaderFilterSupported) await GlassFade.load();
+      }
       final current = metrics.value;
       metrics.value = GlassMetrics(
         tabBarHeight: _positive(info['tabBarHeight'], current.tabBarHeight),

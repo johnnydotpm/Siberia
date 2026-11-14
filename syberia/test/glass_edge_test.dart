@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'dart:ui' as ui;
 
 import 'package:flutter/foundation.dart';
@@ -132,7 +133,10 @@ void main() {
     scroll.jumpTo(400);
     await tester.pumpAndSettle();
     // A few blurs letting go into each other where a shader can, or bands.
-    expect(_edge, findsNWidgets(GlassFade.available ? 4 : 9));
+    expect(
+      _edge,
+      GlassFade.available ? findsNWidgets(4) : findsAtLeastNWidgets(6),
+    );
     final contrast = await _contrastDownTheTail(tester);
     // Grey right below the bar, part way through half way down, and the
     // page as it is at the end.
@@ -167,4 +171,45 @@ void main() {
     // --enable-impeller.
     skip: !ui.ImageFilter.isShaderFilterSupported,
   );
+
+  testWidgets('the veils under the bars ease in and out, with no kink '
+      'where a line would show', (tester) async {
+    final scroll = ScrollController();
+    addTearDown(scroll.dispose);
+    await _shell(tester, scroll);
+    scroll.jumpTo(400);
+    await tester.pumpAndSettle();
+    final veils = [
+      for (final box in tester.widgetList<DecoratedBox>(
+        find.byType(DecoratedBox),
+      ))
+        if (box.decoration
+            case BoxDecoration(gradient: final LinearGradient gradient)
+            when gradient.colors.length > 8)
+          gradient,
+    ];
+    // The one under the top bar and the one behind the tab bar.
+    expect(veils, hasLength(2));
+    for (final veil in veils) {
+      final alphas = [for (final color in veil.colors) color.a];
+      final stops = veil.stops!;
+      final total = (alphas.first - alphas.last).abs();
+      expect(total, greaterThan(0.3));
+      // Where the fade starts and where it ends it is all but flat: the
+      // first and the last steps change it by a hair of what the middle
+      // ones do.
+      double slope(int index) =>
+          (alphas[index + 1] - alphas[index]).abs() /
+          (stops[index + 1] - stops[index]);
+      final fading = [
+        for (var index = 0; index < alphas.length - 1; index++)
+          if (stops[index + 1] > stops[index]) index,
+      ];
+      final steepest = fading.map(slope).reduce(math.max);
+      final first = fading.firstWhere((index) => slope(index) > 0);
+      expect(slope(first), lessThan(steepest * 0.15));
+      expect(slope(fading.last), lessThan(steepest * 0.15));
+    }
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
 }

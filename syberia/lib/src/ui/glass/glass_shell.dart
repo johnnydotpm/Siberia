@@ -627,12 +627,33 @@ class _ScrollEdgeState extends State<_ScrollEdge> {
     super.dispose();
   }
 
-  /// The blur at [t] of the way down the tail.
-  static double _profile(double t) => _blur * math.pow(1 - t, 1.5).toDouble();
+  /// How much a blur of one point takes off detail a little bigger than a
+  /// line of text, 32 points across: a Gaussian keeps exp(-2π²σ²/32²) of it.
+  static const double _attenuation = 2 * math.pi * math.pi / (32 * 32);
+
+  /// The blur at [t] of the way down the tail. What the eye follows is how
+  /// sharp the page looks, so that is what eases from the full blur to none,
+  /// without a kink at either end: where sharpness changes its rate at once,
+  /// the eye sees a line.
+  static double _profile(double t) {
+    final floor = math.exp(-_attenuation * _blur * _blur);
+    final kept = floor + (1 - floor) * _ease(t);
+    return math.sqrt(-math.log(kept) / _attenuation);
+  }
 
   /// How far down the tail the profile comes to [sigma].
-  static double _depthOf(double sigma) =>
-      1 - math.pow(sigma / _blur, 2 / 3).toDouble();
+  static double _depthOf(double sigma) {
+    var low = 0.0, high = 1.0;
+    for (var step = 0; step < 30; step++) {
+      final middle = (low + high) / 2;
+      if (_profile(middle) > sigma) {
+        low = middle;
+      } else {
+        high = middle;
+      }
+    }
+    return (low + high) / 2;
+  }
 
   /// The blur of band [index] at full strength.
   static double _bandBlur(int index) => _profile((index + 0.5) / _bands);
@@ -661,21 +682,12 @@ class _ScrollEdgeState extends State<_ScrollEdge> {
                 Positioned.fill(
                   child: DecoratedBox(
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          background.withValues(alpha: _veil * value),
-                          background.withValues(alpha: _veil * value),
-                          background.withValues(alpha: _veil * value * 0.4),
-                          background.withValues(alpha: 0),
-                        ],
-                        stops: [
-                          0,
-                          solidExtent / extent,
-                          (solidExtent + tail * 0.45) / extent,
-                          1,
-                        ],
+                      // The veil eases out as the blur does, with no kink
+                      // where it starts to fade or where it ends.
+                      gradient: _easedFade(
+                        background,
+                        _veil * value,
+                        start: solidExtent / extent,
                       ),
                     ),
                   ),
@@ -704,9 +716,12 @@ class _ScrollEdgeState extends State<_ScrollEdge> {
     final depths = [for (final level in _levels) _depthOf(level)];
     double down(double depth) => solidExtent + depth * tail;
     return [
+      // Every level reaches up to the top of the screen, under the stronger
+      // ones: no level starts part way down, where its own edge could show,
+      // and the shader counts from the same top whatever it is given.
       for (var index = _levels.length - 1; index >= 0; index--)
         _area(
-          index == 0 ? 0 : down(depths[index - 1]),
+          0,
           down(index + 1 < _levels.length ? depths[index + 1] : 1),
           GlassFade.filter(
             shaders[index],
@@ -836,16 +851,9 @@ class _BottomBar extends StatelessWidget {
           child: IgnorePointer(
             child: DecoratedBox(
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    background.withValues(alpha: 0),
-                    background.withValues(alpha: 0.5),
-                    background.withValues(alpha: 0.92),
-                  ],
-                  stops: const [0, 0.45, 1],
-                ),
+                // Eased in, with no kink where it starts, where a line
+                // would show.
+                gradient: _easedFade(background, 0.92, reverse: true),
               ),
             ),
           ),
@@ -899,5 +907,41 @@ class _GlassDrawer extends StatelessWidget {
       minimum: const EdgeInsets.fromLTRB(8, 8, 0, 8),
       child: GlassPanel(radius: 32, child: child),
     ),
+  );
+}
+
+/// Smoothstep: from 0 to 1 over [t] from 0 to 1, flat at both ends.
+double _ease(double t) {
+  final x = t.clamp(0.0, 1.0);
+  return x * x * (3 - 2 * x);
+}
+
+/// [color] at [alpha] down to nothing, top to bottom, held until [start] and
+/// then eased out, with no kink anywhere for the eye to read as a line; with
+/// [reverse], from nothing at the top up to [alpha] at the bottom.
+LinearGradient _easedFade(
+  Color color,
+  double alpha, {
+  double start = 0,
+  bool reverse = false,
+}) {
+  const steps = 16;
+  final colors = <Color>[];
+  final stops = <double>[];
+  if (start > 0 && !reverse) {
+    colors.add(color.withValues(alpha: alpha));
+    stops.add(0);
+  }
+  for (var index = 0; index <= steps; index++) {
+    final t = index / steps;
+    final shown = reverse ? _ease(t) : 1 - _ease(t);
+    colors.add(color.withValues(alpha: alpha * shown));
+    stops.add(start + (1 - start) * t);
+  }
+  return LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    colors: colors,
+    stops: stops,
   );
 }
