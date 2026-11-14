@@ -778,37 +778,57 @@ class _SideNavigation extends StatelessWidget {
               ),
             ),
             Expanded(
-              child: ListView.builder(
-                // Scrolls only when the entries do not fit, as on a short
-                // screen or with large text.
-                primary: false,
-                physics: const _MenuScrollPhysics(),
-                itemCount: entries.length,
-                itemBuilder: (context, index) {
-                  final entry = entries[index];
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 2,
-                    ),
-                    child: ListTile(
-                      selected: controller.tabIndex == index,
-                      leading: AppIcon(entry.$1),
-                      title: Text(context.tr(entry.$2)),
-                      trailing:
-                          index == 5 && controller.snapshot.unreadMessages > 0
-                          ? Badge(
-                              label: Text(
-                                badgeText(controller.snapshot.unreadMessages),
-                                style: const TextStyle(fontFeatures: _tabular),
-                              ),
-                            )
-                          : null,
-                      onTap: () {
-                        controller.selectTab(index);
-                        if (!permanent) Navigator.pop(context);
-                      },
-                    ),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  // Rows a little shorter where Material's do not all fit,
+                  // as on an iPhone, whose screen is shorter and whose edges
+                  // take more: 48 points, as in its own sidebars.
+                  final line = MediaQuery.textScalerOf(context).scale(16);
+                  final roomy =
+                      entries.length * (math.max(56.0, line * 1.5 + 24) + 4) <=
+                      constraints.maxHeight;
+                  return ListView.builder(
+                    // Scrolls only when the entries do not fit even then, as on
+                    // a very short screen or with large text.
+                    primary: false,
+                    physics: const _MenuScrollPhysics(),
+                    itemCount: entries.length,
+                    itemBuilder: (context, index) {
+                      final entry = entries[index];
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 2,
+                        ),
+                        child: ListTile(
+                          key: ValueKey('drawer-entry-$index'),
+                          visualDensity: roomy
+                              ? null
+                              : const VisualDensity(vertical: -2),
+                          selected: controller.tabIndex == index,
+                          leading: AppIcon(entry.$1),
+                          title: Text(context.tr(entry.$2)),
+                          trailing:
+                              index == 5 &&
+                                  controller.snapshot.unreadMessages > 0
+                              ? Badge(
+                                  label: Text(
+                                    badgeText(
+                                      controller.snapshot.unreadMessages,
+                                    ),
+                                    style: const TextStyle(
+                                      fontFeatures: _tabular,
+                                    ),
+                                  ),
+                                )
+                              : null,
+                          onTap: () {
+                            controller.selectTab(index);
+                            if (!permanent) Navigator.pop(context);
+                          },
+                        ),
+                      );
+                    },
                   );
                 },
               ),

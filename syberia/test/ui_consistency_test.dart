@@ -195,6 +195,56 @@ void main() {
     }),
   );
 
+  testWidgets('on an iPhone the side menu fits whole and stays still', (
+    tester,
+  ) async {
+    // The screens and edges of an iPhone 14 and a 15 Pro, in points.
+    for (final (width, height, top, bottom) in [
+      (390.0, 844.0, 47.0, 34.0),
+      (393.0, 852.0, 59.0, 34.0),
+    ]) {
+      for (final design in ['classic', 'glass']) {
+        SharedPreferences.setMockInitialValues({
+          'app_design_v1': design,
+          'onboarding_done_v1': true,
+        });
+        tester.view.physicalSize = Size(width * 3, height * 3);
+        tester.view.devicePixelRatio = 3;
+        tester.view.padding = FakeViewPadding(top: top * 3, bottom: bottom * 3);
+        addTearDown(tester.view.reset);
+        final controller = AppController(
+          _Repository(_snapshot()),
+          updatesEnabled: false,
+        );
+        await controller.bootstrap();
+        await tester.pumpWidget(SyberiaApp(controller: controller));
+        await tester.pumpAndSettle();
+        final scaffold = tester.state<ScaffoldState>(
+          find.byType(Scaffold).first,
+        );
+        scaffold.openDrawer();
+        await tester.pumpAndSettle();
+        final what = '$design, ${width}x$height';
+        _expectStill(tester, find.byType(Drawer), what);
+        // Every entry shows in full.
+        final menu = tester.getRect(
+          find.descendant(
+            of: find.byType(Drawer),
+            matching: find.byType(Scrollable),
+          ),
+        );
+        for (var index = 0; index < 10; index++) {
+          final entry = tester.getRect(
+            find.byKey(ValueKey('drawer-entry-$index')),
+          );
+          expect(entry.bottom, lessThanOrEqualTo(menu.bottom), reason: what);
+        }
+        await tester.pumpWidget(const SizedBox.shrink());
+        controller.dispose();
+      }
+    }
+  }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
+
   testWidgets('a fitting menu rejects inherited always-scrollable physics', (
     tester,
   ) async {
