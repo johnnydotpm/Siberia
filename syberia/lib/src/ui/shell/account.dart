@@ -637,6 +637,7 @@ class _RenameProfileState extends State<_RenameProfile> {
             Padding(
               padding: const EdgeInsetsDirectional.only(end: 8),
               child: TextField(
+                contextMenuBuilder: _textMenu,
                 key: const ValueKey('profile-name-field'),
                 controller: text,
                 autofocus: true,
@@ -1140,6 +1141,7 @@ class _LoginState extends State<_Login> {
     for (final field in diary.release!.loginFields) ...[
       const SizedBox(height: 12),
       TextFormField(
+        contextMenuBuilder: _textMenu,
         key: ValueKey('plugin-field-${field['id']}'),
         controller: pluginFields[field['id']],
         obscureText: field['type'] == 'password',
@@ -1187,6 +1189,7 @@ class _LoginState extends State<_Login> {
         padding: const EdgeInsets.only(bottom: 20),
       ),
       TextFormField(
+        contextMenuBuilder: _textMenu,
         controller: email,
         keyboardType: TextInputType.emailAddress,
         autofillHints: const [AutofillHints.email],
@@ -1200,6 +1203,7 @@ class _LoginState extends State<_Login> {
       ),
       const SizedBox(height: 12),
       TextFormField(
+        contextMenuBuilder: _textMenu,
         controller: password,
         obscureText: obscure,
         autofillHints: const [AutofillHints.password],

@@ -1430,7 +1430,10 @@ void _showLessonDetails(BuildContext context, _LessonBlock block) {
                           ),
                           if (test.title.isNotEmpty &&
                               test.title != test.typeLabel)
-                            SelectableText(test.title),
+                            SelectableText(
+                              test.title,
+                              contextMenuBuilder: _textMenu,
+                            ),
                         ],
                       ),
                     ),

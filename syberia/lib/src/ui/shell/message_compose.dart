@@ -327,6 +327,7 @@ class _ComposeMessageSheetState extends State<_ComposeMessageSheet> {
                                   (context, controller, focusNode, onSubmit) {
                                     recipientSearchController = controller;
                                     return TextField(
+                                      contextMenuBuilder: _textMenu,
                                       controller: controller,
                                       focusNode: focusNode,
                                       enabled: !sending,
@@ -380,6 +381,7 @@ class _ComposeMessageSheetState extends State<_ComposeMessageSheet> {
                     ),
                     const SizedBox(height: 16),
                     TextField(
+                      contextMenuBuilder: _textMenu,
                       key: const ValueKey('compose-subject'),
                       controller: subjectController,
                       enabled: !sending,
@@ -405,6 +407,7 @@ class _ComposeMessageSheetState extends State<_ComposeMessageSheet> {
                     // recipient.
                     const SizedBox(height: 16),
                     TextField(
+                      contextMenuBuilder: _textMenu,
                       key: const ValueKey('compose-body'),
                       controller: bodyController,
                       enabled: !sending,

@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -15,6 +16,7 @@ import 'package:syberia/src/ui/glass/glass_picker.dart';
 import 'package:syberia/src/ui/glass/glass_platform.dart';
 import 'package:syberia/src/ui/glass/glass_segmented.dart';
 import 'package:syberia/src/ui/glass/glass_switch.dart';
+import 'package:syberia/src/ui/glass/glass_text_menu.dart';
 import 'package:syberia/src/ui/glass/glass_toast.dart';
 
 /// The glass design's own controls: the word over the tab bar, the
@@ -722,5 +724,196 @@ void main() {
       expect(picks, ['a']);
       await tester.pumpWidget(const SizedBox.shrink());
     });
+  });
+
+  group('the menu over selected text', () {
+    Future<void> pumpText(
+      WidgetTester tester,
+      Widget text, {
+      bool glass = true,
+      bool systemMenu = false,
+    }) async {
+      tester.view.physicalSize = const Size(400, 860);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        MaterialApp(
+          builder: (context, child) => MediaQuery(
+            data: MediaQuery.of(context)
+                .copyWith(supportsShowingSystemContextMenu: systemMenu),
+            child: GlassStyle(enabled: glass, child: child!),
+          ),
+          home: Scaffold(
+            body: Padding(padding: const EdgeInsets.all(40), child: text),
+          ),
+        ),
+      );
+    }
+
+    Widget selectable() => SelectableText(
+      'Kartkówka z ułamków',
+      contextMenuBuilder: (context, state) => glassTextMenu(context, state),
+    );
+
+    Finder glassMenu() => find.byKey(const ValueKey('glass-text-menu'));
+
+    testWidgets('in the glass design its buttons sit on a capsule of glass', (
+      tester,
+    ) async {
+      await pumpText(tester, selectable());
+      await tester.longPress(find.byType(SelectableText));
+      await tester.pumpAndSettle();
+      expect(glassMenu(), findsOneWidget);
+      expect(
+        find.descendant(of: glassMenu(), matching: find.byType(GlassPlate)),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(of: glassMenu(), matching: find.text('Copy')),
+        findsOneWidget,
+      );
+      await tester.pumpWidget(const SizedBox.shrink());
+    });
+
+    testWidgets('the other designs keep the platform\'s toolbar', (
+      tester,
+    ) async {
+      await pumpText(tester, selectable(), glass: false);
+      await tester.longPress(find.byType(SelectableText));
+      await tester.pumpAndSettle();
+      expect(glassMenu(), findsNothing);
+      expect(find.text('Copy'), findsOneWidget);
+      await tester.pumpWidget(const SizedBox.shrink());
+    });
+
+    testWidgets('on an iPhone that can show it, over a field being typed '
+        'into, it is iOS\'s own edit menu; over text only read, glass', (
+      tester,
+    ) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      addTearDown(() => debugDefaultTargetPlatformOverride = null);
+      final shown = <MethodCall>[];
+      final messenger =
+          TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
+      messenger.setMockMethodCallHandler(SystemChannels.platform, (call) async {
+        if (call.method == 'ContextMenu.showSystemContextMenu') {
+          shown.add(call);
+        }
+        return null;
+      });
+      addTearDown(
+        () => messenger.setMockMethodCallHandler(SystemChannels.platform, null),
+      );
+      final field = TextEditingController(text: 'Kartkówka z ułamków');
+      addTearDown(field.dispose);
+      await pumpText(
+        tester,
+        TextField(
+          controller: field,
+          contextMenuBuilder: (context, state) => glassTextMenu(context, state),
+        ),
+        systemMenu: true,
+      );
+      await tester.tap(find.byType(TextField));
+      await tester.pump(const Duration(milliseconds: 400));
+      await tester.longPress(find.byType(TextField));
+      await tester.pumpAndSettle();
+      expect(find.byType(SystemContextMenu), findsOneWidget);
+      expect(glassMenu(), findsNothing);
+      expect(shown, isNotEmpty, reason: 'UIKit was asked to show it');
+
+      // iOS shows its menu only over a field it is typing into.
+      await pumpText(tester, selectable(), systemMenu: true);
+      await tester.longPress(find.byType(SelectableText));
+      await tester.pumpAndSettle();
+      expect(find.byType(SystemContextMenu), findsNothing);
+      expect(glassMenu(), findsOneWidget);
+      await tester.pumpWidget(const SizedBox.shrink());
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets('over text selected in an area, as a message\'s, it is on '
+        'glass with the choices of a link first', (tester) async {
+      final picked = <String>[];
+      await pumpText(
+        tester,
+        SelectionArea(
+          contextMenuBuilder: (context, region) => glassSelectionMenu(
+            context,
+            region,
+            extra: [
+              GlassTextMenuItem('Open link', () => picked.add('open')),
+              GlassTextMenuItem('Copy link', () => picked.add('copy')),
+            ],
+          ),
+          child: const Text('Plan na stronie szkoły'),
+        ),
+      );
+      final range = find.textRange.ofSubstring('stronie').evaluate().single;
+      final boxes = range.renderObject.getBoxesForSelection(
+        TextSelection(
+          baseOffset: range.textRange.start,
+          extentOffset: range.textRange.end,
+        ),
+      );
+      await tester.longPressAt(
+        range.renderObject.localToGlobal(boxes.first.toRect().center),
+      );
+      await tester.pumpAndSettle();
+      expect(glassMenu(), findsOneWidget);
+      expect(
+        find.descendant(of: glassMenu(), matching: find.byType(GlassPlate)),
+        findsOneWidget,
+      );
+      for (final label in ['Open link', 'Copy link']) {
+        expect(
+          find.descendant(of: glassMenu(), matching: find.text(label)),
+          findsOneWidget,
+          reason: label,
+        );
+      }
+      await tester.tap(find.text('Open link'));
+      await tester.pumpAndSettle();
+      expect(picked, ['open']);
+      expect(glassMenu(), findsNothing, reason: 'a choice closes the menu');
+      await tester.pumpWidget(const SizedBox.shrink());
+    });
+  });
+
+  testWidgets('in the glass design a long press on a button shows no tip', (
+    tester,
+  ) async {
+    Future<ThemeData> themeOf(String design) async {
+      final controller = await _app(tester, design: design);
+      final theme = Theme.of(tester.element(find.byType(Scaffold).first));
+      await tester.pumpWidget(const SizedBox.shrink());
+      controller.dispose();
+      return theme;
+    }
+
+    Future<bool> tipShows(ThemeData theme) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: theme,
+          home: const Scaffold(
+            body: Center(
+              child: Tooltip(
+                message: 'Wskazówka',
+                child: SizedBox.square(dimension: 48),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.longPress(find.byType(Tooltip));
+      await tester.pump(const Duration(milliseconds: 600));
+      final shows = find.text('Wskazówka').evaluate().isNotEmpty;
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpAndSettle();
+      return shows;
+    }
+
+    expect(await tipShows(await themeOf('glass')), isFalse);
+    expect(await tipShows(await themeOf('classic')), isTrue);
   });
 }

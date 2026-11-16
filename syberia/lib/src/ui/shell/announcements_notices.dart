@@ -59,7 +59,10 @@ class _Announcements extends StatelessWidget {
                     ),
                     child: Align(
                       alignment: AlignmentDirectional.centerStart,
-                      child: SelectableText(item.content),
+                      child: SelectableText(
+                        item.content,
+                        contextMenuBuilder: _textMenu,
+                      ),
                     ),
                   ),
                 ],
@@ -165,7 +168,7 @@ class _NoticeCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 6),
                   ],
-                  SelectableText(item.text),
+                  SelectableText(item.text, contextMenuBuilder: _textMenu),
                 ],
               ),
             ),

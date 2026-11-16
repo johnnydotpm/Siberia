@@ -14,6 +14,8 @@ import 'package:syberia/src/domain/excuse.dart';
 import 'package:syberia/src/domain/models.dart';
 import 'package:syberia/src/domain/parent.dart';
 import 'package:syberia/src/state/app_controller.dart';
+import 'package:syberia/src/ui/glass/glass_plate.dart';
+import 'package:syberia/src/ui/glass/glass_platform.dart';
 
 import 'support/profile_fakes.dart';
 
@@ -75,10 +77,11 @@ const _teacher = MessageRecipient(
 Future<(AppController, FakeLibrusWorld)> _app({
   bool parent = true,
   List<MessageRecipient> recipients = const [],
+  String design = 'classic',
 }) async {
   SharedPreferences.setMockInitialValues({
     'auto_sync_on_open_v1': false,
-    'app_design_v1': 'classic',
+    'app_design_v1': design,
     'app_locale_v1': 'en',
   });
   final world = FakeLibrusWorld()
@@ -320,6 +323,34 @@ void main() {
     expect(history.single.recordIds, unorderedEquals(['a1', 'a2']));
     expect(history.single.body, contains('mojej córki'));
     await tester.pumpWidget(const SizedBox.shrink());
+  });
+
+  testWidgets('in the glass design the confirmation is a window of glass, '
+      'and its button sends', (tester) async {
+    GlassPlatform.debugSetBackend(GlassBackend.rendered);
+    addTearDown(() => GlassPlatform.debugSetBackend(GlassBackend.none));
+    final (controller, _) = await _app(
+      recipients: const [_teacher],
+      design: 'glass',
+    );
+    await _pump(tester, controller);
+    await tester.tap(find.byKey(const ValueKey('today-excuse-button')));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.byKey(const ValueKey('excuse-send')));
+    await tester.tap(find.byKey(const ValueKey('excuse-send')));
+    await tester.pumpAndSettle();
+    final confirm = find.byKey(const ValueKey('excuse-confirm'));
+    expect(confirm, findsOneWidget);
+    expect(find.byType(AlertDialog), findsNothing);
+    expect(
+      find.descendant(of: confirm, matching: find.byType(GlassPlate)),
+      findsWidgets,
+    );
+    await tester.tap(find.byKey(const ValueKey('excuse-confirm-send')));
+    await tester.pumpAndSettle();
+    expect(controller.snapshot.sentMessages, hasLength(1));
+    await tester.pumpWidget(const SizedBox.shrink());
+    controller.dispose();
   });
 
   testWidgets('a note in the parent\'s own words goes as written', (

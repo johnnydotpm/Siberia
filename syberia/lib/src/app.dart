@@ -83,6 +83,16 @@ class _SyberiaAppState extends State<SyberiaApp> with WidgetsBindingObserver {
         );
       }
 
+      // The glass design follows iOS, where a long press on a button shows
+      // no tip: the label stays for VoiceOver and TalkBack.
+      ThemeData quiet(ThemeData theme) => glass
+          ? theme.copyWith(
+              tooltipTheme: theme.tooltipTheme.copyWith(
+                triggerMode: TooltipTriggerMode.manual,
+              ),
+            )
+          : theme;
+
       return ValueListenableBuilder(
         valueListenable: _revealing,
         builder: (context, revealing, _) => BrandEventScope(
@@ -93,12 +103,14 @@ class _SyberiaAppState extends State<SyberiaApp> with WidgetsBindingObserver {
             debugShowCheckedModeBanner: false,
             theme: expressive
                 ? expressiveTheme(Brightness.light)
-                : AppTheme.light(likeIos: likeIos),
+                : quiet(AppTheme.light(likeIos: likeIos)),
             darkTheme: expressive
                 ? expressiveTheme(Brightness.dark)
-                : amoled
-                ? AppTheme.amoled(likeIos: likeIos)
-                : AppTheme.dark(likeIos: likeIos),
+                : quiet(
+                    amoled
+                        ? AppTheme.amoled(likeIos: likeIos)
+                        : AppTheme.dark(likeIos: likeIos),
+                  ),
             themeAnimationDuration: revealing
                 ? Duration.zero
                 : kThemeAnimationDuration,

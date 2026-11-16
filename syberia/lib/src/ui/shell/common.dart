@@ -1220,7 +1220,9 @@ Future<TimeOfDay?> _glassTimeSheet(
                     key: const ValueKey('time-done'),
                     onPressed: () => Navigator.pop(sheet, picked),
                     style: TextButton.styleFrom(
-                      textStyle: const TextStyle(fontWeight: FontWeight.w700),
+                      textStyle: theme.textTheme.labelLarge?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                     child: Text(sheet.tr('timeDone')),
                   ),
@@ -1233,6 +1235,16 @@ Future<TimeOfDay?> _glassTimeSheet(
                 data: CupertinoThemeData(
                   brightness: theme.brightness,
                   primaryColor: colors.primary,
+                  // In the app's typeface: the system's of iOS is not on
+                  // other phones.
+                  textTheme: CupertinoTextThemeData(
+                    dateTimePickerTextStyle: TextStyle(
+                      fontFamily: theme.textTheme.bodyLarge?.fontFamily,
+                      fontSize: 21,
+                      letterSpacing: -0.6,
+                      color: colors.onSurface,
+                    ),
+                  ),
                 ),
                 child: CupertinoDatePicker(
                   key: const ValueKey('time-wheels'),
@@ -1298,3 +1310,123 @@ class _PickerField<T> extends StatelessWidget {
     );
   }
 }
+
+/// One button of an [_appAlert]: what it reads and the answer it gives.
+class _AlertAction<T> {
+  const _AlertAction(
+    this.label,
+    this.value, {
+    this.answer,
+    this.key,
+    this.primary = false,
+  });
+
+  final String label;
+  final T? value;
+
+  /// The answer, made when the button is pressed, in place of [value].
+  final T? Function()? answer;
+  final Key? key;
+
+  T? get _given => answer == null ? value : answer!();
+
+  /// The button that goes ahead, filled.
+  final bool primary;
+}
+
+/// A dialog with [title] over [content] and [actions] under them: Material's
+/// alert elsewhere; in the glass design on a glass panel, which comes up out
+/// of the page, UIKit's glass on iOS 26. With no actions, the glass one has
+/// a button to close it, as iOS's always do; a tap beside it closes it too.
+Future<T?> _appAlert<T>(
+  BuildContext context, {
+  Key? key,
+  Widget? icon,
+  required String title,
+  required Widget content,
+  List<_AlertAction<T>> actions = const [],
+  bool scrollable = false,
+}) {
+  Widget button(BuildContext dialog, _AlertAction<T> action) => action.primary
+      ? FilledButton(
+          key: action.key,
+          onPressed: () => Navigator.pop(dialog, action._given),
+          child: Text(action.label),
+        )
+      : TextButton(
+          key: action.key,
+          onPressed: () => Navigator.pop(dialog, action._given),
+          child: Text(action.label),
+        );
+  if (!GlassStyle.of(context)) {
+    return showDialog<T>(
+      context: context,
+      builder: (dialog) => AlertDialog(
+        key: key,
+        icon: icon,
+        title: Text(title),
+        scrollable: scrollable,
+        content: content,
+        actions: actions.isEmpty
+            ? null
+            : [for (final action in actions) button(dialog, action)],
+      ),
+    );
+  }
+  return showAppDialog<T>(
+    context: context,
+    builder: (dialog) {
+      final theme = Theme.of(dialog);
+      return AppDialog(
+        key: key,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(24, 22, 16, 12),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Padding(
+                padding: const EdgeInsetsDirectional.only(end: 8),
+                child: Text(
+                  title,
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              Flexible(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsetsDirectional.only(end: 8),
+                  child: content,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Wrap(
+                alignment: WrapAlignment.end,
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  if (actions.isEmpty)
+                    TextButton(
+                      onPressed: () => Navigator.pop(dialog),
+                      child: Text(
+                        MaterialLocalizations.of(dialog).closeButtonLabel,
+                      ),
+                    ),
+                  for (final action in actions) button(dialog, action),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
+/// The menu over text selected in a [SelectableText]: iOS's own edit menu in
+/// the glass design where the system shows it, glass elsewhere in it, and
+/// the platform's toolbar in the other designs.
+Widget _textMenu(BuildContext context, EditableTextState state) =>
+    glassTextMenu(context, state);

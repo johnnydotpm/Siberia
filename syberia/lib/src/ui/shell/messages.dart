@@ -748,6 +748,7 @@ class _MessagesSearchField extends StatelessWidget {
     final dark = theme.brightness == Brightness.dark;
     final radius = glass ? 20.0 : (expressive ? 28.0 : 24.0);
     return TextField(
+      contextMenuBuilder: _textMenu,
       key: const ValueKey('messages-search'),
       controller: controller,
       onChanged: (_) => onChanged(),

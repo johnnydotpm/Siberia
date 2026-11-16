@@ -289,6 +289,7 @@ class _HomeworkState extends State<_Homework> {
         padding: const EdgeInsets.all(_Space.page),
         children: [
           TextField(
+            contextMenuBuilder: _textMenu,
             key: const ValueKey('homework-search'),
             controller: _search,
             onChanged: (_) => setState(() {}),
@@ -961,6 +962,7 @@ void _showHomeworkDetails(BuildContext context, SchoolEvent item) {
               SelectableText(
                 _homeworkTitle(context, item),
                 style: _sheetTitleStyle(context),
+                contextMenuBuilder: _textMenu,
               ),
               const SizedBox(height: 12),
               Row(
@@ -1011,7 +1013,11 @@ void _showHomeworkDetails(BuildContext context, SchoolEvent item) {
               ],
               if (details.isNotEmpty) ...[
                 const SizedBox(height: 16),
-                SelectableText(details, style: theme.textTheme.bodyLarge),
+                SelectableText(
+                  details,
+                  style: theme.textTheme.bodyLarge,
+                  contextMenuBuilder: _textMenu,
+                ),
               ],
             ],
           ),

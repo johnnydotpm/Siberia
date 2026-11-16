@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../l10n/app_localizations.dart';
+import 'glass/glass_text_menu.dart';
 
 /// Web addresses ("https://…", "http://…", "www.…") and e-mail addresses in
 /// a text, as people write them in messages.
@@ -194,26 +195,17 @@ class _LinkedTextState extends State<LinkedText> {
 
   Widget _menu(BuildContext context, SelectableRegionState region) {
     final link = _selectedLink();
-    return AdaptiveTextSelectionToolbar.buttonItems(
-      anchors: region.contextMenuAnchors,
-      buttonItems: [
+    return glassSelectionMenu(
+      context,
+      region,
+      extra: [
         if (link != null) ...[
-          ContextMenuButtonItem(
-            label: context.tr('linkOpen'),
-            onPressed: () {
-              ContextMenuController.removeAny();
-              _open(link);
-            },
-          ),
-          ContextMenuButtonItem(
-            label: context.tr('linkCopy'),
-            onPressed: () {
-              ContextMenuController.removeAny();
-              Clipboard.setData(ClipboardData(text: _copied(link)));
-            },
+          GlassTextMenuItem(context.tr('linkOpen'), () => _open(link)),
+          GlassTextMenuItem(
+            context.tr('linkCopy'),
+            () => Clipboard.setData(ClipboardData(text: _copied(link))),
           ),
         ],
-        ...region.contextMenuButtonItems,
       ],
     );
   }

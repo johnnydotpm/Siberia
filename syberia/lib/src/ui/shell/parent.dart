@@ -327,11 +327,11 @@ class _AbsenceSheetState extends State<_AbsenceSheet> {
       margin: const EdgeInsets.only(bottom: _Space.card),
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
-        onTap: () => showDialog<void>(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text(request.subject),
-            content: SingleChildScrollView(child: SelectableText(request.body)),
+        onTap: () => _appAlert<void>(
+          context,
+          title: request.subject,
+          content: SingleChildScrollView(
+            child: SelectableText(request.body, contextMenuBuilder: _textMenu),
           ),
         ),
         child: Padding(
@@ -479,12 +479,13 @@ class _AbsenceSheetState extends State<_AbsenceSheet> {
         borderRadius: BorderRadius.circular(16),
         onTap: note.message.isEmpty
             ? null
-            : () => showDialog<void>(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: Text(when),
-                  content: SingleChildScrollView(
-                    child: SelectableText(note.message),
+            : () => _appAlert<void>(
+                context,
+                title: when,
+                content: SingleChildScrollView(
+                  child: SelectableText(
+                    note.message,
+                    contextMenuBuilder: _textMenu,
                   ),
                 ),
               ),

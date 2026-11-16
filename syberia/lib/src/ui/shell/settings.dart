@@ -59,6 +59,7 @@ class _Settings extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
                 child: TextFormField(
+                  contextMenuBuilder: _textMenu,
                   key: const ValueKey('settings-excuse-signature'),
                   initialValue: controller.excuseSignature,
                   textCapitalization: TextCapitalization.words,
@@ -936,6 +937,7 @@ class _ExcuseWording extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           TextFormField(
+            contextMenuBuilder: _textMenu,
             key: const ValueKey('settings-excuse-greeting'),
             initialValue: preferences.excuseGreeting,
             textCapitalization: TextCapitalization.sentences,
@@ -966,6 +968,7 @@ class _ExcuseWording extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           TextFormField(
+            contextMenuBuilder: _textMenu,
             key: const ValueKey('settings-excuse-closing'),
             initialValue: preferences.excuseClosing,
             textCapitalization: TextCapitalization.sentences,

@@ -291,46 +291,44 @@ class _ExcuseSheetState extends State<_ExcuseSheet> {
 
   Future<void> _editGreeting() async {
     final field = TextEditingController(text: _greeting);
-    final picked = await showDialog<String>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(context.tr('excuseGreeting')),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Wrap(
-              spacing: 8,
-              runSpacing: 4,
-              children: [
-                for (final greeting in excuseGreetings(teacher?.name ?? ''))
-                  ActionChip(
-                    label: Text(greeting),
-                    onPressed: () => field.text = greeting,
-                  ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              key: const ValueKey('excuse-greeting-field'),
-              controller: field,
-              autofocus: true,
-              textCapitalization: TextCapitalization.sentences,
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(context.tr('cancel')),
+    final picked = await _appAlert<String>(
+      context,
+      title: context.tr('excuseGreeting'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Wrap(
+            spacing: 8,
+            runSpacing: 4,
+            children: [
+              for (final greeting in excuseGreetings(teacher?.name ?? ''))
+                ActionChip(
+                  label: Text(greeting),
+                  onPressed: () => field.text = greeting,
+                ),
+            ],
           ),
-          TextButton(
-            key: const ValueKey('excuse-greeting-save'),
-            onPressed: () => Navigator.pop(context, field.text),
-            child: Text(context.tr('save')),
+          const SizedBox(height: 12),
+          TextField(
+            contextMenuBuilder: _textMenu,
+            key: const ValueKey('excuse-greeting-field'),
+            controller: field,
+            autofocus: true,
+            textCapitalization: TextCapitalization.sentences,
           ),
         ],
       ),
+      actions: [
+        _AlertAction(MaterialLocalizations.of(context).cancelButtonLabel, null),
+        _AlertAction(
+          MaterialLocalizations.of(context).saveButtonLabel,
+          null,
+          answer: () => field.text,
+          key: const ValueKey('excuse-greeting-save'),
+          primary: true,
+        ),
+      ],
     );
     field.dispose();
     if (picked == null) return;
@@ -362,67 +360,66 @@ class _ExcuseSheetState extends State<_ExcuseSheet> {
         ],
       ),
     );
-    final go = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        key: const ValueKey('excuse-confirm'),
-        icon: const AppIcon(Icons.send_rounded),
-        title: Text(
-          context.tr(planned ? 'excuseConfirmPlanned' : 'excuseConfirmTitle'),
-        ),
-        scrollable: true,
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Card(
-              margin: EdgeInsets.zero,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: _Space.inset,
-                  vertical: 8,
-                ),
-                child: Column(
-                  children: [
-                    row(
-                      context.tr('excuseConfirmChild'),
-                      _profile?.displayName ?? '',
-                    ),
-                    row(context.tr('excuseConfirmWhen'), when),
-                    row(
-                      context.tr('excuseConfirmWho'),
-                      teacher?.name ?? context.tr('excuseConfirmTeacher'),
-                    ),
-                  ],
-                ),
+    final go = await _appAlert<bool>(
+      context,
+      key: const ValueKey('excuse-confirm'),
+      icon: const AppIcon(Icons.send_rounded),
+      title: context.tr(
+        planned ? 'excuseConfirmPlanned' : 'excuseConfirmTitle',
+      ),
+      scrollable: true,
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Card(
+            margin: EdgeInsets.zero,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: _Space.inset,
+                vertical: 8,
+              ),
+              child: Column(
+                children: [
+                  row(
+                    context.tr('excuseConfirmChild'),
+                    _profile?.displayName ?? '',
+                  ),
+                  row(context.tr('excuseConfirmWhen'), when),
+                  row(
+                    context.tr('excuseConfirmWho'),
+                    teacher?.name ?? context.tr('excuseConfirmTeacher'),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 12),
-            Container(
-              padding: const EdgeInsetsDirectional.only(start: 12),
-              decoration: BoxDecoration(
-                border: BorderDirectional(
-                  start: BorderSide(color: theme.colorScheme.primary, width: 3),
-                ),
+          ),
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsetsDirectional.only(start: 12),
+            decoration: BoxDecoration(
+              border: BorderDirectional(
+                start: BorderSide(color: theme.colorScheme.primary, width: 3),
               ),
-              child: Text(_body, style: theme.textTheme.bodyMedium),
             ),
-            const SizedBox(height: 12),
-            Text(context.tr('excuseConfirmNote'), style: _metaStyle(context)),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text(context.tr('cancel')),
+            child: Text(_body, style: theme.textTheme.bodyMedium),
           ),
-          FilledButton(
-            key: const ValueKey('excuse-confirm-send'),
-            onPressed: () => Navigator.pop(context, true),
-            child: Text(context.tr('send')),
-          ),
+          const SizedBox(height: 12),
+          Text(context.tr('excuseConfirmNote'), style: _metaStyle(context)),
         ],
       ),
+      actions: [
+        _AlertAction(
+          MaterialLocalizations.of(context).cancelButtonLabel,
+          false,
+        ),
+        _AlertAction(
+          context.tr('send'),
+          true,
+          key: const ValueKey('excuse-confirm-send'),
+          primary: true,
+        ),
+      ],
     );
     return go ?? false;
   }
@@ -761,6 +758,7 @@ class _ExcuseSheetState extends State<_ExcuseSheet> {
         if (_usesOther) ...[
           const SizedBox(height: 8),
           TextField(
+            contextMenuBuilder: _textMenu,
             key: const ValueKey('excuse-other'),
             controller: other,
             textCapitalization: TextCapitalization.none,
@@ -806,6 +804,7 @@ class _ExcuseSheetState extends State<_ExcuseSheet> {
         const SizedBox(height: 8),
         if (own) ...[
           TextField(
+            contextMenuBuilder: _textMenu,
             key: const ValueKey('excuse-own-text'),
             controller: ownText,
             minLines: 6,
@@ -849,6 +848,7 @@ class _ExcuseSheetState extends State<_ExcuseSheet> {
           ),
           const SizedBox(height: 8),
           TextField(
+            contextMenuBuilder: _textMenu,
             key: const ValueKey('excuse-preview'),
             controller: text,
             minLines: 4,
