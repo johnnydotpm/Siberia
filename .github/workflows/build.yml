@@ -225,6 +225,8 @@ jobs:
       - name: Record while the test drives the controls
         run: |
           mkdir -p out
+          rm -rf "$HOME/capture-shots"
+          plutil -p build/Build/Products/Debug-iphonesimulator/CaptureUITests-Runner.app/Info.plist | grep -i bundleidentifier || true
           python3 -c 'import time; print(time.time())' > out/record-start.txt
           xcrun simctl io "$UDID" recordVideo --codec=h264 --force out/controls.mp4 &
           RECORDER=$!
