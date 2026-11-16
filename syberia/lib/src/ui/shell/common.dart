@@ -410,6 +410,25 @@ class _SwitchTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final change = onChanged;
+    if (GlassStyle.of(context)) {
+      // iOS's switch at the end of the row, UIKit's on iOS 26; a tap on the
+      // row flips it too, as in Settings.
+      return ListTile(
+        key: tileKey,
+        title: title,
+        subtitle: subtitle,
+        leading: secondary,
+        contentPadding: contentPadding,
+        enabled: change != null,
+        onTap: change == null
+            ? null
+            : () {
+                HapticFeedback.selectionClick();
+                change(!value);
+              },
+        trailing: GlassSwitch(value: value, onChanged: change),
+      );
+    }
     if (ExpressiveStyle.of(context)) {
       return SwitchListTile(
         key: tileKey,
@@ -1113,3 +1132,14 @@ class _Notifier {
         .then((_) {});
   }
 }
+
+/// A switch on its own: iOS's in the glass design, UIKit's on iOS 26, and
+/// the platform's own elsewhere. [key] goes to the switch itself.
+Widget _appSwitch(
+  BuildContext context, {
+  Key? key,
+  required bool value,
+  required ValueChanged<bool>? onChanged,
+}) => GlassStyle.of(context)
+    ? GlassSwitch(key: key, value: value, onChanged: onChanged)
+    : Switch.adaptive(key: key, value: value, onChanged: onChanged);

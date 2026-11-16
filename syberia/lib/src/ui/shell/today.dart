@@ -1357,7 +1357,8 @@ Future<void> _showTodayLayoutSheet(
                               ),
                             ],
                           ),
-                          trailing: Switch.adaptive(
+                          trailing: _appSwitch(
+                            context,
                             value: entry.visible,
                             onChanged: (visible) {
                               final blocks = [...layout.blocks];

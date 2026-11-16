@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -12,6 +13,7 @@ import 'package:syberia/src/ui/glass/glass_material.dart';
 import 'package:syberia/src/ui/glass/glass_plate.dart';
 import 'package:syberia/src/ui/glass/glass_platform.dart';
 import 'package:syberia/src/ui/glass/glass_segmented.dart';
+import 'package:syberia/src/ui/glass/glass_switch.dart';
 import 'package:syberia/src/ui/glass/glass_toast.dart';
 
 /// The glass design's own controls: the word over the tab bar, the
@@ -64,12 +66,13 @@ Future<AppController> _app(
   WidgetTester tester, {
   int tab = 0,
   String design = 'glass',
+  double height = 860,
 }) async {
   SharedPreferences.setMockInitialValues({
     'app_design_v1': design,
     'onboarding_done_v1': true,
   });
-  tester.view.physicalSize = const Size(400, 860);
+  tester.view.physicalSize = Size(400, height);
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
   final controller = AppController(
@@ -148,6 +151,44 @@ Future<List<String?>> _segmented(
 /// The selection's glass, and how far it is a lens.
 Finder get _thumbGlass => find.descendant(
   of: find.byKey(const ValueKey('control')),
+  matching: find.byType(GlassPlate),
+);
+
+/// A switch on a page, holding its value unless [keep].
+Future<List<bool>> _switch(
+  WidgetTester tester, {
+  bool initial = false,
+  bool keep = false,
+}) async {
+  tester.view.physicalSize = const Size(400, 860);
+  tester.view.devicePixelRatio = 1;
+  addTearDown(tester.view.reset);
+  final flips = <bool>[];
+  var value = initial;
+  await tester.pumpWidget(
+    MaterialApp(
+      home: Scaffold(
+        body: Center(
+          child: StatefulBuilder(
+            builder: (context, setState) => GlassSwitch(
+              key: const ValueKey('switch'),
+              value: value,
+              onChanged: (next) => setState(() {
+                flips.add(next);
+                if (!keep) value = next;
+              }),
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+  await tester.pumpAndSettle();
+  return flips;
+}
+
+Finder get _knobGlass => find.descendant(
+  of: find.byKey(const ValueKey('switch')),
   matching: find.byType(GlassPlate),
 );
 
@@ -233,6 +274,14 @@ void main() {
         find.ancestor(of: word, matching: find.byType(GlassPlate)),
         findsOneWidget,
       );
+      // Its button in the app's typeface, as the word beside it.
+      String? family(String text) => tester
+          .renderObject<RenderParagraph>(find.text(text))
+          .text
+          .style
+          ?.fontFamily;
+      expect(family('Undo'), isNotNull);
+      expect(family('Undo'), family('Marked as done'));
       await tester.tap(find.text('Undo'));
       await tester.pumpAndSettle();
       expect(controller.snapshot.events, isNotEmpty);
@@ -372,6 +421,132 @@ void main() {
         findsOneWidget,
       );
       expect(find.byType(SegmentedButton<bool>), findsNothing);
+      await tester.pumpWidget(const SizedBox.shrink());
+      controller.dispose();
+    });
+  });
+
+  group('the switch', () {
+    testWidgets('a tap flips it; the knob slides over on a spring and the '
+        'track takes on its colour', (tester) async {
+      final flips = await _switch(tester);
+      final control = tester.getRect(find.byKey(const ValueKey('switch')));
+      expect(control.size, GlassSwitch.size);
+      final start = tester.getRect(_knobGlass).left;
+      await tester.tap(find.byKey(const ValueKey('switch')));
+      await tester.pump();
+      expect(flips, [true]);
+      final lefts = <double>[];
+      for (var frame = 0; frame < 20; frame++) {
+        await tester.pump(const Duration(milliseconds: 16));
+        lefts.add(tester.getRect(_knobGlass).left);
+      }
+      await tester.pumpAndSettle();
+      final end = tester.getRect(_knobGlass).left;
+      expect(end, greaterThan(start + 15));
+      // It travels, not jumps.
+      expect(lefts.first, lessThan(end - 2));
+      expect(tester.getRect(_knobGlass).right, closeTo(control.right - 2, 1));
+    });
+
+    testWidgets('held, the knob swells into a lens of glass; dragged across, '
+        'it flips the switch', (tester) async {
+      final flips = await _switch(tester);
+      final rest = tester.getRect(_knobGlass);
+      final gesture = await tester.startGesture(tester.getCenter(_knobGlass));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 200));
+      expect(
+        tester.widget<GlassPlate>(_knobGlass).look.visibility,
+        greaterThan(0.5),
+      );
+      expect(tester.getRect(_knobGlass).width, greaterThan(rest.width + 4));
+      await gesture.moveBy(const Offset(12, 0));
+      await gesture.moveBy(const Offset(12, 0));
+      await gesture.moveBy(const Offset(12, 0));
+      await tester.pump();
+      await gesture.up();
+      await tester.pumpAndSettle();
+      expect(flips, [true]);
+      // At rest the glass is gone and the knob is white again.
+      expect(tester.widget<GlassPlate>(_knobGlass).look.visibility, 0);
+    });
+
+    testWidgets('on iOS 26 it is UIKit\'s own: its flip comes back, and '
+        'where the app keeps the value UIKit\'s switch is set back', (
+      tester,
+    ) async {
+      final messenger =
+          TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
+      int? id;
+      Map<Object?, Object?>? created;
+      GlassPlatform.debugSetBackend(GlassBackend.uikit);
+      messenger.setMockMethodCallHandler(SystemChannels.platform_views, (
+        call,
+      ) async {
+        if (call.method == 'create') {
+          final arguments = call.arguments as Map;
+          if (arguments['viewType'] == 'siberia/glass_switch') {
+            id = arguments['id'] as int;
+            final params = arguments['params'];
+            if (params is Uint8List) {
+              created = const StandardMessageCodec().decodeMessage(
+                ByteData.sublistView(params),
+              ) as Map<Object?, Object?>;
+            }
+          }
+        }
+        return null;
+      });
+      addTearDown(
+        () => messenger.setMockMethodCallHandler(
+          SystemChannels.platform_views,
+          null,
+        ),
+      );
+      final flips = await _switch(tester, keep: true);
+      expect(id, isNotNull);
+      expect(created?['value'], isFalse);
+      final updates = <Map<Object?, Object?>>[];
+      messenger.setMockMethodCallHandler(
+        MethodChannel('siberia/glass_switch/$id'),
+        (call) async {
+          if (call.method == 'update') {
+            updates.add(call.arguments as Map<Object?, Object?>);
+          }
+          return null;
+        },
+      );
+      await messenger.handlePlatformMessage(
+        'siberia/glass_switch/$id',
+        const StandardMethodCodec().encodeMethodCall(
+          const MethodCall('changed', true),
+        ),
+        (_) {},
+      );
+      await tester.pump();
+      await tester.pump();
+      expect(flips, [true]);
+      // The app kept off: UIKit's switch is told off again.
+      expect(updates, isNotEmpty);
+      expect(updates.last['value'], isFalse);
+      await tester.pumpWidget(const SizedBox.shrink());
+    });
+
+    testWidgets('in the glass design a row with a switch flips it when '
+        'tapped, and the switches are these', (tester) async {
+      final controller = await _app(tester, tab: 9, height: 3000);
+      expect(find.byType(Switch), findsNothing);
+      final row = find.byKey(const ValueKey('grade-weighted'));
+      final glassSwitch = find.descendant(
+        of: row,
+        matching: find.byType(GlassSwitch),
+      );
+      expect(glassSwitch, findsOneWidget);
+      final before = tester.widget<GlassSwitch>(glassSwitch).value;
+      await tester.tap(row);
+      await tester.pumpAndSettle();
+      expect(tester.widget<GlassSwitch>(glassSwitch).value, !before);
       await tester.pumpWidget(const SizedBox.shrink());
       controller.dispose();
     });

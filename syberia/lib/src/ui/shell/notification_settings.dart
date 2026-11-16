@@ -335,7 +335,8 @@ class _NotificationKindsTileState<T extends Enum>
                   color: theme.colorScheme.onSurfaceVariant,
                 ),
               ),
-              Switch.adaptive(
+              _appSwitch(
+                context,
                 key: ValueKey('notification-${category.name}'),
                 value: on,
                 onChanged: settings.enabled
@@ -543,7 +544,8 @@ class _ReminderTimeTile extends StatelessWidget {
         );
         if (picked != null) onTime(picked.hour * 60 + picked.minute);
       },
-      trailing: Switch.adaptive(
+      trailing: _appSwitch(
+        context,
         value: value,
         onChanged: enabled ? onChanged : null,
       ),
@@ -589,7 +591,8 @@ class _QuietHoursTile extends StatelessWidget {
           ),
         );
       },
-      trailing: Switch.adaptive(
+      trailing: _appSwitch(
+        context,
         value: preferences.quiet,
         onChanged: settings.enabled
             ? (value) => controller.setParentPreferences(

@@ -329,53 +329,62 @@ class _RenderedSegmentedState<T> extends State<_RenderedSegmented<T>> {
         final width = constraints.maxWidth;
         final slot = width / _count;
         final index = widget.index;
-        final gestures = GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTapDown: (details) {
-            if (_slotAt(details.localPosition.dx, width) == index) {
+        // The selection turns to glass the moment a finger is on it, not
+        // once a tap has been told apart from a drag.
+        final gestures = Listener(
+          onPointerDown: (event) {
+            if (_slotAt(event.localPosition.dx, width) == index) {
               setState(() => _held = true);
             }
           },
-          onTapUp: (details) {
-            setState(() => _held = false);
-            _tap(_slotAt(details.localPosition.dx, width));
+          onPointerUp: (_) {
+            if (_drag == null) setState(() => _held = false);
           },
-          onTapCancel: () => setState(() => _held = false),
-          onHorizontalDragStart: (details) {
-            if (index == null) return;
-            if (_slotAt(details.localPosition.dx, width) != index) return;
-            setState(() {
-              _held = true;
-              _drag = index.toDouble();
-            });
+          onPointerCancel: (_) {
+            if (_drag == null) setState(() => _held = false);
           },
-          onHorizontalDragUpdate: (details) {
-            final drag = _drag;
-            if (drag == null) return;
-            setState(() {
-              _drag = (drag + details.delta.dx / slot).clamp(
-                0.0,
-                (_count - 1).toDouble(),
-              );
-            });
-          },
-          onHorizontalDragEnd: (_) => _release(),
-          onHorizontalDragCancel: _release,
-          child: GlassSpring(
-            target: _drag ?? (index ?? 0).toDouble(),
-            jump: _jump,
-            spring: _drag != null ? GlassSprings.follow : GlassSprings.settle,
-            builder: (context, position, velocity, _) => GlassSpring(
-              target: !still && (_held || _travelling || _drag != null) ? 1 : 0,
-              spring: GlassSprings.press,
-              builder: (context, lens, _, _) => _paint(
-                context,
-                width: width,
-                position: position,
-                velocity: still ? 0 : velocity,
-                lens: lens.clamp(0.0, 1.0),
-                track: track,
-                platter: platter,
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTapUp: (details) =>
+                _tap(_slotAt(details.localPosition.dx, width)),
+            onHorizontalDragStart: (details) {
+              if (index == null) return;
+              if (_slotAt(details.localPosition.dx, width) != index) return;
+              setState(() {
+                _held = true;
+                _drag = index.toDouble();
+              });
+            },
+            onHorizontalDragUpdate: (details) {
+              final drag = _drag;
+              if (drag == null) return;
+              setState(() {
+                _drag = (drag + details.delta.dx / slot).clamp(
+                  0.0,
+                  (_count - 1).toDouble(),
+                );
+              });
+            },
+            onHorizontalDragEnd: (_) => _release(),
+            onHorizontalDragCancel: _release,
+            child: GlassSpring(
+              target: _drag ?? (index ?? 0).toDouble(),
+              jump: _jump,
+              spring: _drag != null ? GlassSprings.follow : GlassSprings.settle,
+              builder: (context, position, velocity, _) => GlassSpring(
+                target: !still && (_held || _travelling || _drag != null)
+                    ? 1
+                    : 0,
+                spring: GlassSprings.press,
+                builder: (context, lens, _, _) => _paint(
+                  context,
+                  width: width,
+                  position: position,
+                  velocity: still ? 0 : velocity,
+                  lens: lens.clamp(0.0, 1.0),
+                  track: track,
+                  platter: platter,
+                ),
               ),
             ),
           ),

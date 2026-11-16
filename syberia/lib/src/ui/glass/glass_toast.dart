@@ -202,7 +202,8 @@ class _GlassToastState extends State<_GlassToast>
                 style: TextButton.styleFrom(
                   foregroundColor: colors.primary,
                   shape: const StadiumBorder(),
-                  textStyle: const TextStyle(
+                  // In the app's typeface, as the word beside it.
+                  textStyle: theme.textTheme.bodyMedium?.copyWith(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
                   ),

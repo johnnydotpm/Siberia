@@ -51,6 +51,7 @@ import 'glass/native_glass_menu_button.dart';
 import 'glass/glass_platform.dart';
 import 'glass/glass_shell.dart';
 import 'glass/glass_segmented.dart';
+import 'glass/glass_switch.dart';
 import 'glass/glass_toast.dart';
 import 'glass/glass_toolbar.dart';
 import 'home_widget_settings.dart';
