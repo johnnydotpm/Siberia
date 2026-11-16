@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -25,8 +23,8 @@ class GlassSwitch extends StatefulWidget {
   /// Null leaves the switch disabled.
   final ValueChanged<bool>? onChanged;
 
-  /// UIKit's switch before iOS 26 measured this, and the drawn one keeps it.
-  static const Size size = Size(51, 31);
+  /// UIKit's switch measures this on iOS 26, and the drawn one keeps it.
+  static const Size size = Size(63, 28);
 
   @override
   State<GlassSwitch> createState() => _GlassSwitchState();
@@ -141,7 +139,8 @@ class _NativeSwitchState extends State<_NativeSwitch> {
   );
 }
 
-/// The switch drawn by Flutter.
+/// The switch drawn by Flutter, to the measure of UIKit's on iOS 26: a
+/// track of 63 by 28 points with a knob of 37 by 24, two points in.
 class _RenderedSwitch extends StatefulWidget {
   const _RenderedSwitch({required this.value, required this.onChanged});
 
@@ -154,10 +153,17 @@ class _RenderedSwitch extends StatefulWidget {
 
 class _RenderedSwitchState extends State<_RenderedSwitch> {
   static const double _inset = 2;
+  static const Size _knob = Size(37, 24);
 
-  /// How much the knob swells as a lens, across and up and down.
-  static const double _swellWide = 12;
-  static const double _swellHigh = 6;
+  /// How much the knob grows as a lens under the finger, across and up and
+  /// down: to 58 by 38 points, past the track on every side, around its own
+  /// middle.
+  static const double _swellWide = 21;
+  static const double _swellHigh = 14;
+
+  /// How far the lens is grown while the knob travels after a tap: a
+  /// frosted piece of glass a little taller than the track.
+  static const double _travelSwell = 0.4;
 
   /// Where a dragged knob is, from 0 for off to 1 for on.
   double? _drag;
@@ -184,14 +190,16 @@ class _RenderedSwitchState extends State<_RenderedSwitch> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final dark = theme.brightness == Brightness.dark;
-    // iOS's colours for a switch: green for on, a light fill for off.
+    final brightness = theme.brightness;
+    final dark = brightness == Brightness.dark;
+    // UIKit's colours, as iOS 26 draws them on a grouped row: green for on,
+    // a grey for off.
     final on = dark ? const Color(0xFF30D158) : const Color(0xFF34C759);
-    final off = dark ? const Color(0xFF39393D) : const Color(0xFFE9E9EA);
+    final off = dark ? const Color(0xFF5A5A5E) : const Color(0xFFC5C5C7);
     final still = MediaQuery.maybeDisableAnimationsOf(context) ?? false;
     const size = GlassSwitch.size;
-    final knob = size.height - 2 * _inset;
-    final travel = size.width - knob - 2 * _inset;
+    final travel = size.width - _knob.width - 2 * _inset;
+    final target = _drag ?? (widget.value ? 1.0 : 0.0);
     // The knob swells the moment a finger is on it, as UIKit's does, not
     // once a tap has been told apart from a drag.
     final drawn = Listener(
@@ -225,75 +233,31 @@ class _RenderedSwitchState extends State<_RenderedSwitch> {
         onHorizontalDragEnd: (_) => _release(),
         onHorizontalDragCancel: _release,
         child: GlassSpring(
-          target: _drag ?? (widget.value ? 1 : 0),
+          target: target,
           spring: _drag != null ? GlassSprings.follow : GlassSprings.settle,
-          builder: (context, position, _, _) => GlassSpring(
-            target: !still && _held ? 1 : 0,
-            spring: GlassSprings.press,
-            builder: (context, lens, _, _) {
-              final swell = lens.clamp(0.0, 1.0);
-              final at = position.clamp(0.0, 1.0);
-              final width = knob + _swellWide * swell;
-              final height = knob + _swellHigh * swell;
-              // The knob grows from its own side, as UIKit's does.
-              final left = _inset + travel * at - _swellWide * swell * at;
-              return SizedBox.fromSize(
-                size: size,
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    Positioned.fill(
-                      child: DecoratedBox(
-                        decoration: ShapeDecoration(
-                          shape: const StadiumBorder(),
-                          color: Color.lerp(off, on, at),
-                        ),
-                      ),
-                    ),
-                    PositionedDirectional(
-                      start: left,
-                      top: (size.height - height) / 2,
-                      width: width,
-                      height: height,
-                      child: Stack(
-                        fit: StackFit.expand,
-                        children: [
-                          // The white knob at rest, gone soon after the glass
-                          // shows.
-                          Opacity(
-                            opacity: (1 - swell / 0.4).clamp(0.0, 1.0),
-                            child: const DecoratedBox(
-                              decoration: ShapeDecoration(
-                                shape: StadiumBorder(),
-                                color: Colors.white,
-                                shadows: [
-                                  BoxShadow(
-                                    color: Color(0x26000000),
-                                    blurRadius: 8,
-                                    offset: Offset(0, 3),
-                                  ),
-                                  BoxShadow(
-                                    color: Color(0x0F000000),
-                                    blurRadius: 1,
-                                    offset: Offset(0, 1),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          GlassPlate(
-                            look: GlassMaterial.lens(theme.brightness)
-                                .faded(math.min(swell, 1)),
-                            shape: const StadiumBorder(),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
+          builder: (context, position, _, _) {
+            // On its way after a tap the knob is glass too, smaller and
+            // frosted, as on iOS 26.
+            final moving = (target - position).abs() > 0.02;
+            return GlassSpring(
+              target: still
+                  ? 0
+                  : _held
+                  ? 1
+                  : moving
+                  ? _travelSwell
+                  : 0,
+              spring: GlassSprings.press,
+              builder: (context, lens, _, _) => _paint(
+                position: position.clamp(0.0, 1.0),
+                swell: lens.clamp(0.0, 1.0),
+                travel: travel,
+                on: on,
+                off: off,
+                brightness: brightness,
+              ),
+            );
+          },
         ),
       ),
     );
@@ -304,6 +268,67 @@ class _RenderedSwitchState extends State<_RenderedSwitch> {
       child: ExcludeSemantics(child: drawn),
     );
     if (_enabled) return control;
-    return IgnorePointer(child: Opacity(opacity: 0.45, child: control));
+    // UIKit draws a disabled switch at half its strength, knob and all.
+    return IgnorePointer(child: Opacity(opacity: 0.5, child: control));
+  }
+
+  Widget _paint({
+    required double position,
+    required double swell,
+    required double travel,
+    required Color on,
+    required Color off,
+    required Brightness brightness,
+  }) {
+    const size = GlassSwitch.size;
+    final width = _knob.width + _swellWide * swell;
+    final height = _knob.height + _swellHigh * swell;
+    final middle = _inset + travel * position + _knob.width / 2;
+    return SizedBox.fromSize(
+      size: size,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Positioned.fill(
+            child: DecoratedBox(
+              decoration: ShapeDecoration(
+                shape: const StadiumBorder(),
+                color: Color.lerp(off, on, position),
+              ),
+            ),
+          ),
+          PositionedDirectional(
+            start: middle - width / 2,
+            top: (size.height - height) / 2,
+            width: width,
+            height: height,
+            child: Stack(
+              key: const ValueKey('glass-switch-knob'),
+              fit: StackFit.expand,
+              children: [
+                // Glass only while it shows: at rest a clear lens would read
+                // the page behind every switch for nothing.
+                if (swell > 0.01)
+                  GlassPlate(
+                    look: GlassMaterial.clearLens(brightness).faded(swell),
+                    shape: const StadiumBorder(),
+                  ),
+                // The white knob, frosting the lens on its way and gone once
+                // the lens is held.
+                Opacity(
+                  opacity: (1 - swell * swell).clamp(0.0, 1.0),
+                  child: const DecoratedBox(
+                    decoration: ShapeDecoration(
+                      shape: StadiumBorder(),
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

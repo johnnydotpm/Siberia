@@ -51,7 +51,7 @@ class GlassSegmentedControl<T> extends StatefulWidget {
   final bool emptyAllowed;
 
   /// The drawn control's height before the text is scaled.
-  static const double height = 36;
+  static const double height = 33;
 
   /// Room on each side of a label.
   static const double _padding = 16;
@@ -109,7 +109,7 @@ class _GlassSegmentedControlState<T> extends State<GlassSegmentedControl<T>> {
     final scaler = MediaQuery.textScalerOf(context);
     final height = native
         ? _nativeHeight ?? GlassSegmentedControl.height
-        : math.max(GlassSegmentedControl.height, scaler.scale(14) * 1.3 + 14);
+        : math.max(GlassSegmentedControl.height, scaler.scale(13) * 1.3 + 16);
     return LayoutBuilder(
       builder: (context, constraints) {
         final natural = _natural(context, style);
@@ -249,7 +249,7 @@ class _RenderedSegmented<T> extends StatefulWidget {
   static TextStyle labelStyle(BuildContext context, {required bool selected}) =>
       TextStyle(
         color: Theme.of(context).colorScheme.onSurface,
-        fontSize: 14,
+        fontSize: 13,
         fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
         letterSpacing: -0.15,
       );
@@ -259,8 +259,10 @@ class _RenderedSegmented<T> extends StatefulWidget {
 }
 
 class _RenderedSegmentedState<T> extends State<_RenderedSegmented<T>> {
-  /// How much larger the selection grows as a lens.
-  static const double _growth = 0.1;
+  /// How much the selection grows as a lens, in points across and up and
+  /// down, as UIKit's does on iOS 26: past the track above and below.
+  static const double _growWide = 16;
+  static const double _growHigh = 11;
 
   /// Where a dragged selection is, in choices from the first.
   double? _drag;
@@ -322,7 +324,7 @@ class _RenderedSegmentedState<T> extends State<_RenderedSegmented<T>> {
     // iOS's fill for a control's track, and its platter: white in the light
     // appearance, a lifted grey in the dark.
     final track = dark ? const Color(0x3D767680) : const Color(0x1F767680);
-    final platter = dark ? const Color(0xFF636366) : Colors.white;
+    final platter = dark ? const Color(0xFF69696F) : Colors.white;
     final still = MediaQuery.maybeDisableAnimationsOf(context) ?? false;
     final control = LayoutBuilder(
       builder: (context, constraints) {
@@ -379,6 +381,7 @@ class _RenderedSegmentedState<T> extends State<_RenderedSegmented<T>> {
                 builder: (context, lens, _, _) => _paint(
                   context,
                   width: width,
+                  height: constraints.maxHeight,
                   position: position,
                   velocity: still ? 0 : velocity,
                   lens: lens.clamp(0.0, 1.0),
@@ -436,6 +439,7 @@ class _RenderedSegmentedState<T> extends State<_RenderedSegmented<T>> {
   Widget _paint(
     BuildContext context, {
     required double width,
+    required double height,
     required double position,
     required double velocity,
     required double lens,
@@ -450,7 +454,10 @@ class _RenderedSegmentedState<T> extends State<_RenderedSegmented<T>> {
     // Narrower along its way and a little taller while it moves fast, as
     // the tab bar's lens.
     final squash = (velocity.abs() / 10).clamp(0.0, 1.0) * 0.35;
-    final grow = 1 + _growth * lens;
+    final thumbWidth = slot - 2 * inset;
+    final thumbHeight = height - 2 * inset;
+    final growWide = 1 + _growWide * lens / thumbWidth;
+    final growHigh = 1 + _growHigh * lens / thumbHeight;
     return Stack(
       fit: StackFit.expand,
       children: [
@@ -469,34 +476,32 @@ class _RenderedSegmentedState<T> extends State<_RenderedSegmented<T>> {
             child: Transform(
               alignment: Alignment.center,
               transform: Matrix4.diagonal3Values(
-                grow * (1 - squash * 0.5),
-                grow * (1 + squash * 0.3),
+                growWide * (1 - squash * 0.5),
+                growHigh * (1 + squash * 0.3),
                 1,
               ),
               child: Stack(
+                key: const ValueKey('glass-segment-thumb'),
                 fit: StackFit.expand,
                 children: [
                   // The platter at rest, gone soon after the glass shows.
                   Opacity(
                     opacity: (1 - lens / 0.3).clamp(0.0, 1.0),
+                    // Flat, as UIKit's: no shadow under it.
                     child: DecoratedBox(
                       decoration: ShapeDecoration(
                         shape: const StadiumBorder(),
                         color: platter,
-                        shadows: const [
-                          BoxShadow(
-                            color: Color(0x1F000000),
-                            blurRadius: 6,
-                            offset: Offset(0, 2),
-                          ),
-                        ],
                       ),
                     ),
                   ),
-                  GlassPlate(
-                    look: GlassMaterial.lens(brightness).faded(lens),
-                    shape: const StadiumBorder(),
-                  ),
+                  // Glass only while it shows, so that a control at rest
+                  // reads nothing of the page.
+                  if (lens > 0.01)
+                    GlassPlate(
+                      look: GlassMaterial.clearLens(brightness).faded(lens),
+                      shape: const StadiumBorder(),
+                    ),
                 ],
               ),
             ),

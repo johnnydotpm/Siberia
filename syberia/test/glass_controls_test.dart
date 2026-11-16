@@ -151,11 +151,19 @@ Future<List<String?>> _segmented(
   return picks;
 }
 
-/// The selection's glass, and how far it is a lens.
+/// The selection, platter or lens.
 Finder get _thumbGlass => find.descendant(
   of: find.byKey(const ValueKey('control')),
-  matching: find.byType(GlassPlate),
+  matching: find.byKey(const ValueKey('glass-segment-thumb')),
 );
+
+/// How far [thumb], the selection or a knob, is a lens: its glass is built
+/// only while it shows.
+double _lensOf(WidgetTester tester, Finder thumb) {
+  final glass = find.descendant(of: thumb, matching: find.byType(GlassPlate));
+  if (glass.evaluate().isEmpty) return 0;
+  return tester.widget<GlassPlate>(glass).look.visibility;
+}
 
 /// A switch on a page, holding its value unless [keep].
 Future<List<bool>> _switch(
@@ -192,7 +200,7 @@ Future<List<bool>> _switch(
 
 Finder get _knobGlass => find.descendant(
   of: find.byKey(const ValueKey('switch')),
-  matching: find.byType(GlassPlate),
+  matching: find.byKey(const ValueKey('glass-switch-knob')),
 );
 
 void main() {
@@ -298,7 +306,7 @@ void main() {
     testWidgets('a tap picks a choice; the selection travels to it as a '
         'lens on a spring and settles as a platter', (tester) async {
       final picks = await _segmented(tester);
-      double lens() => tester.widget<GlassPlate>(_thumbGlass).look.visibility;
+      double lens() => _lensOf(tester, _thumbGlass);
       double left() => tester.getRect(_thumbGlass).left;
       expect(lens(), 0);
       final start = left();
@@ -338,10 +346,7 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 120));
       // Under the finger it is a lens.
-      expect(
-        tester.widget<GlassPlate>(_thumbGlass).look.visibility,
-        greaterThan(0.3),
-      );
+      expect(_lensOf(tester, _thumbGlass), greaterThan(0.3));
       await gesture.up();
       await tester.pumpAndSettle();
       expect(picks, ['b']);
@@ -435,6 +440,15 @@ void main() {
       final flips = await _switch(tester);
       final control = tester.getRect(find.byKey(const ValueKey('switch')));
       expect(control.size, GlassSwitch.size);
+      // At rest the knob is plain white, and no glass reads the page.
+      expect(_lensOf(tester, _knobGlass), 0);
+      expect(
+        find.descendant(
+          of: find.byKey(const ValueKey('switch')),
+          matching: find.byType(GlassPlate),
+        ),
+        findsNothing,
+      );
       final start = tester.getRect(_knobGlass).left;
       await tester.tap(find.byKey(const ValueKey('switch')));
       await tester.pump();
@@ -459,11 +473,13 @@ void main() {
       final gesture = await tester.startGesture(tester.getCenter(_knobGlass));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 200));
-      expect(
-        tester.widget<GlassPlate>(_knobGlass).look.visibility,
-        greaterThan(0.5),
-      );
+      expect(_lensOf(tester, _knobGlass), greaterThan(0.5));
       expect(tester.getRect(_knobGlass).width, greaterThan(rest.width + 4));
+      // As on iOS 26, the lens stands out of the track above and below.
+      expect(
+        tester.getRect(_knobGlass).height,
+        greaterThan(GlassSwitch.size.height),
+      );
       await gesture.moveBy(const Offset(12, 0));
       await gesture.moveBy(const Offset(12, 0));
       await gesture.moveBy(const Offset(12, 0));
@@ -472,7 +488,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(flips, [true]);
       // At rest the glass is gone and the knob is white again.
-      expect(tester.widget<GlassPlate>(_knobGlass).look.visibility, 0);
+      expect(_lensOf(tester, _knobGlass), 0);
     });
 
     testWidgets('on iOS 26 it is UIKit\'s own: its flip comes back, and '

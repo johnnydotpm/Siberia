@@ -358,6 +358,28 @@ abstract final class GlassMaterial {
     bend: 18,
   );
 
+  /// A lens of clear glass, as iOS 26 makes the knob of a switch and the
+  /// selection of a segmented control under the finger: what lies below
+  /// shows through as it is, so the track and the row around it, with a
+  /// fine edge. Light, a hairline and a soft shadow set it off the row;
+  /// dark, the glint does. It reads nothing of the page, so it costs no
+  /// more than paint.
+  static GlassLook clearLens(Brightness brightness) =>
+      brightness == Brightness.dark ? _clearLensDark : _clearLensLight;
+
+  static const _clearLensLight = GlassLook.veiled(
+    Color(0x00FFFFFF),
+    rim: GlassRim.lit(Color(0x40000000), softness: 0.2),
+    shadows: [
+      BoxShadow(color: Color(0x1A000000), blurRadius: 10, offset: Offset(0, 3)),
+    ],
+  );
+
+  static const _clearLensDark = GlassLook.veiled(
+    Color(0x00FFFFFF),
+    rim: GlassRim.lit(Color(0x66FFFFFF), blendMode: BlendMode.plus),
+  );
+
   /// The selection of the tab bar while it is held: a clearer, brighter
   /// piece of glass floating over the bar. Its rim stretches the tabs it
   /// passes over. It does not mirror them as the bar's rim does the page:
