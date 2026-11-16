@@ -468,8 +468,38 @@ class _Segmented<T> extends StatelessWidget {
   final bool showSelectedIcon;
   final ButtonStyle? style;
 
+  /// The words of a segment's label, or nothing where it has none.
+  static String _plain(Widget? label) => switch (label) {
+    Text(:final String data) => data,
+    Text(:final InlineSpan textSpan) => textSpan.toPlainText(),
+    _ => '',
+  };
+
   @override
-  Widget build(BuildContext context) => ExpressiveStyle.of(context)
+  Widget build(BuildContext context) {
+    // In the glass design, iOS's segmented control: UIKit's on iOS 26, drawn
+    // alike elsewhere. It shows words only, as UIKit's does.
+    if (GlassStyle.of(context)) {
+      final labels = [for (final segment in segments) _plain(segment.label)];
+      if (labels.every((label) => label.isNotEmpty)) {
+        final change = onSelectionChanged;
+        return GlassSegmentedControl<T>(
+          segments: [
+            for (var i = 0; i < segments.length; i++)
+              GlassSegment(segments[i].value, labels[i]),
+          ],
+          selected: selected.isEmpty ? null : selected.first,
+          emptyAllowed: emptySelectionAllowed,
+          onChanged: change == null
+              ? null
+              : (value) => change(value == null ? <T>{} : {value}),
+        );
+      }
+    }
+    return _material(context);
+  }
+
+  Widget _material(BuildContext context) => ExpressiveStyle.of(context)
       ? SegmentedGroup<T>(
           segments: segments,
           selected: selected,

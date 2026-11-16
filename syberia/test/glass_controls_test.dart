@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syberia/src/app.dart';
@@ -10,6 +11,7 @@ import 'package:syberia/src/state/app_controller.dart';
 import 'package:syberia/src/ui/glass/glass_material.dart';
 import 'package:syberia/src/ui/glass/glass_plate.dart';
 import 'package:syberia/src/ui/glass/glass_platform.dart';
+import 'package:syberia/src/ui/glass/glass_segmented.dart';
 import 'package:syberia/src/ui/glass/glass_toast.dart';
 
 /// The glass design's own controls: the word over the tab bar, the
@@ -101,6 +103,54 @@ Future<BuildContext> _page(WidgetTester tester) async {
   return page;
 }
 
+/// A segmented control of three choices on a page, holding its choice.
+Future<List<String?>> _segmented(
+  WidgetTester tester, {
+  String? initial = 'a',
+  bool emptyAllowed = false,
+}) async {
+  tester.view.physicalSize = const Size(400, 860);
+  tester.view.devicePixelRatio = 1;
+  addTearDown(tester.view.reset);
+  final picks = <String?>[];
+  var selected = initial;
+  await tester.pumpWidget(
+    MaterialApp(
+      home: Scaffold(
+        body: Center(
+          child: SizedBox(
+            width: 300,
+            child: StatefulBuilder(
+              builder: (context, setState) => GlassSegmentedControl<String>(
+                key: const ValueKey('control'),
+                segments: const [
+                  GlassSegment('a', 'One'),
+                  GlassSegment('b', 'Two'),
+                  GlassSegment('c', 'Three'),
+                ],
+                selected: selected,
+                emptyAllowed: emptyAllowed,
+                onChanged: (value) => setState(() {
+                  picks.add(value);
+                  selected = value;
+                }),
+              ),
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+  await tester.pumpAndSettle();
+  return picks;
+}
+
+/// The selection's glass, and how far it is a lens.
+Finder get _thumbGlass => find.descendant(
+  of: find.byKey(const ValueKey('control')),
+  matching: find.byType(GlassPlate),
+);
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -187,6 +237,141 @@ void main() {
       await tester.pumpAndSettle();
       expect(controller.snapshot.events, isNotEmpty);
       expect(find.text('Marked as done'), findsNothing);
+      await tester.pumpWidget(const SizedBox.shrink());
+      controller.dispose();
+    });
+  });
+
+  group('the segmented control', () {
+    testWidgets('a tap picks a choice; the selection travels to it as a '
+        'lens on a spring and settles as a platter', (tester) async {
+      final picks = await _segmented(tester);
+      double lens() => tester.widget<GlassPlate>(_thumbGlass).look.visibility;
+      double left() => tester.getRect(_thumbGlass).left;
+      expect(lens(), 0);
+      final start = left();
+      await tester.tap(find.text('Three'));
+      await tester.pump();
+      expect(picks, ['c']);
+      final lenses = <double>[];
+      final lefts = <double>[];
+      for (var frame = 0; frame < 20; frame++) {
+        await tester.pump(const Duration(milliseconds: 16));
+        lenses.add(lens());
+        lefts.add(left());
+      }
+      await tester.pumpAndSettle();
+      // On its way it is glass, and it moves, not jumps.
+      expect(lenses.reduce(math.max), greaterThan(0.5));
+      expect(lefts.first, lessThan(left() - 20));
+      expect(lefts.first, greaterThan(start));
+      // At rest it is a platter again, under the choice.
+      expect(lens(), 0);
+      expect(
+        tester.getCenter(_thumbGlass).dx,
+        closeTo(tester.getCenter(find.text('Three')).dx, 2),
+      );
+    });
+
+    testWidgets('the selection can be dragged to another choice', (
+      tester,
+    ) async {
+      final picks = await _segmented(tester);
+      final gesture = await tester.startGesture(
+        tester.getCenter(find.text('One')),
+      );
+      await gesture.moveBy(const Offset(20, 0));
+      await gesture.moveBy(const Offset(40, 0));
+      await gesture.moveBy(const Offset(40, 0));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 120));
+      // Under the finger it is a lens.
+      expect(
+        tester.widget<GlassPlate>(_thumbGlass).look.visibility,
+        greaterThan(0.3),
+      );
+      await gesture.up();
+      await tester.pumpAndSettle();
+      expect(picks, ['b']);
+    });
+
+    testWidgets('where none may be chosen, tapping the choice lets it go', (
+      tester,
+    ) async {
+      final picks = await _segmented(tester, emptyAllowed: true);
+      await tester.tap(find.text('One'));
+      await tester.pumpAndSettle();
+      expect(picks, [null]);
+      expect(_thumbGlass, findsNothing);
+      await tester.tap(find.text('Two'));
+      await tester.pumpAndSettle();
+      expect(picks, [null, 'b']);
+    });
+
+    testWidgets('on iOS 26 it is UIKit\'s own, whose choice comes back', (
+      tester,
+    ) async {
+      final messenger =
+          TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
+      final views = <String, Map<Object?, Object?>>{};
+      final ids = <String, int>{};
+      GlassPlatform.debugSetBackend(GlassBackend.uikit);
+      messenger.setMockMethodCallHandler(SystemChannels.platform_views, (
+        call,
+      ) async {
+        if (call.method == 'create') {
+          final arguments = call.arguments as Map;
+          final type = arguments['viewType'] as String;
+          ids[type] = arguments['id'] as int;
+          final params = arguments['params'];
+          if (params is Uint8List) {
+            views[type] = const StandardMessageCodec().decodeMessage(
+              ByteData.sublistView(params),
+            ) as Map<Object?, Object?>;
+          }
+        }
+        return null;
+      });
+      addTearDown(
+        () => messenger.setMockMethodCallHandler(
+          SystemChannels.platform_views,
+          null,
+        ),
+      );
+      final picks = await _segmented(tester);
+      const type = 'siberia/glass_segmented';
+      expect(ids[type], isNotNull);
+      expect(views[type]?['labels'], ['One', 'Two', 'Three']);
+      expect(views[type]?['selected'], 0);
+      Future<void> say(String method, Object? arguments) =>
+          messenger.handlePlatformMessage(
+            '$type/${ids[type]}',
+            const StandardMethodCodec().encodeMethodCall(
+              MethodCall(method, arguments),
+            ),
+            (_) {},
+          );
+      await say('select', 2);
+      await tester.pump();
+      expect(picks, ['c']);
+      // UIKit's height for its control is the height it gets.
+      await say('metrics', {'height': 40.0});
+      await tester.pump();
+      expect(tester.getSize(find.byKey(const ValueKey('control'))).height, 40);
+      await tester.pumpWidget(const SizedBox.shrink());
+    });
+
+    testWidgets('in the glass design the app\'s segmented controls are '
+        'these', (tester) async {
+      final controller = await _app(tester, tab: 4);
+      expect(
+        find.descendant(
+          of: find.byKey(const ValueKey('homework-filter')),
+          matching: find.byType(GlassSegmentedControl<bool>),
+        ),
+        findsOneWidget,
+      );
+      expect(find.byType(SegmentedButton<bool>), findsNothing);
       await tester.pumpWidget(const SizedBox.shrink());
       controller.dispose();
     });
