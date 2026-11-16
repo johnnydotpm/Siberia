@@ -538,10 +538,7 @@ class _ReminderTimeTile extends StatelessWidget {
         '${description == null ? '' : '\n$description'}',
       ),
       onTap: () async {
-        final picked = await showTimePicker(
-          context: context,
-          initialTime: time,
-        );
+        final picked = await _pickTime(context, time, title: title);
         if (picked != null) onTime(picked.hour * 60 + picked.minute);
       },
       trailing: _appSwitch(
@@ -578,9 +575,17 @@ class _QuietHoursTile extends StatelessWidget {
         '${context.tr('reminderChangeTime')}\n${context.tr('quietHoursText')}',
       ),
       onTap: () async {
-        final start = await showTimePicker(context: context, initialTime: from);
+        final start = await _pickTime(
+          context,
+          from,
+          title: context.tr('quietHoursStart'),
+        );
         if (start == null || !context.mounted) return;
-        final end = await showTimePicker(context: context, initialTime: to);
+        final end = await _pickTime(
+          context,
+          to,
+          title: context.tr('quietHoursEnd'),
+        );
         if (end == null) return;
         await controller.setParentPreferences(
           profile.id,

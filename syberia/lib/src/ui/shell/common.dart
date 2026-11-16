@@ -1143,3 +1143,117 @@ Widget _appSwitch(
 }) => GlassStyle.of(context)
     ? GlassSwitch(key: key, value: value, onChanged: onChanged)
     : Switch.adaptive(key: key, value: value, onChanged: onChanged);
+
+/// Asks for a time: Material's clock elsewhere; in the glass design iOS's
+/// wheels in a sheet, UIKit's own on iOS 26 and drawn alike on glass
+/// elsewhere. [title] says what the time is for.
+Future<TimeOfDay?> _pickTime(
+  BuildContext context,
+  TimeOfDay initial, {
+  required String title,
+}) async {
+  if (!GlassStyle.of(context)) {
+    return showTimePicker(context: context, initialTime: initial);
+  }
+  final theme = Theme.of(context);
+  final native = await GlassPlatform.pickTime(
+    minutes: initial.hour * 60 + initial.minute,
+    title: title,
+    cancel: MaterialLocalizations.of(context).cancelButtonLabel,
+    done: context.tr('timeDone'),
+    locale: Localizations.localeOf(context).toLanguageTag(),
+    tint: theme.colorScheme.primary,
+    dark: theme.brightness == Brightness.dark,
+  );
+  if (native.asked) {
+    final minutes = native.minutes;
+    return minutes == null
+        ? null
+        : TimeOfDay(hour: minutes ~/ 60, minute: minutes % 60);
+  }
+  if (!context.mounted) return null;
+  return _glassTimeSheet(context, initial, title: title);
+}
+
+/// iOS's wheels for a time on a sheet of glass, with Cancel and Done above
+/// them.
+Future<TimeOfDay?> _glassTimeSheet(
+  BuildContext context,
+  TimeOfDay initial, {
+  required String title,
+}) {
+  var picked = initial;
+  return showAppSheet<TimeOfDay>(
+    context: context,
+    compact: true,
+    builder: (sheet) {
+      final theme = Theme.of(sheet);
+      final colors = theme.colorScheme;
+      return SafeArea(
+        top: false,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+              child: Row(
+                children: [
+                  TextButton(
+                    key: const ValueKey('time-cancel'),
+                    onPressed: () => Navigator.pop(sheet),
+                    child: Text(
+                      MaterialLocalizations.of(sheet).cancelButtonLabel,
+                    ),
+                  ),
+                  Expanded(
+                    child: Text(
+                      title,
+                      textAlign: TextAlign.center,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                  TextButton(
+                    key: const ValueKey('time-done'),
+                    onPressed: () => Navigator.pop(sheet, picked),
+                    style: TextButton.styleFrom(
+                      textStyle: const TextStyle(fontWeight: FontWeight.w700),
+                    ),
+                    child: Text(sheet.tr('timeDone')),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(
+              height: 216,
+              child: CupertinoTheme(
+                data: CupertinoThemeData(
+                  brightness: theme.brightness,
+                  primaryColor: colors.primary,
+                ),
+                child: CupertinoDatePicker(
+                  key: const ValueKey('time-wheels'),
+                  mode: CupertinoDatePickerMode.time,
+                  initialDateTime: DateTime(
+                    2000,
+                    1,
+                    1,
+                    initial.hour,
+                    initial.minute,
+                  ),
+                  use24hFormat: MediaQuery.alwaysUse24HourFormatOf(sheet),
+                  onDateTimeChanged: (value) =>
+                      picked = TimeOfDay.fromDateTime(value),
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+          ],
+        ),
+      );
+    },
+  );
+}

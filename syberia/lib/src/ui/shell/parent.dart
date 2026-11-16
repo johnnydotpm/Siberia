@@ -26,9 +26,16 @@ Future<void> _showParentSettings(
                 : start
                 ? preferences.quietStart
                 : preferences.quietEnd;
-            final time = await showTimePicker(
-              context: context,
-              initialTime: TimeOfDay(hour: minutes ~/ 60, minute: minutes % 60),
+            final time = await _pickTime(
+              context,
+              TimeOfDay(hour: minutes ~/ 60, minute: minutes % 60),
+              title: context.tr(
+                digest
+                    ? 'digest'
+                    : start
+                    ? 'quietHoursStart'
+                    : 'quietHoursEnd',
+              ),
             );
             if (time == null) return;
             final latest =

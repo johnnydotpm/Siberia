@@ -18,6 +18,8 @@ enum LiquidGlass {
         result(LiquidGlass.capabilities)
       case "confirm":
         LiquidGlass.confirm(call.arguments, result: result)
+      case "pickTime":
+        LiquidGlass.pickTime(call.arguments, result: result)
       default:
         result(FlutterMethodNotImplemented)
       }
@@ -67,6 +69,42 @@ enum LiquidGlass {
     if let tint = args["tint"] as? NSNumber {
       sheet.view.tintColor = UIColor(argb: tint.int64Value)
     }
+    presenter.present(sheet, animated: true)
+  }
+
+  /// Asks for a time on UIKit's own wheels, in a sheet with Cancel and Done
+  /// at the top: on iOS 26 a sheet of Liquid Glass. Answers the minutes after
+  /// midnight, or nil when cancelled; an error where there is nothing to
+  /// present it from, for Flutter to ask instead.
+  static func pickTime(_ arguments: Any?, result: @escaping FlutterResult) {
+    guard let args = arguments as? [String: Any], let presenter = topViewController() else {
+      result(FlutterError(code: "unavailable", message: nil, details: nil))
+      return
+    }
+    let picker = TimePickerController(
+      minutes: (args["minutes"] as? NSNumber)?.intValue ?? 0,
+      title: args["title"] as? String,
+      cancel: args["cancel"] as? String,
+      done: args["done"] as? String,
+      locale: args["locale"] as? String
+    ) { minutes in
+      result(minutes.map { NSNumber(value: $0) })
+    }
+    let sheet = UINavigationController(rootViewController: picker)
+    if let dark = args["dark"] as? Bool {
+      sheet.overrideUserInterfaceStyle = dark ? .dark : .light
+    }
+    if let tint = args["tint"] as? NSNumber {
+      sheet.view.tintColor = UIColor(argb: tint.int64Value)
+    }
+    if let presentation = sheet.sheetPresentationController {
+      if #available(iOS 16.0, *) {
+        presentation.detents = [.custom { _ in 300 }]
+      } else {
+        presentation.detents = [.medium()]
+      }
+    }
+    sheet.presentationController?.delegate = picker
     presenter.present(sheet, animated: true)
   }
 
@@ -137,5 +175,78 @@ extension UIColor {
       green: CGFloat((argb >> 8) & 0xFF) / 255,
       blue: CGFloat(argb & 0xFF) / 255,
       alpha: CGFloat((argb >> 24) & 0xFF) / 255)
+  }
+}
+
+/// UIKit's wheels for a time, with Cancel and Done in the bar above them.
+final class TimePickerController: UIViewController, UIAdaptivePresentationControllerDelegate {
+  private let picker = UIDatePicker()
+  private let finish: (Int?) -> Void
+  private var finished = false
+  private let cancelTitle: String?
+  private let doneTitle: String?
+
+  init(
+    minutes: Int, title: String?, cancel: String?, done: String?, locale: String?,
+    finish: @escaping (Int?) -> Void
+  ) {
+    self.finish = finish
+    cancelTitle = cancel
+    doneTitle = done
+    super.init(nibName: nil, bundle: nil)
+    self.title = title
+    picker.datePickerMode = .time
+    picker.preferredDatePickerStyle = .wheels
+    if let locale { picker.locale = Locale(identifier: locale) }
+    var parts = Calendar.current.dateComponents([.year, .month, .day], from: Date())
+    parts.hour = minutes / 60
+    parts.minute = minutes % 60
+    if let date = Calendar.current.date(from: parts) { picker.date = date }
+  }
+
+  @available(*, unavailable)
+  required init?(coder: NSCoder) { fatalError("init(coder:) is not used") }
+
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    picker.translatesAutoresizingMaskIntoConstraints = false
+    view.addSubview(picker)
+    NSLayoutConstraint.activate([
+      picker.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+      picker.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor),
+    ])
+    let cancel = UIBarButtonItem(
+      title: cancelTitle, style: .plain, target: self, action: #selector(cancelled))
+    let done = UIBarButtonItem(
+      title: doneTitle, style: .done, target: self, action: #selector(chosen))
+    #if compiler(>=6.2)
+      if #available(iOS 26.0, *) {
+        done.style = .prominent
+      }
+    #endif
+    navigationItem.leftBarButtonItem = cancel
+    navigationItem.rightBarButtonItem = done
+  }
+
+  @objc private func cancelled() {
+    complete(nil)
+    dismiss(animated: true)
+  }
+
+  @objc private func chosen() {
+    let parts = Calendar.current.dateComponents([.hour, .minute], from: picker.date)
+    complete((parts.hour ?? 0) * 60 + (parts.minute ?? 0))
+    dismiss(animated: true)
+  }
+
+  /// Swiped away: as Cancel.
+  func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
+    complete(nil)
+  }
+
+  private func complete(_ minutes: Int?) {
+    guard !finished else { return }
+    finished = true
+    finish(minutes)
   }
 }

@@ -551,4 +551,83 @@ void main() {
       controller.dispose();
     });
   });
+
+  group('picking a time', () {
+    Future<AppController> openReminders(WidgetTester tester) async {
+      final controller = await _app(tester, tab: 9, height: 3000);
+      await tester.tap(find.byKey(const ValueKey('settings-notifications')));
+      await tester.pumpAndSettle();
+      final morning = find.byKey(const ValueKey('reminder-morning'));
+      await tester.ensureVisible(morning);
+      await tester.pumpAndSettle();
+      return controller;
+    }
+
+    testWidgets('in the glass design it is iOS\'s wheels on a sheet of '
+        'glass, with Cancel and Done', (tester) async {
+      final controller = await openReminders(tester);
+      expect(find.text('7:00 AM · change time'), findsOneWidget);
+      await tester.tap(find.byKey(const ValueKey('reminder-morning')));
+      await tester.pumpAndSettle();
+      expect(find.byType(TimePickerDialog), findsNothing);
+      final wheels = find.byKey(const ValueKey('time-wheels'));
+      expect(wheels, findsOneWidget);
+      expect(
+        find.ancestor(of: wheels, matching: find.byType(GlassPlate)),
+        findsOneWidget,
+      );
+      // An hour on: the hour wheel turned by one row.
+      final hour = find.descendant(of: wheels, matching: find.text('07')).first;
+      await tester.drag(hour, const Offset(0, -32), touchSlopY: 0);
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('time-done')));
+      await tester.pumpAndSettle();
+      expect(find.text('8:00 AM · change time'), findsOneWidget);
+      // Cancel keeps the time.
+      await tester.tap(find.byKey(const ValueKey('reminder-morning')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('time-cancel')));
+      await tester.pumpAndSettle();
+      expect(find.text('8:00 AM · change time'), findsOneWidget);
+      await tester.pumpWidget(const SizedBox.shrink());
+      controller.dispose();
+    });
+
+    testWidgets('on iOS 26 UIKit asks, in a sheet of its own', (tester) async {
+      final messenger =
+          TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
+      GlassPlatform.debugSetBackend(GlassBackend.uikit);
+      messenger.setMockMethodCallHandler(
+        SystemChannels.platform_views,
+        (call) async => null,
+      );
+      final asked = <Map<Object?, Object?>>[];
+      messenger.setMockMethodCallHandler(const MethodChannel('siberia/glass'), (
+        call,
+      ) async {
+        if (call.method == 'pickTime') {
+          asked.add(call.arguments as Map<Object?, Object?>);
+          return 6 * 60 + 30;
+        }
+        return null;
+      });
+      addTearDown(() {
+        messenger.setMockMethodCallHandler(SystemChannels.platform_views, null);
+        messenger.setMockMethodCallHandler(
+          const MethodChannel('siberia/glass'),
+          null,
+        );
+      });
+      final controller = await openReminders(tester);
+      await tester.tap(find.byKey(const ValueKey('reminder-morning')));
+      await tester.pumpAndSettle();
+      expect(asked, hasLength(1));
+      expect(asked.single['minutes'], 7 * 60);
+      expect(asked.single['done'], 'Done');
+      expect(find.byKey(const ValueKey('time-wheels')), findsNothing);
+      expect(find.text('6:30 AM · change time'), findsOneWidget);
+      await tester.pumpWidget(const SizedBox.shrink());
+      controller.dispose();
+    });
+  });
 }

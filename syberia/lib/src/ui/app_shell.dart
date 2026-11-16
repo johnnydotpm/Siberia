@@ -3,7 +3,13 @@ import 'dart:io' show Platform;
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 
-import 'package:flutter/cupertino.dart' show CupertinoIcons;
+import 'package:flutter/cupertino.dart'
+    show
+        CupertinoDatePicker,
+        CupertinoDatePickerMode,
+        CupertinoIcons,
+        CupertinoTheme,
+        CupertinoThemeData;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';

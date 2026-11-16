@@ -206,6 +206,40 @@ abstract final class GlassPlatform {
     }
   }
 
+  /// Asks for a time on UIKit's own wheels, in a sheet of its own, where
+  /// UIKit draws the glass. [minutes] after midnight to start from.
+  ///
+  /// Whether UIKit asked, and the minutes after midnight chosen, or null
+  /// when cancelled. Where it did not ask, Flutter asks instead.
+  static Future<({bool asked, int? minutes})> pickTime({
+    required int minutes,
+    required String title,
+    required String cancel,
+    required String done,
+    required String locale,
+    required Color tint,
+    required bool dark,
+  }) async {
+    const notAsked = (asked: false, minutes: null);
+    if (_backend != GlassBackend.uikit) return notAsked;
+    try {
+      final picked = await _channel.invokeMethod<int>('pickTime', {
+        'minutes': minutes,
+        'title': title,
+        'cancel': cancel,
+        'done': done,
+        'locale': locale,
+        'tint': tint.toARGB32(),
+        'dark': dark,
+      });
+      return (asked: true, minutes: picked);
+    } on PlatformException {
+      return notAsked;
+    } on MissingPluginException {
+      return notAsked;
+    }
+  }
+
   static double _positive(Object? value, double fallback) =>
       value is num && value > 0 ? value.toDouble() : fallback;
 
