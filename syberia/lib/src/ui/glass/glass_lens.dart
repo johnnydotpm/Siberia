@@ -35,6 +35,7 @@ class GlassEdgeLens extends SingleChildRenderObjectWidget {
     required this.radius,
     required this.band,
     this.fold = 1,
+    this.disperse = 0,
     super.child,
     super.key,
   });
@@ -49,24 +50,30 @@ class GlassEdgeLens extends SingleChildRenderObjectWidget {
   /// How far towards the middle of the glass its very edge reaches for what
   /// it shows: all the way at 1, which is what Apple's bars and panels do
   /// and mirrors the picture in the rim, and not at all at 0. A small share
-  /// only stretches what is near the edge.
+  /// only stretches what is near the edge. Below 0 the rim reaches out past
+  /// the edge instead, and what lies under the glass shows smaller.
   final double fold;
+
+  /// How much the rim parts the colours, as thick glass does. 0 keeps them
+  /// together, at the cost of a single reading of the page.
+  final double disperse;
 
   @override
   RenderObject createRenderObject(BuildContext context) =>
-      _RenderGlassEdgeLens(radius, band, fold);
+      _RenderGlassEdgeLens(radius, band, fold, disperse);
 
   @override
   void updateRenderObject(BuildContext context, RenderObject renderObject) {
     (renderObject as _RenderGlassEdgeLens)
       ..radius = radius
       ..band = band
-      ..fold = fold;
+      ..fold = fold
+      ..disperse = disperse;
   }
 }
 
 class _RenderGlassEdgeLens extends RenderProxyBox {
-  _RenderGlassEdgeLens(this._radius, this._band, this._fold);
+  _RenderGlassEdgeLens(this._radius, this._band, this._fold, this._disperse);
 
   double get radius => _radius;
   double _radius;
@@ -96,13 +103,21 @@ class _RenderGlassEdgeLens extends RenderProxyBox {
     markNeedsPaint();
   }
 
+  double get disperse => _disperse;
+  double _disperse;
+  set disperse(double value) {
+    if (_disperse == value) return;
+    _disperse = value;
+    markNeedsPaint();
+  }
+
   /// Whether this lens could ever push a layer. It has to keep saying so
   /// even if the shader gives out later.
   final bool _layered = GlassLens.available;
 
   /// Whether it bends anything now. A lens that does not, as the tab bar's
   /// selection at rest, needs no layer of its own.
-  bool get _bends => band > 0 && fold >= 0.002;
+  bool get _bends => band > 0 && fold.abs() >= 0.002;
 
   @override
   bool get alwaysNeedsCompositing => _layered && _bends;
@@ -110,7 +125,7 @@ class _RenderGlassEdgeLens extends RenderProxyBox {
   @override
   void paint(PaintingContext context, Offset offset) {
     final program = GlassLens._program;
-    if (program == null || size.isEmpty || band <= 0 || fold < 0.002) {
+    if (program == null || size.isEmpty || !_bends) {
       layer = null;
       super.paint(context, offset);
       return;
@@ -119,7 +134,8 @@ class _RenderGlassEdgeLens extends RenderProxyBox {
       ..glass = offset & size
       ..radius = math.min(radius, size.shortestSide / 2)
       ..band = band
-      ..fold = fold.clamp(0.0, 1.0);
+      ..fold = fold.clamp(-1.0, 1.0)
+      ..disperse = disperse.clamp(0.0, 1.0);
     context.pushLayer(lens, super.paint, offset);
     layer = lens;
   }
@@ -141,6 +157,7 @@ class _LensLayer extends ContainerLayer {
   double radius = 0;
   double band = 0;
   double fold = 1;
+  double disperse = 0;
 
   @override
   bool get alwaysNeedsAddToScene => true;
@@ -203,7 +220,8 @@ class _LensLayer extends ContainerLayer {
       ..setFloat(5, onScreen.height / 2)
       ..setFloat(6, radius * scale)
       ..setFloat(7, band * scale)
-      ..setFloat(8, fold);
+      ..setFloat(8, fold)
+      ..setFloat(9, disperse);
     return ui.ImageFilter.shader(_shader);
   }
 

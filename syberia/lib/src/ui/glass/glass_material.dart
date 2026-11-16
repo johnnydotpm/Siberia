@@ -66,6 +66,7 @@ class GlassLook {
     required this.rim,
     this.bend = 0,
     this.fold = 1,
+    this.disperse = 0,
     this.shadows = const [],
     this.visibility = 1,
   }) : veil = null;
@@ -78,6 +79,7 @@ class GlassLook {
     required this.rim,
     this.bend = 0,
     this.fold = 1,
+    this.disperse = 0,
     this.shadows = const [],
     this.visibility = 1,
   }) : blur = 0,
@@ -93,6 +95,7 @@ class GlassLook {
     required double lift,
     required GlassRim rim,
     double bend = 0,
+    double disperse = 0,
     List<BoxShadow> shadows = const [],
   }) {
     // Saturation moves every colour away from its own grey (Rec. 709 luma).
@@ -108,6 +111,7 @@ class GlassLook {
       ],
       rim: rim,
       bend: bend,
+      disperse: disperse,
       shadows: shadows,
     );
   }
@@ -137,6 +141,10 @@ class GlassLook {
   /// mirrors the picture in the rim.
   final double fold;
 
+  /// How much the rim parts the colours of what it bends, as thick glass
+  /// does where the renderer can bend. 0 keeps them together.
+  final double disperse;
+
   /// Shadows cast outside the glass. Nothing of them shows through it.
   final List<BoxShadow> shadows;
 
@@ -162,6 +170,7 @@ class GlassLook {
         rim: rim,
         bend: bend,
         fold: fold,
+        disperse: disperse,
         shadows: shadows,
         visibility: this.visibility * show,
       );
@@ -176,6 +185,7 @@ class GlassLook {
       // The lens stays and bends less: see [visibility].
       bend: bend,
       fold: fold,
+      disperse: disperse,
       shadows: shadows,
       visibility: this.visibility * show,
     );
@@ -238,6 +248,10 @@ abstract final class GlassMaterial {
   /// How far from its edge the glass of a bar bends what shows through it.
   static const double _bend = 14;
 
+  /// How much the rim of a bar, a panel or a menu parts the colours of what
+  /// it bends: the faint rainbow at the edge of iOS 26's thick glass.
+  static const double _disperse = 0.18;
+
   /// The glass of the tab bar.
   static GlassLook chrome(Brightness brightness) =>
       brightness == Brightness.dark ? _chromeDark : _chromeLight;
@@ -249,6 +263,7 @@ abstract final class GlassMaterial {
     lift: 189.4,
     rim: _crispGlint,
     bend: _bend,
+    disperse: _disperse,
     shadows: _shadows,
   );
 
@@ -259,6 +274,7 @@ abstract final class GlassMaterial {
     lift: 17.2,
     rim: _glint,
     bend: _bend,
+    disperse: _disperse,
   );
 
   /// The glass of the buttons in the top bar. On the light material iOS
@@ -318,6 +334,7 @@ abstract final class GlassMaterial {
     ],
     rim: GlassRim.even(Color(0xF2F5FFFF)),
     bend: 24,
+    disperse: _disperse,
     shadows: _shadows,
   );
 
@@ -330,6 +347,7 @@ abstract final class GlassMaterial {
     ],
     rim: GlassRim.even(Color(0x3AB3D9FF)),
     bend: 24,
+    disperse: _disperse,
   );
 
   /// The glass of a pull-down menu and of the side menu: the bars' own
@@ -346,6 +364,7 @@ abstract final class GlassMaterial {
     lift: 189.4,
     rim: _crispGlint,
     bend: 18,
+    disperse: _disperse,
     shadows: _shadows,
   );
 
@@ -356,29 +375,56 @@ abstract final class GlassMaterial {
     lift: 17.2,
     rim: _glint,
     bend: 18,
+    disperse: _disperse,
   );
 
   /// A lens of clear glass, as iOS 26 makes the knob of a switch and the
-  /// selection of a segmented control under the finger: what lies below
-  /// shows through as it is, so the track and the row around it, with a
-  /// fine edge. Light, a hairline and a soft shadow set it off the row;
-  /// dark, the glint does. It reads nothing of the page, so it costs no
-  /// more than paint.
-  static GlassLook clearLens(Brightness brightness) =>
-      brightness == Brightness.dark ? _clearLensDark : _clearLensLight;
+  /// selection of a segmented control under the finger: thick glass that
+  /// shows what lies under it a little smaller, drawing the row around it
+  /// into its rim with the colours parted, as a drop of water does, with a
+  /// glint along its edge. Light, a soft shadow sets it off the row.
+  ///
+  /// With [frost] it is frosted too, as a switch's knob on its way: what
+  /// lies under it blurs. Clear, it reads the page only to bend its rim.
+  /// Where the renderer cannot bend, it is clear paint with the glint. It is
+  /// meant only while it shows.
+  static GlassLook clearLens(Brightness brightness, {double frost = 0}) {
+    final dark = brightness == Brightness.dark;
+    final rim = dark ? _clearRimDark : _clearRimLight;
+    final shadows = dark ? const <BoxShadow>[] : _clearShadows;
+    if (frost <= 0.01) {
+      return GlassLook.veiled(
+        const Color(0x00FFFFFF),
+        rim: rim,
+        bend: _clearBend,
+        fold: _clearFold,
+        disperse: _clearDisperse,
+        shadows: shadows,
+      );
+    }
+    return GlassLook(
+      blur: 3 * frost.clamp(0.0, 1.0),
+      tone: _identity,
+      rim: rim,
+      bend: _clearBend,
+      fold: _clearFold,
+      disperse: _clearDisperse,
+      shadows: shadows,
+    );
+  }
 
-  static const _clearLensLight = GlassLook.veiled(
-    Color(0x00FFFFFF),
-    rim: GlassRim.lit(Color(0x40000000), softness: 0.2),
-    shadows: [
-      BoxShadow(color: Color(0x1A000000), blurRadius: 10, offset: Offset(0, 3)),
-    ],
+  static const _identity = <double>[1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0];
+  static const double _clearBend = 14;
+  static const double _clearFold = -0.7;
+  static const double _clearDisperse = 0.35;
+  static const _clearRimLight = GlassRim.lit(Color(0x59000000), softness: 0.25);
+  static const _clearRimDark = GlassRim.lit(
+    Color(0x80FFFFFF),
+    blendMode: BlendMode.plus,
   );
-
-  static const _clearLensDark = GlassLook.veiled(
-    Color(0x00FFFFFF),
-    rim: GlassRim.lit(Color(0x66FFFFFF), blendMode: BlendMode.plus),
-  );
+  static const _clearShadows = [
+    BoxShadow(color: Color(0x1A000000), blurRadius: 10, offset: Offset(0, 3)),
+  ];
 
   /// The selection of the tab bar while it is held: a clearer, brighter
   /// piece of glass floating over the bar. Its rim stretches the tabs it

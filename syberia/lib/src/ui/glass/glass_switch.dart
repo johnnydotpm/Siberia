@@ -310,13 +310,17 @@ class _RenderedSwitchState extends State<_RenderedSwitch> {
                 // the page behind every switch for nothing.
                 if (swell > 0.01)
                   GlassPlate(
-                    look: GlassMaterial.clearLens(brightness).faded(swell),
+                    // Frosted on its way, clear once held.
+                    look: GlassMaterial.clearLens(
+                      brightness,
+                      frost: 1 - swell,
+                    ).faded(swell),
                     shape: const StadiumBorder(),
                   ),
-                // The white knob, frosting the lens on its way and gone once
-                // the lens is held.
+                // The white knob, whitening the frosted lens on its way and
+                // gone once the lens is held.
                 Opacity(
-                  opacity: (1 - swell * swell).clamp(0.0, 1.0),
+                  opacity: (1 - swell).clamp(0.0, 1.0),
                   child: const DecoratedBox(
                     decoration: ShapeDecoration(
                       shape: StadiumBorder(),

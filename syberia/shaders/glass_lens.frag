@@ -25,8 +25,13 @@ uniform float u_radius;
 // How far from the edge the bending starts.
 uniform float u_band;
 // How far towards the spine the edge reaches: all the way at 1, which
-// mirrors what it shows, and not at all at 0.
+// mirrors what it shows, and not at all at 0. Below 0 the rim reaches out
+// instead, past the edge, and what lies under the glass shows smaller, as
+// through the knob of a switch held on iOS 26.
 uniform float u_fold;
+// How much the rim parts the colours, as thick glass does: red bent a
+// little more than green, blue a little less. 0 keeps them together.
+uniform float u_disperse;
 
 uniform sampler2D u_backdrop;
 
@@ -45,5 +50,13 @@ void main() {
   // Flutter up to 3.44 handed such a picture over upside down on OpenGL ES,
   // and its documentation still says to turn it there. Later versions, which
   // this app is built with, keep it upright on every backend.
-  frag_color = texture(u_backdrop, seen / u_size);
+  vec4 colour = texture(u_backdrop, seen / u_size);
+  // Only the bent rim parts the colours: elsewhere one reading does.
+  if (u_disperse > 0.0 && abs(pull) > 0.001) {
+    vec2 red = u_center + spine + out_from_spine * (1.0 - pull * (1.0 + u_disperse));
+    vec2 blue = u_center + spine + out_from_spine * (1.0 - pull * (1.0 - u_disperse));
+    colour.r = texture(u_backdrop, red / u_size).r;
+    colour.b = texture(u_backdrop, blue / u_size).b;
+  }
+  frag_color = colour;
 }

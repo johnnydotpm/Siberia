@@ -42,6 +42,7 @@ class GlassPlate extends StatelessWidget {
               radius: _cornerRadius(shape, direction),
               band: look.bend,
               fold: look.fold * look.visibility,
+              disperse: look.disperse * look.visibility,
             ),
           )
         : null;

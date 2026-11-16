@@ -434,6 +434,36 @@ void main() {
     });
   });
 
+  group('the lens of a control', () {
+    test('is thick glass: it shows what lies under it smaller and parts the '
+        'colours at its rim; frosted, it blurs too', () {
+      for (final brightness in Brightness.values) {
+        final clear = GlassMaterial.clearLens(brightness);
+        expect(clear.veil, isNotNull, reason: 'clear, it is paint');
+        expect(clear.fold, lessThan(0), reason: 'the rim reaches out');
+        expect(clear.bend, greaterThan(0));
+        expect(clear.disperse, greaterThan(0));
+        expect(clear.faded(0.5).disperse, clear.disperse);
+        final frosted = GlassMaterial.clearLens(brightness, frost: 0.6);
+        expect(frosted.blur, greaterThan(0));
+        expect(frosted.fold, clear.fold);
+      }
+    });
+
+    test('the bars, panels and menus part the colours at their rim, a '
+        'little', () {
+      for (final brightness in Brightness.values) {
+        for (final look in [
+          GlassMaterial.chrome(brightness),
+          GlassMaterial.panel(brightness),
+          GlassMaterial.menu(brightness),
+        ]) {
+          expect(look.disperse, inExclusiveRange(0, 0.5));
+        }
+      }
+    });
+  });
+
   group('the switch', () {
     testWidgets('a tap flips it; the knob slides over on a spring and the '
         'track takes on its colour', (tester) async {
