@@ -3,6 +3,7 @@ import XCTest
 /// Taps, holds and drags each control while the simulator's screen is
 /// recorded. Prints where each control is, in points, and saves still
 /// screenshots at rest.
+@MainActor
 final class CaptureUITests: XCTestCase {
   private func pause(_ seconds: Double) { Thread.sleep(forTimeInterval: seconds) }
 
@@ -25,7 +26,7 @@ final class CaptureUITests: XCTestCase {
     app.launchArguments = dark ? ["-dark"] : []
     app.launch()
     pause(2)
-    print("SCALE \(theme) \(XCUIScreen.main.scale)")
+    print("SCALE \(theme) \(XCUIScreen.main.screenshot().image.scale)")
     for id in ["sw-off", "sw-on", "sw-dis-off", "sw-dis-on", "seg2", "seg3"] {
       let element = app.descendants(matching: .any)[id].firstMatch
       print("FRAME \(theme) \(id) \(element.frame)")

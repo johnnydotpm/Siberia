@@ -220,8 +220,13 @@ jobs:
           xcrun simctl status_bar "$UDID" override --time 9:41 --batteryState charged --batteryLevel 100
       - name: Build for testing
         run: |
-          xcodebuild build-for-testing -project Capture.xcodeproj -scheme Capture \
-            -destination "id=$UDID" -derivedDataPath build | tail -20
+          if ! xcodebuild build-for-testing -project Capture.xcodeproj -scheme Capture \
+            -destination "id=$UDID" -derivedDataPath build > build.log 2>&1; then
+            grep -nE "error:|warning: .*CaptureUITests|failed" build.log | head -60
+            tail -40 build.log
+            exit 1
+          fi
+          tail -5 build.log
       - name: Record while the test drives the controls
         run: |
           mkdir -p out
