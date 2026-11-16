@@ -1,0 +1,22 @@
+{
+  "id": "librus-legacy",
+  "name": "Librus Legacy",
+  "version": "0.1.0",
+  "operations": [
+    "authenticate", "refresh", "prepare", "accounts", "grades", "timetable",
+    "attendance", "homework", "events", "announcements", "notices", "luckyNumbers",
+    "messages", "message", "recipients", "sendMessage", "deleteMessage"
+  ],
+  "origins": ["https://api.librus.pl"],
+  "loginFields": [
+    {"id": "username", "label": "synergiaLogin", "type": "text", "required": true},
+    {"id": "password", "label": "password", "type": "password", "required": true}
+  ],
+  "instructions": {
+    "pl": "Wpisz cyfrowy login Synergii (np. 1234567 lub 1234567u) i hasło. To nie jest adres e-mail konta Librus. Rola ucznia lub rodzica zostanie sprawdzona po zalogowaniu.",
+    "en": "Enter your numeric Synergia login (for example 1234567 or 1234567u) and password, rather than a Librus account email. Your student or parent role is checked after sign-in.",
+    "ru": "Введите цифровой логин Synergia (например, 1234567 или 1234567u) и пароль, а не почту аккаунта Librus. Роль ученика или родителя определяется после входа.",
+    "de": "Gib den numerischen Synergia-Login (z. B. 1234567 oder 1234567u) und das Passwort ein, keine Librus-E-Mail-Adresse. Die Schüler- oder Elternrolle wird nach der Anmeldung geprüft.",
+    "uk": "Введіть цифровий логін Synergia (наприклад, 1234567 або 1234567u) і пароль, а не пошту облікового запису Librus. Роль учня або батьків визначається після входу."
+  }
+}

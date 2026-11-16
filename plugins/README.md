@@ -1,11 +1,11 @@
 # Diary plugins
 
 Plugins belong in **`/plugins/` in `johnnydotpm/Siberia`**, alongside `syberia/`.
-[Librus](librus/README.md) is a **bundled plugin**, compiled into the application. Fryderyk and MobiReg are downloadable plugins.
+[Librus](librus/README.md) is a **bundled plugin**, compiled into the application. Fryderyk, MobiReg and [Librus Legacy](librus-legacy/README.md) are downloadable plugins. Librus remains the default; Legacy is an explicit alternative for numeric Synergia logins.
 
 ## Current status
 
-Fryderyk and modern MobiReg now have versioned, independently authored adapters.
+Fryderyk, modern MobiReg and Librus Legacy have versioned, independently authored adapters.
 For a downloadable diary, the Flutter app installs the selected plugin **before sending login data**,
 then uses its installed, pinned release for login, child profiles, foreground
 and background synchronization, messaging, notifications and widgets. Librus
@@ -22,7 +22,8 @@ Mailbox selection supports marking messages read and deleting them, including
 long-press actions. Deletion requires confirmation; only confirmed successes leave
 the local list. No provider mutation is automatically retried after a failure.
 
-See [Fryderyk](fryderyk/README.md), [MobiReg](mobireg/README.md) and
+See [Fryderyk](fryderyk/README.md), [MobiReg](mobireg/README.md),
+[Librus Legacy](librus-legacy/README.md) and
 [research provenance](RESEARCH.md) for coverage and remaining gates. Tests use
 synthetic responses. No live school account or device build was used to verify
 current backend acceptance or native execution.
@@ -101,6 +102,12 @@ Output: `{"data":...,"state":{...}}` or an error with a stable `code`. Both cros
 A new VM and isolate are created per invocation; there are no persistent globals.
 The SDK does not interpret a provider's error/success envelope as a list of data.
 The adapter must validate it and fail on incompatible or unknown schemas.
+
+An adapter may declare `prepare` for credential-only renewal. Before `message`,
+`sendMessage` or `deleteMessage`, the host calls it under the account lock and
+saves its returned state before invoking the requested operation. A preparation
+failure stops the operation. Preparation must not read-acknowledge, send or delete
+messages; the host never automatically retries these operations.
 
 The only host capability is `await http(requestJson)`, where the request is:
 

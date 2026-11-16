@@ -276,6 +276,17 @@ class DiaryPlugins {
       return result;
     }
 
+    // Optional credential-only preflight is a separate durable checkpoint.
+    // Refreshing before a mutation must never cause that mutation to replay.
+    if (manifest.operations.contains('prepare') &&
+        const {'message', 'sendMessage', 'deleteMessage'}.contains(operation)) {
+      final prepared = await call('prepare', {
+        'pupilId': profile.pluginStudent,
+      });
+      if (prepared.errorCode != null) {
+        throw PluginException(prepared.errorCode!);
+      }
+    }
     var result = await call(operation, {
       ...input,
       'pupilId': profile.pluginStudent,

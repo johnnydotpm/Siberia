@@ -20,6 +20,8 @@ Parent mode follows the Librus account type; the interface role can be changed i
 
 Librus is a bundled plugin using the same interface as the other diaries. Fryderyk and MobiReg are downloadable plugins in [`/plugins/`](plugins/README.md), selected on the login screen. Each adapter documents its 0.1 coverage and limitations; protocols were tested with synthetic responses, without school accounts.
 
+[Librus Legacy](plugins/librus-legacy/README.md) is a separate, optional downloadable plugin for numeric Synergia logins. Select it explicitly in the diary picker; it does not replace the default Librus login. The API determines whether the account belongs to a student or parent.
+
 ## Features
 
 - Sign-in with non-expiring sessions

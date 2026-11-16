@@ -20,6 +20,8 @@ Tryb rodzica jest dobierany na podstawie rodzaju konta Librus; rolę interfejsu 
 
 Librus jest wbudowanym pluginem i korzysta z tego samego interfejsu co pozostałe dzienniki. Fryderyk i MobiReg są dostępne jako pobierane pluginy w [`/plugins/`](plugins/README.md), wybierane na ekranie logowania. Obsługiwane funkcje i ograniczenia wersji 0.1 opisano przy każdym pluginie; protokoły sprawdzono na danych syntetycznych, bez kont szkolnych.
 
+[Librus Legacy](plugins/librus-legacy/README.md) to osobny, opcjonalny plugin do pobrania, obsługujący cyfrowe loginy Synergii. Wybierz go w selektorze dziennika; nie zastępuje domyślnego logowania Librus. API ustala, czy konto należy do ucznia, czy rodzica.
+
 ## Funkcje
 
 - Logowanie z niewygasającymi sesjami
