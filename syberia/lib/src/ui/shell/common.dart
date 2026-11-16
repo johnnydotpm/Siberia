@@ -1257,3 +1257,44 @@ Future<TimeOfDay?> _glassTimeSheet(
     },
   );
 }
+
+/// A choice among a few, under [label]: Material's drop-down field
+/// elsewhere; in the glass design [GlassPickerRow], iOS's pop-up button.
+class _PickerField<T> extends StatelessWidget {
+  const _PickerField({
+    required this.label,
+    required this.value,
+    required this.options,
+    required this.onChanged,
+    super.key,
+  });
+
+  final String label;
+  final T value;
+
+  /// Each choice and what it reads.
+  final List<(T, String)> options;
+  final ValueChanged<T>? onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final change = onChanged;
+    if (GlassStyle.of(context)) {
+      return GlassPickerRow<T>(
+        label: label,
+        value: value,
+        options: options,
+        onChanged: change,
+      );
+    }
+    return DropdownButtonFormField<T>(
+      initialValue: value,
+      decoration: InputDecoration(labelText: label),
+      items: [
+        for (final (value, label) in options)
+          DropdownMenuItem(value: value, child: Text(label)),
+      ],
+      onChanged: change == null ? null : (value) => change(value as T),
+    );
+  }
+}

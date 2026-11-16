@@ -321,7 +321,12 @@ class _GlassMenu<T> extends StatelessWidget {
     final scaler = MediaQuery.textScalerOf(context);
     final row = math.max(48.0, scaler.scale(17) * 1.3 + 12);
     final height = items.length * row + (items.length - 1) * 0.5;
-    final left = anchor.left.clamp(8.0, screen.width - _width - 8);
+    // Under the start of what it comes out of, unless that leaves the point
+    // it comes out of past the menu's far side: then it ends there.
+    final start = origin.dx > anchor.left + _width - 24
+        ? origin.dx + 24 - _width
+        : anchor.left;
+    final left = start.clamp(8.0, screen.width - _width - 8);
     final target = Rect.fromLTWH(left, anchor.bottom + 6, _width, height);
     final divider = theme.colorScheme.onSurface.withValues(alpha: 0.12);
     // Under the chevron, across the menu, it grows from and shrinks to.

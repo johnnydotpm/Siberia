@@ -11,6 +11,7 @@ import 'package:syberia/src/domain/models.dart';
 import 'package:syberia/src/state/app_controller.dart';
 import 'package:syberia/src/ui/glass/glass_material.dart';
 import 'package:syberia/src/ui/glass/glass_plate.dart';
+import 'package:syberia/src/ui/glass/glass_picker.dart';
 import 'package:syberia/src/ui/glass/glass_platform.dart';
 import 'package:syberia/src/ui/glass/glass_segmented.dart';
 import 'package:syberia/src/ui/glass/glass_switch.dart';
@@ -628,6 +629,98 @@ void main() {
       expect(find.text('6:30 AM · change time'), findsOneWidget);
       await tester.pumpWidget(const SizedBox.shrink());
       controller.dispose();
+    });
+  });
+
+  group('the pop-up row', () {
+    Future<List<String?>> row(WidgetTester tester) async {
+      tester.view.physicalSize = const Size(400, 860);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      final picks = <String?>[];
+      String? value = 'b';
+      await tester.pumpWidget(
+        MaterialApp(
+          builder: (context, child) => GlassStyle(enabled: true, child: child!),
+          home: Scaffold(
+            body: Padding(
+              padding: const EdgeInsets.all(20),
+              child: StatefulBuilder(
+                builder: (context, setState) => GlassPickerRow<String?>(
+                  key: const ValueKey('row'),
+                  label: 'Role',
+                  value: value,
+                  options: const [
+                    (null, 'Auto'),
+                    ('a', 'Student'),
+                    ('b', 'Parent'),
+                  ],
+                  onChanged: (next) => setState(() {
+                    picks.add(next);
+                    value = next;
+                  }),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      return picks;
+    }
+
+    testWidgets('shows the choice and opens a glass menu from its chevrons, '
+        'where null is a choice too', (tester) async {
+      final picks = await row(tester);
+      expect(find.text('Parent'), findsOneWidget);
+      await tester.tap(find.byKey(const ValueKey('row')));
+      await tester.pumpAndSettle();
+      final menu = find.ancestor(
+        of: find.byKey(const ValueKey('picker-option-0')),
+        matching: find.byType(GlassPlate),
+      );
+      expect(menu, findsOneWidget);
+      // At the row's end, where its chevrons are.
+      expect(tester.getRect(menu).right, greaterThan(300));
+      await tester.tap(find.byKey(const ValueKey('picker-option-0')));
+      await tester.pumpAndSettle();
+      expect(picks, [null]);
+      expect(find.text('Auto'), findsOneWidget);
+    });
+
+    testWidgets('on iOS 26 UIKit\'s own menu lies over it', (tester) async {
+      final messenger =
+          TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
+      final ids = <String, int>{};
+      GlassPlatform.debugSetBackend(GlassBackend.uikit);
+      messenger.setMockMethodCallHandler(SystemChannels.platform_views, (
+        call,
+      ) async {
+        if (call.method == 'create') {
+          final arguments = call.arguments as Map;
+          ids[arguments['viewType'] as String] = arguments['id'] as int;
+        }
+        return null;
+      });
+      addTearDown(
+        () => messenger.setMockMethodCallHandler(
+          SystemChannels.platform_views,
+          null,
+        ),
+      );
+      final picks = await row(tester);
+      final id = ids['siberia/glass_menu_button'];
+      expect(id, isNotNull);
+      await messenger.handlePlatformMessage(
+        'siberia/glass_menu_button/$id',
+        const StandardMethodCodec().encodeMethodCall(
+          const MethodCall('pick', '1'),
+        ),
+        (_) {},
+      );
+      await tester.pump();
+      expect(picks, ['a']);
+      await tester.pumpWidget(const SizedBox.shrink());
     });
   });
 }

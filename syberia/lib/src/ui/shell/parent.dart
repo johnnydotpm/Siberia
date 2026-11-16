@@ -65,26 +65,19 @@ Future<void> _showParentSettings(
               ),
               Text(current.displayName),
               const SizedBox(height: 16),
-              DropdownButtonFormField<ProfileRole>(
+              _PickerField<ProfileRole?>(
                 key: ValueKey('profile-role-${current.roleOverride}'),
-                initialValue: current.roleOverride,
-                decoration: InputDecoration(
-                  labelText: context.tr('profileRole'),
-                ),
-                items: [
-                  DropdownMenuItem(
-                    value: null,
-                    child: Text(context.tr('roleAuto')),
-                  ),
+                label: context.tr('profileRole'),
+                value: current.roleOverride,
+                options: [
+                  (null, context.tr('roleAuto')),
                   for (final role in ProfileRole.values)
-                    DropdownMenuItem(
-                      value: role,
-                      child: Text(
-                        context.tr(
-                          role == ProfileRole.parent
-                              ? 'roleParent'
-                              : 'roleStudent',
-                        ),
+                    (
+                      role,
+                      context.tr(
+                        role == ProfileRole.parent
+                            ? 'roleParent'
+                            : 'roleStudent',
                       ),
                     ),
                 ],
@@ -577,15 +570,11 @@ class _AbsenceSheetState extends State<_AbsenceSheet> {
         ),
         const SizedBox(height: 12),
         if (profiles.length > 1)
-          DropdownButtonFormField<String>(
-            initialValue: profileId,
-            decoration: InputDecoration(labelText: context.tr('children')),
-            items: [
-              for (final profile in profiles)
-                DropdownMenuItem(
-                  value: profile.id,
-                  child: Text(profile.displayName),
-                ),
+          _PickerField<String?>(
+            label: context.tr('children'),
+            value: profileId,
+            options: [
+              for (final profile in profiles) (profile.id, profile.displayName),
             ],
             onChanged: (id) {
               setState(() {
