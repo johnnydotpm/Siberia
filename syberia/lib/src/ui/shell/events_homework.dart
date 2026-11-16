@@ -807,16 +807,11 @@ void _setHomeworkDone(
   unawaited(controller.setHomeworkDone(item, done));
   // Marked after the card left the screen: nothing to show the message on.
   if (!done || !context.mounted) return;
-  final messenger = ScaffoldMessenger.of(context);
-  messenger.hideCurrentSnackBar();
-  messenger.showSnackBar(
-    SnackBar(
-      content: Text(context.tr('homeworkMarkedDone')),
-      action: SnackBarAction(
-        label: context.tr('undo'),
-        onPressed: () => controller.setHomeworkDone(item, false),
-      ),
-    ),
+  _Notifier.of(context).show(
+    context.tr('homeworkMarkedDone'),
+    replace: true,
+    action: context.tr('undo'),
+    onAction: () => controller.setHomeworkDone(item, false),
   );
 }
 

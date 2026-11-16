@@ -209,13 +209,9 @@ class _DebugMenuState extends State<_DebugMenu> {
     );
     await Clipboard.setData(ClipboardData(text: report));
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text(
-          'Report copied. Names, logins, passwords and tokens are left out.',
-        ),
-      ),
-    );
+    _Notifier.of(
+      context,
+    ).show('Report copied. Names, logins, passwords and tokens are left out.');
   }
 
   Future<void> _checkNow() async {
@@ -405,9 +401,7 @@ class _DebugMenuState extends State<_DebugMenu> {
             style: _wideButton,
             onPressed: () {
               _controller.refreshHomeWidget();
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Widgets drawn again.')),
-              );
+              _Notifier.of(context).show('Widgets drawn again.');
             },
             icon: const AppIcon(Icons.widgets_rounded),
             label: const Text('Refresh widgets'),

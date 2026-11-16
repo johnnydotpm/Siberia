@@ -271,9 +271,7 @@ class _TimetableState extends State<_Timetable> {
       if (lessons.isEmpty) _emptyWeeks.add(monday);
     } on Object {
       if (mounted && _mondayOf(selectedDay!) == monday) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(context.tr('timetableLoadFailed'))),
-        );
+        _Notifier.of(context).show(context.tr('timetableLoadFailed'));
       }
     } finally {
       if (mounted) setState(() => _loadingWeeks.remove(monday));
@@ -327,9 +325,7 @@ class _TimetableState extends State<_Timetable> {
       }
     } on Object {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(context.tr('timetableLoadFailed'))),
-        );
+        _Notifier.of(context).show(context.tr('timetableLoadFailed'));
       }
     } finally {
       if (mounted) {

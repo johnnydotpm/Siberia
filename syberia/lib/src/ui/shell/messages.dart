@@ -235,9 +235,7 @@ class _MessagesState extends State<_Messages> {
       }
     } on Object {
       if (!mounted || scope != _currentScope) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(context.tr('markAllReadFailed'))));
+      _Notifier.of(context).show(context.tr('markAllReadFailed'));
     } finally {
       if (mounted) {
         setState(() {
@@ -1060,15 +1058,13 @@ class _MessageRow extends StatelessWidget {
   static const double bleed = 8;
 
   Future<bool> _markRead(BuildContext context) async {
-    final messenger = ScaffoldMessenger.of(context);
+    final notifier = _Notifier.of(context);
     try {
       await controller.markMessageRead(item);
     } on Object catch (error) {
       // A message that failed stays unread, so its row is still here.
       if (context.mounted) {
-        messenger.showSnackBar(
-          SnackBar(content: Text(context.trError(AppError.from(error)))),
-        );
+        notifier.show(context.trError(AppError.from(error)));
       }
     }
     // The row stays; it just turns read.
@@ -1994,9 +1990,7 @@ Future<void> _deleteMessages(
               controller.activeProfile?.id,
               controller.snapshot.profile.id,
             )) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(context.tr('messagesDeleteFailed'))),
-      );
+      _Notifier.of(context).show(context.tr('messagesDeleteFailed'));
     }
   }
 }

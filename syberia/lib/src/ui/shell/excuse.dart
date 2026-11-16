@@ -452,10 +452,10 @@ class _ExcuseSheetState extends State<_ExcuseSheet> {
       );
       if (!mounted) return;
       HapticFeedback.mediumImpact();
-      final messenger = ScaffoldMessenger.of(context);
+      final notifier = _Notifier.of(context);
       final done = context.tr('excuseSentDone');
       Navigator.pop(context);
-      messenger.showSnackBar(SnackBar(content: Text(done)));
+      notifier.show(done);
     } on Object catch (failure) {
       if (!mounted) return;
       setState(() {

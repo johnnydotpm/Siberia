@@ -1024,3 +1024,62 @@ class _RenderBleed extends RenderShiftedBox {
   double computeMaxIntrinsicHeight(double width) =>
       child?.getMaxIntrinsicHeight(width + 2 * _amount) ?? 0;
 }
+
+/// Says something short at the bottom of the screen: on glass over the tab
+/// bar in the glass design, in a snack bar elsewhere. Taken before a wait,
+/// as a messenger is, it keeps what it needs of the context.
+class _Notifier {
+  _Notifier._(this._messenger, this._overlay);
+
+  factory _Notifier.of(BuildContext context) => _Notifier._(
+    ScaffoldMessenger.maybeOf(context),
+    GlassStyle.of(context) ? Overlay.maybeOf(context, rootOverlay: true) : null,
+  );
+
+  final ScaffoldMessengerState? _messenger;
+
+  /// Where the glass word goes, in the glass design.
+  final OverlayState? _overlay;
+
+  /// Shows [text], with a button [action] that does [onAction], and does
+  /// [onTap] when the word itself is tapped. With [replace], a snack bar on
+  /// screen goes first; a glass word always takes the last one's place.
+  /// Completes once the word has gone.
+  Future<void> show(
+    String text, {
+    Key? key,
+    String? action,
+    VoidCallback? onAction,
+    VoidCallback? onTap,
+    bool replace = false,
+  }) {
+    final overlay = _overlay;
+    if (overlay != null && overlay.mounted) {
+      return showGlassToast(
+        overlay,
+        text: text,
+        key: key,
+        actionLabel: action,
+        onAction: onAction,
+        onTap: onTap,
+      );
+    }
+    final messenger = _messenger;
+    if (messenger == null || !messenger.mounted) return Future.value();
+    if (replace) messenger.hideCurrentSnackBar();
+    return messenger
+        .showSnackBar(
+          SnackBar(
+            key: key,
+            content: onTap == null
+                ? Text(text)
+                : InkWell(onTap: onTap, child: Text(text)),
+            action: action == null
+                ? null
+                : SnackBarAction(label: action, onPressed: onAction ?? () {}),
+          ),
+        )
+        .closed
+        .then((_) {});
+  }
+}

@@ -147,21 +147,14 @@ class _ComposeMessageSheetState extends State<_ComposeMessageSheet> {
     // The word of a draft closed moments ago still shows, and its button
     // throws away whichever draft is kept: one is enough.
     if (_ComposeDraft.told[controller] ?? false) return;
-    final messenger = ScaffoldMessenger.maybeOf(context);
-    if (messenger == null) return;
     _ComposeDraft.told[controller] = true;
-    messenger
-        .showSnackBar(
-          SnackBar(
-            key: const ValueKey('draft-saved'),
-            content: Text(context.tr('draftSaved')),
-            action: SnackBarAction(
-              label: context.tr('draftDiscard'),
-              onPressed: () => _ComposeDraft.kept[controller] = null,
-            ),
-          ),
+    _Notifier.of(context)
+        .show(
+          context.tr('draftSaved'),
+          key: const ValueKey('draft-saved'),
+          action: context.tr('draftDiscard'),
+          onAction: () => _ComposeDraft.kept[controller] = null,
         )
-        .closed
         .whenComplete(() => _ComposeDraft.told[controller] = null);
   }
 
@@ -202,11 +195,9 @@ class _ComposeMessageSheetState extends State<_ComposeMessageSheet> {
       await widget.onSent?.call(subject, body, to);
       if (!mounted) return;
       HapticFeedback.mediumImpact();
-      final messenger = ScaffoldMessenger.of(context);
+      final notifier = _Notifier.of(context);
       Navigator.pop(context);
-      messenger.showSnackBar(
-        SnackBar(content: Text(context.tr('messageSent'))),
-      );
+      notifier.show(context.tr('messageSent'));
     } on Object catch (error) {
       if (!mounted) return;
       setState(() => validationError = context.trError(AppError.from(error)));

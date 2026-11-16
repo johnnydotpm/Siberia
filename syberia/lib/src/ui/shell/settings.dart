@@ -8,7 +8,7 @@ Future<void> _openLink(BuildContext context, String link) async {
     mode: LaunchMode.externalApplication,
   );
   if (!opened && context.mounted) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(link)));
+    _Notifier.of(context).show(link);
   }
 }
 
@@ -783,32 +783,20 @@ class _CheckUpdatesRowState extends State<_CheckUpdatesRow> {
     final latest = await widget.controller.checkForUpdateNow();
     if (!mounted) return;
     setState(() => _checking = false);
-    final messenger = ScaffoldMessenger.of(context);
+    final notifier = _Notifier.of(context);
     if (latest == null) {
-      messenger.showSnackBar(
-        SnackBar(content: Text(context.tr('updateCheckFailed'))),
-      );
+      notifier.show(context.tr('updateCheckFailed'));
     } else if (isNewerVersion(latest, AppBuildInfo.version)) {
-      messenger.showSnackBar(
-        SnackBar(
-          content: InkWell(
-            key: const ValueKey('update-snackbar-link'),
-            onTap: () => _openLink(context, '$_repositoryUrl/releases/latest'),
-            child: Text(
-              context.trArgs('updateAvailableShort', {'version': latest}),
-            ),
-          ),
-          action: SnackBarAction(
-            label: context.tr('openRelease'),
-            onPressed: () =>
-                _openLink(context, '$_repositoryUrl/releases/latest'),
-          ),
-        ),
+      void open() => _openLink(context, '$_repositoryUrl/releases/latest');
+      notifier.show(
+        context.trArgs('updateAvailableShort', {'version': latest}),
+        key: const ValueKey('update-snackbar-link'),
+        onTap: open,
+        action: context.tr('openRelease'),
+        onAction: open,
       );
     } else {
-      messenger.showSnackBar(
-        SnackBar(content: Text(context.tr('updateLatest'))),
-      );
+      notifier.show(context.tr('updateLatest'));
     }
   }
 
@@ -841,8 +829,7 @@ Future<void> _confirmResetSettings(
   if (!confirmed) return;
   await controller.resetSettings();
   if (!context.mounted) return;
-  ScaffoldMessenger.of(context)
-      .showSnackBar(SnackBar(content: Text(context.tr('resetSettingsDone'))));
+  _Notifier.of(context).show(context.tr('resetSettingsDone'));
 }
 
 /// The three tabs beside Today on the bottom bar of [profile], by default

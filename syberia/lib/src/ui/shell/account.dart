@@ -890,13 +890,9 @@ void _announceNotifications(BuildContext context, AppController controller) {
       !controller.notificationSettings.enabled) {
     return;
   }
-  ScaffoldMessenger.maybeOf(context)?.showSnackBar(
-    SnackBar(
-      key: const ValueKey('profile-notifications-notice'),
-      content: Text(
-        context.trArgs('profileNotificationsOn', {'name': profile.displayName}),
-      ),
-    ),
+  _Notifier.of(context).show(
+    context.trArgs('profileNotificationsOn', {'name': profile.displayName}),
+    key: const ValueKey('profile-notifications-notice'),
   );
 }
 
