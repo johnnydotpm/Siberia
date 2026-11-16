@@ -27,6 +27,11 @@ on:
         required: false
         type: boolean
         default: false
+      capture_ios_controls:
+        description: Record iOS 26's switches and segmented controls on the simulator
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -181,3 +186,75 @@ jobs:
           name: siberiagb-ios
           path: syberia/build/ipa/SiberiaGB-unsigned.ipa
           if-no-files-found: error
+
+  ios-capture:
+    name: Record iOS controls on the simulator
+    if: github.event_name == 'workflow_dispatch' && inputs.capture_ios_controls
+    runs-on: macos-26
+    defaults:
+      run:
+        working-directory: syberia/tool/ios_capture
+    steps:
+      - uses: actions/checkout@v4
+      - name: Generate the project
+        run: |
+          brew install xcodegen
+          xcodegen generate
+      - name: Boot an iPhone on iOS 26
+        run: |
+          xcodebuild -version
+          xcrun simctl list runtimes
+          UDID="$(xcrun simctl list devices available -j | python3 -c '
+          import json, sys
+          devices = json.load(sys.stdin)["devices"]
+          runtimes = sorted((r for r in devices if "iOS-26" in r), reverse=True)
+          picks = [d for r in runtimes for d in devices[r] if d["name"].startswith("iPhone")]
+          picks.sort(key=lambda d: (not d["name"].startswith("iPhone 17 Pro"), d["name"]))
+          print(picks[0]["udid"] if picks else "")
+          ')"
+          test -n "$UDID"
+          xcrun simctl list devices | grep "$UDID"
+          echo "UDID=$UDID" >> "$GITHUB_ENV"
+          xcrun simctl boot "$UDID"
+          xcrun simctl bootstatus "$UDID" -b
+          xcrun simctl status_bar "$UDID" override --time 9:41 --batteryState charged --batteryLevel 100
+      - name: Build for testing
+        run: |
+          xcodebuild build-for-testing -project Capture.xcodeproj -scheme Capture \
+            -destination "id=$UDID" -derivedDataPath build | tail -20
+      - name: Record while the test drives the controls
+        run: |
+          mkdir -p out
+          python3 -c 'import time; print(time.time())' > out/record-start.txt
+          xcrun simctl io "$UDID" recordVideo --codec=h264 --force out/controls.mp4 &
+          RECORDER=$!
+          sleep 2
+          set +e
+          xcodebuild test-without-building -project Capture.xcodeproj -scheme Capture \
+            -destination "id=$UDID" -derivedDataPath build \
+            -resultBundlePath out/Capture.xcresult > out/xcodebuild.log 2>&1
+          STATUS=$?
+          set -e
+          sleep 1
+          kill -INT "$RECORDER"
+          wait "$RECORDER" || true
+          grep -E "^(SCALE|FRAME|MARK) " out/xcodebuild.log > out/marks.txt || true
+          cat out/marks.txt
+          tail -30 out/xcodebuild.log
+          cp -R "$HOME/capture-shots" out/shots 2>/dev/null || true
+          xcrun xcresulttool export attachments --path out/Capture.xcresult \
+            --output-path out/attachments 2>/dev/null || true
+          ls -la out out/shots out/attachments 2>/dev/null || true
+          exit "$STATUS"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ios-controls-capture
+          path: |
+            syberia/tool/ios_capture/out/controls.mp4
+            syberia/tool/ios_capture/out/record-start.txt
+            syberia/tool/ios_capture/out/marks.txt
+            syberia/tool/ios_capture/out/xcodebuild.log
+            syberia/tool/ios_capture/out/shots
+            syberia/tool/ios_capture/out/attachments
+          if-no-files-found: warn

@@ -1,0 +1,44 @@
+# A small UIKit app and a UI test that drive iOS 26's own switches and
+# segmented controls on the simulator, so the drawn copies on Android can be
+# matched to recorded frames. Generated with XcodeGen in CI only.
+name: Capture
+options:
+  bundleIdPrefix: dev.siberiagb.capture
+  deploymentTarget:
+    iOS: "26.0"
+settings:
+  base:
+    CODE_SIGN_STYLE: Manual
+    CODE_SIGN_IDENTITY: "-"
+    DEVELOPMENT_TEAM: ""
+    SWIFT_VERSION: "5.0"
+targets:
+  Capture:
+    type: application
+    platform: iOS
+    sources: [Capture]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: dev.siberiagb.capture.app
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        TARGETED_DEVICE_FAMILY: "1"
+  CaptureUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources: [CaptureUITests]
+    dependencies:
+      - target: Capture
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: dev.siberiagb.capture.uitests
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_TARGET_NAME: Capture
+schemes:
+  Capture:
+    build:
+      targets:
+        Capture: all
+        CaptureUITests: [test]
+    test:
+      targets: [CaptureUITests]
